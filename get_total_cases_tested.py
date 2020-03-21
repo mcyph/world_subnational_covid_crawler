@@ -1,4 +1,3 @@
-#!/bin/env python3
 from pyquery import PyQuery as pq
 from urllib.parse import urlparse
 from urllib.request import urlopen
