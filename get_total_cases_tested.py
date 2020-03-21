@@ -44,7 +44,8 @@ urls_dict = {
         'https://ww2.health.wa.gov.au/News/Media-releases-listing-page',
         href='div.threeCol-accordian a',
         regex=(
-            compile(r'([0-9,]+) negative COVID-19 tests'),
+            # Seems the WA website's wording can change day-to-day
+            compile(r'([0-9]+[0-9,]*)(.*?negative COVID-19 tests|.*?tested negative|.*?negative)'),
             compile(r'total to ([0-9,]+)')
         ),
         rough_only=False
