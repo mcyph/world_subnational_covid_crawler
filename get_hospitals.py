@@ -20,6 +20,9 @@ class _GetHospitals:
             'WA': self._get_for_wa,
             'SA': self._get_for_sa,
             'TAS': self._get_for_tas,
+            'QLD': self._get_for_qld,
+            #'NT': FIXME,
+            #'ACT': self._get_for_act,
         }
 
     def get_hospitals_dict(self):
@@ -27,6 +30,58 @@ class _GetHospitals:
         for state_name, fn in self._states.items():
             r[state_name] = fn()
         return r
+
+    #==============================================================#
+    #                          Queensland                          #
+    #==============================================================#
+
+    def _get_for_qld(self):
+        html = pq(
+            url='https://metronorth.health.qld.gov.au/news/fever-clinics'
+        )
+        sections = (
+            ':contains("Fever Clinics")',
+            ':contains("Community Assessment Clinics")'
+        )
+
+        hospitals = []
+        for section in sections:
+            h2 = html(section)
+
+            for h3 in h2.next_all('h2,h3'):
+                if pq(h3).html().upper().startswith('<H2'):
+                    # End of section
+                    print("EOS:", h3.html())
+                    break
+
+                h3 = pq(h3)
+                name = h3.text().strip()
+                address = pq(h3.next_all('p')[0]).text().strip().replace('\n', ' ')
+                opening_hours = pq(h3.next_all('p')[1]).text().strip()
+
+                hospitals.append(Hospital(
+                    name=name,
+                    location=address,
+                    opening_hours=opening_hours.replace('Open: ', ''),
+                    message='Please ring the buzzer at the Emergency Care '
+                            'Department entrance (not ambulance entrance) '
+                            'to alert staff.'
+                            if name == 'Kilcoy Hospital'
+                            else None,  # HACK!
+                    phone=None
+                ))
+        return hospitals
+
+    #==============================================================#
+    #                             ACT                              #
+    #==============================================================#
+
+    def _get_for_act(self):
+        raise NotImplementedError()
+
+    #==============================================================#
+    #                       South Australia                        #
+    #==============================================================#
 
     _SA_DEDICATED_CLINIC = 0
     _SA_DRIVE_THRU_CLINIC = 1
@@ -37,7 +92,6 @@ class _GetHospitals:
                 'public+content/sa+health+internet/health+topics/'
                 'health+topics+a+-+z/covid+2019/covid-19+response'
         )
-
         sections = (
             (
                 ':contains("Dedicated COVID-19 clinics are open '
@@ -63,7 +117,7 @@ class _GetHospitals:
 
                 if 'PDF' in name:
                     hospitals.append(Hospital(
-                        # FIXME!
+                        # FIXME! - Lyell McEwin Hospital
                         name=name.split('(')[0].strip(),
                         location=None,
                         message=None,
@@ -119,12 +173,13 @@ class _GetHospitals:
             address = None
 
         if typ == self._SA_DEDICATED_CLINIC:
-            message = 'These clinics are for people who have COVID-19 symptoms ' \
+            message = 'These dedicated clinics are for people who have COVID-19 symptoms ' \
                       '(especially fever or cough) AND have recently returned ' \
                       'from overseas  OR have had contact with a known COVID-19 ' \
                       'case.'
         elif typ == self._SA_DRIVE_THRU_CLINIC:
-            message = 'Patients need a referral from their GP to access this service.'
+            message = 'Patients need a referral from their GP to access these ' \
+                      'drive-thru services.'
         else:
             raise Exception()
 
@@ -135,6 +190,10 @@ class _GetHospitals:
             phone=phone,
             opening_hours=None  # ??? is this provided for some of them?
         )
+
+    #==============================================================#
+    #                         Tasmania                             #
+    #==============================================================#
 
     def _get_for_tas(self):
         html = pq(
@@ -171,6 +230,10 @@ class _GetHospitals:
             hospitals.append(Hospital(**hospital_dict))
         return hospitals
 
+    #==============================================================#
+    #                      Western Australia                       #
+    #==============================================================#
+
     def _get_for_wa(self):
         html = pq(
             url='https://pathwest.health.wa.gov.au/'
@@ -197,6 +260,10 @@ class _GetHospitals:
             ))
         return hospitals
 
+    #==============================================================#
+    #                       New South Wales                        #
+    #==============================================================#
+
     def _get_for_nsw(self):
         html = pq(
             url='https://www.health.nsw.gov.au/Infectious/diseases/'
@@ -222,6 +289,10 @@ class _GetHospitals:
                 opening_hours=opening_hours
             ))
         return hospitals
+
+    #==============================================================#
+    #                          Victoria                            #
+    #==============================================================#
 
     def _get_for_vic(self):
         html = pq(
@@ -260,4 +331,9 @@ if __name__ == '__main__':
     #print(_GetHospitals()._get_for_vic())
     #print(_GetHospitals()._get_for_nsw())
     #print(_GetHospitals()._get_for_tas())
-    print(_GetHospitals()._get_for_sa())
+    #print(_GetHospitals()._get_for_sa())
+    #print(_GetHospitals()._get_for_qld())
+    #print(_GetHospitals()._get_for_act())
+
+    from pprint import pprint
+    pprint(get_hospitals_dict())
