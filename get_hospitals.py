@@ -4,7 +4,7 @@ from collections import namedtuple
 
 
 Hospital = namedtuple('Hospital', [
-    'name', 'location', 'message', 'phone', 'opening_hours'
+    'state', 'name', 'location', 'message', 'phone', 'opening_hours'
 ])
 
 
@@ -19,7 +19,9 @@ class _GetHospitals:
             'NSW': self._get_for_nsw,
             'WA': self._get_for_wa,
             'SA': self._get_for_sa,
-            'TAS': self._get_for_tas,
+            # Can't seem to find the designated
+            # hospitals for Tas for now
+            #'TAS': self._get_for_tas,
             'QLD': self._get_for_qld,
             #'NT': FIXME,
             'ACT': self._get_for_act,
@@ -64,36 +66,43 @@ class _GetHospitals:
                 opening_hours = pq(h3.next_all('p')[1]) \
                     .text() \
                     .strip()
+                opening_hours = opening_hours \
+                    .replace('Open: ', '')
+                message = None
+                if '\n' in opening_hours:
+                    opening_hours, message = opening_hours.split('\n')
 
                 hospitals.append(Hospital(
+                    state='qld',
                     name=name,
                     location=address,
-                    opening_hours=opening_hours.replace('Open: ', ''),
+                    opening_hours=opening_hours,
                     message='Please ring the buzzer at the Emergency Care '
                             'Department entrance (not ambulance entrance) '
                             'to alert staff.'
                             if name == 'Kilcoy Hospital'
-                            else None,  # HACK!
+                            else message,  # HACK!
                     phone=None
                 ))
         return hospitals
 
     #==============================================================#
-    #                             ACT                              #
+    #                          Tasmania                            #
     #==============================================================#
 
-    def _get_for_act(self):
+    def _get_for_tas(self):
         # https://www.health.act.gov.au/hospitals-and-health-centres/walk-centres/locations
         # Hardcoded for now, as can't find info it's
         # recommended to go to other walk-in centres
         return [
-            Hospital(
-                name='Weston Creek Walk-in Centre',
-                location='24 Parkinson St, Weston ACT 2611',
-                message=None,
-                phone='(02) 5124 9977',
-                opening_hours='7:30am - 10pm'
-            )
+            #Hospital(
+            #    state='tas',
+            #    name='Weston Creek Walk-in Centre',
+            #    location='24 Parkinson St, Weston ACT 2611',
+            #    message=None,
+            #    phone='(02) 5124 9977',
+            #    opening_hours='7:30am - 10pm'
+            #)
         ]
 
     #==============================================================#
@@ -135,6 +144,7 @@ class _GetHospitals:
                 if 'PDF' in name:
                     hospitals.append(Hospital(
                         # FIXME! - Lyell McEwin Hospital
+                        state='sa',
                         name=name.split('(')[0].strip(),
                         location=None,
                         message=None,
@@ -145,6 +155,7 @@ class _GetHospitals:
                     hospitals.append(Hospital(
                         # FIXME! - royal adelaide hospital
                         # https://www.rah.sa.gov.au/news/coronavirus-novel-coronavirus-2019-ncov
+                        state='sa',
                         name=name.split('(')[0].strip(),
                         location=None,
                         message=None,
@@ -201,6 +212,7 @@ class _GetHospitals:
             raise Exception()
 
         return Hospital(
+            state='sa',
             name=name,
             location=address,
             message=message,
@@ -209,16 +221,16 @@ class _GetHospitals:
         )
 
     #==============================================================#
-    #                         Tasmania                             #
+    #                            ACT                               #
     #==============================================================#
 
-    def _get_for_tas(self):
+    def _get_for_act(self):
         html = pq(
             url='https://health.act.gov.au/about-our-health-system/'
                 'novel-coronavirus-covid-19/getting-tested',
             parser='html'
         )
-        TAS_RE = compile(
+        ACT_RE = compile(
             r'^(?P<name>.*?)'
             r'(?P<location>\(.*?\))'
             r'(?P<opening_hours>Open.*?\.)?'
@@ -236,7 +248,7 @@ class _GetHospitals:
 
         hospitals = []
         for li in ul('li'):
-            match = TAS_RE.match(pq(li).text())
+            match = ACT_RE.match(pq(li).text())
             hospital_dict = match.groupdict()
 
             for k, v in hospital_dict.items():
@@ -244,6 +256,7 @@ class _GetHospitals:
                     hospital_dict[k] = v.strip('().').strip()
 
             hospital_dict['phone'] = None
+            hospital_dict['state'] = 'act'
             hospitals.append(Hospital(**hospital_dict))
         return hospitals
 
@@ -269,6 +282,7 @@ class _GetHospitals:
             name = name.strip()
             address = address.strip()
             hospitals.append(Hospital(
+                state='wa',
                 name=name,
                 location=address,
                 message=None,
@@ -308,6 +322,7 @@ class _GetHospitals:
                     message = 'Call prior'
 
             hospitals.append(Hospital(
+                state='nsw',
                 name=name,
                 location=address.replace('\n', ' '),
                 message=message,
@@ -343,6 +358,7 @@ class _GetHospitals:
                 message = message.strip().strip('()').strip()
 
             hospitals.append(Hospital(
+                state='vic',
                 name=name.strip(),
                 location=location,
                 message=message,
@@ -362,4 +378,11 @@ if __name__ == '__main__':
     #print(_GetHospitals()._get_for_act())
 
     from pprint import pprint
-    pprint(get_hospitals_dict())
+    hospitals_dict = get_hospitals_dict()
+    #pprint(hospitals_dict)
+
+    print()
+    print(f"state\tname\tlocation\tmessage\tphone\topening_hours")
+    for k, l in hospitals_dict.items():
+        for v in l:
+            print(f"{v.state}\t{v.name}\t{v.location}\t{v.message}\t{v.phone}\t{v.opening_hours}")
