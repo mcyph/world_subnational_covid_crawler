@@ -16,5 +16,7 @@
 
 * https://www.khanacademy.org/science/health-and-medicine/current-issues-in-health-and-medicine/ebola-outbreak/v/understanding-r-nought
 
-* https://openwho.org/courses/UNCT-COVID19-preparedness-and-response-EN
+* https://covid-19.alibabacloud.com/
+
+* https://openwho.org/
 
