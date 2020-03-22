@@ -22,12 +22,13 @@ class _GetHospitals:
             'TAS': self._get_for_tas,
             'QLD': self._get_for_qld,
             #'NT': FIXME,
-            #'ACT': self._get_for_act,
+            'ACT': self._get_for_act,
         }
 
     def get_hospitals_dict(self):
         r = {}
         for state_name, fn in self._states.items():
+            print(f"{state_name}: Getting hospitals data")
             r[state_name] = fn()
         return r
 
@@ -56,8 +57,13 @@ class _GetHospitals:
 
                 h3 = pq(h3)
                 name = h3.text().strip()
-                address = pq(h3.next_all('p')[0]).text().strip().replace('\n', ' ')
-                opening_hours = pq(h3.next_all('p')[1]).text().strip()
+                address = pq(h3.next_all('p')[0]) \
+                    .text() \
+                    .strip() \
+                    .replace('\n', ' ')
+                opening_hours = pq(h3.next_all('p')[1]) \
+                    .text() \
+                    .strip()
 
                 hospitals.append(Hospital(
                     name=name,
@@ -77,7 +83,18 @@ class _GetHospitals:
     #==============================================================#
 
     def _get_for_act(self):
-        raise NotImplementedError()
+        # https://www.health.act.gov.au/hospitals-and-health-centres/walk-centres/locations
+        # Hardcoded for now, as can't find info it's
+        # recommended to go to other walk-in centres
+        return [
+            Hospital(
+                name='Weston Creek Walk-in Centre',
+                location='24 Parkinson St, Weston ACT 2611',
+                message=None,
+                phone='(02) 5124 9977',
+                opening_hours='7:30am - 10pm'
+            )
+        ]
 
     #==============================================================#
     #                       South Australia                        #
@@ -277,15 +294,24 @@ class _GetHospitals:
         for x, tr in enumerate(table('tr')):
             if not x: continue
             tr = pq(tr)
-            name = pq(tr('th')[0]).text().strip()
+            name = pq(tr('th')[0]).text().strip().replace('\n', ' ')
             address, opening_hours = tr('td')[0], tr('td')[1]
             address = pq(address).text().strip()
             opening_hours = pq(opening_hours).text().strip()
+            phone = None
+            message = None
+
+            if '\n' in opening_hours:
+                opening_hours, message = opening_hours.split('\n')
+                if message.startswith('Call prior: '):
+                    phone = message.split(': ')[-1]
+                    message = 'Call prior'
+
             hospitals.append(Hospital(
                 name=name,
-                location=address,
-                message=None,
-                phone=None,
+                location=address.replace('\n', ' '),
+                message=message,
+                phone=phone,
                 opening_hours=opening_hours
             ))
         return hospitals
