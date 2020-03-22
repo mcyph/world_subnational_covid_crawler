@@ -22,7 +22,7 @@ urls_dict = {
         href='.dfwp-item a',
         regex=compile(
             # Total (including tested and excluded)
-            r'<td width="208" class="moh-rteTableFooterOddCol-6">.*?([0-9,]+).*?</td>',
+            r'<td.*?>Total</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
             MULTILINE|DOTALL
         ),
         rough_only=False
