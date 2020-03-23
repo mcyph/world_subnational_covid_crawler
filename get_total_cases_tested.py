@@ -30,6 +30,7 @@ urls_dict = {
     'VIC': CaseURL(
         'https://www.dhhs.vic.gov.au/media-hub-coronavirus-disease-covid-19',
         href='.field--item a',
+        # Victoria's seems to follow a formula (for now), so will hardcode
         regex=compile(r'([0-9,]+) Victorians have been tested'),
         rough_only=False
     ),
@@ -50,7 +51,7 @@ urls_dict = {
         href='div.threeCol-accordian a',
         regex=(
             # Seems the WA website's wording can change day-to-day
-            compile(r'([0-9]+[0-9,]*)(.*?negative COVID-19 tests|.*?tested negative|.*?negative)'),
+            compile(r'([0-9]+[0-9,]*)([^0-9]*negative COVID-19 tests|[^0-9]*tested negative|[^0-9]*negative)'),
             compile(r'total to ([0-9,]+)')
         ),
         rough_only=False
@@ -67,7 +68,7 @@ urls_dict = {
             'novel-coronavirus-covid-19',
         href='.latestnewsinner a',
         regex=(
-            compile(r'(?:tested negative is now|test.*?negative.*?) ([0-9,]+)'),
+            compile(r'(?:tested negative is now|test[^0-9]*negative[^0-9]*) ([0-9,]+)'),
             compile(r'confirmed cases in the ACT is now ([0-9,]+)')
         ),
         rough_only=False
@@ -78,7 +79,7 @@ urls_dict = {
     'TAS': CaseURL(
         'https://www.dhhs.tas.gov.au/news/2020',
         href='table.dhhs a',
-        regex=compile('([0-9,]+) (?:coronavirus tests had been completed|tests.*?complete)'),
+        regex=compile('([0-9,]+)[^0-9]*(?:coronavirus tests had been completed|tests[^0-9]*complete)'),
         rough_only=False
     )
 }
