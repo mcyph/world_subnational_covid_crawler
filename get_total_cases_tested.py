@@ -59,7 +59,7 @@ urls_dict = {
         'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'
             'SA+Health+Internet/About+us/News+and+media/all+media+releases/',
         href='.news a',
-        regex=compile(r'undertaken more than ([0-9,]+) tests'),
+        regex=compile(r'(?:undertaken more than )?([0-9,]+) tests'),
         rough_only=True
     ),
     'ACT': CaseURL(
@@ -67,8 +67,8 @@ urls_dict = {
             'novel-coronavirus-covid-19',
         href='.latestnewsinner a',
         regex=(
-            compile(r'tested negative is now ([0-9,]+)'),
-            compile(r'confirmed cases in the ACT is now ([0-9,]+)')
+            compile(r'(?:tested negative is now|test.*?negative.*?) ([0-9,]+)'),
+            compile(r'(?:confirmed cases in the ACT is now|confirmed.*?case.*?) ([0-9,]+)')
         ),
         rough_only=False
     ),
@@ -78,7 +78,7 @@ urls_dict = {
     'TAS': CaseURL(
         'https://www.dhhs.tas.gov.au/news/2020',
         href='table.dhhs a',
-        regex=compile('([0-9,]+) coronavirus tests had been completed'),
+        regex=compile('([0-9,]+) (?:coronavirus tests had been completed|tests.*?complete)'),
         rough_only=False
     )
 }
