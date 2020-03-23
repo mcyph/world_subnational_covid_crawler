@@ -22,7 +22,7 @@ urls_dict = {
         href='.dfwp-item a',
         regex=compile(
             # Total (including tested and excluded)
-            r'<td.*?>Total</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
+            r'<td.*?>.*?Total.*?</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
             MULTILINE|DOTALL
         ),
         rough_only=False
@@ -36,7 +36,13 @@ urls_dict = {
     'QLD': CaseURL(
         'https://www.qld.gov.au/health/conditions/health-alerts/coronavirus-covid-19/current-status',
         href='#qg-primary-content a',
-        regex=compile(r'<strong>Total</strong></td><td headers="table.*?"><strong>([0-9,]+)</strong>'),
+        regex=compile(
+            # Total number changed from being enclosed in a <strong>
+            # tag to a <b> tag, so changed to be as broad as NSW
+            # <strong>Total</strong></td><td headers="table59454r1c2"><b>37,334‬</b></td>
+            r'<td.*?>.*?Total.*?</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
+            MULTILINE|DOTALL
+        ),
         rough_only=False
     ),
     'WA': CaseURL(
