@@ -22,7 +22,7 @@ urls_dict = {
         href='.dfwp-item a',
         regex=compile(
             # Total (including tested and excluded)
-            r'<td.*?>.*?Total.*?</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
+            r'<td[^>]*>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>[^<]*<td[^>]*>.*?([0-9,]+).*?</td>',
             MULTILINE|DOTALL
         ),
         rough_only=False
@@ -40,7 +40,7 @@ urls_dict = {
             # Total number changed from being enclosed in a <strong>
             # tag to a <b> tag, so changed to be as broad as NSW
             # <strong>Total</strong></td><td headers="table59454r1c2"><b>37,334‬</b></td>
-            r'<td.*?>.*?Total.*?</td>.*?<td.*?>.*?([0-9,]+).*?</td>',
+            r'<td[^>]*>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>[^<]*<td[^>]*>.*?([0-9,]+).*?</td>',
             MULTILINE|DOTALL
         ),
         rough_only=False
@@ -68,7 +68,7 @@ urls_dict = {
         href='.latestnewsinner a',
         regex=(
             compile(r'(?:tested negative is now|test.*?negative.*?) ([0-9,]+)'),
-            compile(r'(?:confirmed cases in the ACT is now|confirmed.*?case.*?) ([0-9,]+)')
+            compile(r'confirmed cases in the ACT is now ([0-9,]+)')
         ),
         rough_only=False
     ),
@@ -114,7 +114,7 @@ def get_total_cases_tested():
                 if total_cases is None:
                     print(f"{state_name}: Warning: not found, trying next URL")
                 else:
-                    print(f"{state_name}: Found ")
+                    print(f"{state_name}: Found")
                     if case_url.rough_only:
                         total_cases_dict[state_name] = "> " + str(total_cases)
                     else:
@@ -138,6 +138,7 @@ def get_from_subpage(url, regex):
             num = match.group(1)
             num = num.replace(',', '')
             if num.isdecimal():
+                print(f"    Found Match: {match.group()}")
                 return int(num)
         return None
 
