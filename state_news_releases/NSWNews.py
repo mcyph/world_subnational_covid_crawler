@@ -12,12 +12,19 @@ class NSWNews(StateNewsBase):
                           'diseases/Pages/covid-19-latest.aspx'
 
     def _get_date(self, href, html):
-        selector = '.newsdate'
-        date_format = '%d %B %Y'
-        return strptime(
-            date_format,
-            pq(html)(selector).strip()
+        return self._extract_date_using_format(
+            pq(html)('.newsdate').strip()
         )
+
+    #============================================================#
+    #                      General Totals                        #
+    #============================================================#
+
+    def _get_total_new_cases(self, href, html):
+        pass
+
+    def _get_total_cases(self, href, html):
+        pass
 
     def _get_total_cases_tested(self, href, html):
         text = self.url_archiver.get_text(href)
@@ -29,6 +36,23 @@ class NSWNews(StateNewsBase):
             MULTILINE | DOTALL
         ), text)
 
+    #============================================================#
+    #                  Male/Female Breakdown                     #
+    #============================================================#
+
+    def _get_new_male_female_breakdown(self, url, html):
+        pass
+
+    def _get_total_male_female_breakdown(self, url, html):
+        pass
+
+    #============================================================#
+    #                     Totals by Region                       #
+    #============================================================#
+
+    def _get_new_cases_by_region(self, href, html):
+        pass
+
     def _get_total_cases_by_region(self, href, html):
         """
         TODO: Use Tesseract to grab the data from
@@ -38,12 +62,12 @@ class NSWNews(StateNewsBase):
         """
         pass
 
-    def _get_total_fatalities(self, href, html):
+    #============================================================#
+    #                     Totals by Source                       #
+    #============================================================#
+
+    def _get_new_source_of_infection(self, url, html):
         pass
 
-    def _get_total_hospitalized_recovered(self, href, html):
+    def _get_total_source_of_infection(self, url, html):
         pass
-
-    def _get_total_cases(self, href, html):
-        pass
-

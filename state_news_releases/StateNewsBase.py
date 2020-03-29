@@ -26,14 +26,22 @@ class StateNewsBase(ABC):
             self.STATE_NAME, force_no_cache
         )
 
-    def get_data_by_date_dict(self):
+    @abstractmethod
+    def get_data(self):
         # -> {'DD-MM-YY': [DataPoint(...), ...], ...}
-        data_by_date = defaultdict([])
+        pass
 
-        print(f"{self.STATE_NAME}: Getting listing for URL {self.LISTING_URL}...")
-        q = pq(url=self.LISTING_URL, parser='html')
+    def _get_listing_urls(self, url, selector):
+        """
+        Most (all?) of the state pages are of a very similar
+        format with listings of hyperlinks to news articles
+        """
+        listing_urls = []
 
-        for href_elm in q(self.LISTING_HREF_SELECTOR):
+        print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
+        q = pq(url=url, parser='html')
+
+        for href_elm in q(selector):
             href_elm = pq(href_elm, parser='html')
 
             if any([
@@ -45,39 +53,16 @@ class StateNewsBase(ABC):
                 # reasonable bet it'll contain the latest total cases
                 href = href_elm.attr('href')
                 if href.startswith('/'):
-                    parsed = urlparse(self.LISTING_URL)
+                    parsed = urlparse(url)
                     href = f'{parsed.scheme}://{parsed.netloc}/{href[1:]}'
 
                 print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}"')
 
                 # Get the date
-                date_str = self._get_date(href)
+                date_str = self._get_date(href, FIXME)
 
-                # Get total number tested
-                total_tested = self._get_total_cases_tested(href)
-                if total_tested is not None:
-                    data_by_date[date_str] = total_tested
-
-                # Get new cases
-                new_cases = self._get_total_new_cases(href)
-
-                # Get total cases
-                self._get_total_cases(href)
-
-                # Get cases by region
-                # FIXME: This often only has the current day of data - caching etc will need to be adjusted!!!!
-                self._get_total_cases_by_region(href)
-
-                # Get fatalities
-                self._get_total_fatalities(href)
-
-                # Get hospitalized/recovered
-                self._get_total_hospitalized_recovered(href)
-
-                # Get new cases
-                self._get_total_new_cases(href)
-
-        print()
+                listing_urls.append((href, date_str))
+        return listing_urls
 
     def _extract_number_using_regex(self, regex, s):
         """
@@ -96,6 +81,9 @@ class StateNewsBase(ABC):
                 return int(num)
         return None
 
+    def _extract_date_using_format(self, s, format='%d %B %Y'):
+        pass
+
     #===============================================================#
     #                Methods that must be overridden                #
     #===============================================================#
@@ -107,12 +95,9 @@ class StateNewsBase(ABC):
         """
         pass
 
-    @abstractmethod
-    def _get_total_cases_tested(self, href, html):
-        """
-        Get the total number of cases tested to date
-        """
-        pass
+    #===============================================================#
+    #                Methods that must be overridden                #
+    #===============================================================#
 
     @abstractmethod
     def _get_total_new_cases(self, href, html):
@@ -124,6 +109,28 @@ class StateNewsBase(ABC):
         pass
 
     @abstractmethod
+    def _get_total_cases(self, href, html):
+        """
+
+        """
+        pass
+
+    @abstractmethod
+    def _get_total_cases_tested(self, href, html):
+        """
+        Get the total number of cases tested to date
+        """
+        pass
+
+    #============================================================#
+    #                     Totals by Region                       #
+    #============================================================#
+
+    @abstractmethod
+    def _get_new_cases_by_region(self, href, html):
+        pass
+
+    @abstractmethod
     def _get_total_cases_by_region(self, href, html):
         """
         A lot of states aren't recording the precise
@@ -132,23 +139,27 @@ class StateNewsBase(ABC):
         """
         pass
 
-    @abstractmethod
-    def _get_total_cases(self, href, html):
-        """
+    #============================================================#
+    #                  Male/Female Breakdown                     #
+    #============================================================#
 
-        """
+    @abstractmethod
+    def _get_new_male_female_breakdown(self, url, html):
         pass
 
     @abstractmethod
-    def _get_total_fatalities(self, href, html):
-        """
+    def _get_total_male_female_breakdown(self, url, html):
+        pass
 
-        """
+    #============================================================#
+    #                     Totals by Source                       #
+    #============================================================#
+
+    @abstractmethod
+    def _get_new_source_of_infection(self, url, html):
         pass
 
     @abstractmethod
-    def _get_total_hospitalized_recovered(self, href, html):
-        """
-
-        """
+    def _get_total_source_of_infection(self, url, html):
         pass
+
