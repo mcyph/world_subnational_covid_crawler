@@ -63,14 +63,18 @@ class _GetHospitals:
                     .text() \
                     .strip() \
                     .replace('\n', ' ')
-                opening_hours = pq(h3.next_all('p')[1]) \
-                    .text() \
-                    .strip()
-                opening_hours = opening_hours \
-                    .replace('Open: ', '')
                 message = None
-                if '\n' in opening_hours:
-                    opening_hours, message = opening_hours.split('\n')
+
+                try:
+                    opening_hours = pq(h3.next_all('p')[1]) \
+                        .text() \
+                        .strip()
+                    opening_hours = opening_hours \
+                        .replace('Open: ', '')
+                    if '\n' in opening_hours:
+                        opening_hours, message = opening_hours.split('\n')
+                except IndexError:
+                    opening_hours = None
 
                 hospitals.append(Hospital(
                     state='qld',
@@ -109,20 +113,25 @@ class _GetHospitals:
     #                       South Australia                        #
     #==============================================================#
 
-    _SA_DEDICATED_CLINIC = 0
-    _SA_DRIVE_THRU_CLINIC = 1
+    _SA_METROPOLITAN_CLINIC = 0
+    _SA_REGIONAL_CLINIC = 1
+    _SA_DRIVE_THRU_CLINIC = 2
 
     def _get_for_sa(self):
         html = pq(
             url='http://emergencydepartments.sa.gov.au/wps/wcm/connect/'
                 'public+content/sa+health+internet/health+topics/'
-                'health+topics+a+-+z/covid+2019/covid-19+response'
+                'health+topics+a+-+z/covid+2019/covid-19+response/'
+                'covid-19+clinics+and+testing+centres'
         )
         sections = (
             (
-                ':contains("Dedicated COVID-19 clinics are open '
-                'across metropolitan and regional South Australia.")',
-                self._SA_DEDICATED_CLINIC
+                ':contains("Metropolitan Clinics")',
+                self._SA_METROPOLITAN_CLINIC
+            ),
+            (
+                ':contains("Regional Clinics")',
+                self._SA_REGIONAL_CLINIC
             ),
             (
                 ':contains("Drive-through COVID-19 collection")',
@@ -200,11 +209,13 @@ class _GetHospitals:
         except IndexError:
             address = None
 
-        if typ == self._SA_DEDICATED_CLINIC:
-            message = 'These dedicated clinics are for people who have COVID-19 symptoms ' \
-                      '(especially fever or cough) AND have recently returned ' \
-                      'from overseas  OR have had contact with a known COVID-19 ' \
-                      'case.'
+        if typ in (self._SA_METROPOLITAN_CLINIC, self._SA_REGIONAL_CLINIC):
+            message = 'Please only present for testing if: You have travelled overseas ' \
+                      'in the past 14 days AND have symptoms. You have travelled interstate ' \
+                      'in the past 7 days AND have new symptoms. You have been in contact ' \
+                      'with a confirmed case AND have symptoms. You are a healthcare worker ' \
+                      'with direct patient contact AND have a fever (≥37.5) AND an acute ' \
+                      'respiratory infection (e.g. shortness of breath, cough, sore throat).​'
         elif typ == self._SA_DRIVE_THRU_CLINIC:
             message = 'Patients need a referral from their GP to access these ' \
                       'drive-thru services.'
@@ -265,6 +276,8 @@ class _GetHospitals:
     #==============================================================#
 
     def _get_for_wa(self):
+        # TODO: UPDATE TO USE https://www.healthywa.wa.gov.au/Articles/A_E/COVID-clinics !!! =========================================================
+
         html = pq(
             url='https://pathwest.health.wa.gov.au/'
                 'COVID-19/Pages/default.aspx',
@@ -308,8 +321,9 @@ class _GetHospitals:
         for x, tr in enumerate(table('tr')):
             if not x: continue
             tr = pq(tr)
-            name = pq(tr('th')[0]).text().strip().replace('\n', ' ')
-            address, opening_hours = tr('td')[0], tr('td')[1]
+            print(tr.html())
+            name = pq(tr('td')[0]).text().strip().replace('\n', ' ')
+            address, opening_hours = tr('td')[1], tr('td')[2]
             address = pq(address).text().strip()
             opening_hours = pq(opening_hours).text().strip()
             phone = None
@@ -341,30 +355,38 @@ class _GetHospitals:
                 'victorian-public-coronavirus-disease-covid-19',
             parser='html'
         )
-        next_ul = html("div.field section ul")[0]
 
         hospitals = []
-        VIC_RE = compile(r'^(.*?)(-.*)?(\(.*?\))?$')
+        for next_ul in html("div.field section ul")[:2]:
+            # There are multiple uls here at the time of this:
+            # with both Metropolitan and Regional Health Services
+            # as <h3> before them
+            i_html = pq(next_ul).html().lower()
+            if i_html.startswith('<h2'):
+                break
 
-        for li in pq(next_ul)('li'):
-            li = pq(li)
-            text = li.text().strip().replace('–', '-')
-            match = VIC_RE.match(text)
+            VIC_RE = compile(r'^(.*?)(-.*)?(\(.*?\))?$')
 
-            name, location, message = match.groups()
-            if location is not None:
-                location = location.strip(' -')
-            if message is not None:
-                message = message.strip().strip('()').strip()
+            for li in pq(next_ul)('li'):
+                li = pq(li)
+                text = li.text().strip().replace('–', '-')
+                print(text)
+                match = VIC_RE.match(text)
 
-            hospitals.append(Hospital(
-                state='vic',
-                name=name.strip(),
-                location=location,
-                message=message,
-                phone=None,  # TODO!
-                opening_hours=None
-            ))
+                name, location, message = match.groups()
+                if location is not None:
+                    location = location.strip(' -')
+                if message is not None:
+                    message = message.strip().strip('()').strip()
+
+                hospitals.append(Hospital(
+                    state='vic',
+                    name=name.strip(),
+                    location=location,
+                    message=message,
+                    phone=None,  # TODO!
+                    opening_hours=None
+                ))
         return hospitals
 
 
@@ -383,6 +405,6 @@ if __name__ == '__main__':
 
     print()
     print(f"state\tname\tlocation\tmessage\tphone\topening_hours")
-    for k, l in hospitals_dict.items():
+    for k, l in sorted(hospitals_dict.items()):
         for v in l:
             print(f"{v.state}\t{v.name}\t{v.location}\t{v.message}\t{v.phone}\t{v.opening_hours}")
