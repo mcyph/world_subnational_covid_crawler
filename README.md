@@ -3,7 +3,7 @@ Things are changing fast as of writing this, so they may or
 may not be functional.
 
 * hospitals/get_hospitals.py gets COVID-19 hospital/clinic information 
-  from the state websites. As of this The WA data needs to be updated 
+  from the state websites. As of 29 March the WA data needs to be updated 
   to a different URL.
   
 * vic_power_bi_grabber/grab.py gets Victorian regional statistics etc
