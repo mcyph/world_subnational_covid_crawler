@@ -17,7 +17,7 @@ class _GetHospitals:
         self._states = {
             'VIC': self._get_for_vic,
             'NSW': self._get_for_nsw,
-            'WA': self._get_for_wa,
+            #'WA': self._get_for_wa,
             'SA': self._get_for_sa,
             # Can't seem to find the designated
             # hospitals for Tas for now
