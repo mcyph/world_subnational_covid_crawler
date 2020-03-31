@@ -16,8 +16,6 @@ class VicNews(StateNewsBase):
     LISTING_HREF_SELECTOR = '.field--item a'
 
     def _get_date(self, href, html):
-        print(href)
-
         selector = (
             # New page format
             '.first-line.field.field--name-field-general-first-line.'
@@ -27,7 +25,6 @@ class VicNews(StateNewsBase):
         )
         s = pq(html)(selector).text()
         s = s.strip().split('\n')[-1]
-        print(s)
 
         if ', ' in s:
             s = s.split(', ')[-1]

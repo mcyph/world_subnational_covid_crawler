@@ -81,7 +81,10 @@ class WANews(StateNewsBase):
                 value=neg_cases.value+pos_cases.value,
                 date_updated=neg_cases.date_updated,
                 source_url=neg_cases.source_url,
-                text_match=(neg_cases.text_match, pos_cases.text_match)
+                text_match=(
+                    neg_cases.text_match,
+                    pos_cases.text_match
+                )
             )
         return None
 
