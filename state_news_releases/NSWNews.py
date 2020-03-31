@@ -1,19 +1,22 @@
 from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL
+
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase
+from covid_19_au_grab.state_news_releases.constants import DT_CASES_TESTED
 
 
 class NSWNews(StateNewsBase):
     STATE_NAME = 'nsw'
-    LISTING_URL = 'https://www.health.nsw.gov.au/news/Pages/default.aspx'
+    #LISTING_URL = 'https://www.health.nsw.gov.au/news/Pages/default.aspx'
+    LISTING_URL = 'https://www.health.nsw.gov.au/news/pages/2020-nsw-health.aspx'
     LISTING_HREF_SELECTOR = '.dfwp-item a'
     STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/' \
                           'diseases/Pages/covid-19-latest.aspx'
 
     def _get_date(self, href, html):
         return self._extract_date_using_format(
-            pq(html)('.newsdate').strip()
+            pq(pq(html)('.newsdate')[0]).text().strip()
         )
 
     #============================================================#
@@ -27,14 +30,18 @@ class NSWNews(StateNewsBase):
         pass
 
     def _get_total_cases_tested(self, href, html):
-        text = self.url_archiver.get_text(href)
-
-        return self._extract_number_using_regex(compile(
-            # Total (including tested and excluded)
-            r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
-            r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
-            MULTILINE | DOTALL
-        ), text)
+        return self._extract_number_using_regex(
+            compile(
+                # Total (including tested and excluded)
+                r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
+                r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
+                MULTILINE | DOTALL
+            ),
+            html,
+            source_url=href,
+            datatype=DT_CASES_TESTED,
+            date_updated=self._get_date(href, html)
+        )
 
     #============================================================#
     #                  Male/Female Breakdown                     #
@@ -71,3 +78,9 @@ class NSWNews(StateNewsBase):
 
     def _get_total_source_of_infection(self, url, html):
         pass
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    nn = NSWNews()
+    pprint(nn.get_data())

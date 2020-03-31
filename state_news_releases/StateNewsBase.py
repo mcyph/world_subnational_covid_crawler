@@ -82,7 +82,10 @@ class StateNewsBase(ABC):
                     'soundcloud' in href or
                     'coronavirus-stage-1-statement-premier' in href or
                     'youtube.com' in href or
-                    'premier.vic' in href
+                    'premier.vic' in href or
+                    '2020/expressions_of_interest_covid-19_staffing' in href or
+                    '2020/prime_minister_update_on_coronavirus_measures' in href or
+                    href.endswith('news/2020/coronavirus_update')
                 ):
                     continue  # HACK!
 
