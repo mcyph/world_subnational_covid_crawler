@@ -22,6 +22,7 @@ class NTNews(StateNewsBase):
         pass
 
     def _get_total_cases_tested(self, href, html):
+        # Don't think this data has been provided to date.
         pass
 
     #============================================================#

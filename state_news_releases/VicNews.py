@@ -1,4 +1,4 @@
-from re import compile
+from re import compile, IGNORECASE
 from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
 
@@ -35,7 +35,11 @@ class VicNews(StateNewsBase):
     def _get_total_cases_tested(self, href, html):
         # Victoria's seems to follow a formula (for now), so will hardcode
         vic_test = self._extract_number_using_regex(
-            compile(r'([0-9,]+) Victorians have been tested'),
+            compile(
+                r'([0-9,]+) (?:Victorians have been tested|'
+                r'tests have been conducted',
+                IGNORECASE
+            ),
             html
         )
         if vic_test:

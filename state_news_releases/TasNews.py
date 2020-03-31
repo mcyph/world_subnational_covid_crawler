@@ -9,7 +9,7 @@ class TasNews(StateNewsBase):
     LISTING_HREF_SELECTOR = 'table.dhhs a'
 
     def _get_date(self, url, html):
-        pass
+        FIXME
 
     #============================================================#
     #                      General Totals                        #
@@ -33,9 +33,14 @@ class TasNews(StateNewsBase):
         )
 
     def _get_total_cases_tested(self, url, html):
-        compile('([0-9,]+)[^0-9]*?'
-                '(?:coronavirus tests had been completed|'
-                   'tests[^0-9]*?complete)')
+        return self._extract_number_using_regex(
+            compile(
+                '([0-9,]+)[^0-9]*?'
+                '(?:coronavirus tests (?:have|had) been completed|'
+                   'tests)'  # [^0-9]*?complete
+            ),
+            html
+        )
 
     #============================================================#
     #                  Male/Female Breakdown                     #

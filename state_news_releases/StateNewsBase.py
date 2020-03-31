@@ -1,7 +1,11 @@
+import datetime
+from pyquery import PyQuery as pq
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
-from pyquery import PyQuery as pq
-from collections import namedtuple, defaultdict
+
+from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DataPoint
+from covid_19_au_grab.URLArchiver import URLArchiver
 
 
 class StateNewsBase(ABC):
@@ -17,14 +21,17 @@ class StateNewsBase(ABC):
     # information.
     STATS_BY_REGION_URL = None
 
-    def __init__(self, force_no_cache=False):
+    def __init__(self):
         assert self.STATE_NAME
         assert self.LISTING_URL
         assert self.LISTING_HREF_SELECTOR
 
-        self.url_archiver = URLArchiver(
-            self.STATE_NAME, force_no_cache
-        )
+        # "Press release listing" archiver
+        self.listing_ua = URLArchiver(f'{self.STATE_NAME}/listing')
+        # Press release archiver
+        self.pr_ua = URLArchiver(f'{self.STATE_NAME}/pr')
+        # "Current stats" archiver
+        self.current_status_ua = URLArchiver(f'{self.STATE_NAME}/current_status')
 
     @abstractmethod
     def get_data(self):
@@ -47,7 +54,8 @@ class StateNewsBase(ABC):
             if any([
                 (i in href_elm.text().upper())
                 for i in ('COVID-19', 'COVID–19',
-                          'CURRENT STATUS', 'CORONAVIRUS')
+                          'CURRENT STATUS',
+                          'CORONAVIRUS', 'CORONA')
             ]):
                 # If the link says it's about COVID-19, it's a
                 # reasonable bet it'll contain the latest total cases
@@ -64,7 +72,8 @@ class StateNewsBase(ABC):
                 listing_urls.append((href, date_str))
         return listing_urls
 
-    def _extract_number_using_regex(self, regex, s):
+    def _extract_number_using_regex(self, regex, s, source_url, datatype,
+                                    date_updated=None):
         """
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()
@@ -76,13 +85,37 @@ class StateNewsBase(ABC):
         if match:
             num = match.group(1)
             num = num.replace(',', '')
+
             if num.isdecimal():
                 print(f"    Found Match: {match.group()}")
-                return int(num)
+                num = int(num)
+                if date_updated is None:
+                    date_updated = self._todays_date()
+
+                return DataPoint(
+                    datatype=datatype,
+                    value=num,
+                    date_updated=date_updated,
+                    source_url=source_url,
+                    text_match=s[
+                        max(0, match.start(1)-5):
+                        min(len(s), match.end(1)+5)
+                    ]
+                )
         return None
 
-    def _extract_date_using_format(self, s, format='%d %B %Y'):
-        pass
+    def _extract_date_using_format(self, s,
+                                   format='%d %B %Y'):
+        """
+        Parses a date as strptime format "format"
+        and outputs it as format 'YYYY_MM_DD'
+        """
+        return datetime.datetime.strptime(s, format) \
+               .strftime('%Y_%m_%d')
+
+    def _todays_date(self):
+        return datetime.datetime.now() \
+            .strftime('%Y_%m_%d')
 
     #===============================================================#
     #                Methods that must be overridden                #

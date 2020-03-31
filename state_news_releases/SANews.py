@@ -10,7 +10,11 @@ class SANews(StateNewsBase):
     LISTING_HREF_SELECTOR = '.news a'
 
     def _get_date(self, href, html):
-        pass
+        return self._extract_date_using_format(
+            # e.g. Monday, 30 March 2020
+            pq(html)('div.middle-column div.wysiwyg p') \
+                .text().strip().split(', ')[-1]
+        )
 
     #============================================================#
     #                      General Totals                        #
@@ -24,7 +28,10 @@ class SANews(StateNewsBase):
 
     def _get_total_cases_tested(self, href, html):
         # This is only a rough value - is currently displayed as "> (value)"!
-        compile(r'(?:undertaken more than )?([0-9,]+) tests')
+        return self._extract_number_using_regex(
+            compile(r'(?:undertaken more than )?([0-9,]+) tests'),
+            html
+        )
 
     #============================================================#
     #                  Male/Female Breakdown                     #

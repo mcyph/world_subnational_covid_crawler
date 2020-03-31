@@ -155,5 +155,5 @@ class WANews(StateNewsBase):
             }
         return None
 
-    def _get_total_source_of_infection(self):
+    def _get_total_source_of_infection(self, url, html):
         pass
