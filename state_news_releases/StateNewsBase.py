@@ -33,10 +33,23 @@ class StateNewsBase(ABC):
         # "Current stats" archiver
         self.current_status_ua = URLArchiver(f'{self.STATE_NAME}/current_status')
 
-    @abstractmethod
     def get_data(self):
-        # -> {'DD-MM-YY': [DataPoint(...), ...], ...}
-        pass
+        """
+        -> [DataPoint(...), ...]
+        """
+        output = []
+        for href, date_str, html in self._get_listing_urls(
+            self.LISTING_URL,
+            self.LISTING_HREF_SELECTOR
+        ):
+            print('get_data for:', href, date_str, html)
+            tested = self._get_total_cases_tested(href, html)
+            if tested is not None:
+                print('** TESTED DATA OK!')
+                output.append(tested)
+            else:
+                print("** TESTED NO DATA!")
+        return output
 
     def _get_listing_urls(self, url, selector):
         """
@@ -46,7 +59,8 @@ class StateNewsBase(ABC):
         listing_urls = []
 
         print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
-        q = pq(url=url, parser='html')
+        listing_html = self.listing_ua.get_url_data(url)
+        q = pq(listing_html, parser='html')
 
         for href_elm in q(selector):
             href_elm = pq(href_elm, parser='html')
@@ -64,12 +78,20 @@ class StateNewsBase(ABC):
                     parsed = urlparse(url)
                     href = f'{parsed.scheme}://{parsed.netloc}/{href[1:]}'
 
-                print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}"')
+                if (
+                    'soundcloud' in href or
+                    'coronavirus-stage-1-statement-premier' in href or
+                    'youtube.com' in href or
+                    'premier.vic' in href
+                ):
+                    continue  # HACK!
 
                 # Get the date
-                date_str = self._get_date(href, FIXME)
+                print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}"')
+                html = self.pr_ua.get_url_data(href)
+                date_str = self._get_date(href, html)
 
-                listing_urls.append((href, date_str))
+                listing_urls.append((href, date_str, html))
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
@@ -110,6 +132,8 @@ class StateNewsBase(ABC):
         Parses a date as strptime format "format"
         and outputs it as format 'YYYY_MM_DD'
         """
+        print("INPUT:", s, "OUTPUT:", datetime.datetime.strptime(s, format) \
+               .strftime('%Y_%m_%d'))
         return datetime.datetime.strptime(s, format) \
                .strftime('%Y_%m_%d')
 

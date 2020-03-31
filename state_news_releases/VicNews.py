@@ -1,6 +1,12 @@
-from re import compile, IGNORECASE
 from pyquery import PyQuery as pq
-from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
+from re import compile, IGNORECASE
+
+from covid_19_au_grab.state_news_releases.StateNewsBase import \
+    StateNewsBase
+from covid_19_au_grab.state_news_releases.constants import \
+    DT_CASES_TESTED
+from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DataPoint
 
 
 class VicNews(StateNewsBase):
@@ -10,17 +16,28 @@ class VicNews(StateNewsBase):
     LISTING_HREF_SELECTOR = '.field--item a'
 
     def _get_date(self, href, html):
+        print(href)
+
         selector = (
             # New page format
-            '.first-line field field--name-field-general-first-line '
-                'field--type-string-long field--label-hidden field--item, '
+            '.first-line.field.field--name-field-general-first-line.'
+                'field--type-string-long.field--label-hidden.field--item, '
             # Old page format
-            '.page-date',
+            '.page-date'
         )
         s = pq(html)(selector).text()
-        self._extract_date_using_format(
-            s.strip().split('\n')[-1]
-        )
+        s = s.strip().split('\n')[-1]
+        print(s)
+
+        if ', ' in s:
+            s = s.split(', ')[-1]
+
+        try:
+            return self._extract_date_using_format(s)
+        except ValueError:
+            return self._extract_date_using_format(
+                s, format='%d %b %Y'
+            )
 
     #============================================================#
     #                      General Totals                        #
@@ -34,18 +51,29 @@ class VicNews(StateNewsBase):
 
     def _get_total_cases_tested(self, href, html):
         # Victoria's seems to follow a formula (for now), so will hardcode
+        print("TT DATE UPDATE:", self._get_date(href, html))
         vic_test = self._extract_number_using_regex(
             compile(
                 r'([0-9,]+) (?:Victorians have been tested|'
-                r'tests have been conducted',
+                r'tests have been conducted)',
                 IGNORECASE
             ),
-            html
+            html,
+            source_url=href,
+            datatype=DT_CASES_TESTED,
+            date_updated=self._get_date(href, html)
         )
+
         if vic_test:
             return vic_test
         elif 'thousand casual contacts have been tested' in html:
-            return 1000
+            return DataPoint(
+                value=1000,
+                datatype=DT_CASES_TESTED,
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match='thousand casual contacts have been tested'
+            )
         else:
             return None
 
@@ -73,7 +101,7 @@ class VicNews(StateNewsBase):
     #                     Totals by Region                       #
     #============================================================#
 
-    def _get_total_new_cases_by_region(self, href, html):
+    def _get_new_cases_by_region(self, href, html):
         return None
 
     def _get_total_cases_by_region(self, href, html):
@@ -133,3 +161,9 @@ class VicNews(StateNewsBase):
                 'Other': total_cases - num_comm_trans
             }
         return None
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    vn = VicNews()
+    pprint(vn.get_data())

@@ -3,8 +3,6 @@ from re import compile, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
 from covid_19_au_grab.state_news_releases.constants import DT_CASES_TESTED
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
-    DataPoint
 
 
 class QLDNews(StateNewsBase):
@@ -87,7 +85,7 @@ class QLDNews(StateNewsBase):
         # Find the start of the # samples tested table
         th_regex = compile(
             '<th id="table[^"]+">[^<]*?As at ([^<]+)[^<]*?</th>[^<]*'
-            '<th id="table[^"]+">[^<]*?Samples tested[^<]*?</th>',
+            '<th id="table[^"]+">[^<]*?(?:Samples|Patients) tested[^<]*?</th>',
             DOTALL | MULTILINE
         )
         match = th_regex.search(html)
@@ -112,10 +110,11 @@ class QLDNews(StateNewsBase):
                 r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
                 r'[^<]*?<td[^>]*?>.*?([0-9,]+).*?</td>',
                 MULTILINE | DOTALL
-            ), html,
+            ),
+            html,
             date_updated=date_updated,
             datatype=DT_CASES_TESTED,
-            source_url=href,
+            source_url=href
         )
         if not value:
             print("NOT SECOND MATCH!")

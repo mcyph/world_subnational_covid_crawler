@@ -1,7 +1,12 @@
-from re import compile, IGNORECASE
 from pyquery import PyQuery as pq
-from collections import defaultdict
-from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
+from re import compile, IGNORECASE
+
+from covid_19_au_grab.state_news_releases.StateNewsBase import \
+    StateNewsBase
+from covid_19_au_grab.state_news_releases.constants import \
+    DT_CASES_TESTED, DT_CASES
+from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DataPoint
 
 
 class WANews(StateNewsBase):
@@ -10,6 +15,7 @@ class WANews(StateNewsBase):
                   'Media-releases-listing-page'
     LISTING_HREF_SELECTOR = 'div.threeCol-accordian a'
 
+    """
     def get_data(self):
         date_dict = defaultdict([])
 
@@ -20,12 +26,27 @@ class WANews(StateNewsBase):
             date_dict[date_str].append(
                 self._get_total_cases(url, html)
             )
+    """
 
     def _get_date(self, url, html):
         # e.g. "24 March 2020"
-        return self._extract_date_using_format(
-            pq(html)('#contentArea h3').text().strip()
-        )
+        print(url)
+        try:
+            date = pq(pq(html)('.newsCreatedDate')[0]).text().strip()
+            if not date:
+                raise IndexError
+        except IndexError:
+            date = pq(pq(html)('#contentArea h3')[0]).text().strip()
+
+        if ', ' in date:
+            date = date.split(', ')[-1]
+
+        try:
+            return self._extract_date_using_format(date)
+        except ValueError:
+            return self._extract_date_using_format(
+                date.split()[0], format='%d/%m/%Y'
+            )
 
     #============================================================#
     #                      General Totals                        #
@@ -34,7 +55,10 @@ class WANews(StateNewsBase):
     def _get_total_cases(self, url, html):
         return self._extract_number_using_regex(
             compile(r'total to ([0-9,]+)'),
-            html
+            html,
+            source_url=url,
+            datatype=DT_CASES,
+            date_updated=self._get_date(url, html)
         )
 
     def _get_total_cases_tested(self, url, html):
@@ -44,10 +68,22 @@ class WANews(StateNewsBase):
                     r'([^0-9]*?negative COVID-19 tests|'
                     r'[^0-9]*?tested negative|'
                     r'[^0-9]*?negative)'),
-            html
+            html,
+            source_url=url,
+            datatype=DT_CASES_TESTED,
+            date_updated=self._get_date(url, html)
         )
         pos_cases = self._get_total_cases(url, html)
-        return neg_cases + pos_cases
+
+        if neg_cases and pos_cases:
+            return DataPoint(
+                datatype=neg_cases.datatype,
+                value=neg_cases.value+pos_cases.value,
+                date_updated=neg_cases.date_updated,
+                source_url=neg_cases.source_url,
+                text_match=(neg_cases.text_match, pos_cases.text_match)
+            )
+        return None
 
     def _get_total_new_cases(self, url, html):
         regex = compile(
@@ -82,7 +118,7 @@ class WANews(StateNewsBase):
             f = None
         return m, f
 
-    def _get_total_male_female_breakdown(self):
+    def _get_total_male_female_breakdown(self, url, html):
         return None
 
     #============================================================#
@@ -157,3 +193,9 @@ class WANews(StateNewsBase):
 
     def _get_total_source_of_infection(self, url, html):
         pass
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    wn = WANews()
+    pprint(wn.get_data())

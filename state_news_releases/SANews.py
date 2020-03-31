@@ -1,6 +1,7 @@
 from re import compile
 from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
+from covid_19_au_grab.state_news_releases.constants import DT_CASES_TESTED
 
 
 class SANews(StateNewsBase):
@@ -10,11 +11,15 @@ class SANews(StateNewsBase):
     LISTING_HREF_SELECTOR = '.news a'
 
     def _get_date(self, href, html):
-        return self._extract_date_using_format(
+        date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
+                           .text().strip().split(', ')[-1]
+
+        try:
             # e.g. Monday, 30 March 2020
-            pq(html)('div.middle-column div.wysiwyg p') \
-                .text().strip().split(', ')[-1]
-        )
+            return self._extract_date_using_format(date)
+        except:
+            # e.g. Sunday 22 March 2020
+            return self._extract_date_using_format(date.partition(' ')[-1])
 
     #============================================================#
     #                      General Totals                        #
@@ -29,8 +34,11 @@ class SANews(StateNewsBase):
     def _get_total_cases_tested(self, href, html):
         # This is only a rough value - is currently displayed as "> (value)"!
         return self._extract_number_using_regex(
-            compile(r'(?:undertaken more than )?([0-9,]+) tests'),
-            html
+            compile(r'(?:undertaken (?:almost|more than) )?([0-9,]+)(?: COVID-19)? tests'),
+            html,
+            source_url=href,
+            datatype=DT_CASES_TESTED,
+            date_updated=self._get_date(href, html)
         )
 
     #============================================================#
@@ -63,4 +71,10 @@ class SANews(StateNewsBase):
 
     def _get_total_source_of_infection(self, url, html):
         pass
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    sn = SANews()
+    pprint(sn.get_data())
 
