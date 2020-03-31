@@ -1,47 +1,53 @@
-from pyquery import PyQuery as pq
-from urllib.parse import urlparse
-from urllib.request import urlopen
-from collections import namedtuple
-from re import compile, MULTILINE, DOTALL
+import unicodedata
+
+from covid_19_au_grab.state_news_releases.ACTNews import ACTNews
+from covid_19_au_grab.state_news_releases.NSWNews import NSWNews
+#from covid_19_au_grab.state_news_releases.NTNews import NTNews
+from covid_19_au_grab.state_news_releases.QLDNews import QLDNews
+from covid_19_au_grab.state_news_releases.SANews import SANews
+from covid_19_au_grab.state_news_releases.TasNews import TasNews
+from covid_19_au_grab.state_news_releases.VicNews import VicNews
+from covid_19_au_grab.state_news_releases.WANews import WANews
+from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
-def get_from_subpage(url, regex):
-    print(f"    Getting from subpage {url}...")
-
-    def do_search(regex):
-        # Remove numeral grouping X,XXX
-        match = regex.search(html)
-        # print(regex, match)
-        if match:
-            num = match.group(1)
-            num = num.replace(',', '')
-            if num.isdecimal():
-                print(f"    Found Match: {match.group()}")
-                return int(num)
-        return None
-
-    with urlopen(url) as req:
-        html = req.read().decode('utf-8', 'replace')
-
-        if isinstance(regex, (tuple, list)):
-            # Two regexes: (negative, positive
-            neg = do_search(regex[0])
-            pos = do_search(regex[1])
-            if neg and pos:
-                return pos+neg
-            else:
-                return None
-        else:
-            return do_search(regex)
+def remove_control_characters(s):
+    return "".join(
+        ch for ch in s
+        if unicodedata.category(ch)[0] != "C"
+    )
 
 
 if __name__ == '__main__':
-    import json
-    import datetime
+    news_insts = [
+        ACTNews(),
+        NSWNews(),
+        #NTNews(),
+        QLDNews(),
+        SANews(),
+        TasNews(),
+        VicNews(),
+        WANews()
+    ]
 
-    r = get_total_cases_tested()
+    data = {}
+    for inst in news_insts:
+        data[inst.STATE_NAME] = inst.get_data()
+
+    from pprint import pprint
+    pprint(data)
     print()
 
-    today = datetime.date.today()
-    print('"'+today.strftime('%Y-%m-%d')+'"', end=": ")
-    print(json.dumps(r, indent=4))
+    print('state_name\tdatatype\tvalue\tdate_updated\tsource_url\ttext_match')
+    for state_name, datapoints in data.items():
+        for datapoint in datapoints:
+            text_match = repr(remove_control_characters(
+                str(datapoint.text_match).replace("\t", " ").replace('\n', ' ').replace('\r', ' ')
+            ))
+            print(f'{state_name}\t'
+                  f'{constant_to_name(datapoint.datatype)}\t'
+                  f'{datapoint.value}\t'
+                  f'{datapoint.date_updated}\t'
+                  f'{datapoint.source_url}\t'
+                  f'{text_match}')
+

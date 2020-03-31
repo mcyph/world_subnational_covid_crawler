@@ -57,6 +57,12 @@ class StateNewsBase(ABC):
         format with listings of hyperlinks to news articles
         """
         listing_urls = []
+        if isinstance(url, (list, tuple)):
+            for i_url in url:
+                listing_urls.extend(self._get_listing_urls(
+                    i_url, selector
+                ))
+            return listing_urls
 
         print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
         listing_html = self.listing_ua.get_url_data(url)
