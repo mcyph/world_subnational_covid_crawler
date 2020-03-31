@@ -1,63 +1,128 @@
-import hashlib
+import re
 import datetime
-from json import loads, dumps
+import unicodedata
+from os import listdir, makedirs
+from os.path import isfile, expanduser
+from urllib.request import urlretrieve
 
 
-CACHE_PERIOD_NONE = 0
-CACHE_PERIOD_HOURLY = 1
-CACHE_PERIOD_HALF_DAILY = 2
-CACHE_PERIOD_DAILY = 3
+BASE_PATH = expanduser('~/dev/covid_19_data')
+
+
+def slugify(value):
+    """
+    Function from Django, under the 3-clause BSD
+    https://docs.djangoproject.com/en/3.0/ref/utils/
+
+    Converts to lowercase, removes non-word characters (alphanumerics and
+    underscores) and converts spaces to hyphens. Also strips leading and
+    trailing whitespace.
+    """
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    return re.sub('[-\s]+', '-', value)
 
 
 class URLArchiver:
-    def __init__(self):
-        pass
+    def __init__(self, base_dir):
+        self.base_dir = BASE_PATH+'/'+base_dir
 
-    def _get_filename_for_url(self, url, ext, period=None):
-        hash_md5 = hashlib.md5()
-        hash_md5.update(url)
+    def get_path(self, subdir):
+        dir_ = f'{self.base_dir}/{subdir}'
+        fnam = self._get_first_fnam_in_dir(dir_)
+        path = f'{dir_}/{fnam}'
+        return path
 
-        if period is not None:
-            period = '.'+period
-        else:
-            period = ''
-
-        return f'{hash_md5.digest().encode("base64")}' \
-               f'{period}' \
-               f'.{ext}'
-
-    def _get_for_period(self, period=None, t=None):
-        if t is None:
+    def get_url_data(self, url, period=None):
+        """
+        Note that if url is `None` here, it will
+        """
+        # I'm using YYYY_MM_DD-ID here, so
+        # that it sorts in date then ID order
+        if period is None:
             t = datetime.datetime.now()
+            period = t.strftime('%Y_%m_%d')
+        elif isinstance(period, datetime.datetime):
+            period = period.strftime('%Y_%m_%d')
 
-        if period == CACHE_PERIOD_NONE:
-            return None
-        elif period == CACHE_PERIOD_HOURLY:
-            # YYYY-MM-DD HH
-            return t.strftime('%YYYY-%MM-%DD %HH')
-        elif period == CACHE_PERIOD_DAILY:
-            # YYYY-MM-DD
-            return t.strftime('%YYYY-%MM-%DD')
-        elif period == CACHE_PERIOD_HALF_DAILY:
-            # YYYY-MM-DD [AM/PM]
-            return t.strftime('%YYYY-%MM-%DD %p')
-        else:
-            raise Exception("Unknown cache period type:", period)
+        subperiod_id = self._get_subperiod_id_for_url(period, url)
+        dir_ = f'{self.base_dir}/{period}-{subperiod_id}'
 
-    def get_image_file_path(self, url,
-                            format=None,
-                            cache_period=None):
-        if format is None:
-            format = url.split('.')[-1]
+        try:
+            makedirs(dir_)
+        except OSError:
+            pass
 
-    def get_text(self, url,
-                 cache_period=CACHE_PERIOD_NONE,
-                 period_value=None):
-        pass
+        try:
+            fnam = self._get_first_fnam_in_dir(dir_)
+        except FileNotFoundError:
+            # Download if a cached version
+            # for this URL can't be found
+            fnam = self._escape_url(url)
+            urlretrieve(url, f'{dir_}/{fnam}')
+
+        with open(f'{dir_}/{fnam}', 'r',
+                  encoding='utf-8',
+                  errors='replace') as f:
+            return f.read()
+
+    def iter_periods(self, newest_first=True):
+        """
+
+        """
+        for dir_ in sorted(listdir(self.base_dir),
+                           reverse=newest_first):
+            assert '-' in dir_
+            yield dir_.split('-')[0]
+
+    def iter_paths_for_period(self, period):
+        """
+
+        """
+        for dir_ in listdir(f"{self.base_dir}"):
+            if dir_.split('-')[0] == period:
+                subperiod_id = int(dir_.split('-')[-1])
+                yield subperiod_id, dir_
+
+    def _get_subperiod_id_for_url(self, period, url=None):
+        """
+        TODO: Find the ID that corresponds to `url`
+        by looking through all the current DD_MM_YYYY-ID
+        directories, and seeing if there's a file which
+        corresponds to `url`. If one doesn't
+
+        if one doesn't
+        """
+        largest_id = 0
+        escaped_url = self._escape_url(url)
+
+        for subperiod_id, subdir in self.iter_paths_for_period(period):
+            fnam = self._get_first_fnam_in_dir(f'{self.base_dir}/{subdir}')
+
+            if fnam == escaped_url:
+                print("FOUND:", subperiod_id)
+                return subperiod_id
+            if subperiod_id > largest_id:
+                largest_id = subperiod_id
+
+        return largest_id+1
+
+    def _get_first_fnam_in_dir(self, dir_):
+        for fnam in listdir(dir_):
+            if isfile(f'{dir_}/{fnam}'):
+                return fnam
+        raise FileNotFoundError("No file found in directory:", dir_)
+
+    def _escape_url(self, url):
+        return slugify(url)
 
 
-    def get_newer_than(self):
-        FIXME
+if __name__ == '__main__':
+    ua = URLArchiver('act/listing')
+    print(ua.get_url_data('https://www.covid19.act.gov.au/news-articles/covid-19-update-31-march'))
 
-    def get_older_than(self):
-        FIXME
+    ua = URLArchiver('qld/current_status')
+    for i in ua.iter_periods():
+        print(i)
+        for j in ua.iter_paths_for_period(i):
+            print(j)
