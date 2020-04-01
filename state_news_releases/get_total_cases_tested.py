@@ -38,7 +38,7 @@ if __name__ == '__main__':
     pprint(data)
     print()
 
-    print('state_name\tdatatype\tvalue\tdate_updated\tsource_url\ttext_match')
+    print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
             text_match = repr(remove_control_characters(
@@ -46,6 +46,7 @@ if __name__ == '__main__':
             ))
             print(f'{state_name}\t'
                   f'{constant_to_name(datapoint.datatype)}\t'
+                  f'{datapoint.name}\t'
                   f'{datapoint.value}\t'
                   f'{datapoint.date_updated}\t'
                   f'{datapoint.source_url}\t'

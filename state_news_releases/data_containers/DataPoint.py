@@ -2,6 +2,7 @@ from collections import namedtuple
 
 
 DataPoint = namedtuple('DataPoint', [
+    'name',
     'datatype',
     'value',
     'date_updated',

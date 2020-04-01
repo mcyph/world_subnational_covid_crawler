@@ -8,6 +8,9 @@ from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
 from covid_19_au_grab.URLArchiver import URLArchiver
 
 
+ALWAYS_DOWNLOAD_LISTING = True
+
+
 class StateNewsBase(ABC):
     # A short name for the state (e.g. "sa")
     STATE_NAME = None
@@ -37,18 +40,73 @@ class StateNewsBase(ABC):
         """
         -> [DataPoint(...), ...]
         """
+        # Download from the stats by region URL,
+        # even if I don't use the stats for now, daily!!
+        # TODO: WHAT IF THERE ARE MULTIPLE UPDATES IN A DAY?? ==========================================================
+        if self.STATS_BY_REGION_URL:
+            self.current_status_ua.get_url_data(
+                self.STATS_BY_REGION_URL,
+                cache=False if ALWAYS_DOWNLOAD_LISTING else True
+            )
+
         output = []
         for href, date_str, html in self._get_listing_urls(
             self.LISTING_URL,
             self.LISTING_HREF_SELECTOR
         ):
-            print('get_data for:', href, date_str, html)
+            # Add tested data
+            #print('get_data for:', href, date_str, html)
             tested = self._get_total_cases_tested(href, html)
             if tested is not None:
-                print('** TESTED DATA OK!')
+                #print('** TESTED DATA OK!')
                 output.append(tested)
-            else:
-                print("** TESTED NO DATA!")
+            #else:
+                #print("** TESTED NO DATA!")
+
+            # Add total/new cases
+            total_cases = self._get_total_cases(href, html)
+            if total_cases:
+                output.append(total_cases)
+            new_cases = self._get_total_new_cases(href, html)
+            if new_cases:
+                output.append(new_cases)
+
+            # Add total/new cases by region
+            tcbr = self._get_total_cases_by_region(href, html)
+            if tcbr:
+                output.extend(tcbr)
+            ncbr = self._get_new_cases_by_region(href, html)
+            if ncbr:
+                output.extend(ncbr)
+
+            # Add new/total age breakdown
+            nab = self._get_new_age_breakdown(href, html)
+            if nab:
+                output.extend(nab)
+            tab = self._get_total_age_breakdown(href, html)
+            if tab:
+                output.extend(tab)
+
+            # Add new/total source of infection
+            nsoi = self._get_new_source_of_infection(href, html)
+            if nsoi:
+                output.extend(nsoi)
+            tsoi = self._get_total_source_of_infection(href, html)
+            if tsoi:
+                output.extend(tsoi)
+
+            # Add male/female breakdown
+            nmfb = self._get_new_male_female_breakdown(href, html)
+            if nmfb:
+                output.extend(nmfb)
+            tmfb = self._get_total_male_female_breakdown(href, html)
+            if tmfb:
+                output.extend(tmfb)
+
+            dhr = self._get_total_dhr(href, html)
+            if dhr:
+                output.extend(dhr)
+
         return output
 
     def _get_listing_urls(self, url, selector):
@@ -65,7 +123,10 @@ class StateNewsBase(ABC):
             return listing_urls
 
         print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
-        listing_html = self.listing_ua.get_url_data(url)
+        listing_html = self.listing_ua.get_url_data(
+            url,
+            cache=False if ALWAYS_DOWNLOAD_LISTING else True
+        )
         q = pq(listing_html, parser='html')
 
         for href_elm in q(selector):
@@ -96,15 +157,21 @@ class StateNewsBase(ABC):
                     continue  # HACK!
 
                 # Get the date
+                # Note that when downloading the data,
+                # I'm assuming the press releases won't change.
+                # This may or may not be the case!! ====================================================================
                 print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}"')
-                html = self.pr_ua.get_url_data(href)
+                html = self.pr_ua.get_url_data(
+                    href,
+                    period=self._get_date
+                )
                 date_str = self._get_date(href, html)
 
                 listing_urls.append((href, date_str, html))
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated=None):
+                                    date_updated=None, name=None):
         """
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()
@@ -118,12 +185,13 @@ class StateNewsBase(ABC):
             num = num.replace(',', '')
 
             if num.isdecimal():
-                print(f"    Found Match: {match.group()}")
+                #print(f"    Found Match: {match.group()}")
                 num = int(num)
                 if date_updated is None:
                     date_updated = self._todays_date()
 
                 return DataPoint(
+                    name=name,
                     datatype=datatype,
                     value=num,
                     date_updated=date_updated,
@@ -189,6 +257,19 @@ class StateNewsBase(ABC):
         pass
 
     #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    @abstractmethod
+    def _get_total_dhr(self, href, html):
+        """
+        Return total deaths/hospitalized/intensive care/recovered
+        I'll only record absolute values for now, as relative
+        values can be unreliable
+        """
+        pass
+
+    #============================================================#
     #                     Totals by Region                       #
     #============================================================#
 
@@ -203,6 +284,18 @@ class StateNewsBase(ABC):
         locations any more, only a general region
         including NSW, QLD and VIC as of 25/3
         """
+        pass
+
+    #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    @abstractmethod
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    @abstractmethod
+    def _get_total_age_breakdown(self, href, html):
         pass
 
     #============================================================#

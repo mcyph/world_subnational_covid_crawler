@@ -3,7 +3,9 @@ from pyquery import PyQuery as pq
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES
+    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES, \
+    DT_MALE, DT_FEMALE
+from covid_19_au_grab.word_to_number import word_to_number
 
 
 class TasNews(StateNewsBase):
@@ -39,40 +41,56 @@ class TasNews(StateNewsBase):
     #============================================================#
 
     def _get_total_new_cases(self, url, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
             compile(
-                'confirmed ([0-9,]+) more cases of coronavirus',
+                'confirmed ([0-9,]+)[^0-9.]* cases? of coronavirus',
                 IGNORECASE
             ),
-            html,
+            c_html,
             source_url=url,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(url, html)
         )
 
     def _get_total_cases(self, url, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
             compile(
                 'tally to ([0-9,]+)'
             ),
-            html,
+            c_html,
             source_url=url,
             datatype=DT_CASES,
             date_updated=self._get_date(url, html)
         )
 
     def _get_total_cases_tested(self, url, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
             compile(
                 '([0-9,]+)[^0-9]*?'
                 '(?:coronavirus tests (?:have|had) been completed|'
                    'tests)'  # [^0-9]*?complete
             ),
-            html,
+            c_html,
             source_url=url,
             datatype=DT_CASES_TESTED,
             date_updated=self._get_date(url, html)
         )
+
+    #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    def _get_total_age_breakdown(self, href, html):
+        pass
 
     #============================================================#
     #                  Male/Female Breakdown                     #
@@ -85,16 +103,29 @@ class TasNews(StateNewsBase):
 
     def _get_new_male_female_breakdown(self, url, html):
         # 'Four of the cases are women; two are men'
+        c_html = word_to_number(html)
+
         men = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* men', IGNORECASE),
-            html
+            c_html,
+            source_url=url,
+            datatype=DT_MALE,
+            date_updated=self._get_date(url, html)
         )
         women = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* women', IGNORECASE),
-            html
+            c_html,
+            source_url=url,
+            datatype=DT_FEMALE,
+            date_updated=self._get_date(url, html)
         )
-        if men is not None and women is not None:
-            return (men, women)
+        if men is not None or women is not None:
+            r = []
+            if men:
+                r.append(men)
+            if women:
+                r.append(women)
+            return r
         return None
 
     def _get_total_male_female_breakdown(self, url, html):
@@ -124,6 +155,13 @@ class TasNews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        pass
+
+    #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    def _get_total_dhr(self, href, html):
         pass
 
 
