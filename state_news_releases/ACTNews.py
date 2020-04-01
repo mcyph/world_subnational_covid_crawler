@@ -4,7 +4,7 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES
+    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 
@@ -19,6 +19,8 @@ class ACTNews(StateNewsBase):
             '&result_1504801_result_page=2',
     )
     LISTING_HREF_SELECTOR = '.card .card-content .card--title a'
+    STATS_BY_REGION_URL = 'https://www.covid19.act.gov.au/updates/' \
+                          'confirmed-case-information'
 
     def _get_date(self, href, html):
         date = pq(html)('.article-body--date p').text().strip()
@@ -61,6 +63,7 @@ class ACTNews(StateNewsBase):
 
         if neg_cases is not None and pos_cases is not None:
             return DataPoint(
+                name=None,
                 datatype=neg_cases.datatype,
                 value=neg_cases.value + pos_cases.value,
                 date_updated=neg_cases.date_updated,
@@ -74,15 +77,36 @@ class ACTNews(StateNewsBase):
 
     def _get_total_new_cases(self, href, html):
         return self._extract_number_using_regex(
-            compile(r'([0-9,]+) new confirmed cases'), html
+            compile(
+                r'([0-9,]+) new confirmed cases'
+            ),
+            html,
+            source_url=href,
+            datatype=DT_NEW_CASES,
+            date_updated=self._get_date(href, html)
         )
+
+    #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    def _get_total_age_breakdown(self, href, html):
+        pass
 
     #============================================================#
     #                  Male/Female Breakdown                     #
     #============================================================#
 
     def _get_new_male_female_breakdown(self, href, html):
-        pass
+        'new cases include ([0-9,]+) male(?:s)? and ([0-9,]+) female(?:s)?'
+
+        # Can have multiple entries per article
+        'a male in his ([0-9]+)\'?s'
+        'a female in her ([0-9]+)\'?s'
+
 
     def _get_total_male_female_breakdown(self, href, html):
         pass
@@ -108,6 +132,13 @@ class ACTNews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        pass
+
+    #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    def _get_total_dhr(self, href, html):
         pass
 
 

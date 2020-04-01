@@ -9,6 +9,7 @@ class SANews(StateNewsBase):
     LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
                   'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
     LISTING_HREF_SELECTOR = '.news a'
+    STATS_BY_REGION_URL = 'https://www.sa.gov.au/covid-19/latest-updates/daily-update/current'  # NEED TO KEEP UPDATED!
 
     def _get_date(self, href, html):
         date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
@@ -42,6 +43,16 @@ class SANews(StateNewsBase):
         )
 
     #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    def _get_total_age_breakdown(self, href, html):
+        pass
+
+    #============================================================#
     #                  Male/Female Breakdown                     #
     #============================================================#
 
@@ -70,6 +81,13 @@ class SANews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        pass
+
+    #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    def _get_total_dhr(self, href, html):
         pass
 
 

@@ -1,8 +1,10 @@
 from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
-from covid_19_au_grab.state_news_releases.constants import DT_CASES_TESTED
+from covid_19_au_grab.state_news_releases.StateNewsBase import \
+    StateNewsBase
+from covid_19_au_grab.state_news_releases.constants import \
+    DT_CASES_TESTED, DT_NEW_CASES, DT_CASES
 
 
 class QLDNews(StateNewsBase):
@@ -56,7 +58,11 @@ class QLDNews(StateNewsBase):
     def _get_total_cases(self, href, html):
         return self._extract_number_using_regex(
             compile('state total to ([0-9,]+)'),
-            html
+            html,
+            source_url=href,
+            datatype=DT_CASES,
+            date_updated=self._get_date(href, html)
+
         ) or self._extract_number_using_regex(
             compile(
                 # Total number changed from being enclosed in a <strong>
@@ -67,13 +73,19 @@ class QLDNews(StateNewsBase):
                 r'[^<]*?<td[^>]*?>.*?([0-9,]+).*?</td>',
                 MULTILINE | DOTALL
             ),
-            html
+            html,
+            source_url=href,
+            datatype=DT_CASES,
+            date_updated=self._get_date(href, html)
         )
 
     def _get_total_new_cases(self, href, html):
         return self._extract_number_using_regex(
             '[0-9,] new cases',
-            html
+            html,
+            source_url=href,
+            datatype=DT_NEW_CASES,
+            date_updated=self._get_date(href, html)
         )
 
     def _get_total_cases_tested(self, href, html):
@@ -120,6 +132,16 @@ class QLDNews(StateNewsBase):
             print("NOT SECOND MATCH!")
             return None  # WARNING!
         return value
+
+    #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    def _get_total_age_breakdown(self, href, html):
+        pass
 
     #============================================================#
     #                  Male/Female Breakdown                     #
@@ -200,6 +222,13 @@ class QLDNews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        pass
+
+    #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    def _get_total_dhr(self, href, html):
         pass
 
 

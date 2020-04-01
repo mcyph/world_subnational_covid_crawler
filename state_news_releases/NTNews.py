@@ -26,6 +26,16 @@ class NTNews(StateNewsBase):
         pass
 
     #============================================================#
+    #                      Age Breakdown                         #
+    #============================================================#
+
+    def _get_new_age_breakdown(self, href, html):
+        pass
+
+    def _get_total_age_breakdown(self, href, html):
+        pass
+
+    #============================================================#
     #                  Male/Female Breakdown                     #
     #============================================================#
 
@@ -53,4 +63,11 @@ class NTNews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        pass
+
+    #============================================================#
+    #               Deaths/Hospitalized/Recovered                #
+    #============================================================#
+
+    def _get_total_dhr(self, href, html):
         pass
