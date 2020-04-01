@@ -1,5 +1,5 @@
 import re
-from re import IGNORECASE
+from re import compile, IGNORECASE
 
 
 def word_to_number(s):
@@ -24,30 +24,42 @@ def word_to_number(s):
     s = re.sub(r'\bboth\b', '2', s,
                flags=IGNORECASE)
 
+    out = []
     for x, ten in enumerate(tens):
         ten = ten.lower()
-
         for y, num in enumerate(less_than_20):
             num = num.lower()
-            s = re.sub(r'\b'+ten+' '+num+r'\b',
-                       str((10*(x+2))+y), s,
-                       flags=IGNORECASE)
-            s = re.sub(r'\b'+ten+'-'+num+r'\b',
-                       str((10*(x+2))+y), s,
-                       flags=IGNORECASE)
-        s = re.sub(r'\b%s\b' % ten, str(10*(x+2)), s,
-                   flags=IGNORECASE)
+            out.append(rf'\b{ten})[- ]({num}\b')
 
-    for x, num in enumerate(less_than_20):
-        num = num.lower()
-        s = re.sub(r'\b%s\b' % num, str(x), s,
-                   flags=IGNORECASE)
+    RE_TEN_COMBS = compile('(%s)' % '|'.join(out),
+                           flags=IGNORECASE)
+    RE_TENS = compile('(%s)' % '|'.join(tens),
+                      flags=IGNORECASE)
+    RE_LESS_THAN_20 = compile('(%s)' % '|'.join(less_than_20),
+                              flags=IGNORECASE)
+    RE_ORDINALS = compile('(%s)' % '|'.join(ordinals),
+                          flags=IGNORECASE)
 
-    # Convert "first case" etc to "1 case"
-    for x, ordinal in enumerate(ordinals):
-        ordinal = ordinal.lower()
-        s = re.sub(r'\b%s\b' % ordinal, '1', s,
-                   flags=IGNORECASE)
+    def replace_ten_combs(ten, num):
+        return str(
+           ((tens.index(ten.group().lower())+2)*10) +
+           less_than_20.index(num.lower())
+        )
+
+    def replace_tens(ten):
+        return str((tens.index(ten.group().lower())+2)*10)
+
+    def replace_less_than_20(num):
+        return str(less_than_20.index(num.group().lower()))
+
+    def replace_ordinals(num):
+        # Convert "first case" etc to "1 case"
+        return str(ordinals.index(num.group().lower()))
+
+    s = RE_TEN_COMBS.sub(replace_ten_combs, s)
+    s = RE_TENS.sub(replace_tens, s)
+    s = RE_LESS_THAN_20.sub(replace_less_than_20, s)
+    s = RE_ORDINALS.sub(replace_ordinals, s)
 
     return s
 
