@@ -4,7 +4,10 @@ from re import compile, MULTILINE, DOTALL
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_NEW_CASES, DT_CASES
+    DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
+    DT_CASES_BY_REGION, DT_NEW_CASES_BY_REGION
+from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DataPoint
 
 
 class QLDNews(StateNewsBase):
@@ -137,23 +140,33 @@ class QLDNews(StateNewsBase):
     #============================================================#
 
     def _get_total_cases_by_region(self, href, html):
-        table = pq(pq('table.table.table-bordered.header-basic')[0])
-
-        if not 'Total confirmed cases to date' in table.text():
+        table = pq(pq(html)('table.table.table-bordered.header-basic'))
+        if not table:
             return None
 
-        regions = {}
+        if not 'Total confirmed cases to date' in pq(table[0]).text():
+            print("NOT TOTAL:", table.text())
+            return None
+
+        regions = []
         for tr in table('tr'):
             if 'total' in pq(tr).text().lower():
                 continue
 
             for x, td in enumerate(pq(tr)('td')):
                 if x == 0:
-                    hhs_region = td.text().strip()
+                    hhs_region = pq(td).text().strip()
                 elif x == 1:
                     try:
-                        value = int(td.text().strip())
-                        regions[hhs_region] = value
+                        value = int(pq(td).text().strip())
+                        regions.append(DataPoint(
+                            datatype=DT_CASES_BY_REGION,
+                            name=hhs_region,
+                            value=value,
+                            date_updated=self._get_date(href, html),
+                            source_url=href,
+                            text_match=None
+                        ))
                     except ValueError:
                         # WARNING!!!
                         pass
@@ -167,12 +180,14 @@ class QLDNews(StateNewsBase):
         # it might pay to do a tally of some kind!
         ' New confirmed cases'
 
-        table = pq(pq('table.table.table-bordered.header-basic')[0])
-
-        if not 'New confirmed cases' in table.text():
+        table = pq(html)('table.table.table-bordered.header-basic')
+        if not table:
             return None
 
-        regions = {}
+        if not 'New confirmed cases' in pq(table[0]).text():
+            return None
+
+        regions = []
         for tr in table('tr'):
             text = pq(tr).text().lower()
             if 'total' in text or 'new confirmed' in text:
@@ -180,11 +195,18 @@ class QLDNews(StateNewsBase):
 
             for x, td in enumerate(pq(tr)('td')):
                 if x == 0:
-                    hhs_region = td.text().strip()
+                    hhs_region = pq(td).text().strip()
                 elif x == 1:
                     try:
-                        value = int(td.text().strip())
-                        regions[hhs_region] = value
+                        value = int(pq(td).text().strip())
+                        regions.append(DataPoint(
+                            datatype=DT_NEW_CASES_BY_REGION,
+                            name=hhs_region,
+                            value=value,
+                            date_updated=self._get_date(href, html),
+                            source_url=href,
+                            text_match=None
+                        ))
                     except ValueError:
                         # WARNING!!!
                         pass
