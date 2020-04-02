@@ -44,11 +44,14 @@ if __name__ == '__main__':
             text_match = repr(remove_control_characters(
                 str(datapoint.text_match).replace("\t", " ").replace('\n', ' ').replace('\r', ' ')
             ))
+            yyyy, mm, dd = datapoint.date_updated.split('_')
+            backwards_date = f'{dd}/{mm}/{yyyy}'
+
             print(f'{state_name}\t'
                   f'{constant_to_name(datapoint.datatype)}\t'
                   f'{datapoint.name}\t'
                   f'{datapoint.value}\t'
-                  f'{datapoint.date_updated}\t'
+                  f'{backwards_date}\t'
                   f'{datapoint.source_url}\t'
                   f'{text_match}')
 
