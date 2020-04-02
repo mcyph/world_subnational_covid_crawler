@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
 from covid_19_au_grab.URLArchiver import URLArchiver
 
 
-ALWAYS_DOWNLOAD_LISTING = False
+ALWAYS_DOWNLOAD_LISTING = True
 
 if not ALWAYS_DOWNLOAD_LISTING:
     import warnings
@@ -221,7 +221,7 @@ class StateNewsBase(ABC):
                 # Note that when downloading the data,
                 # I'm assuming the press releases won't change.
                 # This may or may not be the case!! ====================================================================
-                print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}"')
+                print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}" href {href}')
                 html = self.pr_ua.get_url_data(
                     href,
                     period=self._get_date

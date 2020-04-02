@@ -196,7 +196,31 @@ class SANews(StateNewsBase):
         Under investigation 27
         TOTAL 367
         """
-        DT_SOURCE_OF_INFECTION
+        r = []
+
+        for k in (
+            'Overseas acquired',
+            'Locally acquired (close contact of a confirmed case)',
+            'Locally acquired (Interstate travel)',
+            'Locally acquired (contact not identified)',
+            'Under investigation'
+        ):
+            tr = pq(html)('tr:contains("%s")' % k)
+            if not tr:
+                continue
+
+            tr = tr[0]
+            c_icu = int(pq(tr[1]).text().strip())
+
+            r.append(DataPoint(
+                name=k,
+                datatype=DT_SOURCE_OF_INFECTION,
+                value=c_icu,
+                date_updated=self._get_date(url, html),
+                source_url=url,
+                text_match=None
+            ))
+        return r or None
 
     #============================================================#
     #               Deaths/Hospitalized/Recovered                #
