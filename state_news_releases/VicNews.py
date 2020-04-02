@@ -38,8 +38,16 @@ class VicNews(StateNewsBase):
         s = pq(html)(selector).text()
         s = s.strip().split('\n')[-1]
 
+        if '-' in s:
+            s = s.split('-')[-1].strip()
         if ', ' in s:
             s = s.split(', ')[-1]
+
+        if not s or 'and' in s:
+            # Exception to the rule..
+            # https://www.dhhs.vic.gov.au/media-release-coronavirus-update-cho-victoria-2-april-2020
+            s = pq(html)('.page-banner-content h1').text().split('-')[-1].strip()
+        #print('S:', s)
 
         try:
             return self._extract_date_using_format(s)

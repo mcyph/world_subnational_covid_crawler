@@ -62,6 +62,33 @@ class StateNewsBase(ABC):
         # "Current stats" archiver
         self.current_status_ua = URLArchiver(f'{self.STATE_NAME}/current_status')
 
+    def _pq_contains(self, html, selector, text, ignore_case=False):
+        """
+        For some reason, the :contains() selector doesn't
+        always work for e.g. the NSW news infection reasons
+
+        I'm not sure why this is, but for now...
+        """
+        if ignore_case:
+            text = text.lower()
+        html = pq(html)
+
+        out = []
+        for i in html(selector):
+            o = i
+            i = pq(i)
+            i_text = i.text() or ''
+            i_html = i.html() or ''
+
+            if ignore_case:
+                i_html = i_html.lower()
+                i_text = i_text.lower()
+
+            if text in i_text or text in i_html:
+                out.append(o)
+
+        return pq(out)
+
     def get_data(self):
         """
         -> [DataPoint(...), ...]

@@ -34,7 +34,14 @@ class WANews(StateNewsBase):
             date = match.group(1)
         else:
             try:
-                date = pq(pq(html)('.newsCreatedDate, div p strong:contains("as of") p')[0]).text().strip()
+                date = pq((
+                    pq(html)('.newsCreatedDate') or
+                    self._pq_contains(
+                        html, 'div p strong p', 'As of',
+                        ignore_case=True
+                    )
+                )[0]).text().strip()
+
                 if not date:
                     raise IndexError
             except IndexError:

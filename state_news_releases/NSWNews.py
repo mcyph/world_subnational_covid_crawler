@@ -77,10 +77,9 @@ class NSWNews(StateNewsBase):
 
     def _get_total_age_breakdown(self, href, html):
         r = []
-        table = pq(html, parser='html')(
-            'table:contains("Age Group")'
-        ) or pq(html, parser='html')(
-            'table:contains("Age group")'
+        table = self._pq_contains(
+            html, 'table', 'Age Group',
+            ignore_case=True
         )
         if not table:
             return None
@@ -98,7 +97,7 @@ class NSWNews(StateNewsBase):
             '80-89',
             '90-100'
         ):
-            tds = pq(table)('tr:contains("%s")' % age_group)
+            tds = self._pq_contains(table, 'tr', age_group)
             if not tds:
                 continue
             tds = tds[0]
@@ -161,7 +160,7 @@ class NSWNews(StateNewsBase):
         r = []
 
         c_html = html.replace('  ', ' ').replace('\u200b', '')  # HACK!
-        c_html = pq(c_html)('table:contains("Source")')
+        c_html = self._pq_contains(c_html, 'table', 'Source')
 
         for k in (
             'Overseas acquired',
@@ -173,7 +172,7 @@ class NSWNews(StateNewsBase):
         ):
             # TODO: MAKE WORD WITH ALL THE CASES!!
             # not sure why this doesn't always work! ==================================================================
-            tr = pq(c_html)('tr:contains("%s")' % k)
+            tr = self._pq_contains(c_html, 'tr', k)
             if not tr:
                 continue
 

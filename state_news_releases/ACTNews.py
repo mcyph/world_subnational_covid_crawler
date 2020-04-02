@@ -32,7 +32,7 @@ class ACTNews(StateNewsBase):
         date = pq(html)('.article-body--date p').text().strip()
 
         if not date:
-            date = pq(pq(html)('.container:contains("Last Updated:")')[0]).text()
+            date = pq(self._pq_contains(html, '.container', 'Last Updated:')[0]).text()
             date = date.split('</strong>')[-1].strip()
             # April 02 2020
             return self._extract_date_using_format(

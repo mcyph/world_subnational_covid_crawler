@@ -26,7 +26,8 @@ class SANews(StateNewsBase):
     def _get_date(self, href, html):
         if href == self.STATS_BY_REGION_URL:
             # Latest statistics – as of 4pm, 1 April 2020
-            date = pq(html)(':contains("Latest statistics")').text().split(',')[-1].strip()
+            date = self._pq_contains(html, '*', 'Latest statistics',
+                                     ignore_case=True).text().split(',')[-1].strip()
         else:
             date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
                                .text().strip().split(', ')[-1]
@@ -48,7 +49,8 @@ class SANews(StateNewsBase):
     @bothlistingandstat
     def _get_total_cases(self, href, html):
         if href == self.STATS_BY_REGION_URL:
-            tr = pq(html)('tr:contains("Confirmed cases")')[0]
+            tr = self._pq_contains(html, 'tr', 'Confirmed cases',
+                                   ignore_case=True)[0]
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
@@ -101,10 +103,9 @@ class SANews(StateNewsBase):
         r = []
         print("URL:", href)
         print(html)
-        table = pq(html, parser='html')(
-            'table:contains("Age Group")'
-        ) or pq(html, parser='html')(
-            'table:contains("Age group")'
+        table = self._pq_contains(
+            html, 'table', 'Age Group',
+            ignore_case=True
         )
         if not table:
             return None
@@ -123,7 +124,7 @@ class SANews(StateNewsBase):
             '90-100',
             '>100'
         ):
-            tds = pq(table)('tr:contains("%s")' % age_group)
+            tds = self._pq_contains(table, 'tr', age_group)
             if not tds:
                 continue
 
@@ -205,7 +206,8 @@ class SANews(StateNewsBase):
             'Locally acquired (contact not identified)',
             'Under investigation'
         ):
-            tr = pq(html)('tr:contains("%s")' % k)
+            tr = self._pq_contains(html, 'tr', k,
+                                   ignore_case=True)
             if not tr:
                 continue
 
@@ -230,7 +232,8 @@ class SANews(StateNewsBase):
     def _get_total_dhr(self, href, html):
         r = []
         print(href)
-        tr = pq(html)('tr:contains("Cases in ICU")')[0]
+        tr = self._pq_contains(html, 'tr', 'Cases in ICU',
+                               ignore_case=True)[0]
         c_icu = int(pq(tr[1]).text().strip())
         print(c_icu)
 
@@ -244,7 +247,8 @@ class SANews(StateNewsBase):
                 text_match=None
             ))
 
-        tr = pq(html)('tr:contains("Total deaths reported")')[0]
+        tr = self._pq_contains(html, 'tr', 'Total deaths reported',
+                               ignore_case=True)[0]
         t_d = int(pq(tr[1]).text().strip())
         if t_d is not None:
             r.append(DataPoint(
