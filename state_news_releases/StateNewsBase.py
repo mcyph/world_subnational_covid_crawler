@@ -8,7 +8,33 @@ from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
 from covid_19_au_grab.URLArchiver import URLArchiver
 
 
-ALWAYS_DOWNLOAD_LISTING = True
+ALWAYS_DOWNLOAD_LISTING = False
+
+if not ALWAYS_DOWNLOAD_LISTING:
+    import warnings
+    warnings.warn("Using cached copy!")
+
+
+METHOD_TYPE_BOTH = 0
+METHOD_TYPE_SINGLE_DAY_STATS = 1
+METHOD_TYPE_FROM_LISTING = 2
+
+
+# Decorators
+
+def fromlisting(fn):
+    fn.typ = METHOD_TYPE_FROM_LISTING
+    return fn
+
+
+def singledaystat(fn):
+    fn.typ = METHOD_TYPE_SINGLE_DAY_STATS
+    return fn
+
+
+def bothlistingandstat(fn):
+    fn.typ = METHOD_TYPE_BOTH
+    return fn
 
 
 class StateNewsBase(ABC):
@@ -43,71 +69,106 @@ class StateNewsBase(ABC):
         # Download from the stats by region URL,
         # even if I don't use the stats for now, daily!!
         # TODO: WHAT IF THERE ARE MULTIPLE UPDATES IN A DAY?? ==========================================================
+        output = []
+
         if self.STATS_BY_REGION_URL:
+            # Make sure the latest is in the cache!
             self.current_status_ua.get_url_data(
                 self.STATS_BY_REGION_URL,
                 cache=False if ALWAYS_DOWNLOAD_LISTING else True
             )
 
-        output = []
-        for href, date_str, html in self._get_listing_urls(
-            self.LISTING_URL,
-            self.LISTING_HREF_SELECTOR
-        ):
-            # Add tested data
-            #print('get_data for:', href, date_str, html)
-            tested = self._get_total_cases_tested(href, html)
-            if tested is not None:
-                #print('** TESTED DATA OK!')
-                output.append(tested)
-            #else:
-                #print("** TESTED NO DATA!")
+            for period in self.current_status_ua.iter_periods():
+                for subperiod_id, subdir in self.current_status_ua.iter_paths_for_period(period):
+                    path = self.current_status_ua.get_path(subdir)
 
-            # Add total/new cases
-            total_cases = self._get_total_cases(href, html)
-            if total_cases:
-                output.append(total_cases)
-            new_cases = self._get_total_new_cases(href, html)
-            if new_cases:
-                output.append(new_cases)
+                    with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                        html = f.read()
+                        self.__add_to_output(
+                            self.STATS_BY_REGION_URL, html, output
+                        )
 
-            # Add total/new cases by region
-            tcbr = self._get_total_cases_by_region(href, html)
-            if tcbr:
-                output.extend(tcbr)
-            ncbr = self._get_new_cases_by_region(href, html)
-            if ncbr:
-                output.extend(ncbr)
-
-            # Add new/total age breakdown
-            nab = self._get_new_age_breakdown(href, html)
-            if nab:
-                output.extend(nab)
-            tab = self._get_total_age_breakdown(href, html)
-            if tab:
-                output.extend(tab)
-
-            # Add new/total source of infection
-            nsoi = self._get_new_source_of_infection(href, html)
-            if nsoi:
-                output.extend(nsoi)
-            tsoi = self._get_total_source_of_infection(href, html)
-            if tsoi:
-                output.extend(tsoi)
-
-            # Add male/female breakdown
-            nmfb = self._get_new_male_female_breakdown(href, html)
-            if nmfb:
-                output.extend(nmfb)
-            tmfb = self._get_total_male_female_breakdown(href, html)
-            if tmfb:
-                output.extend(tmfb)
-
-            dhr = self._get_total_dhr(href, html)
-            if dhr:
-                output.extend(dhr)
+        if self.LISTING_URL:
+            for href, date_str, html in self._get_listing_urls(
+                self.LISTING_URL,
+                self.LISTING_HREF_SELECTOR
+            ):
+                self.__add_to_output(href, html, output)
 
         return output
+
+    def __add_to_output(self, href, html, output):
+        # Add tested data
+        # print('get_data for:', href, date_str, html)
+
+        def do_call(fn, href, html):
+            if not hasattr(fn, 'typ') and href != self.STATS_BY_REGION_URL:
+                # Functions default to for listing pages only!
+                return fn(href, html)
+            elif hasattr(fn, 'typ'):
+                typ = fn.typ
+                if typ == METHOD_TYPE_BOTH:
+                    return fn(href, html)
+                elif typ == METHOD_TYPE_FROM_LISTING and href != self.STATS_BY_REGION_URL:
+                    return fn(href, html)
+                elif typ == METHOD_TYPE_SINGLE_DAY_STATS and href == self.STATS_BY_REGION_URL:
+                    return fn(href, html)
+                else:
+                    return None
+            return None
+
+        tested = do_call(self._get_total_cases_tested, href, html)
+        if tested is not None:
+            # print('** TESTED DATA OK!')
+            output.append(tested)
+        # else:
+        # print("** TESTED NO DATA!")
+
+        # Add total/new cases
+        total_cases = do_call(self._get_total_cases, href, html)
+        if total_cases:
+            output.append(total_cases)
+        new_cases = do_call(self._get_total_new_cases, href, html)
+        if new_cases:
+            output.append(new_cases)
+
+        # Add total/new cases by region
+        tcbr = do_call(self._get_total_cases_by_region, href, html)
+        if tcbr:
+            output.extend(tcbr)
+        ncbr = do_call(self._get_new_cases_by_region, href, html)
+        if ncbr:
+            output.extend(ncbr)
+
+        # Add new/total age breakdown
+        nab = do_call(self._get_new_age_breakdown, href, html)
+        if nab:
+            output.extend(nab)
+        tab = do_call(self._get_total_age_breakdown, href, html)
+        if tab:
+            output.extend(tab)
+
+        # Add new/total source of infection
+        nsoi = do_call(self._get_new_source_of_infection, href, html)
+        if nsoi:
+            output.extend(nsoi)
+        tsoi = do_call(self._get_total_source_of_infection, href, html)
+        if tsoi:
+            output.extend(tsoi)
+
+        # Add male/female breakdown
+        nmfb = do_call(self._get_new_male_female_breakdown, href, html)
+        if nmfb:
+            output.extend(nmfb)
+        tmfb = do_call(self._get_total_male_female_breakdown, href, html)
+        if tmfb:
+            output.extend(tmfb)
+
+        dhr = do_call(self._get_total_dhr, href, html)
+        if dhr:
+            output.extend(dhr)
+
+
 
     def _get_listing_urls(self, url, selector):
         """
@@ -176,8 +237,21 @@ class StateNewsBase(ABC):
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()
         instance `regex`
+
+        Multiple regexes can be specified for `regex`, in which
+        case the first match will be returned
         """
         #
+        if isinstance(regex, (list, tuple)):
+            for i_regex in regex:
+                dp = self._extract_number_using_regex(
+                    i_regex, s, source_url, datatype,
+                    date_updated, name
+                )
+                if dp:
+                    return dp
+            return None
+
         match = regex.search(s)
         # print(regex, match)
         if match:

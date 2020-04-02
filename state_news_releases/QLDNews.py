@@ -2,42 +2,20 @@ from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
-    StateNewsBase
+    StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES
 
 
 class QLDNews(StateNewsBase):
     STATE_NAME = 'qld'
-    LISTING_URL = 'https://www.qld.gov.au/health/conditions/' \
-                  'health-alerts/coronavirus-covid-19/current-status'
-    LISTING_HREF_SELECTOR = '#qg-primary-content a'
+    LISTING_URL = 'https://www.health.qld.gov.au/' \
+                  'news-events/doh-media-releases'
+    LISTING_HREF_SELECTOR = '.presszebra div h3 a'
     STATS_BY_REGION_URL = 'https://www.qld.gov.au/health/conditions/' \
                           'health-alerts/coronavirus-covid-19/' \
                           'current-status/' \
                           'current-status-and-contact-tracing-alerts'
-
-    def get_data(self):
-        #StateNewsBase.get_data(self)
-
-        # Make sure the latest is in the cache!
-        self.current_status_ua.get_url_data(
-            self.STATS_BY_REGION_URL
-        )
-
-        output = []
-        for period in self.current_status_ua.iter_periods():
-            for subperiod_id, subdir in self.current_status_ua.iter_paths_for_period(period):
-                path = self.current_status_ua.get_path(subdir)
-
-                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                    html = f.read()
-                    total_cases_tested = self._get_total_cases_tested(
-                        self.STATS_BY_REGION_URL, html
-                    )
-                    if total_cases_tested is not None:
-                        output.append(total_cases_tested)
-        return output
 
     def _infer_missing_info(self, dates_dict):
         # TODO: QLD health now only provides a tally, but previously
@@ -81,13 +59,14 @@ class QLDNews(StateNewsBase):
 
     def _get_total_new_cases(self, href, html):
         return self._extract_number_using_regex(
-            '[0-9,] new cases',
+            compile('([0-9,]+) new cases'),
             html,
             source_url=href,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
         )
 
+    @singledaystat
     def _get_total_cases_tested(self, href, html):
         # NOTE: This is actually a different page to the press releases!
         #  I needed to get some of these from web.archive.org.

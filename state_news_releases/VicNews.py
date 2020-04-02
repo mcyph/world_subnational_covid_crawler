@@ -185,7 +185,7 @@ class VicNews(StateNewsBase):
 
                 regions.append(DataPoint(
                     datatype=DT_CASES_BY_REGION,
-                    name=region_name,
+                    name=region_name.replace('have all recorded one case', '').strip(),
                     value=int(num_cases),
                     date_updated=self._get_date(href, html),
                     source_url=href,

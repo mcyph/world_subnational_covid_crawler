@@ -1,13 +1,14 @@
 from pyquery import PyQuery as pq
-from re import compile, IGNORECASE
+from re import compile, IGNORECASE, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
-    StateNewsBase
+    StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_CASES, \
     DT_SOURCE_OF_INFECTION, \
     DT_NEW_CASES_BY_REGION, DT_NEW_CASES, \
-    DT_MALE, DT_FEMALE
+    DT_NEW_MALE, DT_NEW_FEMALE, \
+    DT_RECOVERED, DT_DEATHS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -18,31 +19,28 @@ class WANews(StateNewsBase):
     LISTING_URL = 'https://ww2.health.wa.gov.au/News/' \
                   'Media-releases-listing-page'
     LISTING_HREF_SELECTOR = 'div.threeCol-accordian a'
-
-    """
-    def get_data(self):
-        date_dict = defaultdict([])
-
-        for date_str, url, href_text, html in self._get_listing_urls(
-            self.LISTING_URL,
-            self.LISTING_HREF_SELECTOR
-        ):
-            date_dict[date_str].append(
-                self._get_total_cases(url, html)
-            )
-    """
+    STATS_BY_REGION_URL = 'https://ww2.health.wa.gov.au/' \
+                          'Articles/A_E/Coronavirus/' \
+                          'COVID19-statistics'
 
     def _get_date(self, url, html):
         # e.g. "24 March 2020"
-        print(url)
-        try:
-            date = pq(pq(html)('.newsCreatedDate')[0]).text().strip()
-            if not date:
-                raise IndexError
-        except IndexError:
-            date = pq(pq(html)('#contentArea h3')[0]).text().strip()
-        print(date)
+        if url == self.STATS_BY_REGION_URL:
+            regex = compile(
+                '<strong>As of ([^<]+?)</strong>',
+                IGNORECASE
+            )
+            match = regex.search(html)
+            date = match.group(1)
+        else:
+            try:
+                date = pq(pq(html)('.newsCreatedDate, div p strong:contains("as of") p')[0]).text().strip()
+                if not date:
+                    raise IndexError
+            except IndexError:
+                date = pq(pq(html)('#contentArea h3')[0]).text().strip()
 
+        print(date)
         if ', ' in date:
             date = date.split(', ')[-1]
         print(date)
@@ -96,17 +94,17 @@ class WANews(StateNewsBase):
         return None
 
     def _get_total_new_cases(self, url, html):
-        html = word_to_number(html)
+        c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
             compile('reported ([0-9,]+) new cases'),
-            html,
+            c_html,
             source_url=url,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(url, html)
         ) or self._extract_number_using_regex(
             compile('([0-9,]+) Western Australians who have tested positive'),
-            html,
+            c_html,
             source_url=url,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(url, html)
@@ -129,16 +127,16 @@ class WANews(StateNewsBase):
     def _get_new_male_female_breakdown(self, url, html):
         #return None  # HACK: This info is likely to be too unreliable at this stage - may add back later!!
 
-        html = word_to_number(html)
+        c_html = word_to_number(html)
 
         r = []
 
         # Get male breakdown
         male = self._extract_number_using_regex(
             compile('[^0-9.]+([0-9,]+) male(?:s)?'),
-            html,
+            c_html,
             source_url=url,
-            datatype=DT_MALE,
+            datatype=DT_NEW_MALE,
             date_updated=self._get_date(url, html)
         )
         if male:
@@ -147,9 +145,9 @@ class WANews(StateNewsBase):
         # Get female breakdown
         female = self._extract_number_using_regex(
             compile('[^0-9.]+([0-9,]+) female(?:s)?'),
-            html,
+            c_html,
             source_url=url,
-            datatype=DT_FEMALE,
+            datatype=DT_NEW_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if female:
@@ -283,71 +281,64 @@ class WANews(StateNewsBase):
     #============================================================#
 
     def _get_new_source_of_infection(self, url, html):
-        return None   # This data is really not easily machine-readable, I can't think of any better way than to go thru manually!
-
-        # https://ww2.health.wa.gov.au/Media-releases/2020/Children-among-35-new-cases-of--COVID19
-        # Ruby princess
-        # ... princess
-        # Ovation of the Seas
-        # overseas travel
-        num_overseas = self._extract_number_using_regex(
-            compile("([0-9]+) cases [^0-9.]*"
-                    "overseas",
-                    IGNORECASE),
-            html,
-            name='Overseas',
-            source_url=url,
-            datatype=DT_SOURCE_OF_INFECTION,
-            date_updated=self._get_date(url, html)
-        )
-        num_cruise_ship = self._extract_number_using_regex(
-            compile("([0-9]+) cases [^0-9.]*"
-                    "(?:Ruby Princess|Ovation of the Seas|Diamond Princess|Cruise)",
-                    IGNORECASE),
-            html,
-            name='Cruise Ship',
-            source_url=url,
-            datatype=DT_SOURCE_OF_INFECTION,
-            date_updated=self._get_date(url, html)
-        )
-        total_new = self._get_total_new_cases(url, html)
-
-        if (
-            num_overseas is not None or
-            num_cruise_ship is not None
-        ) and total_new is not None:
-            output = []
-            if num_cruise_ship:
-                output.append(num_cruise_ship)
-            if num_overseas:
-                output.append(num_overseas)
-
-            cruise_ship = num_cruise_ship.value \
-                if num_cruise_ship else 0
-            overseas = num_overseas.value \
-                if num_overseas else 0
-
-            other = DataPoint(
-                name='Other',
-                datatype=DT_SOURCE_OF_INFECTION,
-                value=total_new.value - cruise_ship - overseas,
-                date_updated=self._get_date(url, html),
-                source_url=url,
-                text_match=None
-            )
-            output.append(other)
-            return output
-        return None
-
-    def _get_total_source_of_infection(self, url, html):
         pass
+
+    @singledaystat
+    def _get_total_source_of_infection(self, url, html):
+        c_html = word_to_number(html)
+
+        unknown_source = self._extract_number_using_regex(
+            compile(
+                '<td[^>]*?>Unknown source</td>[^<]*?'
+                '<td[^>]*?>([0-9,]+)</td>',
+                MULTILINE | DOTALL
+            ),
+            c_html,
+            source_url=url,
+            datatype=DT_SOURCE_OF_INFECTION,
+            date_updated=self._get_date(url, html)
+        )
+        if unknown_source:
+            return (unknown_source,)
+        return None
 
     #============================================================#
     #               Deaths/Hospitalized/Recovered                #
     #============================================================#
 
+    @singledaystat
     def _get_total_dhr(self, href, html):
-        pass
+        r = []
+        c_html = word_to_number(html)
+
+        recovered = self._extract_number_using_regex(
+            compile(
+                '<td[^>]*?>Recovered</td>[^<]*?'
+                '<td[^>]*?>([0-9,]+)</td>',
+                MULTILINE | DOTALL
+            ),
+            c_html,
+            source_url=href,
+            datatype=DT_RECOVERED,
+            date_updated=self._get_date(href, html)
+        )
+        if recovered:
+            r.append(recovered)
+
+        deaths = self._extract_number_using_regex(
+            compile(
+                '<td[^>]*?>Deaths</td>[^<]*?'
+                '<td[^>]*?>([0-9,]+)</td>',
+                MULTILINE | DOTALL
+            ),
+            c_html,
+            source_url=href,
+            datatype=DT_DEATHS,
+            date_updated=self._get_date(href, html)
+        )
+        if deaths:
+            r.append(deaths)
+        return r
 
 
 if __name__ == '__main__':
