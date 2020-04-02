@@ -103,7 +103,12 @@ class SANews(StateNewsBase):
         print(html)
         table = pq(html, parser='html')(
             'table:contains("Age Group")'
-        )[0]
+        ) or pq(html, parser='html')(
+            'table:contains("Age group")'
+        )
+        if not table:
+            return None
+        table = table[0]
 
         for age_group in (
             '0-9',
@@ -118,16 +123,28 @@ class SANews(StateNewsBase):
             '90-100',
             '>100'
         ):
-            tds = pq(table)('tr:contains("%s")' % age_group)[0]
-            female = int(pq(tds[1]).text())
-            male = int(pq(tds[2]).text())
-            total = int(pq(tds[3]).text())
+            tds = pq(table)('tr:contains("%s")' % age_group)
+            if not tds:
+                continue
+
+            tds = tds[0]
+            if len(tds) < 4:
+                # Earliest didn't have male/female breakdown
+                male = None
+                female = None
+                total = int(pq(tds[1]).text())
+            else:
+                female = int(pq(tds[1]).text())
+                male = int(pq(tds[2]).text())
+                total = int(pq(tds[3]).text())
 
             for datatype, value in (
                 (DT_AGE_FEMALE, female),
                 (DT_AGE_MALE, male),
                 (DT_AGE, total)
             ):
+                if value is None:
+                    continue
                 r.append(DataPoint(
                     name=age_group,
                     datatype=datatype,

@@ -11,6 +11,8 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_DEATHS, DT_HOSPITALIZED, DT_ICU, DT_RECOVERED
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
+from covid_19_au_grab.state_news_releases.vic_powerbi import \
+    get_powerbi_data
 from covid_19_au_grab.word_to_number import word_to_number
 
 
@@ -19,6 +21,11 @@ class VicNews(StateNewsBase):
     LISTING_URL = 'https://www.dhhs.vic.gov.au/' \
                   'media-hub-coronavirus-disease-covid-19'
     LISTING_HREF_SELECTOR = '.field--item a'
+
+    def get_data(self):
+        r = get_powerbi_data()
+        r.extend(StateNewsBase.get_data(self))
+        return r
 
     def _get_date(self, href, html):
         selector = (

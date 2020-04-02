@@ -8,12 +8,22 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_BY_REGION, DT_NEW_CASES_BY_REGION
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
 
 
 class QLDNews(StateNewsBase):
     STATE_NAME = 'qld'
-    LISTING_URL = 'https://www.health.qld.gov.au/' \
-                  'news-events/doh-media-releases'
+    LISTING_URL = (
+        'https://www.health.qld.gov.au/'
+        'news-events/doh-media-releases',
+
+        'https://www.health.qld.gov.au/news-events/'
+        'doh-media-releases?result_707098_result_page=2',
+
+        'https://www.health.qld.gov.au/news-events/'
+        'doh-media-releases?result_707098_result_page=3',
+    )
+
     LISTING_HREF_SELECTOR = '.presszebra div h3 a'
     STATS_BY_REGION_URL = 'https://www.qld.gov.au/health/conditions/' \
                           'health-alerts/coronavirus-covid-19/' \
@@ -29,7 +39,9 @@ class QLDNews(StateNewsBase):
     def _get_date(self, href, html):
         return self._extract_date_using_format(
             # e.g. 24 March 2020
-            pq(html)('div#content div h2').text().strip()
+            pq(html)('div#content div h2').text().strip() or
+            pq(html)('div#content div h4').text().strip() or
+            pq(html)('div#content div h3').text().strip()
         )
 
     #============================================================#
@@ -37,9 +49,14 @@ class QLDNews(StateNewsBase):
     #============================================================#
 
     def _get_total_cases(self, href, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
-            compile('state total to ([0-9,]+)'),
-            html,
+            (
+                compile('state total to ([0-9,]+)'),
+                compile('total of ([0-9,]+) people')
+            ),
+            c_html,
             source_url=href,
             datatype=DT_CASES,
             date_updated=self._get_date(href, html)
@@ -54,16 +71,18 @@ class QLDNews(StateNewsBase):
                 r'[^<]*?<td[^>]*?>.*?([0-9,]+).*?</td>',
                 MULTILINE | DOTALL
             ),
-            html,
+            c_html,
             source_url=href,
             datatype=DT_CASES,
             date_updated=self._get_date(href, html)
         )
 
     def _get_total_new_cases(self, href, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
-            compile('([0-9,]+) new cases'),
-            html,
+            compile('([0-9,]+) new cases?'),
+            c_html,
             source_url=href,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
