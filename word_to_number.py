@@ -3,6 +3,9 @@ from re import compile, IGNORECASE
 
 
 def word_to_number(s):
+    def longest_first(nums):
+        return list(sorted(nums, key=lambda x: -len(x)))
+
     less_than_20 = [
         'zero', 'one', 'two', 'three', 'four', 'five',
         'six', 'seven', 'eight', 'nine', 'ten',
@@ -29,20 +32,29 @@ def word_to_number(s):
         ten = ten.lower()
         for y, num in enumerate(less_than_20):
             num = num.lower()
-            out.append(rf'\b{ten})[- ]({num}\b')
+            out.append(rf'\b{ten}[\- ]{num}\b')
 
-    RE_TEN_COMBS = compile('(%s)' % '|'.join(out),
-                           flags=IGNORECASE)
-    RE_TENS = compile('(%s)' % '|'.join(tens),
-                      flags=IGNORECASE)
-    RE_LESS_THAN_20 = compile('(%s)' % '|'.join(less_than_20),
-                              flags=IGNORECASE)
-    RE_ORDINALS = compile('(%s)' % '|'.join(ordinals),
-                          flags=IGNORECASE)
+    RE_TEN_COMBS = compile(
+        '(%s)' % '|'.join(longest_first(out)),
+        flags=IGNORECASE
+    )
+    RE_TENS = compile(
+        '(%s)' % '|'.join(longest_first(tens)),
+        flags=IGNORECASE
+    )
+    RE_LESS_THAN_20 = compile(
+        '(%s)' % '|'.join(longest_first(less_than_20)),
+        flags=IGNORECASE
+    )
+    RE_ORDINALS = compile(
+        '(%s)' % '|'.join(longest_first(ordinals)),
+        flags=IGNORECASE
+    )
 
-    def replace_ten_combs(ten, num):
+    def replace_ten_combs(ten_num):
+        ten, num = ten_num.group(0).replace('-', ' ').split()
         return str(
-           ((tens.index(ten.group().lower())+2)*10) +
+           ((tens.index(ten.lower())+2)*10) +
            less_than_20.index(num.lower())
         )
 
@@ -61,6 +73,10 @@ def word_to_number(s):
     s = RE_LESS_THAN_20.sub(replace_less_than_20, s)
     s = RE_ORDINALS.sub(replace_ordinals, s)
 
+    for i in range(1, 10):
+        # HACK: basic support for hundreds!!!
+        s = s.replace(f'{i} hundred and ', str(i))
+        s = s.replace(f'{i} Hundred and ', str(i))
     return s
 
 
@@ -71,3 +87,5 @@ if __name__ == '__main__':
     print(word_to_number('The new cases include 18 males and 12 females, aged between 21 and 80.'))
     print(word_to_number('Both cases are men. One is from Southern Tasmania and one is from Northern Tasmania. One is aged in their 20s and the other is in their 70s.'))
     print(word_to_number('Tasmania has today confirmed six more cases of coronavirus'))
+    print(word_to_number('Two hundred and forty-eight people have recovered'))
+    print(word_to_number('fourteen'))
