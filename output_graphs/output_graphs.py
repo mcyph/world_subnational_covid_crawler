@@ -148,4 +148,3 @@ if __name__ == '__main__':
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
     output_graph('DT_SOURCE_OF_INFECTION')
     output_graph('DT_DEATHS')
-
