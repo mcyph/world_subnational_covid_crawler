@@ -8,7 +8,8 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_NEW_MALE, DT_NEW_FEMALE, \
     DT_FEMALE, DT_MALE, \
     DT_SOURCE_OF_INFECTION, \
-    DT_HOSPITALIZED, DT_RECOVERED
+    DT_HOSPITALIZED, DT_RECOVERED, \
+    DT_AGE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -111,11 +112,35 @@ class ACTNews(StateNewsBase):
 
     @singledaystat
     def _get_total_age_breakdown(self, href, html):
-        if href != self.STATS_BY_REGION_URL:
-            # Only at stats by region URL
-            return None
-
-        '<strong>By age group</strong></p></td><td><p><strong>Total</strong></p></td></tr><tr><td><p>0-29</p></td><td><p>5</p></td></tr><tr><td><p>30-39</p></td><td><p>7</p></td></tr><tr><td><p>40-49</p></td><td><p>8</p></td></tr><tr><td><p>50-59</p></td><td><p>6</p></td></tr><tr><td><p>60-69</p></td><td><p>8</p></td></tr><tr><td><p>70+</p></td><td><p>5</p>'
+        table = self._pq_contains(
+            html, 'table', 'By age group',
+            ignore_case=True
+        )[0]
+        tbody = pq(table)('tbody')[0]
+        tr = tbody[1]
+        ages = [
+            int(i.replace(',', '').strip())
+            for i in pq(tr).text().split('\n')
+        ]
+        ages = {
+            '0-29': ages[0],
+            '30-39': ages[1],
+            '40-49': ages[2],
+            '50-59': ages[3],
+            '60-69': ages[4],
+            '70+': ages[5]
+        }
+        r = []
+        for k, v in ages.items():
+            r.append(DataPoint(
+                name=k,
+                datatype=DT_AGE,
+                value=v,
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match=None  # HACK!
+            ))
+        return r
 
     #============================================================#
     #                  Male/Female Breakdown                     #
@@ -203,9 +228,6 @@ class ACTNews(StateNewsBase):
         pass
 
     def _get_total_cases_by_region(self, href, html):
-        # There's still a "likely source" (as of 25-march)
-        # but not sure it's worth adding e.g. interstate
-        # or international values
         pass
 
     #============================================================#
@@ -257,7 +279,7 @@ class ACTNews(StateNewsBase):
 
     def _get_total_dhr(self, href, html):
         # recovered/lives lost also at
-        # https://www.covid19.act.gov.au/updates/confirmed-case-information
+        # https://www.covid19.act.gov.au/updates/confirmed-case-information  ===========================================
 
         c_html = word_to_number(html)
         patients = self._extract_number_using_regex(

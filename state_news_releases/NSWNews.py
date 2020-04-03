@@ -4,12 +4,12 @@ from re import compile, MULTILINE, DOTALL, IGNORECASE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
-    StateNewsBase
+    StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, \
     DT_ICU, DT_ICU_VENTILATORS, DT_HOSPITALIZED, DT_DEATHS, \
-    DT_SOURCE_OF_INFECTION
+    DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION
 from covid_19_au_grab.word_to_number import word_to_number
 
 
@@ -22,9 +22,20 @@ class NSWNews(StateNewsBase):
                           'diseases/Pages/covid-19-latest.aspx'
 
     def _get_date(self, href, html):
-        return self._extract_date_using_format(
-            pq(pq(html)('.newsdate')[0]).text().strip()
-        )
+        try:
+            return self._extract_date_using_format(
+                pq(pq(html)('.newsdate')[0]).text().strip()
+            )
+        except:
+            return self._extract_date_using_format(
+                ' '.join(
+                    pq(pq(html)('.lastupdated')[0])
+                               .text()
+                               .split(':')[-1]
+                               .strip()
+                               .split()[1:]
+                )
+            )
 
     #============================================================#
     #                      General Totals                        #
@@ -140,6 +151,7 @@ class NSWNews(StateNewsBase):
     def _get_new_cases_by_region(self, href, html):
         pass
 
+    @singledaystat
     def _get_total_cases_by_region(self, href, html):
         """
         TODO: Use Tesseract to grab the data from
@@ -147,7 +159,57 @@ class NSWNews(StateNewsBase):
 
         NOTE: This webpage *changes daily*!!!! --------
         """
-        pass
+        c_html = '<table class="moh-rteTable-6"' + \
+                 html.partition('<table class="moh-rteTable-6"')[-1]
+
+        r = []
+        table = (
+            self._pq_contains(c_html, 'table', '<span>LHD</span>',
+                              ignore_case=True) or
+            # Earliest stats used a different classifier for region!!!
+            # Might need to use a different graph..
+            #self._pq_contains(c_html, 'table', 'Local Government Area',
+            #                  ignore_case=True) or
+            self._pq_contains(c_html, 'table', 'Local health district',
+                              ignore_case=True) or
+            self._pq_contains(c_html, 'table', 'LHD',
+                              ignore_case=True)
+        )
+
+        for lhd in (
+            'South Eastern Sydney',
+            'Northern Sydney',
+            'Central Coast',
+            'Hunter New England',
+            'Sydney',
+            'Nepean Blue Mountains',
+            'Southern NSW',
+            'Illawarra Shoalhaven',
+            'Western Sydney',
+            'Mid North Coast',
+            'South Western Sydney',
+            'Northern NSW',
+            'Western NSW',
+            'Murrumbidgee',
+            'Far West',
+        ):
+            tr = self._pq_contains(table, 'tr', lhd)
+            if not tr:
+                continue
+
+            tr = tr[0]
+            c_icu = pq(tr[1]).text().replace(',', '').strip()
+            c_icu = int(c_icu) if c_icu != '1-4' else 2     # WARNING: Currently the backend doesn't support ranges!!! ====================================
+
+            r.append(DataPoint(
+                name=lhd,
+                datatype=DT_CASES_BY_REGION,
+                value=c_icu,
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match=None
+            ))
+        return r or None
 
     #============================================================#
     #                     Totals by Source                       #

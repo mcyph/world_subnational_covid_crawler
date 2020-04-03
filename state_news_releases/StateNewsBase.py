@@ -71,12 +71,12 @@ class StateNewsBase(ABC):
         """
         if ignore_case:
             text = text.lower()
-        html = pq(html)
+        html = pq(html, parser='html_fragments')
 
         out = []
         for i in html(selector):
             o = i
-            i = pq(i)
+            i = pq(i, parser='html_fragments')
             i_text = i.text() or ''
             i_html = i.html() or ''
 

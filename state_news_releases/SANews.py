@@ -4,11 +4,12 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, bothlistingandstat, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES, DT_CASES_TESTED, \
+    DT_CASES, DT_NEW_CASES, DT_CASES_TESTED, \
     DT_DEATHS, DT_ICU, DT_SOURCE_OF_INFECTION, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
 
 
 class SANews(StateNewsBase):
@@ -44,7 +45,17 @@ class SANews(StateNewsBase):
     #============================================================#
 
     def _get_total_new_cases(self, href, html):
-        '([0-9,]+)'
+        # FIXME!!!! ==================================================================================================
+        'Eighteen people in South Australia have today tested positive'
+        c_html = word_to_number(html)
+
+        return self._extract_number_using_regex(
+            compile('([0-9,]+) people in South Australia have today tested positive'),
+            c_html,
+            source_url=href,
+            datatype=DT_NEW_CASES,
+            date_updated=self._get_date(href, html)
+        )
 
     @bothlistingandstat
     def _get_total_cases(self, href, html):
@@ -63,7 +74,16 @@ class SANews(StateNewsBase):
                 )
             return None
         else:
-            return None  # TODO!!! ===================================================================================
+            # 'There have now been a total of 385 confirmed cases in South Australia'
+            c_html = word_to_number(html)
+
+            return self._extract_number_using_regex(
+                compile('total of ([0-9,]+) confirmed'),
+                c_html,
+                source_url=href,
+                datatype=DT_CASES,
+                date_updated=self._get_date(href, html)
+            )
 
     def _get_total_cases_tested(self, href, html):
         # This is only a rough value - is currently displayed as "> (value)"!
