@@ -14,12 +14,6 @@ def read_csv(datatype,
     if state_filter and not isinstance(state_filter, (list, tuple)):
         state_filter = (state_filter,)
 
-    if value_filter and not isinstance(value_filter, (list, tuple)):
-        value_filter = (value_filter,)
-
-    if name_filter and not isinstance(name_filter, (list, tuple)):
-        name_filter = (name_filter,)
-
     r = {}
 
     with open('data.tsv') as f:
@@ -30,9 +24,10 @@ def read_csv(datatype,
                 continue
             if state_filter and row['state_name'] not in state_filter:
                 continue
-            if value_filter and row['value'] not in value_filter:
+            if value_filter and not value_filter(row['value']):
                 continue
-            if name_filter and row['value'] not in name_filter:
+            if name_filter and not name_filter(row['name']):
+                print("IGNORE:", row)
                 continue
 
             key = row['state_name']
@@ -60,7 +55,8 @@ COLORS = [
     'brown',
     'pink',
     'gray',
-    'cyan'
+    'cyan',
+    'yellow'
 ]
 STYLES = [
     '-',
@@ -70,17 +66,21 @@ STYLES = [
 ]
 
 
+def output_graph(datatype,
+                 name_filter=None,
+                 value_filter=None,
+                 state_filter=None,
+                 append_to_name=None):
 
-
-def output_graph(datatype, name_filter=None, value_filter=None, state_filter=None):
     if isinstance(state_filter, str):
         state_filter = (state_filter,)
 
-    plt.figure(figsize=(8, 6), dpi=80)
+    plt.figure(figsize=(10, 8), dpi=80)
 
     for x, (k, v) in enumerate(read_csv(
         datatype, name_filter, value_filter, state_filter
     ).items()):
+        print(k)
         X = np.array([i[0] for i in v])
         Y = [i[1] for i in v]
 
@@ -96,6 +96,11 @@ def output_graph(datatype, name_filter=None, value_filter=None, state_filter=Non
         f'%s (%s)' % (datatype, ','.join(state_filter))
         if state_filter
         else datatype
+    )
+    y_label = (
+        f'%s (%s)' % (y_label, append_to_name)
+        if append_to_name
+        else y_label
     )
 
     fontP = FontProperties()
@@ -131,7 +136,12 @@ if __name__ == '__main__':
     output_graph('DT_HOSPITALIZED')
     output_graph('DT_RECOVERED')
     #output_graph('DT_ICU')
-    #output_graph('DT_CASES_BY_REGION', state_filter='vic')
+    output_graph('DT_CASES_BY_REGION', state_filter='vic',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_REGION', state_filter='vic',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
     output_graph('DT_CASES_BY_REGION', state_filter='nsw')
     output_graph('DT_CASES_BY_REGION', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='qld')
