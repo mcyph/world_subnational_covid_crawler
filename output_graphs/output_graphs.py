@@ -133,6 +133,7 @@ if __name__ == '__main__':
     output_graph('DT_AGE_FEMALE', state_filter='vic')
     output_graph('DT_AGE_MALE', state_filter='nsw')
     output_graph('DT_AGE_FEMALE', state_filter='nsw')
+    output_graph('DT_AGE', state_filter='act')
     output_graph('DT_HOSPITALIZED')
     output_graph('DT_RECOVERED')
     #output_graph('DT_ICU')
