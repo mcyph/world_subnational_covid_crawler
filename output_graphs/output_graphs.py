@@ -3,6 +3,7 @@ import numpy as np
 import datetime
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 
 
 def read_csv(datatype,
@@ -75,6 +76,8 @@ def output_graph(datatype, name_filter=None, value_filter=None, state_filter=Non
     if isinstance(state_filter, str):
         state_filter = (state_filter,)
 
+    plt.figure(figsize=(8, 6), dpi=80)
+
     for x, (k, v) in enumerate(read_csv(
         datatype, name_filter, value_filter, state_filter
     ).items()):
@@ -95,7 +98,6 @@ def output_graph(datatype, name_filter=None, value_filter=None, state_filter=Non
         else datatype
     )
 
-    from matplotlib.font_manager import FontProperties
     fontP = FontProperties()
     fontP.set_size('small')
 
