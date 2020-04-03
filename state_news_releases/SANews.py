@@ -44,7 +44,7 @@ class SANews(StateNewsBase):
     #============================================================#
 
     def _get_total_new_cases(self, href, html):
-        pass
+        '([0-9,]+)'
 
     @bothlistingandstat
     def _get_total_cases(self, href, html):
@@ -54,7 +54,7 @@ class SANews(StateNewsBase):
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
-                    name='Confirmed cases',
+                    name=None,
                     datatype=DT_CASES,
                     value=cc,
                     date_updated=self._get_date(href, html),
