@@ -39,6 +39,7 @@ class QLDNews(StateNewsBase):
     def _get_date(self, href, html):
         return self._extract_date_using_format(
             # e.g. 24 March 2020
+            pq(html)('#last-updated').text().split(':')[-1].strip() or
             pq(html)('div#content div h2').text().strip() or
             pq(html)('div#content div h4').text().strip() or
             pq(html)('div#content div h3').text().strip()

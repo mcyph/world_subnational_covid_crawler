@@ -45,37 +45,47 @@ def get_powerbi_data():
             elif fnam == 'age_data.json':
                 for age in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
                     print(age)
-                    if not age['X'] or not 'M0' in age['X'][0]:
-                        print("WARNING:", age)
-                        continue
+                    X = age['X']
 
-                    X = [i for i in age['X'] if not 'S' in i][:2]    # WARNING!!!!
-
-                    if len(X) == 2:
-                        output.append(DataPoint(
-                            name=age['G0'].replace('–', '-'),
-                            datatype=DT_AGE_MALE,
-                            value=X[0].get('M0', 0),
-                            date_updated=dir_.split('-')[0],
-                            source_url=SOURCE_URL,
-                            text_match=None
-                        ))
-                        output.append(DataPoint(
-                            name=age['G0'].replace('–', '-'),
-                            datatype=DT_AGE_FEMALE,
-                            value=X[1].get('M0', 0),
-                            date_updated=dir_.split('-')[0],
-                            source_url=SOURCE_URL,
-                            text_match=None
-                        ))
-                        general_age = (
-                            X[0].get('M0', 0) +
-                            X[1].get('M0', 0)
-                        )
-                    elif len(age['X']) == 1:
-                        pass
+                    if len(X) > 0:
+                        male = X[0].get('M0', 0)
                     else:
-                        raise Exception(age)
+                        male = 0
+
+                    if len(X) > 1:
+                        female = X[1].get(
+                            'M0', male if X[1].get('R') else 0
+                        )  # "R" clearly means "Repeat"
+                    else:
+                        female = 0
+
+                    if len(X) > 2:
+                        not_stated = X[2].get(
+                            'M0', female if X[2].get('R') else 0
+                        )
+                    else:
+                        not_stated = 0
+
+                    output.append(DataPoint(
+                        name=age['G0'].replace('–', '-'),
+                        datatype=DT_AGE_MALE,
+                        value=male,
+                        date_updated=dir_.split('-')[0],
+                        source_url=SOURCE_URL,
+                        text_match=None
+                    ))
+                    output.append(DataPoint(
+                        name=age['G0'].replace('–', '-'),
+                        datatype=DT_AGE_FEMALE,
+                        value=female,
+                        date_updated=dir_.split('-')[0],
+                        source_url=SOURCE_URL,
+                        text_match=None
+                    ))
+                    # TODO: support "not stated" separately!!! ====================================================
+                    general_age = (
+                        male + female + not_stated
+                    )
 
                     output.append(DataPoint(
                         name=age['G0'].replace('–', '-'),

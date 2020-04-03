@@ -43,10 +43,7 @@ class NSWNews(StateNewsBase):
 
     def _get_total_new_cases(self, href, html):
         return self._extract_number_using_regex(
-            compile(
-                'additional ([0-9,]+) cases',
-                IGNORECASE
-            ),
+            compile('additional ([0-9,]+)[^0-9]* cases', IGNORECASE),
             html,
             source_url=href,
             datatype=DT_NEW_CASES,
@@ -54,15 +51,24 @@ class NSWNews(StateNewsBase):
         )
 
     def _get_total_cases(self, href, html):
-        return self._extract_number_using_regex(
-            compile(
-                '([0-9,]+) COVID-19 cases',
-                IGNORECASE
-            ),
-            html,
-            source_url=href,
+        tr = self._pq_contains(
+            html, 'tr', 'Confirmed cases',
+            ignore_case=True
+        )
+        if not tr:
+            return None
+        tr = tr[0]
+
+        return DataPoint(
+            name=None,
             datatype=DT_CASES,
-            date_updated=self._get_date(href, html)
+            value=int(pq(tr[1]).html().split('<')[0]
+                                      .strip()
+                                      .replace(',', '')
+                                      .replace('*', '')),
+            date_updated=self._get_date(href, html),
+            source_url=href,
+            text_match=None
         )
 
     def _get_total_cases_tested(self, href, html):
