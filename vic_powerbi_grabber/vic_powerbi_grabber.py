@@ -118,174 +118,169 @@ age_data_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"dimAgeGroup\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"},\"Name\":\"dimAgeGroup.AgeGroup\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Sex\"},\"Name\":\"Linelist.Sex\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Measure\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"M_Age_MedianANDRange\"},\"Name\":\"Linelist.M_Age_MedianANDRange\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,2],\"ShowItemsWithNoData\":[0]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[1]}]},\"Projections\":[3],\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Window": {
+                        "Count": 200
+                      }
+                    },
+                    "Secondary": {
+                      "Top": {
+                        "Count": 60
+                      }
                     }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"dimAgeGroup\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"},\"Name\":\"dimAgeGroup.AgeGroup\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Sex\"},\"Name\":\"Linelist.Sex\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5},\"Name\":\"CountNonNull(Linelist.PHESSID)\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"M_Age_MedianANDRange\"},\"Name\":\"Linelist.M_Age_MedianANDRange\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,2],\"ShowItemsWithNoData\":[0]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[1]}]},\"Projections\":[3],\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          2
+                        ],
+                        "ShowItemsWithNoData": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Projections": [
+                    3
+                  ],
+                  "Secondary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 4,
-                                    "Primary": {
-                                        "Window": {
-                                            "Count": 200
-                                        }
-                                    },
-                                    "Secondary": {
-                                        "Top": {
-                                            "Count": 60
-                                        }
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0,
-                                                2
-                                            ],
-                                            "ShowItemsWithNoData": [
-                                                0
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Projections": [
-                                    3
-                                ],
-                                "Secondary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                1
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "dimAgeGroup",
-                                        "Name": "d"
-                                    },
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "OrderBy": [
-                                    {
-                                        "Direction": 1,
-                                        "Expression": {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {
-                                                        "Source": "d"
-                                                    }
-                                                },
-                                                "Property": "AgeGroup"
-                                            }
-                                        }
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "d"
-                                                }
-                                            },
-                                            "Property": "AgeGroup"
-                                        },
-                                        "Name": "dimAgeGroup.AgeGroup"
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "l"
-                                                }
-                                            },
-                                            "Property": "Sex"
-                                        },
-                                        "Name": "Linelist.Sex"
-                                    },
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "PHESSID"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "CountNonNull(Linelist.PHESSID)"
-                                    },
-                                    {
-                                        "Measure": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "l"
-                                                }
-                                            },
-                                            "Property": "M_Age_MedianANDRange"
-                                        },
-                                        "Name": "Linelist.M_Age_MedianANDRange"
-                                    }
-                                ],
-                                "Version": 2,
-                                "Where": [
-                                    {
-                                        "Condition": {
-                                            "Not": {
-                                                "Expression": {
-                                                    "Comparison": {
-                                                        "ComparisonKind": 0,
-                                                        "Left": {
-                                                            "Column": {
-                                                                "Expression": {
-                                                                    "SourceRef": {
-                                                                        "Source": "d"
-                                                                    }
-                                                                },
-                                                                "Property": "AgeGroup"
-                                                            }
-                                                        },
-                                                        "Right": {
-                                                            "Literal": {
-                                                                "Value": "null"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                ]
+                      "Entity": "dimAgeGroup",
+                      "Name": "d"
+                    },
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 1,
+                      "Expression": {
+                        "Column": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "d"
                             }
+                          },
+                          "Property": "AgeGroup"
                         }
+                      }
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "AgeGroup"
+                      },
+                      "Name": "dimAgeGroup.AgeGroup"
+                    },
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Sex"
+                      },
+                      "Name": "Linelist.Sex"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Measure"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "M_Age_MedianANDRange"
+                      },
+                      "Name": "Linelist.M_Age_MedianANDRange"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "Not": {
+                          "Expression": {
+                            "Comparison": {
+                              "ComparisonKind": 0,
+                              "Left": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "d"
+                                    }
+                                  },
+                                  "Property": "AgeGroup"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "null"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -362,165 +357,160 @@ tested_and_deceased_total_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
-                    }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}},\"Function\":5},\"Name\":\"Min(Linelist.clin_status_n)\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Deceased'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
-                    {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 3,
-                                    "Primary": {
-                                        "Top": {}
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "clin_status_n"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "Min(Linelist.clin_status_n)"
-                                    }
-                                ],
-                                "Version": 2,
-                                "Where": [
-                                    {
-                                        "Condition": {
-                                            "In": {
-                                                "Expressions": [
-                                                    {
-                                                        "Column": {
-                                                            "Expression": {
-                                                                "SourceRef": {
-                                                                    "Source": "l"
-                                                                }
-                                                            },
-                                                            "Property": "clin_status_n"
-                                                        }
-                                                    }
-                                                ],
-                                                "Values": [
-                                                    [
-                                                        {
-                                                            "Literal": {
-                                                                "Value": "'Deceased'"
-                                                            }
-                                                        }
-                                                    ]
-                                                ]
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                ]
-            },
-            "QueryId": ""
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
         },
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"M_Deaths\"},\"Name\":\"Linelist.M_Deaths\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Deceased'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
                     }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"tested\"}},\"Function\":0},\"Name\":\"Sum(Tested.tested)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 3,
-                                    "Primary": {
-                                        "Top": {}
-                                    }
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "M_Deaths"
+                      },
+                      "Name": "Linelist.M_Deaths"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "In": {
+                          "Expressions": [
+                            {
+                              "Column": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "l"
+                                  }
                                 },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Tested",
-                                        "Name": "t"
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "t"
-                                                        }
-                                                    },
-                                                    "Property": "tested"
-                                                }
-                                            },
-                                            "Function": 0
-                                        },
-                                        "Name": "Sum(Tested.tested)"
-                                    }
-                                ],
-                                "Version": 2
+                                "Property": "clin_status_n"
+                              }
                             }
+                          ],
+                          "Values": [
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Deceased'"
+                                }
+                              }
+                            ]
+                          ]
                         }
+                      }
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      },
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"tested\"}},\"Function\":3},\"Name\":\"Min(Tested.tested)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Tested",
+                      "Name": "t"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Aggregation": {
+                        "Expression": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "t"
+                              }
+                            },
+                            "Property": "tested"
+                          }
+                        },
+                        "Function": 3
+                      },
+                      "Name": "Min(Tested.tested)"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -529,103 +519,93 @@ male_female_balance_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Sex\"},\"Name\":\"Linelist.Sex\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
                     }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5},\"Name\":\"CountNonNull(Linelist.PHESSID)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Sex\"},\"Name\":\"Linelist.Sex\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 3,
-                                    "Primary": {
-                                        "Top": {}
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0,
-                                                1
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "OrderBy": [
-                                    {
-                                        "Direction": 2,
-                                        "Expression": {
-                                            "Aggregation": {
-                                                "Expression": {
-                                                    "Column": {
-                                                        "Expression": {
-                                                            "SourceRef": {
-                                                                "Source": "l"
-                                                            }
-                                                        },
-                                                        "Property": "PHESSID"
-                                                    }
-                                                },
-                                                "Function": 5
-                                            }
-                                        }
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "PHESSID"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "CountNonNull(Linelist.PHESSID)"
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "l"
-                                                }
-                                            },
-                                            "Property": "Sex"
-                                        },
-                                        "Name": "Linelist.Sex"
-                                    }
-                                ],
-                                "Version": 2
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "l"
                             }
+                          },
+                          "Property": "Cases"
                         }
+                      }
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Sex"
+                      },
+                      "Name": "Linelist.Sex"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -634,117 +614,112 @@ regions_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Window": {
+                        "Count": 500
+                      }
                     }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5},\"Name\":\"Linelist.PHESSID\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 3,
-                                    "Primary": {
-                                        "Window": {
-                                            "Count": 500
-                                        }
+                      "Entity": "dimLGA",
+                      "Name": "d1"
+                    },
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d1"
+                          }
+                        },
+                        "Property": "LGAName"
+                      },
+                      "Name": "dimLGA.LGAName"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "Not": {
+                          "Expression": {
+                            "Comparison": {
+                              "ComparisonKind": 0,
+                              "Left": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "d1"
                                     }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0,
-                                                1
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "dimLGA",
-                                        "Name": "d1"
-                                    },
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "d1"
-                                                }
-                                            },
-                                            "Property": "LGAName"
-                                        },
-                                        "Name": "dimLGA.LGAName"
-                                    },
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "PHESSID"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "Linelist.PHESSID"
-                                    }
-                                ],
-                                "Version": 2,
-                                "Where": [
-                                    {
-                                        "Condition": {
-                                            "Not": {
-                                                "Expression": {
-                                                    "Comparison": {
-                                                        "ComparisonKind": 0,
-                                                        "Left": {
-                                                            "Column": {
-                                                                "Expression": {
-                                                                    "SourceRef": {
-                                                                        "Source": "d1"
-                                                                    }
-                                                                },
-                                                                "Property": "LGAName"
-                                                            }
-                                                        },
-                                                        "Right": {
-                                                            "Literal": {
-                                                                "Value": "null"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                ]
+                                  },
+                                  "Property": "LGAName"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "null"
+                                }
+                              }
                             }
+                          }
                         }
+                      }
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -753,120 +728,110 @@ regions_2_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"dimLGA\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":1,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "Aggregates": [
                     {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
-                    }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"},{\"Name\":\"d\",\"Entity\":\"dimLGA\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5},\"Name\":\"CountNonNull(Linelist.PHESSID)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"PHESSID\"}},\"Function\":5}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":0,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
-                    {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "Aggregates": [
-                                    {
-                                        "Aggregations": [
-                                            {
-                                                "Min": {}
-                                            },
-                                            {
-                                                "Max": {}
-                                            }
-                                        ],
-                                        "Select": 0
-                                    }
-                                ],
-                                "DataReduction": {
-                                    "DataVolume": 4,
-                                    "Primary": {
-                                        "Top": {}
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0,
-                                                1
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    },
-                                    {
-                                        "Entity": "dimLGA",
-                                        "Name": "d"
-                                    }
-                                ],
-                                "OrderBy": [
-                                    {
-                                        "Direction": 2,
-                                        "Expression": {
-                                            "Aggregation": {
-                                                "Expression": {
-                                                    "Column": {
-                                                        "Expression": {
-                                                            "SourceRef": {
-                                                                "Source": "l"
-                                                            }
-                                                        },
-                                                        "Property": "PHESSID"
-                                                    }
-                                                },
-                                                "Function": 5
-                                            }
-                                        }
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "PHESSID"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "CountNonNull(Linelist.PHESSID)"
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "d"
-                                                }
-                                            },
-                                            "Property": "LGAName"
-                                        },
-                                        "Name": "dimLGA.LGAName"
-                                    }
-                                ],
-                                "Version": 2
-                            }
+                      "Aggregations": [
+                        {
+                          "Min": {}
+                        },
+                        {
+                          "Max": {}
                         }
+                      ],
+                      "Select": 1
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ],
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "dimLGA",
+                      "Name": "d"
+                    },
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "l"
+                            }
+                          },
+                          "Property": "Cases"
+                        }
+                      }
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "LGAName"
+                      },
+                      "Name": "dimLGA.LGAName"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -885,140 +850,66 @@ total_cases_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
                     }
-                ]
-            },
-            "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"Summarised\"},{\"Name\":\"d\",\"Entity\":\"dimDate\"},{\"Name\":\"l\",\"Entity\":\"LocalDateTable_fa0ba24d-6c6b-4582-bf58-393cd3d4bf89\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Count\"}},\"Function\":0},\"Name\":\"Sum(Summarised.Count)\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RunningTotal\"}},\"Function\":0},\"Name\":\"Sum(Summarised.RunningTotal)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date\"},\"Name\":\"dimDate.Date\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Year\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2020L\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[2,1,0],\"ShowItemsWithNoData\":[2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Sample\":{}}},\"Version\":1}}}]}",
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 4,
-                                    "Primary": {
-                                        "Sample": {}
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                2,
-                                                1,
-                                                0
-                                            ],
-                                            "ShowItemsWithNoData": [
-                                                2
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Summarised",
-                                        "Name": "s"
-                                    },
-                                    {
-                                        "Entity": "dimDate",
-                                        "Name": "d"
-                                    },
-                                    {
-                                        "Entity": "LocalDateTable_fa0ba24d-6c6b-4582-bf58-393cd3d4bf89",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "s"
-                                                        }
-                                                    },
-                                                    "Property": "Count"
-                                                }
-                                            },
-                                            "Function": 0
-                                        },
-                                        "Name": "Sum(Summarised.Count)"
-                                    },
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "s"
-                                                        }
-                                                    },
-                                                    "Property": "RunningTotal"
-                                                }
-                                            },
-                                            "Function": 0
-                                        },
-                                        "Name": "Sum(Summarised.RunningTotal)"
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "d"
-                                                }
-                                            },
-                                            "Property": "Date"
-                                        },
-                                        "Name": "dimDate.Date"
-                                    }
-                                ],
-                                "Version": 2,
-                                "Where": [
-                                    {
-                                        "Condition": {
-                                            "In": {
-                                                "Expressions": [
-                                                    {
-                                                        "Column": {
-                                                            "Expression": {
-                                                                "SourceRef": {
-                                                                    "Source": "l"
-                                                                }
-                                                            },
-                                                            "Property": "Year"
-                                                        }
-                                                    }
-                                                ],
-                                                "Values": [
-                                                    [
-                                                        {
-                                                            "Literal": {
-                                                                "Value": "2020L"
-                                                            }
-                                                        }
-                                                    ]
-                                                ]
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
+                      "Entity": "Linelist",
+                      "Name": "l"
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
@@ -1799,109 +1690,352 @@ median_age_range_age_req = {
     "version": "1.0.0"
 }
 
-acquisition_source_req = {
+source_of_infection_req = {
     "cancelQueries": [],
     "modelId": 1959902,
     "queries": [
-        {
-            "ApplicationContext": {
-                "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
-                "Sources": [
-                    {
-                        "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"acquired_n\"},\"Name\":\"Linelist.acquired_n\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
                     }
-                ]
-            },
-            "Query": {
-                "Commands": [
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
                     {
-                        "SemanticQueryDataShapeCommand": {
-                            "Binding": {
-                                "DataReduction": {
-                                    "DataVolume": 3,
-                                    "Primary": {
-                                        "Top": {}
-                                    }
-                                },
-                                "Primary": {
-                                    "Groupings": [
-                                        {
-                                            "Projections": [
-                                                0,
-                                                1
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "Version": 1
-                            },
-                            "Query": {
-                                "From": [
-                                    {
-                                        "Entity": "Linelist",
-                                        "Name": "l"
-                                    }
-                                ],
-                                "OrderBy": [
-                                    {
-                                        "Direction": 2,
-                                        "Expression": {
-                                            "Aggregation": {
-                                                "Expression": {
-                                                    "Column": {
-                                                        "Expression": {
-                                                            "SourceRef": {
-                                                                "Source": "l"
-                                                            }
-                                                        },
-                                                        "Property": "PHESSID"
-                                                    }
-                                                },
-                                                "Function": 5
-                                            }
-                                        }
-                                    }
-                                ],
-                                "Select": [
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "l"
-                                                }
-                                            },
-                                            "Property": "acquired_n"
-                                        },
-                                        "Name": "Linelist.acquired_n"
-                                    },
-                                    {
-                                        "Aggregation": {
-                                            "Expression": {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {
-                                                            "Source": "l"
-                                                        }
-                                                    },
-                                                    "Property": "PHESSID"
-                                                }
-                                            },
-                                            "Function": 5
-                                        },
-                                        "Name": "CountNonNull(Linelist.PHESSID)"
-                                    }
-                                ],
-                                "Version": 2
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "l"
                             }
+                          },
+                          "Property": "Cases"
                         }
+                      }
                     }
-                ]
-            },
-            "QueryId": ""
-        }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "acquired_n"
+                      },
+                      "Name": "Linelist.acquired_n"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
     ],
     "version": "1.0.0"
 }
+
+running_total_req = {
+    "cancelQueries": [],
+    "modelId": 1959902,
+    "queries": [
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"Summarised\"},{\"Name\":\"d\",\"Entity\":\"dimDate\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"RunningTotal\"}},\"Function\":0},\"Name\":\"Sum(Summarised.RunningTotal)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date\"},\"Name\":\"dimDate.Date\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[1,0],\"ShowItemsWithNoData\":[1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Sample\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Sample": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          1,
+                          0
+                        ],
+                        "ShowItemsWithNoData": [
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Summarised",
+                      "Name": "s"
+                    },
+                    {
+                      "Entity": "dimDate",
+                      "Name": "d"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Aggregation": {
+                        "Expression": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "s"
+                              }
+                            },
+                            "Property": "RunningTotal"
+                          }
+                        },
+                        "Function": 0
+                      },
+                      "Name": "Sum(Summarised.RunningTotal)"
+                    },
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "Date"
+                      },
+                      "Name": "dimDate.Date"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+    ],
+    "version": "1.0.0"
+}
+
+tested_well_req = {
+    "cancelQueries": [],
+    "modelId": 1959902,
+    "queries": [
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"M_LastUpdated\"},\"Name\":\"Tested.M_LastUpdated\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Tested",
+                      "Name": "t"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "t"
+                          }
+                        },
+                        "Property": "M_LastUpdated"
+                      },
+                      "Name": "Tested.M_LastUpdated"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      },
+      {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Well, isolation complete'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "In": {
+                          "Expressions": [
+                            {
+                              "Column": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "l"
+                                  }
+                                },
+                                "Property": "clin_status_n"
+                              }
+                            }
+                          ],
+                          "Values": [
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Well, isolation complete'"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+    ],
+    "version": "1.0.0"
+}
+
+
+
 
 
 OUTPUT_DIR = None
@@ -1915,13 +2049,13 @@ def match_grabbed_with_types():
     r = []
 
     for post_data, content in grab():
-        j_post_data = json.dumps(post_data, sort_keys=True)
+        j_post_data = json.dumps(post_data['queries'], sort_keys=True)
 
         most_likely = None
         smallest_dist = 999999999
         for k, v in globals().items():
             if k.endswith('_req'):
-                v = json.dumps(v, sort_keys=True)
+                v = json.dumps(v['queries'], sort_keys=True)
                 dist = editdistance.distance(j_post_data, v)
                 if dist < smallest_dist:
                     smallest_dist = dist
