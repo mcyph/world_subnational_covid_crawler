@@ -185,7 +185,7 @@ class URLArchiver:
         raise FileNotFoundError("No file found in directory:", dir_)
 
     def _escape_url(self, url):
-        return slugify(url)
+        return slugify(url)[:250]
 
 
 if __name__ == '__main__':
