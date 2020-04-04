@@ -70,17 +70,28 @@ class TasNews(StateNewsBase):
     def _get_total_cases_tested(self, url, html):
         c_html = word_to_number(html)
 
-        return self._extract_number_using_regex(
-            compile(
-                '([0-9,]+)[^0-9]*?'
-                '(?:coronavirus tests (?:have|had) been completed|'
-                   'tests)'  # [^0-9]*?complete
+        r = self._extract_number_using_regex(
+            (
+                compile(
+                    '([0-9,]+) (?:more )?(?:coronavirus )?(?:covid-19 )?'
+                    'tests (?:have|had) been completed',  # [^0-9]*?complete
+                    IGNORECASE
+                ),
+                compile(
+                    'conducted ([0-9,]+) tests',
+                    IGNORECASE
+                ),
+                #compile(
+                #    '([0-9,]+)[^0-9<>]*? test',
+                #    IGNORECASE
+                #)
             ),
             c_html,
             source_url=url,
             datatype=DT_CASES_TESTED,
             date_updated=self._get_date(url, html)
         )
+        return r
 
     #============================================================#
     #                      Age Breakdown                         #
