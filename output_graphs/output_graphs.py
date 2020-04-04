@@ -1,3 +1,4 @@
+from os import listdir
 import csv
 import numpy as np
 import datetime
@@ -16,7 +17,15 @@ def read_csv(datatype,
 
     r = {}
 
-    with open('data.tsv') as f:
+    # Get the newest, based on binary sort order
+    # (year->month->day->revision id)
+    fnam = list(sorted(
+        listdir('../state_news_releases/output')
+    ))[-1]
+
+    with open(f'../state_news_releases/output/{fnam}',
+              'r', encoding='utf-8', errors='replace') as f:
+
         reader = csv.DictReader(f, delimiter='\t')
 
         for row in reader:
@@ -141,6 +150,12 @@ if __name__ == '__main__':
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
+    output_graph('DT_CASES_BY_REGION', state_filter='wa',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_REGION', state_filter='wa',
                  name_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
     output_graph('DT_CASES_BY_REGION', state_filter='nsw')
