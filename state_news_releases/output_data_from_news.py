@@ -52,7 +52,7 @@ class Logger:
 
     def get_path_from_id(self, time_format, revision_id):
         return os.path.expanduser(
-            f'~/dev/covid_19_au_grab/output/{time_format}/{revision_id}.tsv'
+            f'~/dev/covid_19_au_grab/state_news_releases/output/{time_format}/{revision_id}.tsv'
         )
 
     def __del__(self):

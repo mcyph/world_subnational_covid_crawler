@@ -36,7 +36,7 @@ def get_powerbi_data():
                         datatype=DT_CASES_BY_REGION,
                         value=region['C'][1]
                               if len(region['C']) >= 2
-                              else 0,
+                              else 0,    # CHECK ME - there may be 'R' values here!!! ===================================
                         date_updated=dir_.split('-')[0],
                         source_url=SOURCE_URL,
                         text_match=None
