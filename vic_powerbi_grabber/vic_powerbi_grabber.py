@@ -53,10 +53,10 @@ def grab():
         '--ignore-certificate-errors',
         '--disable-dev-shm-usage',
 
-        #'--disable-extensions',
-        #'--disable-gpu',
-        #'--no-sandbox',
-        #'--headless',
+        '--disable-extensions',
+        '--disable-gpu',
+        '--no-sandbox',
+        '--headless',
     ]
     chrome_options = webdriver.ChromeOptions()
     for arg in args:
@@ -1904,7 +1904,14 @@ acquisition_source_req = {
 }
 
 
+OUTPUT_DIR = None
+
+
 def match_grabbed_with_types():
+    global OUTPUT_DIR
+    if not OUTPUT_DIR:
+        OUTPUT_DIR = _get_output_json_dir()
+
     r = []
 
     for post_data, content in grab():
@@ -1932,7 +1939,18 @@ def match_grabbed_with_types():
             if smallest_dist
             else most_likely
         )
-        with open(_get_output_json_file_path(prefix), 'w',
+
+        if smallest_dist:
+            prefix_suffix = 1
+            while True:
+                path = f'{OUTPUT_DIR}/{prefix}-{prefix_suffix}.json'
+                if not os.path.exists(path):
+                    break
+                prefix_suffix += 1
+        else:
+            path = f'{OUTPUT_DIR}/{prefix}.json'
+
+        with open(path, 'w',
                   encoding='utf-8',
                   errors='replace') as f:
             f.write(json.dumps(
@@ -1943,7 +1961,7 @@ def match_grabbed_with_types():
     return r
 
 
-def _get_output_json_file_path(prefix):
+def _get_output_json_dir():
     time_format = datetime.datetime \
         .now() \
         .strftime('%Y_%m_%d')
@@ -1957,21 +1975,25 @@ def _get_output_json_file_path(prefix):
             # This should never happen, but still..
             raise Exception()
 
-        path = os.path.expanduser(
-            f'~/dev/covid_19_data/output/vic/powerbi/'
-            f'{time_format}-{revision_id}/{prefix}.json'
+        dir_ = os.path.expanduser(
+            f'~/dev/covid_19_data/vic/powerbi/'
+            f'{time_format}-{revision_id}'
         )
-        if not os.path.exists(path):
+        if not os.path.exists(dir_):
             break
 
         revision_id += 1
         x += 1
 
     try:
-        makedirs(dirname(path))
+        makedirs(dir_)
     except OSError:
         pass
-    return path
+    return dir_
+
+
+def iter_cache_paths(prefix):
+    pass
 
 
 def get_latest_cache_path(prefix):
@@ -1994,5 +2016,3 @@ if __name__ == '__main__':
                else ""))
         print("POST Query:", json.dumps(post_data, indent=2, sort_keys=True))
         print("Response:", json.dumps(content, indent=2, sort_keys=True))
-
-

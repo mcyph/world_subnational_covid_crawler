@@ -27,6 +27,11 @@ def get_powerbi_data():
                 from json import loads
                 data = loads(f.read())
 
+            if isinstance(data, (list, tuple)):
+                # I've made some outputs have both query+response
+                # here only interested in the response
+                data = data[1]
+
             if fnam == 'regions.json':
                 #print(data['results'][0]['result']['data'])
                 for region in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
