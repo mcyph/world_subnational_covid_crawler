@@ -72,6 +72,10 @@ class Logger:
         self.f.write(data)
         self.f.flush()
 
+    def flush(self):
+        self.stream.flush()
+        self.f.flush()
+
 
 if __name__ == '__main__':
     news_insts = [
