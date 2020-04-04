@@ -93,6 +93,11 @@ class NSWNews(StateNewsBase):
         pass
 
     def _get_total_age_breakdown(self, href, html):
+        if '20200316_02.aspx' in href:
+            # HACK: The very first entry was in a different format with percentages
+            #  Maybe I could fix this later, but not sure it's worth it
+            return None
+
         r = []
         table = self._pq_contains(
             html, 'table', 'Age Group',

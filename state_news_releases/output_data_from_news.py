@@ -1,3 +1,6 @@
+import os
+import sys
+import datetime
 import unicodedata
 
 from covid_19_au_grab.state_news_releases.ACTNews import ACTNews
@@ -16,6 +19,51 @@ def remove_control_characters(s):
         ch for ch in s
         if unicodedata.category(ch)[0] != "C"
     )
+
+
+class Logger:
+    def __init__(self, stream):
+        time_format = datetime.datetime \
+                              .now() \
+                              .strftime('%Y_%m_%d')
+
+        revision_id = self.get_latest_revision_id(time_format)
+        self.f = open(
+            self.get_path_from_id(time_format, revision_id),
+            'w', encoding='utf-8', errors='replace'
+        )
+        self.stream = stream
+
+    def get_latest_revision_id(self, time_format):
+        x = 0
+        revision_id = 1
+
+        while True:
+            if x > 1000:
+                # This should never happen, but still..
+                raise Exception()
+
+            path = self.get_path_from_id(time_format, revision_id)
+            if not os.path.exists(path):
+                return revision_id
+
+            revision_id += 1
+            x += 1
+
+    def get_path_from_id(self, time_format, revision_id):
+        return os.path.expanduser(
+            f'~/dev/covid_19_au_grab/output/{time_format}/{revision_id}.tsv'
+        )
+
+    def __del__(self):
+        if hasattr(self, 'f'):
+            self.f.close()
+
+    def write(self, data):
+        self.stream.write(data)
+        self.stream.flush()
+        self.f.write(data)
+        self.f.flush()
 
 
 if __name__ == '__main__':
@@ -37,6 +85,8 @@ if __name__ == '__main__':
     from pprint import pprint
     pprint(data)
     print()
+
+    sys.stdout = Logger(sys.stdout)
 
     print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
