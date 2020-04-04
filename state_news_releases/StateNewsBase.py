@@ -111,7 +111,7 @@ class StateNewsBase(ABC):
 
                     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
                         html = f.read()
-                        self.__add_to_output(
+                        self._add_to_output(
                             self.STATS_BY_REGION_URL, html, output
                         )
 
@@ -120,11 +120,11 @@ class StateNewsBase(ABC):
                 self.LISTING_URL,
                 self.LISTING_HREF_SELECTOR
             ):
-                self.__add_to_output(href, html, output)
+                self._add_to_output(href, html, output)
 
         return output
 
-    def __add_to_output(self, href, html, output):
+    def _add_to_output(self, href, html, output):
         # Add tested data
         # print('get_data for:', href, date_str, html)
 

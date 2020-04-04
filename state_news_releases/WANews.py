@@ -6,12 +6,13 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import \
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_CASES, \
     DT_SOURCE_OF_INFECTION, \
-    DT_NEW_CASES_BY_REGION, DT_NEW_CASES, \
+    DT_NEW_CASES_BY_REGION, DT_CASES_BY_REGION, DT_NEW_CASES, \
     DT_NEW_MALE, DT_NEW_FEMALE, \
     DT_RECOVERED, DT_DEATHS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.URLArchiver import URLArchiver
 
 
 class WANews(StateNewsBase):
@@ -22,6 +23,44 @@ class WANews(StateNewsBase):
     STATS_BY_REGION_URL = 'https://ww2.health.wa.gov.au/' \
                           'Articles/A_E/Coronavirus/' \
                           'COVID19-statistics'
+
+    # This is only used by the wa map
+    WA_CUSTOM_MAP_URL = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/' \
+                        'services/confirmed_cases_by_LGA/FeatureServer/0/query?' \
+                        'f=json&' \
+                        'where=Confirmed_cases%20%3C%3E%200&' \
+                        'returnGeometry=false&' \
+                        'spatialRel=esriSpatialRelIntersects&' \
+                        'geometryType=esriGeometryEnvelope&' \
+                        'inSR=102100&outFields=*&' \
+                        'outSR=102100&resultType=tile'
+
+    def get_data(self):
+        r = []
+
+        # WA-specific maps archiver
+        wa_custom_map_ua = URLArchiver(f'{self.STATE_NAME}/custom_map')
+        wa_custom_map_ua.get_url_data(self.WA_CUSTOM_MAP_URL, cache=True)   #  TODO: Should this be cached?? ===
+
+        for period in wa_custom_map_ua.iter_periods():
+            for subperiod_id, subdir in wa_custom_map_ua.iter_paths_for_period(period):
+                path = wa_custom_map_ua.get_path(subdir)
+
+                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                    json_text = f.read()
+
+                print("JSON:", json_text)
+                cbr = self._get_total_cases_by_region(
+                    self.WA_CUSTOM_MAP_URL,
+                    (json_text, subdir.split('-')[0])
+                )
+                if cbr:
+                    r.extend(cbr)
+
+        r.extend(
+            StateNewsBase.get_data(self)
+        )
+        return r
 
     def _get_date(self, url, html):
         # e.g. "24 March 2020"
@@ -281,7 +320,46 @@ class WANews(StateNewsBase):
         return None
 
     def _get_total_cases_by_region(self, url, html):
-        return None
+        if url != self.WA_CUSTOM_MAP_URL:
+            return None
+
+        json_text, period = html
+        from json import loads
+        data = loads(json_text)  # Not actually html
+
+        r = []
+        for feature_dict in data['features']:
+            """
+            {
+                "attributes":{
+                    "OBJECTID":145,
+                    "LGA_CODE19":"50080",
+                    "LGA_NAME19":"Albany (C)",
+                    "AREASQKM19":4310.8905,
+                    "Metro_WACHS":"WACHS",
+                    "Pop65_plus":7781,
+                    "Pop_total_18":37826,
+                    "Confirmed_cases":6,
+                    "Classification":"6 - 10",
+                    "Shape__Area":6399054898.15234,
+                    "Shape__Length":910942.011045383,
+                    "LGA_Name_Full":"City of Albany  "
+                }, ...
+            }
+            """
+            attributes = feature_dict['attributes']
+
+            num = DataPoint(
+                name=attributes['LGA_NAME19'].split('(')[0].strip(),
+                datatype=DT_CASES_BY_REGION,
+                value=attributes['Confirmed_cases'],
+                date_updated=period,
+                source_url='https://ww2.health.wa.gov.au/Articles/A_E/Coronavirus/COVID19-statistics',
+                text_match=None
+            )
+            r.append(num)
+        return r
+
 
     #============================================================#
     #                     Totals by Source                       #
