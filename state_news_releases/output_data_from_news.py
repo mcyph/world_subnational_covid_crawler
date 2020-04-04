@@ -2,6 +2,8 @@ import os
 import sys
 import datetime
 import unicodedata
+from os import makedirs
+from os.path import dirname
 
 from covid_19_au_grab.state_news_releases.ACTNews import ACTNews
 from covid_19_au_grab.state_news_releases.NSWNews import NSWNews
@@ -45,6 +47,10 @@ class Logger:
 
             path = self.get_path_from_id(time_format, revision_id)
             if not os.path.exists(path):
+                try:
+                    makedirs(dirname(path))
+                except OSError:
+                    pass
                 return revision_id
 
             revision_id += 1
@@ -52,7 +58,8 @@ class Logger:
 
     def get_path_from_id(self, time_format, revision_id):
         return os.path.expanduser(
-            f'~/dev/covid_19_au_grab/state_news_releases/output/{time_format}/{revision_id}.tsv'
+            f'~/dev/covid_19_au_grab/state_news_releases/output/'
+            f'{time_format}-{revision_id}.tsv'
         )
 
     def __del__(self):
