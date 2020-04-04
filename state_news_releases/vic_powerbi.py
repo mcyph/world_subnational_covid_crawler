@@ -17,7 +17,8 @@ SOURCE_URL = 'https://app.powerbi.com/view?r=' \
 def get_powerbi_data():
     output = []
 
-    for dir_ in listdir(BASE_PATH):
+    for dir_ in sorted(listdir(BASE_PATH)):
+        # TODO: Make only use most recent revision ID for a given day!!! ===============================================
         subdir = f'{BASE_PATH}/{dir_}'
 
         for fnam in listdir(subdir):
@@ -35,17 +36,23 @@ def get_powerbi_data():
             if fnam == 'regions.json':
                 #print(data['results'][0]['result']['data'])
                 for region in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-                    print(region)
+                    #print(region)
+
+                    if region.get('R'):
+                        value = previous_value
+                    else:
+                        value = region['C'][1]
+
                     output.append(DataPoint(
                         name=region['C'][0].split('(')[0].strip(),
                         datatype=DT_CASES_BY_REGION,
-                        value=region['C'][1]
-                              if len(region['C']) >= 2
-                              else 0,    # CHECK ME - there may be 'R' values here!!! ===================================
+                        value=value,
                         date_updated=dir_.split('-')[0],
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
+                    previous_value = value
+                    #print(output[-1])
 
             elif fnam == 'age_data.json':
                 for age in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
@@ -113,3 +120,7 @@ def get_powerbi_data():
                     ))
 
     return output
+
+
+if __name__ == '__main__':
+    get_powerbi_data()
