@@ -370,6 +370,10 @@ class WANews(StateNewsBase):
 
     @singledaystat
     def _get_total_source_of_infection(self, url, html):
+        # Can only really semi-reliably get "Unknown source" or "other source"
+        # because of not being machine readable - probably not really useful ===========================================
+        return None
+
         c_html = word_to_number(html)
 
         unknown_source = self._extract_number_using_regex(
@@ -379,6 +383,7 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            name='Unknown source',
             source_url=url,
             datatype=DT_SOURCE_OF_INFECTION,
             date_updated=self._get_date(url, html)

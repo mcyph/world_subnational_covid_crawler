@@ -54,27 +54,37 @@ def get_powerbi_data():
                     previous_value = value
                     #print(output[-1])
 
+                del previous_value
+
             elif fnam == 'age_data.json':
                 for age in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
                     print(age)
                     X = age['X']
 
                     if len(X) > 0:
-                        male = X[0].get('M0', 0)
+                        # Note that previous value simply means the very last value seen
+                        # That means that if female/not stated is 67 and the following
+                        # male stat is also 67 it'll be elided with an R-repeat val
+                        male = X[0].get(
+                            'M0', previous_value if X[0].get('R') else 0
+                        )
+                        previous_value = male
                     else:
                         male = 0
 
                     if len(X) > 1:
                         female = X[1].get(
-                            'M0', male if X[1].get('R') else 0
+                            'M0', previous_value if X[1].get('R') else 0
                         )  # "R" clearly means "Repeat"
+                        previous_value = female
                     else:
                         female = 0
 
                     if len(X) > 2:
                         not_stated = X[2].get(
-                            'M0', female if X[2].get('R') else 0
+                            'M0', previous_value if X[2].get('R') else 0
                         )
+                        previous_value = not_stated
                     else:
                         not_stated = 0
 
@@ -107,6 +117,8 @@ def get_powerbi_data():
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
+
+                del previous_value
 
             elif fnam == 'source_of_infection.json':
                 for source in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:

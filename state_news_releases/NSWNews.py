@@ -235,13 +235,31 @@ class NSWNews(StateNewsBase):
         c_html = html.replace('  ', ' ').replace('\u200b', '')  # HACK!
         c_html = self._pq_contains(c_html, 'table', 'Source')
 
+        old_type_map = {
+            # NOTE: The descriptions stopped being used 21/3
+            'Epi link (contact of confirmed case)':
+                'Locally acquired – contact of a confirmed case and/or in a known cluster',
+            'Unknown': 'Locally acquired – contact not identified',
+
+            # These were used only 24/1
+            'Locally acquired - contact of a confirmed case':
+                'Locally acquired – contact of a confirmed case and/or in a known cluster',
+            'Local acquired – contact not identified':
+                'Locally acquired – contact not identified'
+        }
+
         for k in (
             'Overseas acquired',
             'Locally acquired – contact of a confirmed case and/or in a known cluster',
             'Locally acquired – contact not identified',
             'Under investigation',
+
             'Epi link (contact of confirmed case)',
             'Unknown',
+
+            # Misspelt on 24/1
+            'Locally acquired - contact of a confirmed case',
+            'Local acquired – contact not identified',
         ):
             # TODO: MAKE WORD WITH ALL THE CASES!!
             # not sure why this doesn't always work! ==================================================================
@@ -253,7 +271,7 @@ class NSWNews(StateNewsBase):
             c_icu = int(pq(tr[1]).text().replace(',', '').strip())
 
             r.append(DataPoint(
-                name=k,
+                name=old_type_map.get(k, k),
                 datatype=DT_SOURCE_OF_INFECTION,
                 value=c_icu,
                 date_updated=self._get_date(url, html),
