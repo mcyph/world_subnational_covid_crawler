@@ -73,6 +73,12 @@ STYLES = [
     '-.',
     ':'
 ]
+MARKERS = [
+    'o',
+    'P',
+    '.',
+    'X'
+]
 
 
 def output_graph(datatype,
@@ -97,7 +103,7 @@ def output_graph(datatype,
             X, Y,
             color=COLORS[x % len(COLORS)],
             label=k,
-            marker='o',
+            marker=MARKERS[x // len(COLORS)],
             linestyle=STYLES[x // len(COLORS)]
         )
 
