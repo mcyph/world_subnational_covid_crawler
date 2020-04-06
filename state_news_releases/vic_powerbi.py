@@ -1,5 +1,5 @@
 from os import listdir
-from os.path import expanduser
+from os.path import expanduser, exists
 
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
@@ -18,8 +18,15 @@ def get_powerbi_data():
     output = []
 
     for dir_ in sorted(listdir(BASE_PATH)):
-        # TODO: Make only use most recent revision ID for a given day!!! ===============================================
         subdir = f'{BASE_PATH}/{dir_}'
+
+        # Only use most revision if there isn't
+        # a newer revision ID for a given day!
+        next_id = int(dir_.split('-')[-1]) + 1
+        next_subdir = f'{BASE_PATH}/{dir_.split("-")[0]}-{next_id}'
+        if exists(next_subdir):
+            print(f"VicPowerBI ignoring {subdir}")
+            continue
 
         for fnam in listdir(subdir):
             path = f'{subdir}/{fnam}'
