@@ -174,6 +174,10 @@ def output_graphs():
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
     output_graph('DT_SOURCE_OF_INFECTION')
+    output_graph('DT_SOURCE_OF_INFECTION', state_filter='sa')
+    output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
+    output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
+    output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
     output_graph('DT_DEATHS')
 
 
