@@ -16,6 +16,9 @@ from covid_19_au_grab.state_news_releases.WANews import WANews
 from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
+UPDATE_VIC_POWERBI = False
+
+
 def remove_control_characters(s):
     return "".join(
         ch for ch in s
@@ -78,6 +81,16 @@ class Logger:
 
 
 if __name__ == '__main__':
+    from covid_19_au_grab.vic_powerbi_grabber.vic_powerbi_grabber import grab
+
+    if UPDATE_VIC_POWERBI:
+        try:
+            grab()
+        except:
+            print("Error occurred using VicPowerBI!")
+            import traceback
+            traceback.print_exc()
+
     news_insts = [
         ACTNews(),
         NSWNews(),

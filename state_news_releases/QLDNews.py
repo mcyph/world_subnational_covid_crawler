@@ -175,7 +175,8 @@ class QLDNews(StateNewsBase):
 
             for x, td in enumerate(pq(tr)('td')):
                 if x == 0:
-                    hhs_region = pq(td).text().strip()
+                    # HACK: one day had "271" prefixed to "North West"
+                    hhs_region = pq(td).text().strip().lstrip('271').strip()
                 elif x == 1:
                     try:
                         value = int(pq(td).text().strip())
