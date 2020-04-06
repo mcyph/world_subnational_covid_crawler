@@ -122,7 +122,7 @@ class SANews(StateNewsBase):
 
         r = []
         print("URL:", href)
-        print(html)
+        #print(html)
         table = self._pq_contains(
             html, 'table', 'Age Group',
             ignore_case=True

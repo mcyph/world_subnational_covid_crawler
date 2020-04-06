@@ -195,8 +195,6 @@ class StateNewsBase(ABC):
         if dhr:
             output.extend(dhr)
 
-
-
     def _get_listing_urls(self, url, selector):
         """
         Most (all?) of the state pages are of a very similar
@@ -204,13 +202,21 @@ class StateNewsBase(ABC):
         """
         listing_urls = []
         if isinstance(url, (list, tuple)):
+            added = set()
             for i_url in url:
-                listing_urls.extend(self._get_listing_urls(
+                for (href, date_str, html) in self._get_listing_urls(
                     i_url, selector
-                ))
+                ):
+                    if href in added:
+                        # Don't add href's twice!
+                        continue
+                    added.add(href)
+                    listing_urls.append((href, date_str, html))
+
             return listing_urls
 
         print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
+
         listing_html = self.listing_ua.get_url_data(
             url,
             cache=False if ALWAYS_DOWNLOAD_LISTING else True
@@ -240,7 +246,10 @@ class StateNewsBase(ABC):
                     'premier.vic' in href or
                     '2020/expressions_of_interest_covid-19_staffing' in href or
                     '2020/prime_minister_update_on_coronavirus_measures' in href or
-                    href.endswith('news/2020/coronavirus_update')
+                    href.endswith('news/2020/coronavirus_update') or
+                    'https://www.worksafe.vic.gov.au' in href or
+                    'https://www.fairwork.gov.au' in href or
+                    'https://www.foodstandards.gov.au' in href
                 ):
                     continue  # HACK!
 

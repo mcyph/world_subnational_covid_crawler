@@ -18,9 +18,18 @@ from covid_19_au_grab.word_to_number import word_to_number
 
 class VicNews(StateNewsBase):
     STATE_NAME = 'vic'
-    LISTING_URL = 'https://www.dhhs.vic.gov.au/' \
-                  'media-hub-coronavirus-disease-covid-19'
-    LISTING_HREF_SELECTOR = '.field--item a'
+    LISTING_URL = (
+        'https://www.dhhs.vic.gov.au/' 
+            'media-hub-coronavirus-disease-covid-19',
+        'https://www.dhhs.vic.gov.au/coronavirus'
+    )
+    LISTING_HREF_SELECTOR = (
+        # A very broad selector, unfortunately to
+        # prevent going into other irrelevant links
+        '.field.field--name-field-dhhs-rich-text-text'
+            '.field--type-text-long.field--label-hidden.field--item a , '
+        '.field--name-field-more-updates .field--item a'
+    )
 
     def get_data(self):
         r = get_powerbi_data()
@@ -52,9 +61,15 @@ class VicNews(StateNewsBase):
         try:
             return self._extract_date_using_format(s)
         except ValueError:
-            return self._extract_date_using_format(
-                s, format='%d %b %Y'
-            )
+            try:
+                return self._extract_date_using_format(
+                    s, format='%d %b %Y'
+                )
+            except ValueError:
+                return self._extract_date_using_format(
+                    pq(html)('.purple-pullout').text().strip(),
+                    format='%d/%m/%Y'
+                )
 
     #============================================================#
     #                      General Totals                        #
