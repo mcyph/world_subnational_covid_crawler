@@ -17,6 +17,7 @@ from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
 UPDATE_VIC_POWERBI = False
+UPDATE_GRAPHS = False
 
 
 def remove_control_characters(s):
@@ -110,7 +111,8 @@ if __name__ == '__main__':
     pprint(data)
     print()
 
-    sys.stdout = Logger(sys.stdout)
+    # Override stdout to point to both stdout and the output file
+    logger = sys.stdout = Logger(sys.stdout)
 
     print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
@@ -129,3 +131,9 @@ if __name__ == '__main__':
                   f'{datapoint.source_url}\t'
                   f'{text_match}')
 
+    # Reset stdout
+    sys.stdout = logger.stream
+
+    if UPDATE_GRAPHS:
+        from covid_19_au_grab.output_graphs.output_graphs import output_graphs
+        output_graphs()

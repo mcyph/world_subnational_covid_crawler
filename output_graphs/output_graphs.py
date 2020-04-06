@@ -1,4 +1,5 @@
 from os import listdir
+from os.path import expanduser
 import csv
 import numpy as np
 import datetime
@@ -20,15 +21,21 @@ def read_csv(datatype,
     # Get the newest, based on binary sort order
     # (year->month->day->revision id)
     fnam = list(sorted(
-        listdir('../state_news_releases/output')
+        listdir(expanduser(
+            '~/dev/covid_19_au_grab/state_news_releases/output'
+        ))
     ))[-1]
 
-    with open(f'../state_news_releases/output/{fnam}',
-              'r', encoding='utf-8', errors='replace') as f:
+    with open(
+        expanduser(f'~/dev/covid_19_au_grab/'
+                   f'state_news_releases/output/{fnam}',),
+        'r', encoding='utf-8', errors='replace'
+    ) as f:
 
         reader = csv.DictReader(f, delimiter='\t')
 
         for row in reader:
+            print(row)
             if row['datatype'] != datatype:
                 continue
             if state_filter and row['state_name'] not in state_filter:
@@ -132,15 +139,13 @@ def output_graph(datatype,
     plt.grid()
     #plt.show()
 
-    plt.savefig(y_label+'.png')
+    plt.savefig(expanduser(
+        f'~/dev/covid_19_au_grab/output_graphs/{y_label}.png'
+    ))
     plt.clf()
 
 
 def output_graphs():
-    pass
-
-
-if __name__ == '__main__':
     output_graph('DT_CASES')
     output_graph('DT_NEW_CASES')
     output_graph('DT_CASES_TESTED')
@@ -151,7 +156,7 @@ if __name__ == '__main__':
     output_graph('DT_AGE', state_filter='act')
     output_graph('DT_HOSPITALIZED')
     output_graph('DT_RECOVERED')
-    #output_graph('DT_ICU')
+    # output_graph('DT_ICU')
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
@@ -170,3 +175,7 @@ if __name__ == '__main__':
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
     output_graph('DT_SOURCE_OF_INFECTION')
     output_graph('DT_DEATHS')
+
+
+if __name__ == '__main__':
+    output_graphs()

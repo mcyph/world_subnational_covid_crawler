@@ -204,7 +204,21 @@ class NSWNews(StateNewsBase):
             'Murrumbidgee',
             'Far West',
         ):
-            tr = self._pq_contains(table, 'tr', lhd)
+            tr = (
+                # Reduce the chance "Sydney" isn't confused
+                # with other values which contain it!
+                self._pq_contains(table, 'tr', f'>{lhd}<') or
+                self._pq_contains(table, 'tr', f'> {lhd} <') or
+                self._pq_contains(table, 'tr', f'> {lhd}<') or
+                self._pq_contains(table, 'tr', f'>{lhd} <')
+            )
+
+            if lhd != 'Sydney':
+                # Only allow broad checks for LHDs which *aren't*
+                # Sydney - better this than potentially giving
+                # incorrect values!
+                tr = tr or self._pq_contains(table, 'tr', lhd)
+
             if not tr:
                 continue
 
