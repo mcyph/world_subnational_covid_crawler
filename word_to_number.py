@@ -39,15 +39,24 @@ def word_to_number(s):
         flags=IGNORECASE
     )
     RE_TENS = compile(
-        '(%s)' % '|'.join(longest_first(tens)),
+        '(%s)' % '|'.join(longest_first([
+            rf'\b{ten}\b'
+            for ten in tens
+        ])),
         flags=IGNORECASE
     )
     RE_LESS_THAN_20 = compile(
-        '(%s)' % '|'.join(longest_first(less_than_20)),
+        '(%s)' % '|'.join(longest_first([
+            rf'\b{num}\b'
+            for num in less_than_20
+        ])),
         flags=IGNORECASE
     )
     RE_ORDINALS = compile(
-        '(%s)' % '|'.join(longest_first(ordinals)),
+        '(%s)' % '|'.join(longest_first([
+            rf'\b{ordinal}\b'
+            for ordinal in ordinals
+        ])),
         flags=IGNORECASE
     )
 
@@ -89,3 +98,5 @@ if __name__ == '__main__':
     print(word_to_number('Tasmania has today confirmed six more cases of coronavirus'))
     print(word_to_number('Two hundred and forty-eight people have recovered'))
     print(word_to_number('fourteen'))
+    print(word_to_number('There are currently 12 COVID-19 cases in our Intensive Care Units and of those cases, 8 require ventilators at this stage.'))
+    print(word_to_number('<p>Sadly, NSW Health  confirms the death of 3 people from COVID-19, bringing the state’s total deaths  of confirmed COVID-19 cases to <strong>21.</strong></p>'))
