@@ -52,8 +52,8 @@ class StateNewsBase(ABC):
 
     def __init__(self):
         assert self.STATE_NAME
-        assert self.LISTING_URL
-        assert self.LISTING_HREF_SELECTOR
+        #assert self.LISTING_URL
+        #assert self.LISTING_HREF_SELECTOR
 
         # "Press release listing" archiver
         self.listing_ua = URLArchiver(f'{self.STATE_NAME}/listing')
@@ -307,8 +307,8 @@ class StateNewsBase(ABC):
                     date_updated=date_updated,
                     source_url=source_url,
                     text_match=s[
-                        max(0, match.start(1)-5):
-                        min(len(s), match.end(1)+5)
+                        max(0, match.start(1)-40):
+                        min(len(s), match.end(1)+40)
                     ]
                 )
         return None

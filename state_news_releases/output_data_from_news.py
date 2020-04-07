@@ -7,7 +7,7 @@ from os.path import dirname
 
 from covid_19_au_grab.state_news_releases.ACTNews import ACTNews
 from covid_19_au_grab.state_news_releases.NSWNews import NSWNews
-#from covid_19_au_grab.state_news_releases.NTNews import NTNews
+from covid_19_au_grab.state_news_releases.NTNews import NTNews
 from covid_19_au_grab.state_news_releases.QLDNews import QLDNews
 from covid_19_au_grab.state_news_releases.SANews import SANews
 from covid_19_au_grab.state_news_releases.TasNews import TasNews
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     news_insts = [
         ACTNews(),
         NSWNews(),
-        #NTNews(),
+        NTNews(),
         QLDNews(),
         SANews(),
         TasNews(),
