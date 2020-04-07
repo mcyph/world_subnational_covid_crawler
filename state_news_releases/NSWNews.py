@@ -21,6 +21,9 @@ class NSWNews(StateNewsBase):
     STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/' \
                           'diseases/Pages/covid-19-latest.aspx'
 
+    NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lhd.aspx'
+    NSW_LGA_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lga.aspx'
+
     def _get_date(self, href, html):
         try:
             return self._extract_date_using_format(
@@ -42,9 +45,19 @@ class NSWNews(StateNewsBase):
     #============================================================#
 
     def _get_total_new_cases(self, href, html):
+        c_html = word_to_number(html)
+
         return self._extract_number_using_regex(
-            compile('additional ([0-9,]+)[^0-9]* cases', IGNORECASE),
-            html,
+            (
+                compile('([0-9,]+) additional cases of COVID-19'),
+                compile(
+                    'additional[^0-9.<]+(?:COVID-19[^0-9.<]+)?'
+                    '(?:<strong>)?([0-9,]+)[^0-9.<]*(?:</strong>)?'
+                    '[^0-9.<]+cases',
+                    IGNORECASE
+                )
+            ),
+            c_html.replace('\n', ' '),
             source_url=href,
             datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
@@ -93,6 +106,8 @@ class NSWNews(StateNewsBase):
         pass
 
     def _get_total_age_breakdown(self, href, html):
+        # TODO: TRANSITION TO https://data.nsw.gov.au/nsw-covid-19-data !! =============================================
+
         if '20200316_02.aspx' in href:
             # HACK: The very first entry was in a different format with percentages
             #  Maybe I could fix this later, but not sure it's worth it
@@ -165,10 +180,7 @@ class NSWNews(StateNewsBase):
     @singledaystat
     def _get_total_cases_by_region(self, href, html):
         """
-        TODO: Use Tesseract to grab the data from
-        https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx
-
-        NOTE: This webpage *changes daily*!!!! --------
+        # TODO: TRANSITION TO https://data.nsw.gov.au/nsw-covid-19-data !! =============================================
         """
         c_html = '<table class="moh-rteTable-6"' + \
                  html.partition('<table class="moh-rteTable-6"')[-1]
@@ -244,6 +256,8 @@ class NSWNews(StateNewsBase):
         pass
 
     def _get_total_source_of_infection(self, url, html):
+        # TODO: TRANSITION TO https://data.nsw.gov.au/nsw-covid-19-data !! =============================================
+
         r = []
 
         c_html = html.replace('  ', ' ').replace('\u200b', '')  # HACK!
@@ -302,9 +316,10 @@ class NSWNews(StateNewsBase):
         r = []
         c_html = word_to_number(html)
 
-        recovered = self._extract_number_using_regex(
+        hospitalized = self._extract_number_using_regex(
             compile(
-                '([0-9,]+) COVID-19 cases being treated by NSW Health',
+                r'([0-9,]+)[^0-9<.]+COVID-19[^0-9<.]+'
+                r'cases[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
                 IGNORECASE
             ),
             c_html,
@@ -312,12 +327,13 @@ class NSWNews(StateNewsBase):
             datatype=DT_HOSPITALIZED,
             date_updated=self._get_date(href, html)
         )
-        if recovered:
-            r.append(recovered)
+        if hospitalized:
+            r.append(hospitalized)
 
         icu = self._extract_number_using_regex(
             compile(
-                '([0-9,]+) cases in our Intensive Care Units',
+                r'([0-9,]+)[^0-9<.]+(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
+                r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
                 IGNORECASE
             ),
             c_html,
@@ -330,7 +346,7 @@ class NSWNews(StateNewsBase):
 
         ventilators = self._extract_number_using_regex(
             compile(
-                '([0-9,]+) cases in our Intensive Care Units',
+                r'([0-9,]+)[^0-9<.]+require[^0-9<.]+ventilators',
                 IGNORECASE
             ),
             c_html,
@@ -342,11 +358,18 @@ class NSWNews(StateNewsBase):
             r.append(ventilators)
 
         deaths = self._extract_number_using_regex(
-            compile(
-                '([0-9,]+) deaths in NSW',
-                MULTILINE | DOTALL
+            (
+                compile(r'have[^0-9<]+been[^0-9<]+([0-9,]+)[^0-9<]+death?',
+                        IGNORECASE),
+                compile(r'total[^0-9<]+deaths[^0-9<]+'
+                        r'COVID-19[^0-9<]+cases[^0-9<]+(?:<strong>)?([0-9,]+)',
+                        IGNORECASE),
+                compile(r'total[^0-9<]+deaths[^0-9<]+(?:<strong>)?([0-9]+)',
+                        IGNORECASE),
+                compile(r'([0-9,]+)[^0-9<]+deaths[^0-9<]+in[^0-9<]+NSW',
+                        IGNORECASE),
             ),
-            c_html,
+            html,
             source_url=href,
             datatype=DT_DEATHS,
             date_updated=self._get_date(href, html)
