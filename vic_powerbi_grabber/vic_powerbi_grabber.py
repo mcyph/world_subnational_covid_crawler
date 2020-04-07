@@ -13,7 +13,8 @@ import json
 import psutil
 import datetime
 import editdistance
-from os import makedirs
+from sys import path
+from os import makedirs, environ, pathsep, system
 from os.path import dirname, expanduser
 from browsermobproxy import Server
 from selenium import webdriver
@@ -2134,19 +2135,21 @@ def get_latest_cache_path(prefix):
     pass
 
 
-if __name__ == '__main__':
-    from sys import path
-    from os import environ, pathsep, system
+def run_vic_powerbi_grabber():
     path.append(GECKO_BROWSER_DIR)
     environ["PATH"] += pathsep + GECKO_BROWSER_DIR
     system('killall browsermob-prox')
 
-    #grab()
+    # grab()
     for dist, most_likely, post_data, content in match_grabbed_with_types():
         print()
-        print(f"{most_likely}: Distance of {dist}"+
+        print(f"{most_likely}: Distance of {dist}" +
               (" - non-zero distance means match is probably incorrect!"
                if dist
                else ""))
         print("POST Query:", json.dumps(post_data, indent=2, sort_keys=True))
         print("Response:", json.dumps(content, indent=2, sort_keys=True))
+
+
+if __name__ == '__main__':
+    run_vic_powerbi_grabber()

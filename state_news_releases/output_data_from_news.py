@@ -82,11 +82,12 @@ class Logger:
 
 
 if __name__ == '__main__':
-    from covid_19_au_grab.vic_powerbi_grabber.vic_powerbi_grabber import grab
+    from covid_19_au_grab.vic_powerbi_grabber.vic_powerbi_grabber import \
+        run_vic_powerbi_grabber
 
     if UPDATE_VIC_POWERBI:
         try:
-            grab()
+            run_vic_powerbi_grabber()
         except:
             print("Error occurred using VicPowerBI!")
             import traceback
