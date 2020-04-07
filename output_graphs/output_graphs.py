@@ -98,6 +98,7 @@ def output_graph(datatype,
         state_filter = (state_filter,)
 
     plt.figure(figsize=(10, 8), dpi=80)
+    max_y = 0
 
     for x, (k, v) in enumerate(read_csv(
         datatype, name_filter, value_filter, state_filter
@@ -105,6 +106,10 @@ def output_graph(datatype,
         print(k)
         X = np.array([i[0] for i in v])
         Y = [i[1] for i in v]
+
+        for i in Y:
+            if max_y < i:
+                max_y = i
 
         plt.plot(
             X, Y,
@@ -135,6 +140,15 @@ def output_graph(datatype,
 
     plt.xlabel('Date')
     plt.ylabel(y_label)
+
+    if max_y > 50:
+        plt.yscale('log')
+        from matplotlib.ticker import ScalarFormatter
+        for axis in [ax.yaxis]:
+            axis.set_major_formatter(ScalarFormatter())
+            formatter = axis.get_major_formatter()
+            axis.set_minor_formatter(formatter)
+
     plt.legend(prop=fontP)
     plt.grid()
     #plt.show()
@@ -176,6 +190,7 @@ def output_graphs():
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
     output_graph('DT_PATIENT_STATUS', state_filter='sa')
+    output_graph('DT_PATIENT_STATUS', state_filter='vic')
     output_graph('DT_PATIENT_STATUS', state_filter='act')
     output_graph('DT_PATIENT_STATUS', state_filter='nsw')
     output_graph('DT_PATIENT_STATUS', state_filter='wa')
