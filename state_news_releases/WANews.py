@@ -2,7 +2,7 @@ from pyquery import PyQuery as pq
 from re import compile, IGNORECASE, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
-    StateNewsBase, singledaystat
+    StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_CASES, \
     DT_SOURCE_OF_INFECTION, \
@@ -40,7 +40,10 @@ class WANews(StateNewsBase):
 
         # WA-specific maps archiver
         wa_custom_map_ua = URLArchiver(f'{self.STATE_NAME}/custom_map')
-        wa_custom_map_ua.get_url_data(self.WA_CUSTOM_MAP_URL, cache=True)   #  TODO: Should this be cached?? ===
+        wa_custom_map_ua.get_url_data(
+            self.WA_CUSTOM_MAP_URL,
+            cache=False if ALWAYS_DOWNLOAD_LISTING else True
+        )
 
         for period in wa_custom_map_ua.iter_periods():
             for subperiod_id, subdir in wa_custom_map_ua.iter_paths_for_period(period):

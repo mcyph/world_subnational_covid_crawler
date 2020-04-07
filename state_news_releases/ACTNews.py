@@ -20,6 +20,7 @@ class ACTNews(StateNewsBase):
     LISTING_URL = (
         # There's only 2 pages for now, so will hardcode
         # MUST BE UPDATED!!! ===========================================================================================
+        'https://www.covid19.act.gov.au/updates',  # 7 April the COVID-19 update is tagged "case updates" but isn't in the topics listing..
         'https://www.covid19.act.gov.au/topics?queries_topic_query=0002',
         'https://www.covid19.act.gov.au/topics?queries_topic_query=0002'
             '&result_1504801_result_page=2',

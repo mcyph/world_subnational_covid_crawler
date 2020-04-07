@@ -4,13 +4,14 @@ from re import compile, MULTILINE, DOTALL, IGNORECASE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
-    StateNewsBase, singledaystat
+    StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, \
     DT_PATIENT_STATUS, \
     DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION
 from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.URLArchiver import URLArchiver
 
 
 class NSWNews(StateNewsBase):
@@ -39,6 +40,35 @@ class NSWNews(StateNewsBase):
                                .split()[1:]
                 )
             )
+
+    def get_data(self):
+        r = []
+
+        for typ, url in (
+            ('lhd', self.NSW_LHD_STATS_URL),
+            #('lga', self.NSW_LGA_STATS_URL), # TODO: Support LGA!!! ==============================================
+        ):
+            ua = URLArchiver(f'{self.STATE_NAME}/{typ}')
+            ua.get_url_data(
+                url,
+                cache=False if ALWAYS_DOWNLOAD_LISTING else True
+            )
+
+            for period in ua.iter_periods():
+                for subperiod_id, subdir in ua.iter_paths_for_period(period):
+                    path = ua.get_path(subdir)
+
+                    with open(path, 'r',
+                              encoding='utf-8',
+                              errors='ignore') as f:
+                        html = f.read()
+
+                    cbr = self._get_total_cases_by_region(url, html)
+                    if cbr:
+                        r.extend(cbr)
+
+        r.extend(StateNewsBase.get_data(self))
+        return r
 
     #============================================================#
     #                      General Totals                        #
@@ -182,8 +212,11 @@ class NSWNews(StateNewsBase):
         """
         # TODO: TRANSITION TO https://data.nsw.gov.au/nsw-covid-19-data !! =============================================
         """
+        # Why on earth are there zero width spaces!?
+        html = html.replace(chr(8203), '')
+
         c_html = '<table class="moh-rteTable-6"' + \
-                 html.partition('<table class="moh-rteTable-6"')[-1]
+                 html.partition(' class="moh-rteTable-6"')[-1]
 
         r = []
         table = (
@@ -196,6 +229,9 @@ class NSWNews(StateNewsBase):
             self._pq_contains(c_html, 'table', 'Local health district',
                               ignore_case=True) or
             self._pq_contains(c_html, 'table', 'LHD',
+                              ignore_case=True) or
+            # omg..why are there zero-width spaces??
+            self._pq_contains(c_html, 'table', 'LH​D​',
                               ignore_case=True)
         )
 
