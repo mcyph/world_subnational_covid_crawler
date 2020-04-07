@@ -54,6 +54,7 @@ class ACTNews(StateNewsBase):
         return self._extract_number_using_regex(
             (
                 compile(r'total to ([0-9,]+)'),
+                compile(r'total is(?: now)? ([0-9,]+)'),
                 compile(r'confirmed cases [^0-9.]+([0-9,]+)'),
                 compile(r'total remains at (?:<strong>)?([0-9,]+)(?:</strong>)?')
             ),

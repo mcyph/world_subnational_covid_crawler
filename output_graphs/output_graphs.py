@@ -23,6 +23,9 @@ def read_csv(datatype,
     fnam = list(sorted(
         listdir(expanduser(
             '~/dev/covid_19_au_grab/state_news_releases/output'
+        )), key=lambda k: (
+            k.split('-')[0],
+            int(k.split('-')[1].split('.')[0]
         ))
     ))[-1]
 
