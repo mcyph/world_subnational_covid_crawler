@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import \
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, \
-    DT_ICU, DT_ICU_VENTILATORS, DT_HOSPITALIZED, DT_DEATHS, \
+    DT_PATIENT_STATUS, \
     DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION
 from covid_19_au_grab.word_to_number import word_to_number
 
@@ -323,8 +323,9 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            name='Hospitalized',
             source_url=href,
-            datatype=DT_HOSPITALIZED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if hospitalized:
@@ -337,8 +338,9 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            name='ICU',
             source_url=href,
-            datatype=DT_ICU,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if icu:
@@ -350,8 +352,9 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            name='ICU needing ventilators',
             source_url=href,
-            datatype=DT_ICU_VENTILATORS,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if ventilators:
@@ -370,8 +373,9 @@ class NSWNews(StateNewsBase):
                         IGNORECASE),
             ),
             html,
+            name='Deaths',
             source_url=href,
-            datatype=DT_DEATHS,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:

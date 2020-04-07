@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_BY_REGION, DT_NEW_CASES_BY_REGION, \
     DT_MALE, DT_FEMALE, \
     DT_SOURCE_OF_INFECTION, \
-    DT_DEATHS, DT_HOSPITALIZED, DT_ICU, DT_RECOVERED
+    DT_PATIENT_STATUS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.vic_powerbi import \
@@ -284,8 +284,9 @@ class VicNews(StateNewsBase):
         deaths = self._extract_number_using_regex(
             compile('([0-9,]+) (?:deaths|people have(?: already)? died)'),
             c_html,
+            name='Deaths',
             source_url=href,
-            datatype=DT_DEATHS,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:
@@ -294,8 +295,9 @@ class VicNews(StateNewsBase):
         in_hospital = self._extract_number_using_regex(
             compile('([0-9,]+) people are in hospital'),
             c_html,
+            name='Hospitalized',
             source_url=href,
-            datatype=DT_HOSPITALIZED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if in_hospital:
@@ -304,8 +306,9 @@ class VicNews(StateNewsBase):
         in_icu = self._extract_number_using_regex(
             compile('([0-9,]+) patients? in intensive care'),
             c_html,
+            name='ICU',
             source_url=href,
-            datatype=DT_ICU,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if in_icu:
@@ -314,8 +317,9 @@ class VicNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people have recovered'),
             c_html,
+            name='Recovered',
             source_url=href,
-            datatype=DT_RECOVERED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if recovered:

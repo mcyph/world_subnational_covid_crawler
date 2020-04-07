@@ -5,7 +5,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, bothlistingandstat, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES, DT_NEW_CASES, DT_CASES_TESTED, \
-    DT_DEATHS, DT_ICU, DT_SOURCE_OF_INFECTION, \
+    DT_PATIENT_STATUS, DT_SOURCE_OF_INFECTION, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
@@ -259,8 +259,8 @@ class SANews(StateNewsBase):
 
         if c_icu is not None:
             r.append(DataPoint(
-                name=None,
-                datatype=DT_ICU,
+                name='ICU',
+                datatype=DT_PATIENT_STATUS,
                 value=c_icu,
                 date_updated=self._get_date(href, html),
                 source_url=href,
@@ -272,8 +272,8 @@ class SANews(StateNewsBase):
         t_d = int(pq(tr[1]).text().strip())
         if t_d is not None:
             r.append(DataPoint(
-                name=None,
-                datatype=DT_DEATHS,
+                name='Deaths',
+                datatype=DT_PATIENT_STATUS,
                 value=t_d,
                 date_updated=self._get_date(href, html),
                 source_url=href,

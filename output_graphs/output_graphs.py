@@ -154,9 +154,6 @@ def output_graphs():
     output_graph('DT_AGE_MALE', state_filter='nsw')
     output_graph('DT_AGE_FEMALE', state_filter='nsw')
     output_graph('DT_AGE', state_filter='act')
-    output_graph('DT_HOSPITALIZED')
-    output_graph('DT_RECOVERED')
-    # output_graph('DT_ICU')
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
@@ -178,7 +175,10 @@ def output_graphs():
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
-    output_graph('DT_DEATHS')
+    output_graph('DT_PATIENT_STATUS', state_filter='sa')
+    output_graph('DT_PATIENT_STATUS', state_filter='act')
+    output_graph('DT_PATIENT_STATUS', state_filter='nsw')
+    output_graph('DT_PATIENT_STATUS', state_filter='wa')
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_SOURCE_OF_INFECTION, \
     DT_NEW_CASES_BY_REGION, DT_CASES_BY_REGION, DT_NEW_CASES, \
     DT_NEW_MALE, DT_NEW_FEMALE, \
-    DT_RECOVERED, DT_DEATHS
+    DT_PATIENT_STATUS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -408,8 +408,9 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            name='Recovered',
             source_url=href,
-            datatype=DT_RECOVERED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if recovered:
@@ -422,8 +423,9 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            name='Deaths',
             source_url=href,
-            datatype=DT_DEATHS,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:

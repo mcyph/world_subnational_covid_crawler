@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_NEW_MALE, DT_NEW_FEMALE, \
     DT_FEMALE, DT_MALE, \
     DT_SOURCE_OF_INFECTION, \
-    DT_HOSPITALIZED, DT_RECOVERED, \
+    DT_PATIENT_STATUS, \
     DT_AGE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
@@ -299,15 +299,17 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)? COVID-19 patients'),
             c_html,
+            name='Hospitalized',
             source_url=href,
-            datatype=DT_HOSPITALIZED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)? cases have recovered'),
             c_html,
+            name='Recovered',
             source_url=href,
-            datatype=DT_RECOVERED,
+            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
 
