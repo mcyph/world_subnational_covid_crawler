@@ -255,20 +255,26 @@ class NSWNews(StateNewsBase):
             tr = (
                 # Reduce the chance "Sydney" isn't confused
                 # with other values which contain it!
-                self._pq_contains(table, 'tr', f'>{lhd}<') or
-                self._pq_contains(table, 'tr', f'> {lhd} <') or
-                self._pq_contains(table, 'tr', f'> {lhd}<') or
-                self._pq_contains(table, 'tr', f'>{lhd} <')
+                self._pq_contains(
+                    table,
+                    'tr.moh-rteTableEvenRow-6, '
+                        'tr.moh-rteTableOddRow-6',
+                    lhd
+                )
             )
 
-            if lhd != 'Sydney':
-                # Only allow broad checks for LHDs which *aren't*
-                # Sydney - better this than potentially giving
-                # incorrect values!
-                tr = tr or self._pq_contains(table, 'tr', lhd)
+            tr = [
+                i for i in tr
+                if pq(i[0]).text()
+                           .lower()
+                           .strip() == lhd.lower()
+                                          .strip()
+            ]
 
             if not tr:
+                print("NOT TR:", lhd)
                 continue
+            print("FOUND TR:", lhd)
 
             tr = tr[0]
             c_icu = pq(tr[1]).text().replace(',', '').strip()
