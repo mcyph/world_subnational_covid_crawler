@@ -144,7 +144,7 @@ def output_graph(datatype,
     plt.xlabel('Date')
     plt.ylabel(y_label)
 
-    if max_y > 50:
+    if max_y > 50 and datatype != 'DT_NEW_CASES':
         plt.yscale('log')
         from matplotlib.ticker import ScalarFormatter
         for axis in [ax.yaxis]:
@@ -170,6 +170,8 @@ def output_graphs():
     output_graph('DT_AGE_FEMALE', state_filter='vic')
     output_graph('DT_AGE_MALE', state_filter='nsw')
     output_graph('DT_AGE_FEMALE', state_filter='nsw')
+    output_graph('DT_AGE_MALE', state_filter='sa')
+    output_graph('DT_AGE_FEMALE', state_filter='sa')
     output_graph('DT_AGE', state_filter='act')
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
                  name_filter=lambda p: p[0].lower() < 'm',
@@ -183,7 +185,7 @@ def output_graphs():
     output_graph('DT_CASES_BY_REGION', state_filter='wa',
                  name_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_REGION', state_filter='nsw')
+    output_graph('DT_CASES_BY_LHA', state_filter='nsw')  # LGA??
     output_graph('DT_CASES_BY_REGION', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
