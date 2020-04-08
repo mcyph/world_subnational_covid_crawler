@@ -18,7 +18,7 @@ class NTNews(StateNewsBase):
         ).text()
         print(date)
         return self._extract_date_using_format(
-            date.split(':')[-1].strip().strip('.').partition(' ')[-1]+' 2020',  # YEAR HACK!!!! ========================
+            date.split('updated')[-1].split(':')[-1].strip().strip('.').partition(' ')[-1]+' 2020',  # YEAR HACK!!!! ========================
             format='%d %B %Y'
         )
 

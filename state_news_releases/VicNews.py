@@ -79,7 +79,7 @@ class VicNews(StateNewsBase):
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
-            compile('an increase of ([0-9,]+)'),
+            compile('increase of ([0-9,]+)'),
             c_html,
             source_url=href,
             datatype=DT_NEW_CASES,
