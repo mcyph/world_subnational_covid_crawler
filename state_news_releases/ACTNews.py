@@ -120,7 +120,11 @@ class ACTNews(StateNewsBase):
         table = self._pq_contains(
             html, 'table', 'By age group',
             ignore_case=True
-        )[0]
+        )
+        if not table:
+            return  # WARNING!!! =======================================================================================
+
+        table = table[0]
         tbody = pq(table)('tbody')[0]
         tr = tbody[1]
         ages = [

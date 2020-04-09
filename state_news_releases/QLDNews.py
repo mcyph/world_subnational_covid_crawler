@@ -5,7 +5,10 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
-    DT_CASES_BY_REGION, DT_NEW_CASES_BY_REGION
+    DT_CASES_BY_REGION, DT_CASES_BY_REGION_ACTIVE, \
+    DT_CASES_BY_REGION_DEATHS, DT_CASES_BY_REGION_RECOVERED, \
+    DT_NEW_CASES_BY_REGION, \
+    DT_PATIENT_STATUS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -45,11 +48,50 @@ class QLDNews(StateNewsBase):
             pq(html)('div#content div h3').text().strip()
         )
 
+    def __get_totals_from_table(self, html):
+        # Get the totals from the new table, which has
+        # HHS*	Active cases	Recovered cases	Deaths	Total confirmed cases to date
+        table = pq(pq(html)('table.table.table-bordered.header-basic'))
+        if not table:
+            print("NOT TABLE!!!")
+            return None
+        table_text = pq(table).text().lower().replace('\n', ' ')
+
+        if (
+            not 'total confirmed' in table_text or
+            not 'recovered cases' in table_text or
+            not 'active cases' in table_text
+        ):
+            print("NOT TOTAL:", table.text())
+            return None
+
+        tr = pq(table[0])('tr:last')[0]
+        ths = pq(tr)('th,td')
+
+        r = {}
+        r['active'] = int(pq(ths[1]).text().strip())
+        r['recovered'] = int(pq(ths[2]).text().strip())
+        r['deaths'] = int(pq(ths[3]).text().strip())
+        r['total'] = int(pq(ths[4]).text().strip().strip('*').strip())
+        return r
+
     #============================================================#
     #                      General Totals                        #
     #============================================================#
 
     def _get_total_cases(self, href, html):
+        # Use new format from the table if possible
+        totals_dict = self.__get_totals_from_table(html)
+        if totals_dict:
+            return DataPoint(
+                datatype=DT_CASES,
+                name=None,
+                value=totals_dict['total'],
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match=None
+            )
+
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
@@ -164,7 +206,7 @@ class QLDNews(StateNewsBase):
         if not table:
             return None
 
-        if not 'Total confirmed cases to date' in pq(table[0]).text():
+        if not 'Total confirmed cases to date' in pq(table[0]).text().replace('\n', ' ').replace('  ', ' '):
             print("NOT TOTAL:", table.text())
             return None
 
@@ -173,15 +215,32 @@ class QLDNews(StateNewsBase):
             if 'total' in pq(tr).text().lower():
                 continue
 
-            for x, td in enumerate(pq(tr)('td')):
+            tds = pq(tr)('td')
+            for x, td in enumerate(tds):
                 if x == 0:
                     # HACK: one day had "271" prefixed to "North West"
                     hhs_region = pq(td).text().strip().lstrip('271').strip()
-                elif x == 1:
+                elif x >= 1:
+                    if len(tds) > 2:
+                        # New format:
+                        # HHS*
+                        # Active cases
+                        # Recovered cases
+                        # Deaths
+                        # Total confirmed cases to date
+                        datatype = [
+                            DT_CASES_BY_REGION_ACTIVE,
+                            DT_CASES_BY_REGION_RECOVERED,
+                            DT_CASES_BY_REGION_DEATHS,
+                            DT_CASES_BY_REGION
+                        ][x-1]
+                    else:
+                        datatype = DT_CASES_BY_REGION
+
                     try:
                         value = int(pq(td).text().strip())
                         regions.append(DataPoint(
-                            datatype=DT_CASES_BY_REGION,
+                            datatype=datatype,
                             name=hhs_region,
                             value=value,
                             date_updated=self._get_date(href, html),
@@ -191,8 +250,6 @@ class QLDNews(StateNewsBase):
                     except ValueError:
                         # WARNING!!!
                         pass
-                else:
-                    FIXME
 
         return regions
 
@@ -251,7 +308,37 @@ class QLDNews(StateNewsBase):
     #============================================================#
 
     def _get_total_dhr(self, href, html):
-        pass
+        # As of 9th April, the format has added recovered/deaths etc info
+        totals_dict = self.__get_totals_from_table(html)
+        if not totals_dict:
+            return
+
+        regions = []
+        regions.append(DataPoint(
+            datatype=DT_PATIENT_STATUS,
+            name='Recovered',
+            value=totals_dict['recovered'],
+            date_updated=self._get_date(href, html),
+            source_url=href,
+            text_match=None
+        ))
+        regions.append(DataPoint(
+            datatype=DT_PATIENT_STATUS,
+            name='Deaths',
+            value=totals_dict['deaths'],
+            date_updated=self._get_date(href, html),
+            source_url=href,
+            text_match=None
+        ))
+        regions.append(DataPoint(
+            datatype=DT_PATIENT_STATUS,
+            name='Active',
+            value=totals_dict['active'],
+            date_updated=self._get_date(href, html),
+            source_url=href,
+            text_match=None
+        ))
+        return regions
 
 
 if __name__ == '__main__':

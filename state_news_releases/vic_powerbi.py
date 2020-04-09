@@ -1,4 +1,5 @@
 from os import listdir
+from datetime import datetime
 from os.path import expanduser, exists
 
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
@@ -19,6 +20,8 @@ def get_powerbi_data():
 
     for dir_ in sorted(listdir(BASE_PATH)):
         subdir = f'{BASE_PATH}/{dir_}'
+        # Use a fallback only if can't get from the source
+        updated_date = dir_.split('-')[0]
 
         # Only use most revision if there isn't
         # a newer revision ID for a given day!
@@ -28,9 +31,9 @@ def get_powerbi_data():
             print(f"VicPowerBI ignoring {subdir}")
             continue
 
-        for fnam in listdir(subdir):
+        for fnam in sorted(listdir(subdir), key=lambda x: 0 if x == 'tested_well.json' else 1):
             path = f'{subdir}/{fnam}'
-            #print(path)
+            print(path)
             with open(path, 'r', encoding='utf-8') as f:
                 from json import loads
                 data = loads(f.read())
@@ -40,7 +43,16 @@ def get_powerbi_data():
                 # here only interested in the response
                 data = data[1]
 
-            if fnam == 'regions.json':
+            if fnam == 'tested_well.json':
+                # Try to get updated date from source, if possible
+                # "M0": "08/04/2020 - 12:03:00 PM"
+                updated_str = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
+                updated_date = datetime.strptime(
+                    updated_str.split('-')[0].strip(), '%d/%m/%Y'
+                ).strftime('%Y_%m_%d')
+                print("Vic updated date supplied:", updated_date)
+
+            elif fnam == 'regions.json':
                 #print(data['results'][0]['result']['data'])
                 for region in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
                     #print(region)
@@ -54,7 +66,7 @@ def get_powerbi_data():
                         name=region['C'][0].split('(')[0].strip(),
                         datatype=DT_CASES_BY_REGION,
                         value=value,
-                        date_updated=dir_.split('-')[0],
+                        date_updated=updated_date,
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
@@ -99,7 +111,7 @@ def get_powerbi_data():
                         name=age['G0'].replace('–', '-'),
                         datatype=DT_AGE_MALE,
                         value=male,
-                        date_updated=dir_.split('-')[0],
+                        date_updated=updated_date,
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
@@ -107,7 +119,7 @@ def get_powerbi_data():
                         name=age['G0'].replace('–', '-'),
                         datatype=DT_AGE_FEMALE,
                         value=female,
-                        date_updated=dir_.split('-')[0],
+                        date_updated=updated_date,
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
@@ -120,7 +132,7 @@ def get_powerbi_data():
                         name=age['G0'].replace('–', '-'),
                         datatype=DT_AGE,
                         value=general_age,
-                        date_updated=dir_.split('-')[0],
+                        date_updated=updated_date,
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
@@ -133,7 +145,7 @@ def get_powerbi_data():
                         name=source['C'][0],
                         datatype=DT_SOURCE_OF_INFECTION,
                         value=source['C'][1],
-                        date_updated=dir_.split('-')[0],
+                        date_updated=updated_date,
                         source_url=SOURCE_URL,
                         text_match=None
                     ))

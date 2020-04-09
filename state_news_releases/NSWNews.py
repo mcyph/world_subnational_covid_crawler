@@ -250,7 +250,7 @@ class NSWNews(StateNewsBase):
         for tr in trs:
             lhd = pq(tr[0]).text().strip()
 
-            if not tr or not lhd:
+            if not tr or not lhd or 'total' in lhd.lower().split():
                 print("NOT TR:", pq(tr).html())
                 continue
             print("FOUND TR:", lhd)
@@ -338,7 +338,7 @@ class NSWNews(StateNewsBase):
 
         hospitalized = self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)[^0-9<.]+COVID-19[^0-9<.]+'
+                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*COVID-19[^0-9<.]+'
                 r'cases[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
                 IGNORECASE
             ),
@@ -353,7 +353,8 @@ class NSWNews(StateNewsBase):
 
         icu = self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)[^0-9<.]+(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
+                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
                 r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
                 IGNORECASE
             ),
@@ -368,7 +369,8 @@ class NSWNews(StateNewsBase):
 
         ventilators = self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)[^0-9<.]+require[^0-9<.]+ventilators',
+                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                r'require[^0-9<.]+ventilators',
                 IGNORECASE
             ),
             c_html,
@@ -382,7 +384,14 @@ class NSWNews(StateNewsBase):
 
         deaths = self._extract_number_using_regex(
             (
-                compile(r'have[^0-9<]+been[^0-9<]+([0-9,]+)[^0-9<]+death?',
+                # Prefer from the table if possible, as that's
+                # more guaranteed to not give false positives
+                compile(r'Deaths[^0-9<]+in[^0-9<]+NSW[^0-9<]+from[^0-9<]+'
+                        r'confirmed[^0-9<]+cases[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
+                        MULTILINE | DOTALL | IGNORECASE),
+                compile(r'([0-9,]+)[^0-9<]+death[^0-9<]+in[^0-9<]+NSW',
+                        IGNORECASE),
+                compile(r'have been ([0-9,]+) deaths?',
                         IGNORECASE),
                 compile(r'total[^0-9<]+deaths[^0-9<]+'
                         r'COVID-19[^0-9<]+cases[^0-9<]+(?:<strong>)?([0-9,]+)',
