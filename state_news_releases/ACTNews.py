@@ -13,6 +13,7 @@ from covid_19_au_grab.state_news_releases.constants import \
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.state_news_releases.act_powerbi import get_powerbi_data
 
 
 class ACTNews(StateNewsBase):
@@ -42,6 +43,11 @@ class ACTNews(StateNewsBase):
             )
         else:
             return self._extract_date_using_format(date)
+
+    def get_data(self):
+        r = get_powerbi_data()
+        r.extend(StateNewsBase.get_data(self))
+        return r
 
     #============================================================#
     #                      General Totals                        #

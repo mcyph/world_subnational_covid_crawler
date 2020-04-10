@@ -4,19 +4,20 @@ from covid_19_au_grab.powerbi_grabber.PowerBIBase import \
 
 
 class ACTPowerBI(PowerBIBase):
+    PATH_PREFIX = os.path.expanduser(
+        f'~/dev/covid_19_data/act/powerbi'
+    )
+    POWERBI_URL = (
+        'https://app.powerbi.com/view?r=eyJrIjoiM2M4MGIxYTU'
+        'tZjA1Yy00YTA4LTkwNDMtMDM4ZTdkMGZhN2ZiIiwidCI6ImI0N'
+        'mMxOTA4LTAzMzQtNDIzNi1iOTc4LTU4NWVlODhlNDE5OSJ9'
+    )
+
     def __init__(self):
-        path_prefix = os.path.expanduser(
-            f'~/dev/covid_19_data/act/powerbi'
-        )
-        powerbi_url = (
-            'https://app.powerbi.com/view?r=eyJrIjoiM2M4MGIxYTU'
-            'tZjA1Yy00YTA4LTkwNDMtMDM4ZTdkMGZhN2ZiIiwidCI6ImI0N'
-            'mMxOTA4LTAzMzQtNDIzNi1iOTc4LTU4NWVlODhlNDE5OSJ9'
-        )
         PowerBIBase.__init__(self,
-                             path_prefix,
+                             self.PATH_PREFIX,
                              globals(),
-                             powerbi_url)
+                             self.POWERBI_URL)
 
 
 true = True
@@ -163,71 +164,6 @@ gender_balance_req = {
     "cancelQueries": [],
     "modelId": 1974853,
     "queries": [
-      {
-        "ApplicationContext": {
-          "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",
-          "Sources": [
-            {
-              "ReportId": "6b564b1a-20ea-4707-826f-04a750b77678"
-            }
-          ]
-        },
-        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date Last Refreshed\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date Last Refreshed\"}},\"Function\":3},\"Name\":\"Min(Date Last Refreshed.Date Last Refreshed)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
-        "Query": {
-          "Commands": [
-            {
-              "SemanticQueryDataShapeCommand": {
-                "Binding": {
-                  "DataReduction": {
-                    "DataVolume": 3,
-                    "Primary": {
-                      "Top": {}
-                    }
-                  },
-                  "Primary": {
-                    "Groupings": [
-                      {
-                        "Projections": [
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  "Version": 1
-                },
-                "Query": {
-                  "From": [
-                    {
-                      "Entity": "Date Last Refreshed",
-                      "Name": "d"
-                    }
-                  ],
-                  "Select": [
-                    {
-                      "Aggregation": {
-                        "Expression": {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "d"
-                              }
-                            },
-                            "Property": "Date Last Refreshed"
-                          }
-                        },
-                        "Function": 3
-                      },
-                      "Name": "Min(Date Last Refreshed.Date Last Refreshed)"
-                    }
-                  ],
-                  "Version": 2
-                }
-              }
-            }
-          ]
-        },
-        "QueryId": ""
-      },
       {
         "ApplicationContext": {
           "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",

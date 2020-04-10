@@ -54,6 +54,7 @@ def get_powerbi_data():
 
             elif fnam == 'regions.json':
                 #print(data['results'][0]['result']['data'])
+
                 for region in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
                     #print(region)
 

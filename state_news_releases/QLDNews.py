@@ -53,7 +53,7 @@ class QLDNews(StateNewsBase):
         # HHS*	Active cases	Recovered cases	Deaths	Total confirmed cases to date
         table = pq(pq(html)('table.table.table-bordered.header-basic'))
         if not table:
-            print("NOT TABLE!!!")
+            #print("NOT TABLE!!!")
             return None
         table_text = pq(table).text().lower().replace('\n', ' ')
 
@@ -62,7 +62,7 @@ class QLDNews(StateNewsBase):
             not 'recovered cases' in table_text or
             not 'active cases' in table_text
         ):
-            print("NOT TOTAL:", table.text())
+            #print("NOT TOTAL:", table.text())
             return None
 
         tr = pq(table[0])('tr:last')[0]
@@ -146,7 +146,7 @@ class QLDNews(StateNewsBase):
         )
         match = th_regex.search(html)
         if not match:
-            print("NOT INITIAL MATCH!")
+            #print("NOT INITIAL MATCH!")
             return None  # WARNING!!!
 
         # Get the date - it's in format "30 March 2020"
@@ -173,7 +173,7 @@ class QLDNews(StateNewsBase):
             source_url=href
         )
         if not value:
-            print("NOT SECOND MATCH!")
+            #print("NOT SECOND MATCH!")
             return None  # WARNING!
         return value
 
@@ -207,7 +207,7 @@ class QLDNews(StateNewsBase):
             return None
 
         if not 'Total confirmed cases to date' in pq(table[0]).text().replace('\n', ' ').replace('  ', ' '):
-            print("NOT TOTAL:", table.text())
+            #print("NOT TOTAL:", table.text())
             return None
 
         regions = []

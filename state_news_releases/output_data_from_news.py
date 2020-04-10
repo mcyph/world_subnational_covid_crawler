@@ -16,8 +16,9 @@ from covid_19_au_grab.state_news_releases.WANews import WANews
 from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
-UPDATE_VIC_POWERBI = False
-UPDATE_GRAPHS = False
+UPDATE_VIC_POWERBI = True
+UPDATE_ACT_POWERBI = True
+UPDATE_GRAPHS = True
 
 
 def remove_control_characters(s):
@@ -82,14 +83,23 @@ class Logger:
 
 
 if __name__ == '__main__':
-    from covid_19_au_grab.vic_powerbi_grabber.vic_powerbi_grabber import \
-        run_vic_powerbi_grabber
-
     if UPDATE_VIC_POWERBI:
+        from covid_19_au_grab.powerbi_grabber.VicPowerBI import \
+            VicPowerBI
         try:
-            run_vic_powerbi_grabber()
+            VicPowerBI().run_powerbi_grabber()
         except:
             print("Error occurred using VicPowerBI!")
+            import traceback
+            traceback.print_exc()
+
+    if UPDATE_ACT_POWERBI:
+        from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
+            ACTPowerBI
+        try:
+            ACTPowerBI().run_powerbi_grabber()
+        except:
+            print("Error occurred using ACTPowerBI!")
             import traceback
             traceback.print_exc()
 

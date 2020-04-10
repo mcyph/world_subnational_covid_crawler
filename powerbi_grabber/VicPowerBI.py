@@ -4,19 +4,19 @@ from covid_19_au_grab.powerbi_grabber.PowerBIBase import \
 
 
 class VicPowerBI(PowerBIBase):
+    PATH_PREFIX = os.path.expanduser(
+        f'~/dev/covid_19_data/vic/powerbi'
+    )
+    POWERBI_URL = (
+        "https://app.powerbi.com/view?r=eyJrIjoiODBmMmE3NWQt"
+        "ZWNlNC00OWRkLTk1NjYtMjM2YTY1MjI2NzdjIiwidCI6ImMwZTA"
+        "2MDFmLTBmYWMtNDQ5Yy05Yzg4LWExMDRjNGViOWYyOCJ9"
+    )
     def __init__(self):
-        path_prefix = os.path.expanduser(
-            f'~/dev/covid_19_data/vic/powerbi'
-        )
-        powerbi_url = (
-            "https://app.powerbi.com/view?r=eyJrIjoiODBmMmE3NWQt"
-            "ZWNlNC00OWRkLTk1NjYtMjM2YTY1MjI2NzdjIiwidCI6ImMwZTA"
-            "2MDFmLTBmYWMtNDQ5Yy05Yzg4LWExMDRjNGViOWYyOCJ9"
-        )
         PowerBIBase.__init__(self,
-                             path_prefix,
+                             self.PATH_PREFIX,
                              globals(),
-                             powerbi_url)
+                             self.POWERBI_URL)
 
 
 true = True
