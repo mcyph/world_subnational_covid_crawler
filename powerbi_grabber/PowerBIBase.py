@@ -27,7 +27,6 @@ BROWSER_MOB_PROXY_LOC = expanduser(
 GECKO_BROWSER_DIR = expanduser(
     '~/geckodriver-v0.26.0-linux64/'
 )
-OUTPUT_DIR = None
 
 
 class PowerBIBase:
@@ -37,6 +36,8 @@ class PowerBIBase:
         self.powerbi_url = powerbi_url
 
     def run_powerbi_grabber(self):
+        self.output_dir = self._get_output_json_dir()
+
         path.append(GECKO_BROWSER_DIR)
         environ["PATH"] += pathsep + GECKO_BROWSER_DIR
         system('killall browsermob-prox')
@@ -52,10 +53,6 @@ class PowerBIBase:
             print("Response:", json.dumps(content, indent=2, sort_keys=True))
 
     def match_grabbed_with_types(self):
-        global OUTPUT_DIR
-        if not OUTPUT_DIR:
-            OUTPUT_DIR = self._get_output_json_dir()
-
         r = []
 
         for post_data, content in self.__grab():
@@ -87,12 +84,12 @@ class PowerBIBase:
             if smallest_dist:
                 prefix_suffix = 1
                 while True:
-                    path = f'{OUTPUT_DIR}/{prefix}-{prefix_suffix}.json'
+                    path = f'{self.output_dir}/{prefix}-{prefix_suffix}.json'
                     if not os.path.exists(path):
                         break
                     prefix_suffix += 1
             else:
-                path = f'{OUTPUT_DIR}/{prefix}.json'
+                path = f'{self.output_dir}/{prefix}.json'
 
             with open(path, 'w',
                       encoding='utf-8',

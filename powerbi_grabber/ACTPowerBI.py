@@ -173,6 +173,71 @@ gender_balance_req = {
             }
           ]
         },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date Last Refreshed\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date Last Refreshed\"}},\"Function\":3},\"Name\":\"Min(Date Last Refreshed.Date Last Refreshed)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Date Last Refreshed",
+                      "Name": "d"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Aggregation": {
+                        "Expression": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "Date Last Refreshed"
+                          }
+                        },
+                        "Function": 3
+                      },
+                      "Name": "Min(Date Last Refreshed.Date Last Refreshed)"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      },
+      {
+        "ApplicationContext": {
+          "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",
+          "Sources": [
+            {
+              "ReportId": "6b564b1a-20ea-4707-826f-04a750b77678"
+            }
+          ]
+        },
         "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\"},{\"Name\":\"c1\",\"Entity\":\"COVID Case Data 02042020\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases\"},\"Name\":\"Table.Confirmed Cases\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Sex\"},\"Name\":\"COVID Case Data (02042020).Gender\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
         "Query": {
           "Commands": [

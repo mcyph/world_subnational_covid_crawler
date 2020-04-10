@@ -116,11 +116,21 @@ class NSWNews(StateNewsBase):
 
     def _get_total_cases_tested(self, href, html):
         return self._extract_number_using_regex(
-            compile(
-                # Total (including tested and excluded)
-                r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
-                r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
-                MULTILINE | DOTALL
+            (
+                compile(
+                    # Total (including tested and excluded)
+                    r'<td[^>]*?>(?:<[^</>]+>)?'
+                        r'Total[^0-9<]+persons[^0-9<]+tested[^0-9<]*'
+                        r'(?:</[^<>]+>)?</td>'
+                    r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
+                    MULTILINE | DOTALL | IGNORECASE
+                ),
+                compile(
+                    # Total (including tested and excluded)
+                    r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
+                    r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
+                    MULTILINE | DOTALL
+                )
             ),
             html,
             source_url=href,

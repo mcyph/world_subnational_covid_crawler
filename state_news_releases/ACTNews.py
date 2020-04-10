@@ -76,6 +76,10 @@ class ACTNews(StateNewsBase):
 
         neg_cases = self._extract_number_using_regex(
             (
+                compile(
+                    'number of negative tests in the ACT '
+                    'is now (?:<strong>)?more than ([0-9,]+)'
+                ),
                 compile('There have been ([0-9,]+) negative'),
                 compile('<p>Number of negative tests</p></td><td><p>([0-9,]+)</p>'),
                 compile(r'tested negative is now ([0-9,]+)')
@@ -309,7 +313,7 @@ class ACTNews(StateNewsBase):
 
         c_html = word_to_number(html)
         patients = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)? COVID-19 patients'),
+            compile(r'([0-9,]+)\)?(?:</strong>)? COVID-19 patients'),
             c_html,
             name='Hospitalized',
             source_url=href,
@@ -317,9 +321,17 @@ class ACTNews(StateNewsBase):
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)? cases have recovered'),
+            compile(r'([0-9,]+)\)?(?:</strong>)? cases have recovered'),
             c_html,
             name='Recovered',
+            source_url=href,
+            datatype=DT_PATIENT_STATUS,
+            date_updated=self._get_date(href, html)
+        )
+        deaths = self._extract_number_using_regex(
+            compile(r'([0-9,]+)\)?(?:</strong>)? deaths\.'),
+            c_html,
+            name='Deaths',
             source_url=href,
             datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
@@ -330,6 +342,8 @@ class ACTNews(StateNewsBase):
             r.append(patients)
         if recovered:
             r.append(recovered)
+        if deaths:
+            r.append(deaths)
         return r or None
 
 

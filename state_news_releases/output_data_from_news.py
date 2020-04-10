@@ -16,8 +16,8 @@ from covid_19_au_grab.state_news_releases.WANews import WANews
 from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
-UPDATE_VIC_POWERBI = True
-UPDATE_ACT_POWERBI = True
+UPDATE_VIC_POWERBI = False
+UPDATE_ACT_POWERBI = False
 UPDATE_GRAPHS = True
 
 

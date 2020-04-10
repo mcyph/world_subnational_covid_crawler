@@ -51,6 +51,11 @@ class _ACTPowerBI:
                 return r[1]
             return r
 
+    def _to_int(self, i):
+        if not isinstance(i, str):
+            return i
+        return int(i.rstrip('L'))
+
     def _get_age_groups_data(self, updated_date, rev_id):
         r = []
         data = self.__get_json_data(updated_date, rev_id, 'age_groups')
@@ -77,6 +82,9 @@ class _ACTPowerBI:
                 previous_value = female
             else:
                 female = 0
+
+            male = self._to_int(male)
+            female = self._to_int(female)
 
             r.append(DataPoint(
                 name=age['G0'].replace('–', '-'),
@@ -112,7 +120,8 @@ class _ACTPowerBI:
     def _get_gender_balance_data(self, updated_date, rev_id):
         r = []
         data = self.__get_json_data(updated_date, rev_id, 'gender_balance')
-        m_f = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
+        # WARNING: This sometimes has another query before it!!! =======================================================
+        m_f = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         assert m_f[0]['C'][0] == 'Males'
         assert m_f[1]['C'][0] == 'Females'
@@ -127,7 +136,7 @@ class _ACTPowerBI:
         r.append(DataPoint(
             name=None,
             datatype=DT_MALE,
-            value=male,
+            value=self._to_int(male),
             date_updated=updated_date,
             source_url=self.source_url,
             text_match=None
@@ -135,7 +144,7 @@ class _ACTPowerBI:
         r.append(DataPoint(
             name=None,
             datatype=DT_FEMALE,
-            value=female,
+            value=self._to_int(female),
             date_updated=updated_date,
             source_url=self.source_url,
             text_match=None
@@ -162,7 +171,7 @@ class _ACTPowerBI:
         r.append(DataPoint(
             name='Recovered',
             datatype=DT_PATIENT_STATUS,
-            value=recovered,
+            value=self._to_int(recovered),
             date_updated=updated_date,
             source_url=self.source_url,
             text_match=None
@@ -183,7 +192,7 @@ class _ACTPowerBI:
             r.append(DataPoint(
                 name=region['C'][0].split('(')[0].strip(),
                 datatype=DT_CASES_BY_REGION,
-                value=value,
+                value=self._to_int(value),
                 date_updated=updated_date,
                 source_url=self.source_url,
                 text_match=None

@@ -229,6 +229,7 @@ class StateNewsBase(ABC):
             if any([
                 (i in href_elm.text().upper())
                 for i in ('COVID-19', 'COVID–19',
+                          'COVID 19',
                           'CURRENT STATUS',
                           'CORONAVIRUS', 'CORONA')
             ]):
