@@ -279,6 +279,23 @@ class SANews(StateNewsBase):
                 source_url=href,
                 text_match=None
             ))
+
+        tr = self._pq_contains(html, 'tr', 'Cases cleared of COVID-19',
+                               ignore_case=True)
+        if tr:
+            tr = tr[0]
+            t_d = int(pq(tr[1]).text().strip())
+
+            if t_d is not None:
+                r.append(DataPoint(
+                    name='Recovered',
+                    datatype=DT_PATIENT_STATUS,
+                    value=t_d,
+                    date_updated=self._get_date(href, html),
+                    source_url=href,
+                    text_match=None
+                ))
+
         return r
 
 

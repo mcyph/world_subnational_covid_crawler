@@ -282,7 +282,17 @@ class VicNews(StateNewsBase):
         c_html = word_to_number(html)
 
         deaths = self._extract_number_using_regex(
-            compile('([0-9,]+) (?:deaths|people have(?: already)? died)'),
+            (
+                compile(
+                    'died in Victoria from '
+                    '(?:coronavirus|COVID-19) '
+                    '(?:is|to) ([0-9,]+)',
+                    IGNORECASE
+                ),
+                compile(
+                    '([0-9,]+) (?:deaths|people have(?: already)? died)'
+                ),
+            ),
             c_html,
             name='Deaths',
             source_url=href,
