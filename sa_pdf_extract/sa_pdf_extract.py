@@ -48,11 +48,16 @@ metro_match = {
 
 
 class SAPDFExtract:
-    def __init__(self, pdf_path, relative_to, lga_dict):
+    def __init__(self,
+                 pdf_path,
+                 relative_to,
+                 lga_dict,
+                 small_img_path):
+
         self.relative_to = relative_to
         self.lga_dict = lga_dict
 
-        small_image = cv2.imread('metro_small_img.png')
+        small_image = cv2.imread(small_img_path)
 
         large_image_pil = pdf2image.pdf2image.convert_from_path(
             pdf_path, dpi=80
@@ -80,7 +85,7 @@ class SAPDFExtract:
         x1, y1, x2, y2 = self.get_bounding_coords()
         return x1-self.relative_to[0], y1-self.relative_to[1]
 
-    def get_counts_dict(self):
+    def get_counts_dict(self, as_average=False):
         rel_diff = self.get_x_y_difference()
 
         out = {}
@@ -90,7 +95,10 @@ class SAPDFExtract:
             )
             for (c_r, c_g, c_b), (from_count, to_count) in color_map.items():
                 if abs(r-c_r) + abs(g-c_g) + abs(b-c_b) < 15:
-                    out[lga] = (from_count, to_count)
+                    if as_average:
+                        out[lga] = (from_count + to_count) // 2
+                    else:
+                        out[lga] = (from_count, to_count)
                     break
         return out
 
@@ -102,11 +110,49 @@ class SAPDFExtract:
 
 
 if __name__ == '__main__':
-    spe = SAPDFExtract(
-        '20200410+-+Positive+-+A3_Map+1.pdf',
-        metro_relative_to,
-        metro_match
-    )
-    print(spe.get_counts_dict())
-    x1, y1, x2, y2 = spe.get_bounding_coords()
-    spe.display(x1, y1, x2, y2)
+    import json
+    from os import listdir
+    from os.path import expanduser
+    from glob import glob
+
+    PDFS_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/pdfs')
+    OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/output')
+
+    output_dict = {}  # {date: [(LGA, amount), ...], ...}
+
+    for dir_ in listdir(PDFS_DIR):
+        for pdf_path in glob(f'{PDFS_DIR}/{dir_}/*.pdf'):
+            if pdf_path.endswith('1.pdf'):
+                # Metro
+                spe = SAPDFExtract(
+                    pdf_path,
+                    metro_relative_to,
+                    metro_match,
+                    'metro_small_img.png'
+                )
+                counts_dict = spe.get_counts_dict(
+                    as_average=True
+                )
+                if 'Active' in pdf_path:
+                    datatype = 'DT_CASES_BY_REGION_ACTIVE'
+                elif 'Positive' in pdf_path:
+                    datatype = 'DT_CASES_BY_REGION'
+                else:
+                    raise Exception(pdf_path)
+
+                for lga, count in counts_dict.items():
+                    output_dict.setdefault(dir_, []).append((lga, datatype, count))
+
+                #x1, y1, x2, y2 = spe.get_bounding_coords()
+                #spe.display(x1, y1, x2, y2)
+
+            elif pdf_path.endswith('2.pdf'):
+                # Regional
+                pass  # TODO!
+
+            else:
+                raise Exception(pdf_path)
+
+    for date, count_list in output_dict.items():
+        with open(f'{OUTPUT_DIR}/{date}.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(count_list, indent=4))

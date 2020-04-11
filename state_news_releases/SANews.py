@@ -1,8 +1,12 @@
+import json
+from os import listdir
+from os.path import expanduser
 from re import compile
 from pyquery import PyQuery as pq
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, bothlistingandstat, singledaystat
+from covid_19_au_grab.state_news_releases import constants
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES, DT_NEW_CASES, DT_CASES_TESTED, \
     DT_PATIENT_STATUS, DT_SOURCE_OF_INFECTION, \
@@ -39,6 +43,32 @@ class SANews(StateNewsBase):
         except:
             # e.g. Sunday 22 March 2020
             return self._extract_date_using_format(date.partition(' ')[-1])
+
+    def get_data(self):
+        OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/output')
+
+        r = []
+        for fnam in listdir(OUTPUT_DIR):
+            date = fnam.split('.')[0]
+
+            with open(f'{OUTPUT_DIR}/{fnam}', 'r', encoding='utf-8') as f:
+                data = json.loads(f.read())
+
+            for region, datatype, value in data:
+                r.append(DataPoint(
+                    name=region,
+                    datatype=getattr(constants, datatype),
+                    value=value,
+                    date_updated=date,
+                    source_url='https://www.sahealth.sa.gov.au/wps/wcm/connect/'
+                               'public+content/sa+health+internet/health+topics/'
+                               'health+topics+a+-+z/covid+2019/latest+updates/'
+                               'confirmed+and+suspected+cases+of+covid-19+in+south+australia',
+                    text_match=None,
+                ))
+
+        r.extend(StateNewsBase.get_data(self))
+        return r
 
     #============================================================#
     #                      General Totals                        #
