@@ -21,6 +21,29 @@ color_map = {
     (55, 160, 207): (1, 1)
 }
 
+wholesa_relative_to = (347, 561)
+wholesa_match = {
+    (443, 601): 'The Dc of Streaky Bay',
+    (628, 648): 'The Corporation of the City of Whyalla',
+    (645, 616): 'Port Augusta City Council',
+    (580, 508): 'Pastoral Unincorporated Area',
+    (628, 860): 'Kangaroo Island Council',
+    (646, 721): 'Copper Coast Council',
+    (646, 766): 'Yorke Peninsula Council',
+    (661, 665): 'Port Pirie Regional Council',
+    (691, 733): 'Wakefield Regional Council',
+    (770, 729): 'Mid Murray Council',
+    (857, 734): 'Renmark Paringa Council',
+    (831, 788): 'The Dc of Loxton Waikerie',
+    (704, 845): 'City of Victor Harbor',
+    (747, 813): 'The Rural City of Murray Bridge',
+    (844, 891): 'Tatiara Dc',
+    (795, 918): 'Kingston Dc',
+    (760, 790): 'Berri Barmera',
+    (850, 1001): 'Wattle Range Council',
+    (592, 450): 'Municipal Council of Roxby Downs',
+}
+
 metro_relative_to = (171, 339)
 metro_match = {
     (241, 196): 'City of Playford',
@@ -43,7 +66,8 @@ metro_match = {
     (209, 645): 'City of Marion',
     (313, 627): 'City of Mitcham',
     (285, 726): 'City of Onkaparinga',
-    (480, 749): 'Mount Barker District Council'
+    (480, 749): 'Mount Barker District Council',
+    (344, 962): 'Alexandrina Council',
 }
 
 
@@ -93,6 +117,15 @@ class SAPDFExtract:
             r, g, b = self.large_image_pil.getpixel(
                 (x-rel_diff[0], y-rel_diff[1])
             )
+
+            # Highlight it, for debug purposes
+            cv2.rectangle(
+                self.large_image,
+                (x-rel_diff[0], y-rel_diff[1]),
+                (x-rel_diff[0]+5, y-rel_diff[1]+5),
+                (0, 0, 255), 2
+            )
+
             for (c_r, c_g, c_b), (from_count, to_count) in color_map.items():
                 if abs(r-c_r) + abs(g-c_g) + abs(b-c_b) < 15:
                     if as_average:
@@ -122,6 +155,13 @@ if __name__ == '__main__':
 
     for dir_ in listdir(PDFS_DIR):
         for pdf_path in glob(f'{PDFS_DIR}/{dir_}/*.pdf'):
+            if 'Active' in pdf_path:
+                datatype = 'DT_CASES_BY_REGION_ACTIVE'
+            elif 'Positive' in pdf_path:
+                datatype = 'DT_CASES_BY_REGION'
+            else:
+                raise Exception(pdf_path)
+
             if pdf_path.endswith('1.pdf'):
                 # Metro
                 spe = SAPDFExtract(
@@ -133,22 +173,31 @@ if __name__ == '__main__':
                 counts_dict = spe.get_counts_dict(
                     as_average=True
                 )
-                if 'Active' in pdf_path:
-                    datatype = 'DT_CASES_BY_REGION_ACTIVE'
-                elif 'Positive' in pdf_path:
-                    datatype = 'DT_CASES_BY_REGION'
-                else:
-                    raise Exception(pdf_path)
 
                 for lga, count in counts_dict.items():
                     output_dict.setdefault(dir_, []).append((lga, datatype, count))
 
-                #x1, y1, x2, y2 = spe.get_bounding_coords()
+                x1, y1, x2, y2 = spe.get_bounding_coords()
                 #spe.display(x1, y1, x2, y2)
 
             elif pdf_path.endswith('2.pdf'):
                 # Regional
-                pass  # TODO!
+                spe = SAPDFExtract(
+                    pdf_path,
+                    wholesa_relative_to,
+                    wholesa_match,
+                    'wholesa_small_img.png'
+                )
+                print("DIFFERENCE:", spe.get_x_y_difference())
+                counts_dict = spe.get_counts_dict(
+                    as_average=True
+                )
+
+                for lga, count in counts_dict.items():
+                    output_dict.setdefault(dir_, []).append((lga, datatype, count))
+
+                x1, y1, x2, y2 = spe.get_bounding_coords()
+                #spe.display(x1, y1, x2, y2)
 
             else:
                 raise Exception(pdf_path)
