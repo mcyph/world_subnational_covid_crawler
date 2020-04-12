@@ -1,4 +1,4 @@
-{% from base_template import start_head, start_body, end_page %}
+{% from "base_template.html" import start_head, start_body, end_page %}
 
 {{ start_head() }}
 
@@ -15,8 +15,8 @@
         </tr>
         {% for datapoint in datapoints %}
             <tr>
-                {% for key in datapoints %}
-                    {{ datapoints[key]|e }}
+                {% for key in datapoint %}
+                    <td>{{ datapoint[key]|e }}</td>
                 {% endfor %}
             </tr>
         {% endfor %}

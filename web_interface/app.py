@@ -8,7 +8,7 @@ from glob import glob
 from cherrypy import tools
 from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
-env = Environment(loader=FileSystemLoader('templates'))
+env = Environment(loader=FileSystemLoader('./templates'))
 
 
 OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/state_news_releases/output')
@@ -32,6 +32,7 @@ class App(object):
     def __read_csv(self, period, subperiod_id):
         self.__check_period(period)
         subperiod_id = int(subperiod_id)
+        print(f'{period}-{subperiod_id}.tsv')
 
         out = []
         with open(f'../state_news_releases/output/{period}-{subperiod_id}.tsv',
@@ -39,7 +40,19 @@ class App(object):
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
                 out.append(row)
-        return row
+
+        def sortable_date(i):
+            dd, mm, yyyy = i.split('/')
+            return str(9999-int(yyyy)) + '_' + str(99-int(mm)) + '_' + str(99-int(dd))
+
+        out.sort(key=lambda x: (
+            sortable_date(x['date_updated']),
+            x['state_name'],
+            x['datatype'],
+            x['name']
+        ))
+
+        return out
 
     def __get_revisions(self):
         # Return [[rev_date, rev_subid, rev_time], ...]
@@ -56,7 +69,8 @@ class App(object):
 
     @cherrypy.expose
     def index(self):
-        return env.get_template('index.html').render(
+        t = env.get_template('index.html')
+        return t.render(
             revisions=self.__get_revisions()
         )
 
@@ -124,6 +138,14 @@ class App(object):
     #=============================================================#
 
     @cherrypy.expose
+    def revision(self, rev_date, rev_subid):
+        return env.get_template('revision/revision.html').render(
+            rev_date=rev_date,  # ESCAPE!
+            rev_subid=rev_subid,  # ESCAPE!
+            rev_time=None # FIXME
+        )
+
+    @cherrypy.expose
     def view_log(self, rev_date, rev_subid):
         return env.get_template('revision/view_log.html').render(
             FIXME
@@ -131,8 +153,13 @@ class App(object):
 
     @cherrypy.expose
     def get_data_as_table(self, rev_date, rev_subid):
+        datapoints = self.__read_csv(rev_date, rev_subid)
+
         return env.get_template('revision/get_data_as_table.html').render(
-            FIXME
+            rev_date=rev_date,  # ESCAPE!
+            rev_subid=rev_subid,  # ESCAPE!
+            rev_time=None,  # FIXME
+            datapoints=datapoints
         )
 
     @cherrypy.expose
@@ -146,21 +173,31 @@ class App(object):
         self.__check_period(rev_date)
         rev_subid = int(rev_subid)
         return serve_file(
-            f'../state_news_releases/output/{rev_date}-{rev_subid}.tsv',
+            f'{OUTPUT_DIR}/{rev_date}-{rev_subid}.tsv',
             "application/x-download", "attachment"
         )
+
+    @cherrypy.expose
+    def get_output_table(self):
+        pass
 
 
 if __name__ == '__main__':
     cherrypy.quickstart(App(), '/', config={
-        'graphs': {
+        'global': {
+            'server.socket_port': 5005,
+        },
+        '/': {
+
+        },
+        '/graphs': {
             'tools.staticdir.root': OUTPUT_GRAPHS_DIR,
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': "static"
+            'tools.staticdir.dir': ""
         },
-        'raw_data': {
+        '/raw_data': {
             'tools.staticdir.root': OUTPUT_DIR,
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': "static"
+            'tools.staticdir.dir': ""
         }
     })
