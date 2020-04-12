@@ -1,0 +1,20 @@
+{% from base_template import start_head, start_body, end_page %}
+
+{{ start_head() }}
+
+{{ start_body() }}
+
+    {# This page lists revisions etc #}
+    <h1>COVID-19 AU Data Revisions</h1>
+
+    <ul>
+        {% for rev_date, rev_subid, rev_time in revisions %}
+            <li>
+                <a href="revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+                    Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }})
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{{ end_page() }}

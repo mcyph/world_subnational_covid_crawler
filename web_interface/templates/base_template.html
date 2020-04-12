@@ -1,0 +1,15 @@
+{%- macro start_head(title) -%}
+    <html>
+    <head>
+    <title>{{ title|e }}</title>
+{% endmacro %}
+
+{% macro start_body() %}
+    </head>
+    <body>
+{% endbody %}
+
+{% macro end_page() %}
+    </body>
+    </html>
+{% endmacro %}

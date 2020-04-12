@@ -1,0 +1,25 @@
+{% from base_template import start_head, start_body, end_page %}
+
+{{ start_head() }}
+
+{{ start_body() }}
+    <h1>
+        Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }})
+    </h1>
+
+    <ul>
+        <li><a href="most_recent_changes?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+            Most Recent Changes
+        </a></li>
+        <li><a href="view_logs?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+            View Logs
+        </a></li>
+        <li><a href="get_data_as_table?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+            Get data as HTML table
+        </a></li>
+        <li><a href="get_tsv_data?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+            Get data as TSV
+        </a></li>
+    </ul>
+
+{{ end_page() }}

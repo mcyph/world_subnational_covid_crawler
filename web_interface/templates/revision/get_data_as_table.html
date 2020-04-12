@@ -1,0 +1,25 @@
+{% from base_template import start_head, start_body, end_page %}
+
+{{ start_head() }}
+
+{{ start_body() }}
+    <h1>
+        Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }}) table
+    </h1>
+
+    <table>
+        <tr>
+            {% for key in datapoints[0] %}
+                <th>{{ key|e }}</th>
+            {% endfor %}
+        </tr>
+        {% for datapoint in datapoints %}
+            <tr>
+                {% for key in datapoints %}
+                    {{ datapoints[key]|e }}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+{{ end_page() }}
