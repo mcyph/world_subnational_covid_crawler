@@ -119,7 +119,11 @@ class _ACTPowerBI:
 
     def _get_gender_balance_data(self, updated_date, rev_id):
         r = []
-        data = self.__get_json_data(updated_date, rev_id, 'gender_balance')
+        try:
+            data = self.__get_json_data(updated_date, rev_id, 'gender_balance')
+        except FileNotFoundError:
+            data = self.__get_json_data(updated_date, rev_id, 'gender_balance_2')
+
         # WARNING: This sometimes has another query before it!!! =======================================================
         m_f = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 

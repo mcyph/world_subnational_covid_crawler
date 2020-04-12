@@ -58,6 +58,11 @@ class VicNews(StateNewsBase):
             s = pq(html)('.page-banner-content h1').text().split('-')[-1].strip()
         #print('S:', s)
 
+        if not '2020' in s and '/' in s:
+            s = s.strip()+'/2020'
+        elif not '2020' in s:
+            s = s.strip()+' 2020'
+
         try:
             return self._extract_date_using_format(s)
         except ValueError:
