@@ -3,6 +3,8 @@
 {{ start_head() }}
 
 {{ start_body() }}
+    <a href="/"><< Back to home</a>
+
     <h1>
         Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }})
     </h1>
@@ -15,7 +17,10 @@
             View Logs
         </a></li>
         <li><a href="get_data_as_table?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
-            Get data as HTML table
+            Get all data as HTML table
+        </a></li>
+        <li><a href="statistics?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
+            Get statistics report
         </a></li>
         <li><a href="get_tsv_data?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
             Get data as TSV
