@@ -376,11 +376,19 @@ class NSWNews(StateNewsBase):
             r.append(hospitalized)
 
         icu = self._extract_number_using_regex(
-            compile(
-                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
-                r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
-                IGNORECASE
+            (
+                compile(
+                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                    r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
+                    r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                    IGNORECASE
+                ),
+                compile(
+                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                    r'people[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+in[^0-9<.]+'
+                    r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                    IGNORECASE
+                )
             ),
             c_html,
             name='ICU',

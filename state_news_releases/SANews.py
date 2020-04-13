@@ -81,6 +81,12 @@ class SANews(StateNewsBase):
         'Eighteen people in South Australia have today tested positive'
         c_html = word_to_number(html)
 
+        # HACK!
+        c_html = c_html.replace(
+            'No new people have tested positive',
+            '0 people have tested positive'
+        )
+
         return self._extract_number_using_regex(
             compile('([0-9,]+) people[^0-9<]+have today tested positive'),
             c_html,

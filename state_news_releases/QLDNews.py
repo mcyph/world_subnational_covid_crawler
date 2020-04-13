@@ -45,7 +45,8 @@ class QLDNews(StateNewsBase):
             pq(html)('#last-updated').text().split(':')[-1].strip() or
             pq(html)('div#content div h2').text().strip() or
             pq(html)('div#content div h4').text().strip() or
-            pq(html)('div#content div h3').text().strip()
+            pq(html)('div#content div h3').text().strip() or
+            pq(html)('.qg-content-footer dd').text().strip()   # CHECK ME!!!
         )
 
     def __get_totals_from_table(self, html):
@@ -137,6 +138,18 @@ class QLDNews(StateNewsBase):
         #  I needed to get some of these from web.archive.org.
         #  Some of the stats may be a day or more old,
         #  so will need to add the date of the stat as well(!)
+
+        value = self._extract_number_using_regex(
+            compile(
+                'Total samples tested: <strong>([0-9,]+)'
+            ),
+            html,
+            date_updated=self._get_date(href, html),
+            datatype=DT_CASES_TESTED,
+            source_url=href
+        )
+        if value:
+            return value
 
         # Find the start of the # samples tested table
         th_regex = compile(

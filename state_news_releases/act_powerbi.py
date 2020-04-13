@@ -59,9 +59,12 @@ class _ACTPowerBI:
     def _get_age_groups_data(self, updated_date, rev_id):
         r = []
         try:
-            data = self.__get_json_data(updated_date, rev_id, 'age_groups')
+            try:
+                data = self.__get_json_data(updated_date, rev_id, 'age_groups')
+            except FileNotFoundError:
+                data = self.__get_json_data(updated_date, rev_id, 'age_groups_2')
         except FileNotFoundError:
-            data = self.__get_json_data(updated_date, rev_id, 'age_groups_2')
+            data = self.__get_json_data(updated_date, rev_id, 'age_groups_3')
 
         agd = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
