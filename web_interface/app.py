@@ -1,4 +1,5 @@
 import csv
+import json
 from pytz import timezone
 from os import listdir
 from os.path import getctime, expanduser
@@ -30,6 +31,9 @@ class App(object):
         assert not '/' in path
         assert not '\\' in path
 
+        dd, mm, yyyy = path.split('_')
+        int(yyyy), int(mm), int(dd)
+
     def __read_csv(self, period, subperiod_id):
         self.__check_period(period)
         subperiod_id = int(subperiod_id)
@@ -45,11 +49,21 @@ class App(object):
         out.sort(key=self.__date_updated_sort_key)
         return out
 
+    def __get_status_dict(self, period, subperiod_id):
+        self.__check_period(period)
+        subperiod_id = int(subperiod_id)
+
+        with open(f'../state_news_releases/output/{period}-{subperiod_id}.json',
+                  'r', encoding='utf-8', errors='replace') as f:
+            return json.loads(f.read())['status']
+
     def __get_revisions(self):
         # Return [[rev_date, rev_subid, rev_time], ...]
         r = []
 
         for fnam in listdir(OUTPUT_DIR):
+            if not fnam.endswith('.tsv'):
+                continue
             rev_date, rev_subid = fnam[:-4].split('-')
             rev_time = getctime(f'{OUTPUT_DIR}/{fnam}')
             dt = str(datetime.datetime.fromtimestamp(rev_time) \
@@ -164,7 +178,12 @@ class App(object):
 
     @cherrypy.expose
     def most_recent_graphs(self):
-        return env.get_template('most_recent_graphs.html').render()
+        return env.get_template('most_recent_graphs.html').render(
+            graphs=sorted([
+                i for i in listdir(OUTPUT_GRAPHS_DIR)
+                if i.endswith('.png')
+            ])
+        )
 
     #=============================================================#
     #                   View Specific Revision                    #
@@ -172,10 +191,19 @@ class App(object):
 
     @cherrypy.expose
     def revision(self, rev_date, rev_subid):
+        try:
+            status_list = sorted(list(self.__get_status_dict(rev_date, rev_subid).items()))
+        except FileNotFoundError:
+            status_list = []
+
         return env.get_template('revision/revision.html').render(
+            status_list=status_list,
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            rev_time=None # FIXME
+            rev_time=None, # FIXME
+            revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
         )
 
     @cherrypy.expose
@@ -192,7 +220,10 @@ class App(object):
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
             rev_time=None,  # FIXME
-            datapoints=datapoints
+            datapoints=datapoints,
+            revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
         )
 
     @cherrypy.expose
@@ -232,6 +263,7 @@ class App(object):
         )
         return env.get_template('revision/statistics.html').render(
             rev_date=rev_date,
+            rev_date_slash_format=datetime.datetime.strptime(rev_date, '%Y_%m_%d').strftime('%d/%m/%Y'),
             rev_subid=rev_subid,
             int=int,
             revision_time_string=self.__get_revision_time_string(
@@ -283,7 +315,10 @@ class App(object):
             local_area_case_datapoints=local_area_case_datapoints
         )
 
-    def __get_combined_values_by_datatype(self, datapoints, datatypes, from_date=None):
+    def __get_combined_values_by_datatype(self,
+                                          datapoints,
+                                          datatypes,
+                                          from_date=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -303,7 +338,8 @@ class App(object):
         combined = {}
         for datatype in datatypes:
             for datapoint in self.__get_combined_value(
-                datapoints, datatype, from_date=from_date
+                datapoints, datatype,
+                from_date=from_date
             ):
                 i_combined = combined.setdefault(datapoint['state_name'], {}) \
                                      .setdefault(datapoint['name'], {})
@@ -320,9 +356,11 @@ class App(object):
 
                 i_combined['name'] = datapoint['name']
                 i_combined['state_name'] = datapoint['state_name']
-                i_combined[datatype] = datapoint['value']
-                i_combined[f'{datatype} date_updated'] = datapoint['date_updated']
-                i_combined[f'{datatype} source_url'] = datapoint['source_url']
+
+                if not datatype in i_combined:
+                    i_combined[datatype] = datapoint['value']
+                    i_combined[f'{datatype} date_updated'] = datapoint['date_updated']
+                    i_combined[f'{datatype} source_url'] = datapoint['source_url']
 
         out = []
         for i_combined in combined.values():
@@ -330,7 +368,8 @@ class App(object):
                 out.append(add_me)
         return out
 
-    def __get_combined_values(self, datapoints, filters, from_date=None):
+    def __get_combined_values(self, datapoints, filters,
+                              from_date=None):
         """
         Returns as a combined dict,
         e.g. if filters (a list of ((datatype, name/None), ...) is (
@@ -349,7 +388,8 @@ class App(object):
         combined = {}
         for datatype, name in filters:
             for datapoint in self.__get_combined_value(
-                datapoints, datatype, name, from_date
+                datapoints[:], datatype, name,
+                from_date=from_date
             ):
                 i_combined = combined.setdefault(datapoint['state_name'], {})
 
@@ -370,16 +410,22 @@ class App(object):
                 )
 
                 i_combined['state_name'] = datapoint['state_name']
-                i_combined[k] = datapoint['value']
-                i_combined[f'{k} date_updated'] = datapoint['date_updated']
-                i_combined[f'{k} source_url'] = datapoint['source_url']
+
+                if not k in i_combined:
+                    i_combined[k] = datapoint['value']
+                    i_combined[f'{k} date_updated'] = datapoint['date_updated']
+                    i_combined[f'{k} source_url'] = datapoint['source_url']
 
         out = []
         for i_combined in combined.values():
             out.append(i_combined)
         return out
 
-    def __get_combined_value(self, datapoints, datatype, name=None, from_date=None):
+    def __get_combined_value(self,
+                             datapoints,
+                             datatype,
+                             name=None,
+                             from_date=None):
         """
         Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
@@ -414,6 +460,10 @@ class App(object):
                 datapoint['name']
             )
             if unique_k in r:
+                assert date_greater_than(
+                    r[unique_k]['date_updated'],
+                    datapoint['date_updated']
+                )
                 continue
             r[unique_k] = datapoint
 

@@ -3,9 +3,9 @@
 {{ start_head() }}
 
 {{ start_body() }}
-    <h1>
-        Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }}) table
-    </h1>
+    <a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
+
+    <h1>Revision {{ revision_time_string|e }}</h1>
 
     <table class="fancy-table">
         <tr>

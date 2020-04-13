@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import datetime
 import unicodedata
 from os import makedirs
@@ -28,20 +29,9 @@ def remove_control_characters(s):
     )
 
 
-class Logger:
-    def __init__(self, stream):
-        time_format = datetime.datetime \
-                              .now() \
-                              .strftime('%Y_%m_%d')
-
-        revision_id = self.get_latest_revision_id(time_format)
-        self.f = open(
-            self.get_path_from_id(time_format, revision_id),
-            'w', encoding='utf-8', errors='replace'
-        )
-        self.stream = stream
-
-    def get_latest_revision_id(self, time_format):
+class RevisionIDs:
+    @staticmethod
+    def get_latest_revision_id(time_format):
         x = 0
         revision_id = 1
 
@@ -50,7 +40,7 @@ class Logger:
                 # This should never happen, but still..
                 raise Exception()
 
-            path = self.get_path_from_id(time_format, revision_id)
+            path = RevisionIDs.get_path_from_id(time_format, revision_id)
             if not os.path.exists(path):
                 try:
                     makedirs(dirname(path))
@@ -61,11 +51,31 @@ class Logger:
             revision_id += 1
             x += 1
 
-    def get_path_from_id(self, time_format, revision_id):
+    @staticmethod
+    def get_path_from_id(time_format, revision_id, ext='tsv'):
         return os.path.expanduser(
             f'~/dev/covid_19_au_grab/state_news_releases/output/'
-            f'{time_format}-{revision_id}.tsv'
+            f'{time_format}-{revision_id}.{ext}'
         )
+
+
+TIME_FORMAT = datetime.datetime \
+                      .now() \
+                      .strftime('%Y_%m_%d')
+LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(
+    TIME_FORMAT
+)
+
+
+class Logger:
+    def __init__(self, stream, ext='tsv'):
+        revision_id = RevisionIDs.get_latest_revision_id(TIME_FORMAT)
+        self.f = open(
+            RevisionIDs.get_path_from_id(TIME_FORMAT, revision_id, ext),
+            'w', encoding='utf-8', errors='replace'
+        )
+        self.stream = stream
+        self.ext = ext
 
     def __del__(self):
         if hasattr(self, 'f'):
@@ -83,6 +93,12 @@ class Logger:
 
 
 if __name__ == '__main__':
+    status = {}
+    stdout_logger = sys.stdout = Logger(sys.stdout, ext='stdout')
+    stderr_logger = sys.stderr = Logger(sys.stdout, ext='stderr')
+
+    # Run the Vic/ACT PowerBi grabbers as needed
+
     if UPDATE_VIC_POWERBI:
         from covid_19_au_grab.powerbi_grabber.VicPowerBI import \
             VicPowerBI
@@ -92,6 +108,9 @@ if __name__ == '__main__':
             print("Error occurred using VicPowerBI!")
             import traceback
             traceback.print_exc()
+            status['vic_powerbi'] = (
+                'ERROR', traceback.format_exc()
+            )
 
     if UPDATE_ACT_POWERBI:
         from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
@@ -102,7 +121,11 @@ if __name__ == '__main__':
             print("Error occurred using ACTPowerBI!")
             import traceback
             traceback.print_exc()
+            status['act_powerbi'] = (
+                'ERROR', traceback.format_exc()
+            )
 
+    # Run all of the other grabbers
     news_insts = [
         ACTNews(),
         NSWNews(),
@@ -116,7 +139,30 @@ if __name__ == '__main__':
 
     data = {}
     for inst in news_insts:
-        data[inst.STATE_NAME] = inst.get_data()
+        try:
+            data[inst.STATE_NAME] = inst.get_data()
+            status[inst.STATE_NAME] = (
+                'OK', None
+            )
+        except:
+            import traceback
+            traceback.print_exc()
+            status[inst.STATE_NAME] = (
+                'ERROR', traceback.format_exc()
+            )
+    sys.stdout = stdout_logger.stream
+    sys.stderr = stderr_logger.stream
+
+    # Output basic status info to a .json info
+    with open(
+        RevisionIDs.get_path_from_id(
+            TIME_FORMAT, LATEST_REVISION_ID,
+            ext='json'
+        ), 'w', encoding='utf-8'
+    ) as f:
+        f.write(json.dumps({
+            'status': status
+        }, indent=4))
 
     from pprint import pprint
     pprint(data)
@@ -124,7 +170,6 @@ if __name__ == '__main__':
 
     # Override stdout to point to both stdout and the output file
     logger = sys.stdout = Logger(sys.stdout)
-
     print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
@@ -141,7 +186,6 @@ if __name__ == '__main__':
                   f'{backwards_date}\t'
                   f'{datapoint.source_url}\t'
                   f'{text_match}')
-
     # Reset stdout
     sys.stdout = logger.stream
 

@@ -1,0 +1,16 @@
+{% from "base_template.html" import start_head, start_body, end_page %}
+
+{{ start_head() }}
+{{ start_body() }}
+
+<a href="/"><< Back to home</a>
+
+<h1>Graphs</h1>
+
+{% for graph_fnam in graphs %}
+    <h2>{{ graph_fnam|e }}</h2>
+
+    <img src="/graphs/{{ graph_fnam|e }}">
+{% endfor %}
+
+{{ end_page() }}

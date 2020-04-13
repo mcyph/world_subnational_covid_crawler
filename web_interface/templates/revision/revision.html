@@ -5,9 +5,17 @@
 {{ start_body() }}
     <a href="/"><< Back to home</a>
 
-    <h1>
-        Revision {{ rev_date|e }}-{{ rev_subid|e }} ({{ rev_time|e }})
-    </h1>
+    <h1>Revision {{ revision_time_string|e }}</h1>
+
+    <h2>Status</h2>
+
+    <ul>
+        {% for key, value in status_list %}
+            <li><b>{{ key|e }}</b>: {{ value[0]|e }} {% if value[1] %}{{ value[1]|e }}{% endif %}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>View Data</h2>
 
     <ul>
         <!--<li><a href="most_recent_changes?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">

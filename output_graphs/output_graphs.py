@@ -21,9 +21,9 @@ def read_csv(datatype,
     # Get the newest, based on binary sort order
     # (year->month->day->revision id)
     fnam = list(sorted(
-        listdir(expanduser(
+        [i for i in listdir(expanduser(
             '~/dev/covid_19_au_grab/state_news_releases/output'
-        )), key=lambda k: (
+        )) if i.endswith('.tsv')], key=lambda k: (
             k.split('-')[0],
             int(k.split('-')[1].split('.')[0]
         ))

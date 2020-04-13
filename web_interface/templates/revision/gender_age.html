@@ -24,31 +24,31 @@
             {% else %}
             <tr>
                 <td>
-                    {{ datapoint['state_name']|upper }}
+                    {{- datapoint['state_name']|upper -}}
                 </td>
                 <td>
-                    {{ datapoint['name'] }}
+                    {{- datapoint['name'] -}}
                 </td>
                 <td title="{{ datapoint['DT_AGE_FEMALE date_updated'] }}">
                     <a href="{{ datapoint['DT_AGE_FEMALE source_url'] }}">
-                        {{ datapoint['DT_AGE_FEMALE'] }}
+                        {{- datapoint['DT_AGE_FEMALE'] -}}
                     </a>
                 </td>
                 <td title="{{ datapoint['DT_AGE_MALE date_updated'] }}">
                     <a href="{{ datapoint['DT_AGE_MALE source_url'] }}">
-                        {{ datapoint['DT_AGE_MALE'] }}
+                        {{- datapoint['DT_AGE_MALE'] -}}
                     </a>
                 </td>
-                <td>
-                    0 <!-- TODO! -->
-                </td>
+
+                <td>0<!-- TODO! --></td>
+
                 <td title="{{ datapoint['DT_AGE date_updated'] }}">
                     <a href="{{ datapoint['DT_AGE source_url'] }}">
-                        {{ datapoint['DT_AGE'] }}
+                        {{- datapoint['DT_AGE'] -}}
                     </a>
                 </td>
                 <td>
-                    {{ datapoint['date_updated'] }}
+                    {{- datapoint['date_updated'] -}}
                 </td>
             </tr>
             {% endif %}

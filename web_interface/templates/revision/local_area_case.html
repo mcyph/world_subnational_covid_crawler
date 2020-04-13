@@ -24,27 +24,27 @@
         {% for datapoint in datapoints %}
             <tr>
                 <td>
-                    {{ datapoint['state_name']|upper }}
+                    {{- datapoint['state_name']|upper -}}
                 </td>
                 <td>
-                    {% if datapoint['state_name'] == 'qld' %}
+                    {%- if datapoint['state_name'] == 'qld' -%}
                         HHS
-                    {% elif datapoint['state_name'] == 'act' %}
+                    {%- elif datapoint['state_name'] == 'act' -%}
                         SA3
-                    {% else %}
+                    {%- else -%}
                         LGA
-                    {% endif %}
+                    {%- endif -%}
                 </td>
                 <td>
-                    {{ datapoint['name'] }}
+                    {{- datapoint['name'] -}}
                 </td>
                 <td title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION source_url'] }}">
-                        {{ datapoint['DT_CASES_BY_REGION'] }}
+                        {{- datapoint['DT_CASES_BY_REGION'] -}}
                     </a>
                 </td>
                 <td>
-                    {{ datapoint['date_updated'] }}
+                    {{- datapoint['date_updated'] -}}
                 </td>
                 <td>
                     <!-- assigned to -->
@@ -55,17 +55,17 @@
 
                 <td title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_RECOVERED source_url'] }}">
-                        {{ datapoint['DT_CASES_BY_REGION_RECOVERED'] }}
+                        {{- datapoint['DT_CASES_BY_REGION_RECOVERED'] -}}
                     </a>
                 </td>
                 <td title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_DEATHS source_url'] }}">
-                        {{ datapoint['DT_CASES_BY_REGION_DEATHS'] }}
+                        {{- datapoint['DT_CASES_BY_REGION_DEATHS'] -}}
                     </a>
                 </td>
                 <td title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_ACTIVE source_url'] }}">
-                        {{ datapoint['DT_CASES_BY_REGION_ACTIVE'] }}
+                        {{- datapoint['DT_CASES_BY_REGION_ACTIVE'] -}}
                     </a>
                 </td>
             </tr>
