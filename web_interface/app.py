@@ -212,13 +212,6 @@ class App(object):
 
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
-        """
-        TODO:
-        1. Get a list of unique dates for which datatype exists
-        2. Select the dicts for each of the values(s)
-           by the state_name, datatype
-        3.
-        """
         datapoints = self.__read_csv(rev_date, rev_subid)
         statistics_datapoints = self.__get_combined_values(
             datapoints,
@@ -238,12 +231,104 @@ class App(object):
             )
         )
         return env.get_template('revision/statistics.html').render(
+            rev_date=rev_date,
+            rev_subid=rev_subid,
             int=int,
             revision_time_string=self.__get_revision_time_string(
                 rev_date, rev_subid
             ),
             statistics_datapoints=statistics_datapoints
         )
+
+    @cherrypy.expose
+    def gender_age(self, rev_date, rev_subid):
+        datapoints = self.__read_csv(rev_date, rev_subid)
+        gender_age_datapoints = self.__get_combined_values_by_datatype(
+            datapoints,
+            (
+                'DT_AGE_FEMALE',
+                'DT_AGE_MALE',
+                'DT_AGE',
+            )
+        )
+        return env.get_template('revision/gender_age.html').render(
+            rev_date=rev_date,
+            rev_subid=rev_subid,
+            int=int,
+            revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
+            gender_age_datapoints=gender_age_datapoints
+        )
+
+    @cherrypy.expose
+    def local_area_case(self, rev_date, rev_subid):
+        datapoints = self.__read_csv(rev_date, rev_subid)
+        local_area_case_datapoints = self.__get_combined_values_by_datatype(
+            datapoints,
+            (
+                'DT_CASES_BY_REGION',
+                'DT_CASES_BY_REGION_ACTIVE',
+                'DT_CASES_BY_REGION_RECOVERED',
+                'DT_CASES_BY_REGION_DEATHS',
+            )
+        )
+        return env.get_template('revision/local_area_case.html').render(
+            rev_date=rev_date,
+            rev_subid=rev_subid,
+            int=int,
+            revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
+            local_area_case_datapoints=local_area_case_datapoints
+        )
+
+    def __get_combined_values_by_datatype(self, datapoints, datatypes, from_date=None):
+        """
+        Returns as a combined dict,
+        e.g. if datatypes a list of ((datatype, name/None), ...) is (
+            "DT_AGE",
+            "DT_AGE_FEMALE",
+        )
+        it will output as [{
+            'name': (e.g.) '70+',
+            'date_updated': ...,
+            'DT_AGE': ...,
+            'DT_AGE_FEMALE': ...
+        }, ...]
+        """
+        def to_datetime(dt):
+            return datetime.datetime.strptime(dt, '%d/%m/%Y')
+
+        combined = {}
+        for datatype in datatypes:
+            for datapoint in self.__get_combined_value(
+                datapoints, datatype, from_date=from_date
+            ):
+                i_combined = combined.setdefault(datapoint['state_name'], {}) \
+                                     .setdefault(datapoint['name'], {})
+
+                if (
+                    not 'date_updated' in i_combined or
+                    to_datetime(datapoint['date_updated']) <
+                        to_datetime(i_combined['date_updated'])
+                ):
+                    # Use the least recent date
+                    i_combined['date_updated'] = datapoint['date_updated']
+                    i_combined['date_today'] = datetime.datetime.now() \
+                        .strftime('%d/%m/%Y')
+
+                i_combined['name'] = datapoint['name']
+                i_combined['state_name'] = datapoint['state_name']
+                i_combined[datatype] = datapoint['value']
+                i_combined[f'{datatype} date_updated'] = datapoint['date_updated']
+                i_combined[f'{datatype} source_url'] = datapoint['source_url']
+
+        out = []
+        for i_combined in combined.values():
+            for add_me in i_combined.values():
+                out.append(add_me)
+        return out
 
     def __get_combined_values(self, datapoints, filters, from_date=None):
         """
@@ -263,7 +348,9 @@ class App(object):
 
         combined = {}
         for datatype, name in filters:
-            for datapoint in self.__get_combined_value(datapoints, datatype, name):
+            for datapoint in self.__get_combined_value(
+                datapoints, datatype, name, from_date
+            ):
                 i_combined = combined.setdefault(datapoint['state_name'], {})
 
                 if (
@@ -338,6 +425,7 @@ class App(object):
 if __name__ == '__main__':
     cherrypy.quickstart(App(), '/', config={
         'global': {
+            'server.socket_host': '0.0.0.0',
             'server.socket_port': 5005,
         },
         '/': {

@@ -3,12 +3,12 @@
 {{ start_head() }}
 {{ start_body() }}
 
-<a href="/"><< Back to home</a>
+<a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
 
 <h1>Revision {{ revision_time_string|e }}</h1>
 
 {% macro statistics(datapoints) %}
-    <table>
+    <table class="fancy-table">
         <tr>
             <th>state</th>
             <th>confirmedTotal</th>

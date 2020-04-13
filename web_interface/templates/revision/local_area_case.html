@@ -1,0 +1,78 @@
+{% from "base_template.html" import start_head, start_body, end_page %}
+
+{{ start_head() }}
+{{ start_body() }}
+
+<a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
+
+<h1>Revision {{ revision_time_string|e }}</h1>
+
+{% macro statistics(datapoints) %}
+    <table class="fancy-table">
+        <tr>
+            <th>state</th>
+            <th>schema</th>
+            <th>area</th>
+            <th>confirmedCases</th>
+            <th>lastUpdateDate</th>
+            <th>member1</th>
+            <th>description</th>
+            <th>Recovered cases</th>
+            <th>Deaths</th>
+            <th>Active Cases</th>
+        </tr>
+        {% for datapoint in datapoints %}
+            <tr>
+                <td>
+                    {{ datapoint['state_name']|upper }}
+                </td>
+                <td>
+                    {% if datapoint['state_name'] == 'qld' %}
+                        HHS
+                    {% elif datapoint['state_name'] == 'act' %}
+                        SA3
+                    {% else %}
+                        LGA
+                    {% endif %}
+                </td>
+                <td>
+                    {{ datapoint['name'] }}
+                </td>
+                <td title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }}">
+                    <a href="{{ datapoint['DT_CASES_BY_REGION source_url'] }}">
+                        {{ datapoint['DT_CASES_BY_REGION'] }}
+                    </a>
+                </td>
+                <td>
+                    {{ datapoint['date_updated'] }}
+                </td>
+                <td>
+                    <!-- assigned to -->
+                </td>
+                <td>
+                    <!-- description -->
+                </td>
+
+                <td title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }}">
+                    <a href="{{ datapoint['DT_CASES_BY_REGION_RECOVERED source_url'] }}">
+                        {{ datapoint['DT_CASES_BY_REGION_RECOVERED'] }}
+                    </a>
+                </td>
+                <td title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }}">
+                    <a href="{{ datapoint['DT_CASES_BY_REGION_DEATHS source_url'] }}">
+                        {{ datapoint['DT_CASES_BY_REGION_DEATHS'] }}
+                    </a>
+                </td>
+                <td title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }}">
+                    <a href="{{ datapoint['DT_CASES_BY_REGION_ACTIVE source_url'] }}">
+                        {{ datapoint['DT_CASES_BY_REGION_ACTIVE'] }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{{ statistics(local_area_case_datapoints) }}
+
+{{ end_page() }}

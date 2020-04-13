@@ -1,0 +1,61 @@
+{% from "base_template.html" import start_head, start_body, end_page %}
+
+{{ start_head() }}
+{{ start_body() }}
+
+<a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
+
+<h1>Revision {{ revision_time_string|e }}</h1>
+
+{% macro statistics(datapoints) %}
+    <table class="fancy-table">
+        <tr>
+            <th>state</th>
+            <th>ageGroup</th>
+            <th>female</th>
+            <th>male</th>
+            <th>notStated</th>
+            <th>total</th>
+            <th>dateOfData</th>
+        </tr>
+        {% for datapoint in datapoints %}
+            {% if datapoint['state_name'] == 'act' and datapoint['name'] in ('0-29', '70+') %}
+                <!-- ACT HACK!! -->
+            {% else %}
+            <tr>
+                <td>
+                    {{ datapoint['state_name']|upper }}
+                </td>
+                <td>
+                    {{ datapoint['name'] }}
+                </td>
+                <td title="{{ datapoint['DT_AGE_FEMALE date_updated'] }}">
+                    <a href="{{ datapoint['DT_AGE_FEMALE source_url'] }}">
+                        {{ datapoint['DT_AGE_FEMALE'] }}
+                    </a>
+                </td>
+                <td title="{{ datapoint['DT_AGE_MALE date_updated'] }}">
+                    <a href="{{ datapoint['DT_AGE_MALE source_url'] }}">
+                        {{ datapoint['DT_AGE_MALE'] }}
+                    </a>
+                </td>
+                <td>
+                    0 <!-- TODO! -->
+                </td>
+                <td title="{{ datapoint['DT_AGE date_updated'] }}">
+                    <a href="{{ datapoint['DT_AGE source_url'] }}">
+                        {{ datapoint['DT_AGE'] }}
+                    </a>
+                </td>
+                <td>
+                    {{ datapoint['date_updated'] }}
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{{ statistics(gender_age_datapoints) }}
+
+{{ end_page() }}
