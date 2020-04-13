@@ -141,9 +141,28 @@ def get_powerbi_data():
                 del previous_value
 
             elif fnam == 'source_of_infection.json':
+                # * Overseas acquired
+                # * Cruise ship acquired (included in overseas acquired)
+                # * Interstate acquired
+                # * Locally acquired - contact of a confirmed case
+                # * Locally acquired - contact not identified
+                # * Under investigation
+
+                # Normalise it with other states
+                vic_norm_map = {
+                    'Travel overseas':
+                        'Overseas acquired',
+                    'Contact with a confirmed case':
+                        'Locally acquired - contact of a confirmed case',
+                    'Acquired in Australia, unknown source':
+                        'Locally acquired - contact not identified',
+                    'Under investigation':
+                        'Under investigation',
+                }
+
                 for source in data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
                     output.append(DataPoint(
-                        name=source['C'][0],
+                        name=vic_norm_map[source['C'][0]],
                         datatype=DT_SOURCE_OF_INFECTION,
                         value=source['C'][1],
                         date_updated=updated_date,

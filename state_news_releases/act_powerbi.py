@@ -58,8 +58,12 @@ class _ACTPowerBI:
 
     def _get_age_groups_data(self, updated_date, rev_id):
         r = []
-        data = self.__get_json_data(updated_date, rev_id, 'age_groups')
-        agd = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
+        try:
+            data = self.__get_json_data(updated_date, rev_id, 'age_groups')
+        except FileNotFoundError:
+            data = self.__get_json_data(updated_date, rev_id, 'age_groups_2')
+
+        agd = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         for age in agd:
             X = age['X']
@@ -170,7 +174,11 @@ class _ACTPowerBI:
 
     def _get_recovered_data(self, updated_date, rev_id):
         r = []
-        data = self.__get_json_data(updated_date, rev_id, 'recovered')
+        try:
+            data = self.__get_json_data(updated_date, rev_id, 'recovered')
+        except FileNotFoundError:
+            data = self.__get_json_data(updated_date, rev_id, 'age_groups_2')
+
         recovered = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
             name='Recovered',

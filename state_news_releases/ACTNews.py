@@ -266,6 +266,22 @@ class ACTNews(StateNewsBase):
         # but they're in a different format -
         # not sure it's worth supporting them
 
+        # Normalise it with other states
+        act_norm_map = {
+            'Overseas acquired':
+                'Overseas acquired',
+            'Cruise ship acquired':
+                'Cruise ship acquired (included in overseas acquired)',   # CHECK ME!!!! ===============================
+            'Interstate acquired':
+                'Interstate acquired',
+            'Contact of a confirmed ACT case':
+                'Locally acquired - contact of a confirmed case',
+            'Unknown or local transmission':
+                'Locally acquired - contact not identified',
+            'Under investigation':
+                'Under investigation'
+        }
+
         r = []
         for re_text in (
             r'<tr[^>]*><td[^>]*><p[^>]*>Overseas acquired</p></td>'
@@ -293,7 +309,7 @@ class ACTNews(StateNewsBase):
                         continue
 
                     r.append(DataPoint(
-                        name=k.replace('_', ' '),
+                        name=act_norm_map[k.replace('_', ' ')],
                         datatype=DT_SOURCE_OF_INFECTION,
                         value=int(v.replace(',', '')),
                         date_updated=self._get_date(url, html),

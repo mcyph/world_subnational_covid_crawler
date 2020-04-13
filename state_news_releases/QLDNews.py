@@ -206,7 +206,7 @@ class QLDNews(StateNewsBase):
         if not table:
             return None
 
-        if not 'Total confirmed cases to date' in pq(table[0]).text().replace('\n', ' ').replace('  ', ' '):
+        if not 'Total confirmed' in pq(table[0]).text().replace('\n', ' ').replace('  ', ' '):
             #print("NOT TOTAL:", table.text())
             return None
 

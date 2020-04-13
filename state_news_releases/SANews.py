@@ -29,13 +29,15 @@ class SANews(StateNewsBase):
                           'confirmed+and+suspected+cases+of+covid-19+in+south+australia'
 
     def _get_date(self, href, html):
+        print("HREF:", href)
+
         if href == self.STATS_BY_REGION_URL:
             # Latest statistics – as of 4pm, 1 April 2020
-            date = self._pq_contains(html, '*', 'Latest statistics',
+            date = self._pq_contains(html, 'h2,h1,h3', 'Latest statistics',
                                      ignore_case=True).text().split(',')[-1].strip()
         else:
             date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
-                               .text().strip().split(', ')[-1]
+                               .text().strip().split(',')[-1].strip()
 
         try:
             # e.g. Monday, 30 March 2020
@@ -249,6 +251,20 @@ class SANews(StateNewsBase):
         """
         r = []
 
+        # Normalise it with other states
+        sa_norm_map = {
+            'Overseas acquired':
+                'Overseas acquired',
+            'Locally acquired (Interstate travel)':
+                'Interstate acquired',
+            'Locally acquired (close contact of a confirmed case)':
+                'Locally acquired - contact of a confirmed case',
+            'Locally acquired (contact not identified)':
+                'Locally acquired - contact not identified',
+            'Under investigation':
+                'Under investigation'
+        }
+
         for k in (
             'Overseas acquired',
             'Locally acquired (close contact of a confirmed case)',
@@ -265,7 +281,7 @@ class SANews(StateNewsBase):
             c_icu = int(pq(tr[1]).text().strip())
 
             r.append(DataPoint(
-                name=k,
+                name=sa_norm_map[k],
                 datatype=DT_SOURCE_OF_INFECTION,
                 value=c_icu,
                 date_updated=self._get_date(url, html),

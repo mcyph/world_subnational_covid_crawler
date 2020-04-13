@@ -293,6 +293,20 @@ class NSWNews(StateNewsBase):
         c_html = html.replace('  ', ' ').replace('\u200b', '')  # HACK!
         c_html = self._pq_contains(c_html, 'table', 'Source')
 
+        # Normalise it with other states
+        nsw_norm_map = {
+            'Overseas acquired':
+                'Overseas acquired',
+            'Locally acquired – contact of a confirmed case and/or in a known cluster':
+                'Locally acquired - contact of a confirmed case',
+            'Locally acquired – contact not identified':
+                'Locally acquired - contact not identified',
+            'Under investigation':
+                'Under investigation'
+        }
+
+        # Wording has changed in NSW reports -
+        # normalise them to be consistent in-state
         old_type_map = {
             # NOTE: The descriptions stopped being used 21/3
             'Epi link (contact of confirmed case)':
@@ -329,7 +343,7 @@ class NSWNews(StateNewsBase):
             c_icu = int(pq(tr[1]).text().replace(',', '').strip())
 
             r.append(DataPoint(
-                name=old_type_map.get(k, k),
+                name=nsw_norm_map[old_type_map.get(k, k)],
                 datatype=DT_SOURCE_OF_INFECTION,
                 value=c_icu,
                 date_updated=self._get_date(url, html),
