@@ -125,7 +125,7 @@ class QLDNews(StateNewsBase):
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
-            compile('([0-9,]+) new cases?'),
+            compile('([0-9,]+) new(?: confirmed)? cases?'),
             c_html,
             source_url=href,
             datatype=DT_NEW_CASES,

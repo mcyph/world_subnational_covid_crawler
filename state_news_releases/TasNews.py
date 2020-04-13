@@ -10,8 +10,11 @@ from covid_19_au_grab.word_to_number import word_to_number
 
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
-    LISTING_URL = 'https://www.dhhs.tas.gov.au/news/2020'
-    LISTING_HREF_SELECTOR = 'table.dhhs a'
+    LISTING_URL = (
+        'https://www.dhhs.tas.gov.au/news/2020',
+        'https://www.coronavirus.tas.gov.au/'
+    )
+    LISTING_HREF_SELECTOR = 'table.dhhs a, #pills-Media_Releases .card-rows .card a'
 
     def _get_date(self, url, html):
         # Format 12 March 2020
@@ -23,17 +26,23 @@ class TasNews(StateNewsBase):
             '#main-content div h2:first-child,'
             '#main-content div h3:first-child,'
             '#main-content div h4:first-child,'
-            '#main-content div:first-child p:first-child strong:first-child'
+            '#main-content div:first-child p:first-child strong:first-child,'
+            '.page-content.col.order-xl-1.order-sm-2'
         )[0]) \
             .text() \
             .strip() \
             .split('\n')[0]
 
         try:
-            return self._extract_date_using_format(date)
+            try:
+                return self._extract_date_using_format(date)
+            except ValueError:
+                return self._extract_date_using_format(
+                    date, format='%B %d, %Y'
+                )
         except ValueError:
             return self._extract_date_using_format(
-                date, format='%B %d, %Y'
+                date, format='%d %b %Y'
             )
 
     #============================================================#

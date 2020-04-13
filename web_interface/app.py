@@ -1,13 +1,15 @@
 import csv
 import json
-from pytz import timezone
-from os import listdir
-from os.path import getctime, expanduser
+import time
+import random
+import _thread
 import cherrypy
 import datetime
 import mimetypes
-from glob import glob
-from cherrypy import tools
+from shlex import quote
+from pytz import timezone
+from os import listdir, system
+from os.path import getctime, expanduser
 from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
 env = Environment(loader=FileSystemLoader('./templates'))
@@ -15,12 +17,20 @@ env = Environment(loader=FileSystemLoader('./templates'))
 
 OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/state_news_releases/output')
 OUTPUT_GRAPHS_DIR = expanduser('~/dev/covid_19_au_grab/output_graphs')
+UPDATE_SCRIPT_PATH = expanduser('~/dev/covid_19_au_grab/state_news_releases/output_data_from_news.py')
 mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 
 
 class App(object):
     def __init__(self):
-        pass
+        _thread.start_new_thread(self.loop, ())
+
+    def loop(self):
+        # Run once every around every hour and a half
+        # (an hour is 3600 seconds)
+        while True:
+            time.sleep(random.randint(4000, 5000))
+            system(f'python3 {quote(UPDATE_SCRIPT_PATH)}')
 
     #=============================================================#
     #                       Utility Functions                     #
@@ -68,9 +78,9 @@ class App(object):
             rev_time = getctime(f'{OUTPUT_DIR}/{fnam}')
             dt = str(datetime.datetime.fromtimestamp(rev_time) \
                 .astimezone(timezone('Australia/Melbourne'))).split('.')[0]
-            r.append((rev_date, rev_subid, dt))
+            r.append((rev_date, int(rev_subid), dt))
 
-        r.sort(reverse=True)
+        r.sort(reverse=True, key=lambda x: (x[0], x[1], x[2]))
         return r
 
     def __get_revision_time_string(self, period, subperiod_id):
