@@ -113,7 +113,7 @@ class App(object):
         """
         Sort only by state, datatype and name, ignoring date
         """
-        print(x)
+        #print(x)
         return (
             x['state_name'],
             x['datatype'],
@@ -254,23 +254,38 @@ class App(object):
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
         datapoints = self.__read_csv(rev_date, rev_subid)
-        statistics_datapoints = self.__get_combined_values(
-            datapoints,
-            (
-                ('DT_CASES', 'None'),
-                ('DT_NEW_CASES', 'None'),
-                ('DT_PATIENT_STATUS', 'Deaths'),
-                #('DT_PATIENT_STATUS', 'New Deaths'),
-                ('DT_PATIENT_STATUS', 'Recovered'),
-                #('DT_PATIENT_STATUS', 'New Recovered'),
-                ('DT_CASES_TESTED', 'None'),
-                ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
-                ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact not identified'),
-                ('DT_SOURCE_OF_INFECTION', 'Interstate acquired'),
-                ('DT_PATIENT_STATUS', 'Hospitalized'),
-                ('DT_PATIENT_STATUS', 'ICU'),
-            )
-        )
+        statistics_datapoints = []
+        rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
+
+        for from_date in (
+            None,
+            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%d/%m/%Y')
+        ):
+            print("**FROM DATE:", from_date)
+
+            statistics_datapoints.append((
+                from_date, self.__get_combined_values(
+                datapoints,
+                (
+                    ('DT_CASES', 'None'),
+                    ('DT_NEW_CASES', 'None'),
+                    ('DT_PATIENT_STATUS', 'Deaths'),
+                    #('DT_PATIENT_STATUS', 'New Deaths'),
+                    ('DT_PATIENT_STATUS', 'Recovered'),
+                    #('DT_PATIENT_STATUS', 'New Recovered'),
+                    ('DT_CASES_TESTED', 'None'),
+                    ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
+                    ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact not identified'),
+                    ('DT_SOURCE_OF_INFECTION', 'Interstate acquired'),
+                    ('DT_PATIENT_STATUS', 'Hospitalized'),
+                    ('DT_PATIENT_STATUS', 'ICU'),
+                ),
+                from_date=from_date
+            )))
+
         return env.get_template('revision/statistics.html').render(
             rev_date=rev_date,
             rev_date_slash_format=datetime.datetime.strptime(rev_date, '%Y_%m_%d').strftime('%d/%m/%Y'),
@@ -444,6 +459,8 @@ class App(object):
         """
 
         def date_greater_than(x, y):
+            #print(x, y)
+
             dd1, mm1, yyyy1 = x.split('/')
             x = (int(yyyy1), int(mm1), int(dd1))
 

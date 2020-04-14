@@ -7,7 +7,7 @@
 
 <h1>Revision {{ revision_time_string|e }}</h1>
 
-{% macro statistics(datapoints) %}
+{% macro statistics(date_today, datapoints) %}
     <table class="fancy-table">
         <tr>
             <th>state</th>
@@ -31,7 +31,7 @@
                     {{- datapoint['DT_CASES'] -}}
                 </a></td>
                 <td title="{{ datapoint['DT_NEW_CASES date_updated'] }}">
-                    {%- if datapoint['DT_NEW_CASES date_updated'] == rev_date_slash_format -%}
+                    {%- if datapoint['DT_NEW_CASES date_updated'] == (date_today or datapoint['date_today']) -%}
                         <a href="{{ datapoint['DT_NEW_CASES source_url'] }}">
                             {{- datapoint['DT_NEW_CASES'] -}}
                         </a>
@@ -70,13 +70,23 @@
                     {{- datapoint['date_updated'] -}}
                 </td>
                 <td>
-                    {{- datapoint['date_today'] -}}
+                    {{- date_today or datapoint['date_today'] -}}
                 </td>
             </tr>
         {% endfor %}
     </table>
 {% endmacro %}
 
-{{ statistics(statistics_datapoints) }}
+<h2>Today's statistics</h2>
+{{ statistics(statistics_datapoints[0][0], statistics_datapoints[0][1]) }}
+
+<h2>Yesterday's statistics</h2>
+{{ statistics(statistics_datapoints[1][0], statistics_datapoints[1][1]) }}
+
+<h2>2 days ago's statistics</h2>
+{{ statistics(statistics_datapoints[2][0], statistics_datapoints[2][1]) }}
+
+<h2>3 days ago's statistics</h2>
+{{ statistics(statistics_datapoints[3][0], statistics_datapoints[3][1]) }}
 
 {{ end_page() }}
