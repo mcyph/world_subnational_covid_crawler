@@ -5,6 +5,8 @@
 
 <a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
 
+{{ not_most_recent_warning }}
+
 <h1>Revision {{ revision_time_string|e }}</h1>
 
 {% macro statistics(datapoints) %}
@@ -29,12 +31,12 @@
                 <td>
                     {{- datapoint['name'] -}}
                 </td>
-                <td title="{{ datapoint['DT_AGE_FEMALE date_updated'] }}">
+                <td title="{{ datapoint['DT_AGE_FEMALE date_updated'] }} {{ datapoint['DT_AGE_FEMALE text_match']|e }}">
                     <a href="{{ datapoint['DT_AGE_FEMALE source_url'] }}">
                         {{- datapoint['DT_AGE_FEMALE'] -}}
                     </a>
                 </td>
-                <td title="{{ datapoint['DT_AGE_MALE date_updated'] }}">
+                <td title="{{ datapoint['DT_AGE_MALE date_updated'] }} {{ datapoint['DT_AGE_MALE text_match']|e }}">
                     <a href="{{ datapoint['DT_AGE_MALE source_url'] }}">
                         {{- datapoint['DT_AGE_MALE'] -}}
                     </a>
@@ -42,7 +44,7 @@
 
                 <td>0<!-- TODO! --></td>
 
-                <td title="{{ datapoint['DT_AGE date_updated'] }}">
+                <td title="{{ datapoint['DT_AGE date_updated'] }} {{ datapoint['DT_AGE text_match']|e }}">
                     <a href="{{ datapoint['DT_AGE source_url'] }}">
                         {{- datapoint['DT_AGE'] -}}
                     </a>

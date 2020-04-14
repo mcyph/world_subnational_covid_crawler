@@ -5,6 +5,8 @@
 
 <a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
 
+{{ not_most_recent_warning }}
+
 <h1>Revision {{ revision_time_string|e }}</h1>
 
 {% macro statistics(date_today, datapoints) %}
@@ -27,29 +29,29 @@
         {% for datapoint in datapoints %}
             <tr>
                 <td>{{ datapoint['state_name']|upper }}</td>
-                <td title="{{ datapoint['DT_CASES date_updated'] }}"><a href="{{ datapoint['DT_CASES source_url'] }}">
+                <td title="{{ datapoint['DT_CASES date_updated'] }} {{ datapoint['DT_CASES text_match']|e }}"><a href="{{ datapoint['DT_CASES source_url'] }}">
                     {{- datapoint['DT_CASES'] -}}
                 </a></td>
-                <td title="{{ datapoint['DT_NEW_CASES date_updated'] }}">
+                <td title="{{ datapoint['DT_NEW_CASES date_updated'] }} {{ datapoint['DT_NEW_CASES text_match']|e }}">
                     {%- if datapoint['DT_NEW_CASES date_updated'] == (date_today or datapoint['date_today']) -%}
                         <a href="{{ datapoint['DT_NEW_CASES source_url'] }}">
                             {{- datapoint['DT_NEW_CASES'] -}}
                         </a>
                     {%- endif -%}
                 </td>
-                <td title="{{ datapoint['DT_PATIENT_STATUS (Deaths) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Deaths) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (Deaths) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (Deaths) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Deaths) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (Deaths)'] -}}
                 </a></td>
-                <td title="{{ datapoint['DT_PATIENT_STATUS (New Deaths) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (New Deaths) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (New Deaths) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (New Deaths) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (New Deaths) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (New Deaths)'] -}}
                 </a></td> <!-- FIXME -->
-                <td title="{{ datapoint['DT_PATIENT_STATUS (Recovered) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Recovered) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (Recovered) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (Recovered) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Recovered) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (Recovered)'] -}}
                 </a></td>
-                <td title="{{ datapoint['DT_PATIENT_STATUS (New Recovered) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (New Recovered) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (New Recovered) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (New Recovered) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (New Recovered) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (New Recovered)'] -}}
                 </a></td> <!-- FIXME -->
-                <td title="{{ datapoint['DT_CASES_TESTED date_updated'] }}"><a href="{{ datapoint['DT_CASES_TESTED source_url'] }}">
+                <td title="{{ datapoint['DT_CASES_TESTED date_updated'] }} {{ datapoint['DT_CASES_TESTED text_match']|e }}"><a href="{{ datapoint['DT_CASES_TESTED source_url'] }}">
                     {{- datapoint['DT_CASES_TESTED'] -}}
                 </a></td>
                 <td>
@@ -60,10 +62,10 @@
                         or ''
                     -}}
                 </td>
-                <td title="{{ datapoint['DT_PATIENT_STATUS (Hospitalized) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Hospitalized) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (Hospitalized) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (Hospitalized) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (Hospitalized) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (Hospitalized)'] -}}
                 </a></td>
-                <td title="{{ datapoint['DT_PATIENT_STATUS (ICU) date_updated'] }}"><a href="{{ datapoint['DT_PATIENT_STATUS (ICU) source_url'] }}">
+                <td title="{{ datapoint['DT_PATIENT_STATUS (ICU) date_updated'] }} {{ datapoint['DT_PATIENT_STATUS (ICU) text_match']|e }}"><a href="{{ datapoint['DT_PATIENT_STATUS (ICU) source_url'] }}">
                     {{- datapoint['DT_PATIENT_STATUS (ICU)'] -}}
                 </a></td>
                 <td>

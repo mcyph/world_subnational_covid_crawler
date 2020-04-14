@@ -26,11 +26,31 @@ class App(object):
         _thread.start_new_thread(self.loop, ())
 
     def loop(self):
-        # Run once every around every hour and a half
-        # (an hour is 3600 seconds)
+        powerbi_run_1st = False
+        powerbi_run_2nd = False
+
         while True:
+            # Run once every around every hour and a half
+            # (an hour is 3600 seconds)
             time.sleep(random.randint(4000, 5000))
-            system(f'python3 {quote(UPDATE_SCRIPT_PATH)}')
+
+            dt = datetime.datetime.now()
+
+            if dt.hour >= 7 and dt.hour <= 22:
+                # Run between 7am and 10pm only
+
+                if dt.hour >= 12 and dt.hour < 2 and not powerbi_run_1st:
+                    # Run powerbi once only between 12pm and 2pm
+                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)} --update-powerbi')
+                    powerbi_run_1st = True
+                    powerbi_run_2nd = False
+                elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_2nd:
+                    # Run powerbi once only between 5pm and 7pm
+                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)} --update-powerbi')
+                    powerbi_run_1st = False
+                    powerbi_run_2nd = True
+                else:
+                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)}')
 
     #=============================================================#
     #                       Utility Functions                     #
@@ -119,6 +139,19 @@ class App(object):
             x['datatype'],
             x['name']
         )
+
+    def __get_not_most_recent_warning(self, period, subperiod_id):
+        i_period, i_subperiod_id, i_dt = self.__get_revisions()[0]
+
+        if i_period != period or int(i_subperiod_id) != int(subperiod_id):
+            return (
+                '<div style="font-size: 1.2em; font-weight: bold; color: red">'
+                    f'WARNING: This is an outdated revision. '
+                    f'You can find the newest '
+                    f'<a href="/revision?rev_date={i_period}&rev_subid={i_subperiod_id}">here</a>.'
+                '</div>'
+            )
+        return ''
 
     #=============================================================#
     #                            Index                            #
@@ -210,8 +243,10 @@ class App(object):
             status_list=status_list,
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            rev_time=None, # FIXME
             revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
+            not_most_recent_warning=self.__get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
@@ -229,9 +264,11 @@ class App(object):
         return env.get_template('revision/get_data_as_table.html').render(
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            rev_time=None,  # FIXME
             datapoints=datapoints,
             revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
+            not_most_recent_warning=self.__get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
@@ -294,7 +331,10 @@ class App(object):
             revision_time_string=self.__get_revision_time_string(
                 rev_date, rev_subid
             ),
-            statistics_datapoints=statistics_datapoints
+            statistics_datapoints=statistics_datapoints,
+            not_most_recent_warning=self.__get_not_most_recent_warning(
+                rev_date, rev_subid
+            ),
         )
 
     @cherrypy.expose
@@ -315,7 +355,10 @@ class App(object):
             revision_time_string=self.__get_revision_time_string(
                 rev_date, rev_subid
             ),
-            gender_age_datapoints=gender_age_datapoints
+            gender_age_datapoints=gender_age_datapoints,
+            not_most_recent_warning=self.__get_not_most_recent_warning(
+                rev_date, rev_subid
+            ),
         )
 
     @cherrypy.expose
@@ -337,7 +380,10 @@ class App(object):
             revision_time_string=self.__get_revision_time_string(
                 rev_date, rev_subid
             ),
-            local_area_case_datapoints=local_area_case_datapoints
+            local_area_case_datapoints=local_area_case_datapoints,
+            not_most_recent_warning=self.__get_not_most_recent_warning(
+                rev_date, rev_subid
+            ),
         )
 
     def __get_combined_values_by_datatype(self,
@@ -440,6 +486,7 @@ class App(object):
                     i_combined[k] = datapoint['value']
                     i_combined[f'{k} date_updated'] = datapoint['date_updated']
                     i_combined[f'{k} source_url'] = datapoint['source_url']
+                    i_combined[f'{k} text_match'] = datapoint['text_match']
 
         out = []
         for i_combined in combined.values():

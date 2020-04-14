@@ -5,6 +5,8 @@
 
 <a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
 
+{{ not_most_recent_warning }}
+
 <h1>Revision {{ revision_time_string|e }}</h1>
 
 {% macro statistics(datapoints) %}
@@ -38,7 +40,7 @@
                 <td>
                     {{- datapoint['name'] -}}
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }}">
+                <td title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }} {{ datapoint['DT_CASES_BY_REGION text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION'] -}}
                     </a>
@@ -53,17 +55,17 @@
                     <!-- description -->
                 </td>
 
-                <td title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }}">
+                <td title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_RECOVERED text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_RECOVERED source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_RECOVERED'] -}}
                     </a>
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }}">
+                <td title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_DEATHS text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_DEATHS source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_DEATHS'] -}}
                     </a>
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }}">
+                <td title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_ACTIVE text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_ACTIVE source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_ACTIVE'] -}}
                     </a>
