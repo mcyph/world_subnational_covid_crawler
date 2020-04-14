@@ -39,7 +39,7 @@ wholesa_match = {
     (747, 813): 'The Rural City of Murray Bridge',
     (844, 891): 'Tatiara Dc',
     (795, 918): 'Kingston Dc',
-    (760, 790): 'Berri Barmera',
+    (833, 742): 'The Berri Barmera Council',
     (850, 1001): 'Wattle Range Council',
     (592, 450): 'Municipal Council of Roxby Downs',
 }

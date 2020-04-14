@@ -22,6 +22,11 @@ UPDATE_ACT_POWERBI = False
 UPDATE_GRAPHS = True
 
 
+if '--update-powerbi' in [i.strip() for i in sys.argv]:
+    UPDATE_VIC_POWERBI = True
+    UPDATE_ACT_POWERBI = True
+
+
 def remove_control_characters(s):
     return "".join(
         ch for ch in s
@@ -104,6 +109,7 @@ if __name__ == '__main__':
             VicPowerBI
         try:
             VicPowerBI().run_powerbi_grabber()
+            status['vic_powerbi'] = ('OK', None)
         except:
             print("Error occurred using VicPowerBI!")
             import traceback
@@ -117,6 +123,7 @@ if __name__ == '__main__':
             ACTPowerBI
         try:
             ACTPowerBI().run_powerbi_grabber()
+            status['act_powerbi'] = ('OK', None)
         except:
             print("Error occurred using ACTPowerBI!")
             import traceback

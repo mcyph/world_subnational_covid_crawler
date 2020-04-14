@@ -26,6 +26,8 @@ def word_to_number(s):
                flags=IGNORECASE)
     s = re.sub(r'\bboth\b', '2', s,
                flags=IGNORECASE)
+    s = re.sub(r'\bno\b', '0', s,
+               flags=IGNORECASE)
 
     out = []
     for x, ten in enumerate(tens):
@@ -86,6 +88,8 @@ def word_to_number(s):
         # HACK: basic support for hundreds!!!
         s = s.replace(f'{i} hundred and ', str(i))
         s = s.replace(f'{i} Hundred and ', str(i))
+
+
     return s
 
 

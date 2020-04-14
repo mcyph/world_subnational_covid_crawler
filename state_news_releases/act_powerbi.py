@@ -132,10 +132,16 @@ class _ACTPowerBI:
             data = self.__get_json_data(updated_date, rev_id, 'gender_balance_2')
 
         # WARNING: This sometimes has another query before it!!! =======================================================
-        m_f = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
+        try:
+            m_f = data['results'][-1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
-        assert m_f[0]['C'][0] == 'Males'
-        assert m_f[1]['C'][0] == 'Females'
+            assert m_f[0]['C'][0] == 'Males'
+            assert m_f[1]['C'][0] == 'Females'
+        except:
+            m_f = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
+
+            assert m_f[0]['C'][0] == 'Males'
+            assert m_f[1]['C'][0] == 'Females'
 
         male = m_f[0]['C'][1]
         try:
@@ -199,6 +205,12 @@ class _ACTPowerBI:
         rd = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         for region in rd:
+            print(region)
+            if isinstance(region['C'][0], int):
+                # {'C': [1], 'Ø': 1}
+                # (what is this for???)
+                continue
+
             if region.get('R'):
                 value = previous_value
             else:

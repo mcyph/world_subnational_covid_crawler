@@ -60,7 +60,7 @@ class ACTNews(StateNewsBase):
         return self._extract_number_using_regex(
             (
                 compile(r'total to (?:<strong>)?([0-9,]+)'),
-                compile(r'total is(?: now)? (?:<strong>)?([0-9,]+)'),
+                compile(r'total is(?: now| still)? (?:<strong>)?([0-9,]+)'),
                 compile(r'confirmed cases [^0-9.]+(?:<strong>)?([0-9,]+)'),  # WARNING: THIS CAN HAVE FALSE POSITIVES!!!
                 compile(r'total remains at (?:<strong>)?([0-9,]+)')
             ),
@@ -78,7 +78,7 @@ class ACTNews(StateNewsBase):
             (
                 compile(
                     'number of negative tests in the ACT '
-                    'is now (?:<strong>)?more than ([0-9,]+)'
+                    'is now (?:<strong>)?(?:more than )?([0-9,]+)'
                 ),
                 compile('There have been ([0-9,]+) negative'),
                 compile('<p>Number of negative tests</p></td><td><p>([0-9,]+)</p>'),
@@ -110,7 +110,7 @@ class ACTNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)\)? new (?:confirmed|cases?)'
+                r'([0-9,]+)(?:</strong>)?\)? new (?:confirmed|cases?)'
             ),
             c_html,
             source_url=href,
