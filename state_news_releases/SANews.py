@@ -81,14 +81,12 @@ class SANews(StateNewsBase):
         'Eighteen people in South Australia have today tested positive'
         c_html = word_to_number(html)
 
-        # HACK!
-        c_html = c_html.replace(
-            'No new people have tested positive',
-            '0 people have tested positive'
-        )
-
         return self._extract_number_using_regex(
-            compile('([0-9,]+) people[^0-9<]+have today tested positive'),
+            (
+                compile('([0-9,]+) people[^0-9<.]+?have(?: today)? tested positive'),
+                compile('([0-9,]+) new people have(?: today)? tested positive'),
+                compile('([0-9,]+) new cases of COVID-19'),
+            ),
             c_html,
             source_url=href,
             datatype=DT_NEW_CASES,
@@ -302,6 +300,9 @@ class SANews(StateNewsBase):
 
     @singledaystat
     def _get_total_dhr(self, href, html):
+        # TODO: Also support updates!
+        # e.g. https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/covid-19+update+15+april+2020
+
         r = []
         print(href)
         tr = self._pq_contains(html, 'tr', 'Cases in ICU',

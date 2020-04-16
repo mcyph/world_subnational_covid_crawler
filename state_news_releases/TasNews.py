@@ -22,28 +22,38 @@ class TasNews(StateNewsBase):
         # probably entered manually each time
         print(url)
 
-        date = pq(pq(html)(
-            '#main-content div h2:first-child,'
-            '#main-content div h3:first-child,'
-            '#main-content div h4:first-child,'
-            '#main-content div:first-child p:first-child strong:first-child,'
-            '.page-content.col.order-xl-1.order-sm-2'
-        )[0]) \
-            .text() \
-            .strip() \
-            .split('\n')[0]
-
-        try:
+        for selector in (
+            '#main-banner h2',
+            '#main-content div h2:first-child',
+            '#main-content div h3:first-child',
+            '#main-content div h4:first-child',
+            '#main-content div:first-child p:first-child strong:first-child',
+            '.page-content.col.order-xl-1.order-sm-2',
+        ):
             try:
-                return self._extract_date_using_format(date)
-            except ValueError:
-                return self._extract_date_using_format(
-                    date, format='%B %d, %Y'
-                )
-        except ValueError:
-            return self._extract_date_using_format(
-                date, format='%d %b %Y'
-            )
+                date = pq(pq(html)(selector)[0]) \
+                    .text() \
+                    .strip() \
+                    .split('\n')[0] \
+                    .split('Update')[-1] \
+                    .split('update')[-1] \
+                    .strip()
+
+                try:
+                    try:
+                        return self._extract_date_using_format(date)
+                    except ValueError:
+                        return self._extract_date_using_format(
+                            date, format='%B %d, %Y'
+                        )
+                except ValueError:
+                    return self._extract_date_using_format(
+                        date, format='%d %b %Y'
+                    )
+            except (IndexError, ValueError):
+                pass
+
+        raise Exception("TAS Couldn't find date for URL:", url)
 
     #============================================================#
     #                      General Totals                        #
