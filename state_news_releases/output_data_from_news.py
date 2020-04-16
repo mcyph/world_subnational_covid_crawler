@@ -19,12 +19,14 @@ from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 UPDATE_VIC_POWERBI = False
 UPDATE_ACT_POWERBI = False
+UPDATE_WA_REGIONS = False
 UPDATE_GRAPHS = True
 
 
 if '--update-powerbi' in [i.strip() for i in sys.argv]:
     UPDATE_VIC_POWERBI = True
     UPDATE_ACT_POWERBI = True
+    UPDATE_WA_REGIONS = True
 
 
 def remove_control_characters(s):
@@ -129,6 +131,20 @@ if __name__ == '__main__':
             import traceback
             traceback.print_exc()
             status['act_powerbi'] = (
+                'ERROR', traceback.format_exc()
+            )
+
+    if UPDATE_WA_REGIONS:
+        from covid_19_au_grab.state_news_releases.WARegions import \
+            run_wa_regions
+        try:
+            run_wa_regions()
+            status['wa_regions'] = ('OK', None)
+        except:
+            print("Error occurred using WA regions!")
+            import traceback
+            traceback.print_exc()
+            status['wa_regions'] = (
                 'ERROR', traceback.format_exc()
             )
 

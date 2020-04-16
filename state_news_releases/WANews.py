@@ -1,3 +1,5 @@
+import glob
+from os.path import dirname
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE, MULTILINE, DOTALL
 
@@ -40,25 +42,26 @@ class WANews(StateNewsBase):
 
         # WA-specific maps archiver
         wa_custom_map_ua = URLArchiver(f'{self.STATE_NAME}/custom_map')
-        wa_custom_map_ua.get_url_data(
-            self.WA_CUSTOM_MAP_URL,
-            cache=False if ALWAYS_DOWNLOAD_LISTING else True
-        )
+        #wa_custom_map_ua.get_url_data(
+        #    self.WA_CUSTOM_MAP_URL,
+        #    cache=False if ALWAYS_DOWNLOAD_LISTING else True
+        #)
 
         for period in wa_custom_map_ua.iter_periods():
             for subperiod_id, subdir in wa_custom_map_ua.iter_paths_for_period(period):
-                path = wa_custom_map_ua.get_path(subdir)
+                for path in glob.glob(dirname(
+                    wa_custom_map_ua.get_path(subdir)
+                )+'/*'):
+                    with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                        json_text = f.read()
 
-                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                    json_text = f.read()
-
-                print("JSON:", json_text)
-                cbr = self._get_total_cases_by_region(
-                    self.WA_CUSTOM_MAP_URL,
-                    (json_text, subdir.split('-')[0])
-                )
-                if cbr:
-                    r.extend(cbr)
+                    #print("JSON:", json_text)
+                    cbr = self._get_total_cases_by_region(
+                        self.WA_CUSTOM_MAP_URL,
+                        (json_text, subdir.split('-')[0])
+                    )
+                    if cbr:
+                        r.extend(cbr)
 
         r.extend(
             StateNewsBase.get_data(self)
@@ -350,19 +353,44 @@ class WANews(StateNewsBase):
                 }, ...
             }
             """
+
+            #print(feature_dict)
             attributes = feature_dict['attributes']
+            if attributes.get('exceedslimit'):
+                continue
+
+            if 'Confirmed_cases' in feature_dict:
+                value = attributes['Confirmed_cases']
+            else:
+                try:
+                    value = int(attributes['PopUpLabel'])
+                except (ValueError, KeyError, TypeError):
+                    cls = attributes['Classification'].strip()
+                    if cls == 'No case':
+                        continue
+                    elif ' - ' in cls:
+                        from_num, to_num = cls.split(' - ')
+                        from_num = int(from_num)
+                        to_num = int(to_num)
+                        value = (from_num+to_num)//2
+                    else:
+                        try:
+                            value = int(cls.strip('+'))
+                        except ValueError:
+                            import traceback
+                            traceback.print_exc()
+                            continue # WARNING!!! ============================================================================
 
             num = DataPoint(
                 name=attributes['LGA_NAME19'].split('(')[0].strip(),
                 datatype=DT_CASES_BY_REGION,
-                value=attributes['Confirmed_cases'],
+                value=value,
                 date_updated=period,
                 source_url='https://ww2.health.wa.gov.au/Articles/A_E/Coronavirus/COVID19-statistics',
                 text_match=None
             )
             r.append(num)
         return r
-
 
     #============================================================#
     #                     Totals by Source                       #
