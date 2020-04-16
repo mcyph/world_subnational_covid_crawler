@@ -80,9 +80,9 @@ class ACTNews(StateNewsBase):
                     'number of negative tests in the ACT '
                     'is now (?:<strong>)?(?:more than )?([0-9,]+)'
                 ),
-                compile('There have been ([0-9,]+) negative'),
-                compile('<p>Number of negative tests</p></td><td><p>([0-9,]+)</p>'),
-                compile(r'tested negative is now ([0-9,]+)')
+                compile('There have been (?:<strong>)?([0-9,]+)(?:</strong>)? negative'),
+                compile('<p>Number of negative tests</p></td><td><p>(?:<strong>)?([0-9,]+)'),
+                compile(r'tested negative is now (?:<strong>)?([0-9,]+)')
             ),
             c_html,
             source_url=href,
@@ -181,7 +181,7 @@ class ACTNews(StateNewsBase):
 
         r = []
         male = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)? [^0-9.]*?(?<!fe)male(?:s)?'),
+            compile(r'([0-9,]+)\)?(?:</strong>)? [^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
             source_url=href,
             datatype=DT_NEW_MALE,
@@ -191,7 +191,7 @@ class ACTNews(StateNewsBase):
             r.append(male)
 
         female = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)? [^0-9.]*?female(?:s)?'),
+            compile(r'([0-9,]+)\)?(?:</strong>)? [^0-9.]*?female(?:s)?'),
             c_html,
             source_url=href,
             datatype=DT_NEW_FEMALE,

@@ -43,53 +43,18 @@ class PowerBIBase:
         system('killall browsermob-prox')
 
         # grab()
-        for dist, most_likely, post_data, content in self.match_grabbed_with_types():
-            print()
-            print(f"{most_likely}: Distance of {dist}" +
-                  (" - non-zero distance means match is probably incorrect!"
-                   if dist
-                   else ""))
-            print("POST Query:", json.dumps(post_data, indent=2, sort_keys=True))
-            print("Response:", json.dumps(content, indent=2, sort_keys=True))
+        self.match_grabbed_with_types()
 
     def match_grabbed_with_types(self):
         r = []
 
         for post_data, content in self.__grab():
-            j_post_data = json.dumps(post_data['queries'], sort_keys=True)
-
-            most_likely = None
-            smallest_dist = 999999999
-            for k, v in self.globals_dict.items():
-                if k.endswith('_req'):
-                    v = json.dumps(v['queries'], sort_keys=True)
-                    dist = editdistance.distance(j_post_data, v)
-                    if dist < smallest_dist:
-                        smallest_dist = dist
-                        most_likely = k[:-4]
-
-            r.append((
-                smallest_dist,
-                most_likely,
-                post_data,
-                content
-            ))
-
-            prefix = (
-                most_likely + '_unconfirmed'
-                if smallest_dist
-                else most_likely
-            )
-
-            if smallest_dist:
-                prefix_suffix = 1
-                while True:
-                    path = f'{self.output_dir}/{prefix}-{prefix_suffix}.json'
-                    if not os.path.exists(path):
-                        break
-                    prefix_suffix += 1
-            else:
-                path = f'{self.output_dir}/{prefix}.json'
+            prefix_suffix = 1
+            while True:
+                path = f'{self.output_dir}/json_data-{prefix_suffix}.json'
+                if not os.path.exists(path):
+                    break
+                prefix_suffix += 1
 
             with open(path, 'w',
                       encoding='utf-8',

@@ -19,14 +19,207 @@ class VicPowerBI(PowerBIBase):
                              self.POWERBI_URL)
 
 
+def get_globals():
+    return globals()
+
+
 true = True
 false = False
 
+source_of_infection_2_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l"
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "l"
+                                            }
+                                        },
+                                        "Property": "Cases"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "acquired_n"
+                                },
+                                "Name": "Linelist.acquired_n"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+source_of_infection_3_req = {
+    "ApplicationContext": {
+        "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",
+        "Sources": [
+            {
+                "ReportId": "6b564b1a-20ea-4707-826f-04a750b77678"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\"},{\"Name\":\"s\",\"Entity\":\"Source Table\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases (%)\"},\"Name\":\"Table.Confirmed Cases (%)\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Source_1\"},\"Name\":\"Sheet1.Source_1\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Source (new)\"},\"Name\":\"Sheet1.Source (new)\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases (%)\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[1,0],\"Subtotal\":1}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        1,
+                                        0
+                                    ],
+                                    "Subtotal": 1
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t"
+                            },
+                            {
+                                "Entity": "Source Table",
+                                "Name": "s"
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "t"
+                                            }
+                                        },
+                                        "Property": "Confirmed Cases (%)"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Confirmed Cases (%)"
+                                },
+                                "Name": "Table.Confirmed Cases (%)"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "s"
+                                        }
+                                    },
+                                    "Property": "Source_1"
+                                },
+                                "Name": "Sheet1.Source_1"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "s"
+                                        }
+                                    },
+                                    "Property": "Source (new)"
+                                },
+                                "Name": "Sheet1.Source (new)"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
 age_data_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -189,15 +382,8 @@ age_data_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 age_median_range_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -257,15 +443,8 @@ age_median_range_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
-tested_and_deceased_total_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
+deceased_total_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -353,8 +532,9 @@ tested_and_deceased_total_req = {
           ]
         },
         "QueryId": ""
-      },
-      {
+      }
+
+tested_total_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -419,15 +599,8 @@ tested_and_deceased_total_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 male_female_balance_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -514,15 +687,8 @@ male_female_balance_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 regions_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -628,15 +794,8 @@ regions_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 regions_2_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -740,9 +899,6 @@ regions_2_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 #tested_total_req = {"version":"1.0.0","queries":[{"Query":{"Commands":[{"SemanticQueryDataShapeCommand":
 #                                                                          {"Query":{"Version":2,"From":[{"Name":"t","Entity":"Tested"}],
@@ -755,10 +911,6 @@ regions_2_req = {
 #                                                  "CacheKey":"{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"tested\"}},\"Function\":0},\"Name\":\"Sum(Tested.tested)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}","QueryId":"","ApplicationContext":{"DatasetId":"5b547437-24c9-4b22-92de-900b3b3f4785","Sources":[{"ReportId":"964ef513-8ff4-407c-8068-ade1e7f64ca5"}]}}],"cancelQueries":[],"modelId":1959902}
 
 total_cases_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -818,15 +970,8 @@ total_cases_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
-unknown_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
+unknown_please_categorize_req = {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -920,15 +1065,8 @@ unknown_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
 overseas_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1022,15 +1160,8 @@ overseas_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
 confirmed_cases_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1095,15 +1226,8 @@ confirmed_cases_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
 recovered_cases_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1196,8 +1320,9 @@ recovered_cases_req = {
                 ]
             },
             "QueryId": ""
-        },
-        {
+        }
+
+unknown_please_categorize_2_req = {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1294,15 +1419,8 @@ recovered_cases_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
-recovered_cases_2_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
+unknown_please_categorize_3_req = {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1366,8 +1484,9 @@ recovered_cases_2_req = {
                 ]
             },
             "QueryId": ""
-        },
-        {
+        }
+
+recovered_cases_2_req = {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1461,15 +1580,8 @@ recovered_cases_2_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
 median_age_range_age_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-        {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1528,8 +1640,9 @@ median_age_range_age_req = {
                 ]
             },
             "QueryId": ""
-        },
-        {
+        }
+
+unknown_please_categorize_4_req = {
             "ApplicationContext": {
                 "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
                 "Sources": [
@@ -1594,15 +1707,8 @@ median_age_range_age_req = {
             },
             "QueryId": ""
         }
-    ],
-    "version": "1.0.0"
-}
 
 source_of_infection_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -1689,15 +1795,8 @@ source_of_infection_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 running_total_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -1781,15 +1880,8 @@ running_total_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
-tested_well_req = {
-    "cancelQueries": [],
-    "modelId": 1959902,
-    "queries": [
-      {
+unknown_please_categorize_5_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -1848,8 +1940,9 @@ tested_well_req = {
           ]
         },
         "QueryId": ""
-      },
-      {
+      }
+
+tested_well_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -1938,9 +2031,6 @@ tested_well_req = {
         },
         "QueryId": ""
       }
-    ],
-    "version": "1.0.0"
-}
 
 
 if __name__ == '__main__':
