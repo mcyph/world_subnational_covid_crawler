@@ -1,0 +1,45 @@
+{% from "base_template.html" import start_head, start_body, end_page %}
+
+{{ start_head() }}
+
+{{ start_body() }}
+    <a href="/"><< Back to home</a>
+
+    {% for rev_id, rev_subid, revision_time_string, changes in changes_by_revision %}
+        <h1>Revision {{ revision_time_string|e }}</h1>
+
+        {% if changes %}
+            <table class="fancy-table">
+                <tr>
+                    <th>Change Type</th>
+                    {% for key in changes[0][0] %}
+                        <th>{{ key|e }}</th>
+                    {% endfor %}
+                </tr>
+                {% for current_datapoint, previous_datapoint in changes %}
+                    <tr>
+                        <th>Addition</th>
+                        {% for key in current_datapoint %}
+                            <td>{{ current_datapoint[key]|e }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% if previous_datapoint %}
+                        <tr>
+                            <th>Deletion</th>
+                            {% for key in previous_datapoint %}
+                                <td>{{ previous_datapoint[key]|e }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        {% else %}
+            (There were no changes since the last revision)
+        {% endif %}
+
+        <div style="margin-top: 20px;">
+            <a href="/revision?rev_id={{rev_id}}&rev_subid={{rev_subid}}">Go to revision >></a>
+        </div>
+
+    {% endfor %}
+{{ end_page() }}

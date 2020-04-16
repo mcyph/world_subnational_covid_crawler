@@ -39,7 +39,7 @@ class App(object):
             if dt.hour >= 7 and dt.hour <= 22:
                 # Run between 7am and 10pm only
 
-                if dt.hour >= 12 and dt.hour < 2 and not powerbi_run_1st:
+                if dt.hour >= 12 and dt.hour < 14 and not powerbi_run_1st:
                     # Run powerbi once only between 12pm and 2pm
                     system(f'python3 {quote(UPDATE_SCRIPT_PATH)} --update-powerbi')
                     powerbi_run_1st = True
@@ -170,54 +170,61 @@ class App(object):
         TODO: Go thru each version from the
         last 48 hours, and output any changes
         """
+        revisions = self.__get_revisions()[:15]
+        data = [
+            self.__read_csv(period, subperiod_id)
+            for period, subperiod_id, _ in revisions
+        ]
 
-        today = datetime.datetime.now() \
-                        .strftime(FIXME)
-        yesterday = (
-            datetime.datetime.now() -
-            datetime.timedelta(days=1)
-        ).strftime(FIXME)
-
-        data = []
-        for subdir in sorted(listdir(OUTPUT_DIR), reverse=True):
-            if (
-                subdir.startswith(today+'-') or
-                subdir.startswith(yesterday+'-')
-            ):
-                data.append(self.__read_csv(*subdir.split('-')))
-
-        out = []
+        changes_by_revision = []
         for x, i_data in enumerate(data):
             if x == len(data)-1:
                 break
-            out.append(self.__get_diffs(i_data, data[x+1]))
+
+            changes_by_revision.append((
+                revisions[x][0],
+                revisions[x][1],
+                revisions[x][2],
+                self.__get_changed(i_data, data[x+1])
+            ))
 
         return env.get_template('most_recent_changes.html').render(
-            changes=out
+            changes_by_revision=changes_by_revision
         )
 
-    def __get_diffs(self, data_1, data_2):
-        # This could be done much more efficiently..
-        set_1 = set()
-        set_2 = set()
+    def __get_changed(self, current_datapoints, previous_datapoints):
+        current_dict = {}
+        previous_dict = {}
+        previous_dict_by_name = {}
 
-        for datapoint in data_1:
-            set_1.add(datapoint.values())  #  MAKE SURE THIS IS ORDERED!!
+        keys = (
+            'state_name',
+            'datatype',
+            'name',
+            'value',
+        )
 
-        for datapoint in data_2:
-            set_2.add(datapoint.values())
+        for datapoint in current_datapoints:
+            unique_key = tuple([datapoint[k] for k in keys])
+            if unique_key in current_dict:
+                continue
+            current_dict[unique_key] = datapoint
 
-        deleted = []
-        for datapoint in data_1:
-            if datapoint.values() not in set_2:
-                deleted.append(datapoint)
+        for datapoint in previous_datapoints:
+            unique_key = tuple([datapoint[k] for k in keys])
+            previous_dict[unique_key] = None
+            if unique_key[:-1] in previous_dict_by_name:
+                continue
+            previous_dict_by_name[unique_key[:-1]] = datapoint
 
-        added = []
-        for datapoint in data_2:
-            if datapoint.values() not in set_1:
-                added.append(datapoint)
-
-        return added, deleted
+        changed = []
+        for unique_key in current_dict:
+            if unique_key not in previous_dict:
+                changed.append((
+                    current_dict[unique_key],
+                    previous_dict_by_name.get(unique_key[:-1])
+                ))
+        return changed
 
     @cherrypy.expose
     def most_recent_graphs(self):
