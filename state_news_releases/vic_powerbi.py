@@ -91,28 +91,32 @@ class _VicPowerBI(PowerBIDataReader):
         output = []
         data = response_dict['age_data'][1]
 
+        cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
+        cols = [i['G1'].rstrip('s') for i in cols]
+        #print("COLS:", cols)
+
         for age in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            print(age)
+            #print(age)
             X = age['X']
 
             if len(X) > 0:
                 # Note that previous value simply means the very last value seen
                 # That means that if female/not stated is 67 and the following
                 # male stat is also 67 it'll be elided with an R-repeat val
-                male = X[0].get(
+                value_1 = X[0].get(
                     'M0', previous_value if X[0].get('R') else 0
                 )
-                previous_value = male
+                previous_value = value_1
             else:
-                male = 0
+                value_1 = 0
 
             if len(X) > 1:
-                female = X[1].get(
+                value_2 = X[1].get(
                     'M0', previous_value if X[1].get('R') else 0
                 )  # "R" clearly means "Repeat"
-                previous_value = female
+                previous_value = value_2
             else:
-                female = 0
+                value_2 = 0
 
             if len(X) > 2:
                 not_stated = X[2].get(
@@ -122,25 +126,28 @@ class _VicPowerBI(PowerBIDataReader):
             else:
                 not_stated = 0
 
+            assert cols[0] in ('Male', 'Female')
+            assert cols[1] in ('Male', 'Female')
+
             output.append(DataPoint(
                 name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_MALE,
-                value=male,
+                datatype=DT_AGE_MALE if cols[0] == 'Male' else DT_AGE_FEMALE,
+                value=value_1,
                 date_updated=updated_date,
                 source_url=SOURCE_URL,
                 text_match=None
             ))
             output.append(DataPoint(
                 name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_FEMALE,
-                value=female,
+                datatype=DT_AGE_FEMALE if cols[1] == 'Female' else DT_AGE_MALE,
+                value=value_2,
                 date_updated=updated_date,
                 source_url=SOURCE_URL,
                 text_match=None
             ))
             # TODO: support "not stated" separately!!! ====================================================
             general_age = (
-                    male + female + not_stated
+                value_1 + value_2 + not_stated
             )
 
             output.append(DataPoint(

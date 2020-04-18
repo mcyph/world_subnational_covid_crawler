@@ -149,13 +149,11 @@ class WANews(StateNewsBase):
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
-            compile('reported ([0-9,]+) new cases'),
-            c_html,
-            source_url=url,
-            datatype=DT_NEW_CASES,
-            date_updated=self._get_date(url, html)
-        ) or self._extract_number_using_regex(
-            compile('([0-9,]+) Western Australians who have tested positive'),
+            (
+                compile('([0-9,]+) Western Australians who have tested positive'),
+                compile('reported ([0-9,]+) new cases'),
+                compile('([0-9,]+) new confirmed cases of COVID-19')
+            ),
             c_html,
             source_url=url,
             datatype=DT_NEW_CASES,

@@ -61,5 +61,5 @@ class PowerBIDataReader:
                 else:
                     # TODO: Support the old format, which didn't
                     #  match the request with the response!
-                    print(json.dumps(data, indent=4))
+                    #print(json.dumps(data, indent=4))
                     yield json_path.replace('.json', '').split('/')[-1], data['results'][0]

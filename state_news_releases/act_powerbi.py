@@ -6,6 +6,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_AGE_MALE, DT_AGE_FEMALE, DT_AGE, \
     DT_CASES_BY_REGION, \
     DT_PATIENT_STATUS, \
+    DT_SOURCE_OF_INFECTION, \
     DT_MALE, DT_FEMALE
 from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
     ACTPowerBI, get_globals
@@ -173,12 +174,74 @@ class _ACTPowerBI(PowerBIDataReader):
         return r
 
     def _get_infection_source_data(self, updated_date, response_dict):
-        r = []
+        # TODO: SHOULD THIS ONLY USE THE MOST RECENT VALUES?? ================================================================================
         data = response_dict['infection_source_time_series']
-        #recovered = data['results'][0]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
-        #for time_dict in data:
+        act_norm_map = {
+            'Overseas acquired':
+                'Overseas acquired',
+            'Cruise ship acquired':
+                'Cruise ship acquired (included in overseas acquired)',  # CHECK ME!!!! ===============================
+            'Locally acquired - interstate':
+                'Interstate acquired',
+            'Locally acquired - contact of a confirmed ACT case':
+                'Locally acquired - contact of a confirmed case',
+            'Unknown or local transmission':
+                'Locally acquired - contact not identified',
+            'Locally acquired unknown source':
+                'Locally acquired - contact not identified',
+            'Under investigation':
+                'Under investigation'
+        }
 
+
+        # "Locally acquired - contact of a confirmed ACT case"
+        # "Locally acquired - interstate"
+        # "Overseas acquired"
+        # "Under investigation"
+
+        tally = {}
+        keys = [
+            x['G1'] for x in
+            data[1]['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
+        ]
+        for key in keys:
+            tally[key] = 0
+
+        r = []
+        for item in data[1]['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
+            timestamp = item['G0']  # e.g. 1585958400000
+
+            xx = 0
+            for sub_item in item['X']:
+                print(sub_item)
+                if len(sub_item.keys()) == 1 and list(sub_item.keys())[0] == 'S':
+                    continue
+                xx = sub_item.get('I', xx)
+
+                if sub_item.get('R'):
+                    value = previous_value
+                else:
+                    value = sub_item['M0']
+
+                value = self._to_int(value)
+                tally[keys[xx]] += value
+                previous_value = value
+                xx += 1
+
+            i_date_updated = datetime.fromtimestamp(timestamp/1000) \
+                                     .strftime('%Y_%m_%d')
+
+            if updated_date == i_date_updated:
+                for xx, (key, value) in enumerate(tally.items()):
+                    r.append(DataPoint(
+                        name=act_norm_map[keys[xx]],
+                        datatype=DT_SOURCE_OF_INFECTION,
+                        value=value,
+                        date_updated=i_date_updated,
+                        source_url=self.source_url,
+                        text_match=None
+                    ))
         return r
 
     def _get_new_cases_data(self, updated_date, response_dict):

@@ -75,6 +75,8 @@ class NSWNews(StateNewsBase):
     #============================================================#
 
     def _get_total_new_cases(self, href, html):
+        # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
+
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
@@ -94,6 +96,8 @@ class NSWNews(StateNewsBase):
         )
 
     def _get_total_cases(self, href, html):
+        # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
+
         tr = self._pq_contains(
             html, 'tr', 'Confirmed cases',
             ignore_case=True
@@ -115,6 +119,8 @@ class NSWNews(StateNewsBase):
         )
 
     def _get_total_cases_tested(self, href, html):
+        # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
+
         return self._extract_number_using_regex(
             (
                 compile(
@@ -302,7 +308,9 @@ class NSWNews(StateNewsBase):
             'Locally acquired – contact not identified':
                 'Locally acquired - contact not identified',
             'Under investigation':
-                'Under investigation'
+                'Under investigation',
+            'Interstate acquired':
+                'Interstate acquired'
         }
 
         # Wording has changed in NSW reports -
@@ -317,7 +325,8 @@ class NSWNews(StateNewsBase):
             'Locally acquired - contact of a confirmed case':
                 'Locally acquired – contact of a confirmed case and/or in a known cluster',
             'Local acquired – contact not identified':
-                'Locally acquired – contact not identified'
+                'Locally acquired – contact not identified',
+
         }
 
         for k in (
@@ -325,6 +334,7 @@ class NSWNews(StateNewsBase):
             'Locally acquired – contact of a confirmed case and/or in a known cluster',
             'Locally acquired – contact not identified',
             'Under investigation',
+            'Interstate acquired',
 
             'Epi link (contact of confirmed case)',
             'Unknown',

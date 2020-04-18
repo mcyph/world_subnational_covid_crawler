@@ -98,7 +98,7 @@ class QLDNews(StateNewsBase):
         return self._extract_number_using_regex(
             (
                 compile('state total to ([0-9,]+)'),
-                compile('total of ([0-9,]+) people')
+                compile('total of ([0-9,]+) (?:people|person)')
             ),
             c_html,
             source_url=href,

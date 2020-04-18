@@ -259,12 +259,23 @@ class StateNewsBase(ABC):
                 # I'm assuming the press releases won't change.
                 # This may or may not be the case!! ====================================================================
                 print(f'{self.STATE_NAME}: Trying href with text "{href_elm.text()}" href {href}')
-                html = self.pr_ua.get_url_data(
-                    href,
-                    period=self._get_date
-                )
-                date_str = self._get_date(href, html)
+                import urllib.error
+                try:
+                    html = self.pr_ua.get_url_data(
+                        href,
+                        period=self._get_date
+                    )
+                except urllib.error.HTTPError:
+                    if self.STATE_NAME == 'act':
+                        # e.g. covid-19-update-17-april-2020
+                        # gave a 403 as wasn't properly released
+                        import traceback
+                        traceback.print_exc()
+                        continue
+                    else:
+                        raise
 
+                date_str = self._get_date(href, html)
                 listing_urls.append((href, date_str, html))
         return listing_urls
 

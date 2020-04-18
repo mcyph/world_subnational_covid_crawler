@@ -36,8 +36,17 @@ class SANews(StateNewsBase):
             date = self._pq_contains(html, 'h2,h1,h3', 'Latest statistics',
                                      ignore_case=True).text().split(',')[-1].strip()
         else:
-            date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
-                               .text().strip().split(',')[-1].strip()
+            try:
+                # Fix for date at
+                # http://emergencydepartments.sa.gov.au/wps/wcm/connect/public+content/
+                # sa+health+internet/about+us/news+and+media/all+media+releases/
+                # covid-19+update+17+april+2020
+                return self._extract_date_using_format(
+                    pq(html)('div.wysiwyg h1').text().split('Update')[-1].strip()
+                )
+            except (ValueError, IndexError):
+                date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
+                                   .text().strip().split(',')[-1].strip()
 
         try:
             # e.g. Monday, 30 March 2020
@@ -83,8 +92,8 @@ class SANews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile('([0-9,]+) people[^0-9<.]+?have(?: today)? tested positive'),
-                compile('([0-9,]+) new people have(?: today)? tested positive'),
+                compile('([0-9,]+) (?:people|person)[^0-9<.]+?(?:have|has)(?: today)? tested positive'),
+                compile('([0-9,]+) new (?:people have|person has)(?: today)? tested positive'),
                 compile('([0-9,]+) new cases of COVID-19'),
             ),
             c_html,
