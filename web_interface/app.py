@@ -345,6 +345,48 @@ class App(object):
         )
 
     @cherrypy.expose
+    def source_of_infection(self, rev_date, rev_subid):
+        datapoints = self.__read_csv(rev_date, rev_subid)
+        statistics_datapoints = []
+        rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
+
+        for from_date in (
+            None,
+            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%d/%m/%Y')
+        ):
+            print("**FROM DATE:", from_date)
+
+            statistics_datapoints.append((
+                from_date, self.__get_combined_values(
+                    datapoints,
+                    (
+                        ('DT_SOURCE_OF_INFECTION', 'Overseas acquired'),
+                        ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
+                        ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact not identified'),
+                        ('DT_SOURCE_OF_INFECTION', 'Interstate acquired'),
+                        ('DT_SOURCE_OF_INFECTION', 'Under investigation'),
+                    ),
+                    from_date=from_date
+                )))
+
+        return env.get_template('revision/source_of_infection.html').render(
+            rev_date=rev_date,
+            rev_date_slash_format=datetime.datetime.strptime(rev_date, '%Y_%m_%d').strftime('%d/%m/%Y'),
+            rev_subid=rev_subid,
+            int=int,
+            revision_time_string=self.__get_revision_time_string(
+                rev_date, rev_subid
+            ),
+            statistics_datapoints=statistics_datapoints,
+            not_most_recent_warning=self.__get_not_most_recent_warning(
+                rev_date, rev_subid
+            ),
+        )
+
+    @cherrypy.expose
     def gender_age(self, rev_date, rev_subid):
         datapoints = self.__read_csv(rev_date, rev_subid)
         gender_age_datapoints = self.__get_combined_values_by_datatype(

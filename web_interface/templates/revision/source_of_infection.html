@@ -1,0 +1,65 @@
+{% from "base_template.html" import start_head, start_body, end_page %}
+
+{{ start_head() }}
+{{ start_body() }}
+
+<a href="/revision?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}"><< Back to revision</a>
+
+{{ not_most_recent_warning }}
+
+<h1>Revision {{ revision_time_string|e }}</h1>
+
+{% macro statistics(date_today, datapoints) %}
+    <table class="fancy-table">
+        <tr>
+            <th>state</th>
+            <th>Overseas acquired</th>
+            <th>Locally acquired - contact of a confirmed case</th>
+            <th>Locally acquired - contact not identified</th>
+            <th>Interstate acquired</th>
+            <th>Under investigation</th>
+            <th>reportDate</th>
+            <th>entryDate</th>
+        </tr>
+        {% for datapoint in datapoints %}
+            <tr>
+                <td>{{ datapoint['state_name']|upper }}</td>
+                <td title="{{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) source_url'] }}">
+                        {{- datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired)'] -}}
+                </a></td>
+                <td title="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) source_url'] }}">
+                    {{- datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case)'] -}}
+                </a></td>
+                <td title="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) source_url'] }}">
+                    {{- datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified)'] -}}
+                </a></td>
+                <td title="{{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) source_url'] }}">
+                    {{- datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired)'] -}}
+                </a></td>
+                <td title="{{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) source_url'] }}">
+                    {{- datapoint['DT_SOURCE_OF_INFECTION (Under investigation)'] -}}
+                </a></td>
+                <td>
+                    {{- datapoint['date_updated'] -}}
+                </td>
+                <td>
+                    {{- date_today or datapoint['date_today'] -}}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+<h2>Today's sources of infection</h2>
+{{ statistics(statistics_datapoints[0][0], statistics_datapoints[0][1]) }}
+
+<h2>Yesterday's</h2>
+{{ statistics(statistics_datapoints[1][0], statistics_datapoints[1][1]) }}
+
+<h2>2 days ago's</h2>
+{{ statistics(statistics_datapoints[2][0], statistics_datapoints[2][1]) }}
+
+<h2>3 days ago's</h2>
+{{ statistics(statistics_datapoints[3][0], statistics_datapoints[3][1]) }}
+
+{{ end_page() }}
