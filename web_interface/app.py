@@ -435,6 +435,49 @@ class App(object):
             ),
         )
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_regions_json_data(self, rev_date, rev_subid):
+        datapoints = self.__read_csv(rev_date, rev_subid)
+        from_dates = [i['date_updated'] for i in datapoints]
+
+        out = []
+        added = set()
+
+        for from_date in from_dates:
+            if from_date in added:
+                continue
+            added.add(from_date)
+
+            print(from_date)
+            local_area_case_datapoints = self.__get_combined_values_by_datatype(
+                datapoints,
+                (
+                    'DT_CASES_BY_REGION',
+                    'DT_CASES_BY_REGION_ACTIVE',
+                    'DT_CASES_BY_REGION_RECOVERED',
+                    'DT_CASES_BY_REGION_DEATHS',
+                ),
+                from_date=from_date
+            )
+            out.extend(
+                [(
+                    i['date_updated'],
+                    i['state_name'],
+                    i['name'],
+                    i['DT_CASES_BY_REGION'],
+                    i.get('DT_CASES_BY_REGION_ACTIVE'),
+                    i.get('DT_CASES_BY_REGION_RECOVERED'),
+                    i.get('DT_CASES_BY_REGION_DEATHS')
+                ) for i in local_area_case_datapoints
+                  if i['date_updated'] == from_date]
+            )
+
+        return {
+            'sub_headers': ['total', 'active', 'recovered', 'deaths'],
+            'data': out
+        }
+
     def __get_combined_values_by_datatype(self,
                                           datapoints,
                                           datatypes,
@@ -535,7 +578,11 @@ class App(object):
                     i_combined[k] = datapoint['value']
                     i_combined[f'{k} date_updated'] = datapoint['date_updated']
                     i_combined[f'{k} source_url'] = datapoint['source_url']
-                    i_combined[f'{k} text_match'] = datapoint['text_match']
+                    i_combined[f'{k} text_match'] = (
+                        datapoint['text_match']
+                        if datapoint['text_match'] != "'None'"
+                        else ''
+                    )
 
         out = []
         for i_combined in combined.values():
