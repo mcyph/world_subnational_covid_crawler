@@ -77,8 +77,14 @@ class TasNews(StateNewsBase):
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
-            compile(
-                'tally to ([0-9,]+)'
+            (
+                compile(
+                    'tally to ([0-9,]+)'
+                ),
+                compile(
+                    r"brings the State(?:’|&rsquo;|')s total to ([0-9,]+)",
+                    IGNORECASE
+                )
             ),
             c_html,
             source_url=url,

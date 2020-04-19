@@ -283,8 +283,12 @@ class _ACTPowerBI(PowerBIDataReader):
             else:
                 value = region['C'][1]
 
+            name = region['C'][0].split('(')[0].strip()
+            if name == 'East Canberra':
+                name = 'Canberra East'
+
             r.append(DataPoint(
-                name=region['C'][0].split('(')[0].strip(),
+                name=name,
                 datatype=DT_CASES_BY_REGION,
                 value=self._to_int(value),
                 date_updated=updated_date,

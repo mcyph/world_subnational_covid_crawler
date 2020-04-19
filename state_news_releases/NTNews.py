@@ -13,11 +13,20 @@ class NTNews(StateNewsBase):
     STATS_BY_REGION_URL = 'https://coronavirus.nt.gov.au/current-status'
 
     def _get_date(self, href, html):
-        date = self._pq_contains(
+        date = pq(self._pq_contains(
             html, 'p', 'Data last updated'
-        ).text()
+        )[0]).text()
         print(date)
-        date = date.split('updated')[-1].split(':')[-1].strip().strip('.').partition(' ')[-1]
+
+        date = ' '.join([
+            # Remove 6:00pm/6:00PM times,
+            # which can be at the start or end
+            i.strip(':.') for i in date.split('updated')[-1].split()
+            if not ':' in i
+               and not '.' in i.strip('.')
+               and not 'pm' in i.lower()
+        ])
+
         if not '2020' in date:
             date = date + ' 2020'  # YEAR HACK!!!! ========================
         return self._extract_date_using_format(
