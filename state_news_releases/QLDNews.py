@@ -16,7 +16,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     # Only newer data by LGA (not much history)
     DT_CASES_BY_LGA,
 
-    # Source of infection by region
+    # Source of infection by region (LGA)
     DT_CASES_BY_CONTACT_KNOWN, DT_CASES_BY_NO_KNOWN_CONTACT,
     DT_CASES_BY_INTERSTATE, DT_CASES_BY_OVERSEAS_ACQUIRED,
     DT_CASES_BY_UNDER_INVESTIGATION,
@@ -76,11 +76,26 @@ class QLDNews(StateNewsBase):
                           errors='ignore') as f:
                     html = f.read()
 
-                cbr = self._get_total_cases_by_region(
-                    self.STATS_BY_REGION_URL_2, html
-                )
-                if cbr:
-                    r.extend(cbr)
+                cbr = self._get_total_cases_by_region(self.STATS_BY_REGION_URL_2, html)
+                if cbr: r.extend(cbr)
+
+                total = self._get_total_cases(self.STATS_BY_REGION_URL_2, html)
+                if total: r.append(total)
+
+                new = self._get_total_new_cases(self.STATS_BY_REGION_URL_2, html)
+                if new: r.append(new)
+
+                tested = self._get_total_cases_tested(self.STATS_BY_REGION_URL_2, html)
+                if tested: r.append(tested)
+
+                age_breakdown = self._get_total_age_breakdown(self.STATS_BY_REGION_URL_2, html)
+                if age_breakdown: r.extend(age_breakdown)
+
+                dhr = self._get_total_dhr(self.STATS_BY_REGION_URL_2, html)
+                if dhr: r.extend(dhr)
+
+                soi = self._get_total_source_of_infection(self.STATS_BY_REGION_URL_2, html)
+                if soi: r.extend(soi)
 
         r.extend(StateNewsBase.get_data(self))
         return r
@@ -377,7 +392,7 @@ class QLDNews(StateNewsBase):
 
                     regions.append(DataPoint(
                         datatype=headers[xx],
-                        name=hhs,
+                        name=hhs.title(),
                         value=value,
                         date_updated=self._get_date(href, html),
                         source_url=href,
@@ -402,7 +417,7 @@ class QLDNews(StateNewsBase):
 
                     regions.append(DataPoint(
                         datatype=headers[xx],
-                        name=lga,
+                        name=lga.title(),
                         value=value,
                         date_updated=self._get_date(href, html),
                         source_url=href,
@@ -450,7 +465,7 @@ class QLDNews(StateNewsBase):
                             value = int(pq(td).text().strip())
                             regions.append(DataPoint(
                                 datatype=datatype,
-                                name=hhs_region,
+                                name=hhs_region.title(),
                                 value=value,
                                 date_updated=self._get_date(href, html),
                                 source_url=href,
@@ -525,17 +540,23 @@ class QLDNews(StateNewsBase):
 
         if url == self.STATS_BY_REGION_URL_2:
             table = pq(html)('#QLD_Cases_Sources_Of_Infection')[0]
+            #print(pq(table).html())
 
             r = []
-            for header, value in table[1:]:
-                header = norm_map[pq(header).text().strip()]
+            for header, value in table[0]:
+                header = pq(header).text().strip()
+                if header == 'Confirmed cases':
+                    continue
+
+                header = norm_map[header]
                 value = pq(value).text().strip()
                 r.append(DataPoint(
                     datatype=DT_SOURCE_OF_INFECTION,
                     name=header,
                     value=int(value.replace(',', '')),
-                    date=self._get_date(url, html),
-                    source_url=url
+                    date_updated=self._get_date(url, html),
+                    source_url=url,
+                    text_match=None
                 ))
             return r
         else:
