@@ -196,9 +196,14 @@ if __name__ == '__main__':
     print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
-            text_match = repr(remove_control_characters(
-                str(datapoint.text_match).replace("\t", " ").replace('\n', ' ').replace('\r', ' ')
-            ))
+            try:
+                text_match = repr(remove_control_characters(
+                    str(datapoint.text_match).replace("\t", " ").replace('\n', ' ').replace('\r', ' ')
+                ))
+            except:
+                print("ERROR:", datapoint)
+                raise
+
             yyyy, mm, dd = datapoint.date_updated.split('_')
             backwards_date = f'{dd}/{mm}/{yyyy}'
 

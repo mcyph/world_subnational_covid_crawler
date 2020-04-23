@@ -350,12 +350,15 @@ class NSWNews(StateNewsBase):
                 continue
 
             tr = tr[0]
-            c_icu = int(pq(tr[1]).text().replace(',', '').strip())
+
+            # I'm using index -1, as there's now an added
+            # "Change in past 24 hours" column as of 20/4/2020
+            c_value = int(pq(tr[-1]).text().replace(',', '').strip())
 
             r.append(DataPoint(
                 name=nsw_norm_map[old_type_map.get(k, k)],
                 datatype=DT_SOURCE_OF_INFECTION,
-                value=c_icu,
+                value=c_value,
                 date_updated=self._get_date(url, html),
                 source_url=url,
                 text_match=None

@@ -71,10 +71,17 @@ class VicNews(StateNewsBase):
                     s, format='%d %b %Y'
                 )
             except ValueError:
-                return self._extract_date_using_format(
-                    pq(html)('.purple-pullout').text().strip(),
-                    format='%d/%m/%Y'
-                )
+                try:
+                    return self._extract_date_using_format(
+                        pq(html)('.purple-pullout').text().strip(),
+                        format='%d/%m/%Y'
+                    )
+                except ValueError:
+                    # https://www.dhhs.vic.gov.au/victorias-coronavirus-covid-19-modelling-confirms-staying-home-saves-lives
+                    return self._extract_date_using_format(
+                        pq(html)('.page-updated').text().split(' on ')[-1].strip(),
+                        format='%d/%m/%Y'
+                    )
 
     #============================================================#
     #                      General Totals                        #

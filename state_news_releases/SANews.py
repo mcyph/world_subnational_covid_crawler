@@ -15,21 +15,36 @@ from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
 
-
+# https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
 class SANews(StateNewsBase):
     STATE_NAME = 'sa'
-    LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
-                  'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
-    LISTING_HREF_SELECTOR = '.news a'
+    #LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
+    #              'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
+    LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/SA+Health+Internet/About+us/News+and+media/all+media+releases/?mr-sort=date-desc&mr-pg=1'
+
+    LISTING_HREF_SELECTOR = '.news a, .article-list-item a.arrow-link'
     # SA actually has two URLS - the below and 'https://www.sa.gov.au/covid-19/
     #                                          latest-updates/daily-update/current' - SHOULD SUPPORT BOTH!!
-    STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/' \
-                          'sa+health+internet/health+topics/health+topics+a+-+z/covid+2019/' \
-                          'latest+updates/' \
-                          'confirmed+and+suspected+cases+of+covid-19+in+south+australia'
+    #STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/' \
+    #                      'sa+health+internet/health+topics/health+topics+a+-+z/covid+2019/' \
+    #                      'latest+updates/' \
+    #                      'confirmed+and+suspected+cases+of+covid-19+in+south+australia'
 
+    # Changed as of 23/4/2020!
+    STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia'
+
+    # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia
     def _get_date(self, href, html):
         print("HREF:", href)
+        try:
+            # New format of updated SA website as of 23/4/2020
+            date = pq(html)('.main-content p')[0]
+            if '2020' in pq(date).text():
+                return self._extract_date_using_format(
+                    pq(date).text().split(',')[-1].strip()
+                )
+        except (ValueError, IndexError):
+            pass
 
         if href == self.STATS_BY_REGION_URL:
             # Latest statistics – as of 4pm, 1 April 2020
@@ -105,6 +120,7 @@ class SANews(StateNewsBase):
     @bothlistingandstat
     def _get_total_cases(self, href, html):
         if href == self.STATS_BY_REGION_URL:
+            print(href, html)
             tr = self._pq_contains(html, 'tr', 'Confirmed cases',
                                    ignore_case=True)[0]
             cc = int(pq(tr[1]).text().strip())

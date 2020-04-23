@@ -61,7 +61,8 @@ class ACTNews(StateNewsBase):
             (
                 compile(r'total to (?:<strong>)?([0-9,]+)'),
                 compile(r'total is(?: now| still)? (?:<strong>)?([0-9,]+)'),
-                compile(r'confirmed cases [^0-9.]+(?:<strong>)?([0-9,]+)'),  # WARNING: THIS CAN HAVE FALSE POSITIVES!!!
+                # the "-" negative lookbehind is to prevent "COVID-19" matching
+                compile(r'confirmed cases [^0-9.,]+(?:<strong>)?(?<!-)([0-9,]+)'),
                 compile(r'total remains at (?:<strong>)?([0-9,]+)')
             ),
             c_html,

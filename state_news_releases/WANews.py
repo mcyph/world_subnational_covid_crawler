@@ -110,7 +110,10 @@ class WANews(StateNewsBase):
 
     def _get_total_cases(self, url, html):
         return self._extract_number_using_regex(
-            compile(r'total to ([0-9,]+)'),
+            (
+                compile(r'total to ([0-9,]+)'),
+                compile(r'total number of cases remains at ([0-9,]+)')
+            ),
             html,
             source_url=url,
             datatype=DT_CASES,
@@ -429,6 +432,29 @@ class WANews(StateNewsBase):
     def _get_total_dhr(self, href, html):
         r = []
         c_html = word_to_number(html)
+
+        icu = self._extract_number_using_regex(
+            compile('([0-9,]+) of whom are in ICU'),
+            c_html,
+            name='ICU',
+            source_url=href,
+            datatype=DT_PATIENT_STATUS,
+            date_updated=self._get_date(href, html)
+        )
+        if icu:
+            r.append(icu)
+
+        hospitalized = self._extract_number_using_regex(
+            # Sounds like none are in regional hospitals?? ===================================
+            compile('([0-9,]+) confirmed COVID-19 patients in Perth metropolitan hospitals'),
+            c_html,
+            name='Hospitalized',
+            source_url=href,
+            datatype=DT_PATIENT_STATUS,
+            date_updated=self._get_date(href, html)
+        )
+        if hospitalized:
+            r.append(hospitalized)
 
         recovered = self._extract_number_using_regex(
             compile(
