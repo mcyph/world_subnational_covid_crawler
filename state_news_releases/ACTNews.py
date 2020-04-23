@@ -59,11 +59,11 @@ class ACTNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile(r'total to (?:<strong>)?\s?([0-9,]+)'),
-                compile(r'total is(?: now| still)? (?:<strong>)?\s?([0-9,]+)'),
+                compile(r'total to\s?(?:<strong>)?\s?([0-9,]+)'),
+                compile(r'total is(?: now| still)?\s?(?:<strong>)?\s?([0-9,]+)'),
                 # the "-" negative lookbehind is to prevent "COVID-19" matching
-                compile(r'confirmed cases [^0-9.,]+(?:<strong>)?\s?(?<!-)([0-9,]+)'),
-                compile(r'total remains at (?:<strong>)?\s?([0-9,]+)')
+                compile(r'confirmed cases\s?[^0-9.,]+(?:<strong>)?\s?(?<!-)([0-9,]+)'),
+                compile(r'total remains at\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
             source_url=href,
@@ -79,11 +79,11 @@ class ACTNews(StateNewsBase):
             (
                 compile(
                     r'number of negative tests in the ACT '
-                    r'is now (?:<strong>)?\s?(?:more than )?([0-9,]+)'
+                    r'is now\s?(?:<strong>)?\s?(?:more than )?([0-9,]+)'
                 ),
-                compile(r'There have been (?:<strong>)?\s?([0-9,]+)\s?(?:</strong>)? negative'),
+                compile(r'There have been\s?(?:<strong>)?\s?([0-9,]+)\s?(?:</strong>)?\s?negative'),
                 compile(r'<p>Number of negative tests</p></td><td><p>(?:<strong>)?([0-9,]+)'),
-                compile(r'tested negative is now (?:<strong>)?\s?([0-9,]+)')
+                compile(r'tested negative is now\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
             source_url=href,
@@ -111,7 +111,7 @@ class ACTNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)\s?(?:</strong>)?\)? new (?:confirmed|cases?)'
+                r'([0-9,]+)\s?(?:</strong>)?\)?\s?new (?:confirmed|cases?)'
             ),
             c_html,
             source_url=href,
@@ -182,7 +182,7 @@ class ACTNews(StateNewsBase):
 
         r = []
         male = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?(?:</strong>)? [^0-9.]*?(?<!fe)male(?:s)?'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
             source_url=href,
             datatype=DT_NEW_MALE,
@@ -192,7 +192,7 @@ class ACTNews(StateNewsBase):
             r.append(male)
 
         female = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?(?:</strong>)? [^0-9.]*?female(?:s)?'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?female(?:s)?'),
             c_html,
             source_url=href,
             datatype=DT_NEW_FEMALE,
@@ -330,7 +330,7 @@ class ACTNews(StateNewsBase):
 
         c_html = word_to_number(html)
         patients = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?(?:</strong>)? COVID-19 patients'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
             name='Hospitalized',
             source_url=href,
@@ -338,7 +338,7 @@ class ACTNews(StateNewsBase):
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?(?:</strong>)? cases have recovered'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have recovered'),
             c_html,
             name='Recovered',
             source_url=href,
@@ -346,7 +346,7 @@ class ACTNews(StateNewsBase):
             date_updated=self._get_date(href, html)
         )
         deaths = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?(?:</strong>)? deaths\.'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
             name='Deaths',
             source_url=href,

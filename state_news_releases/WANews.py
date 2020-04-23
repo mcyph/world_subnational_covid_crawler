@@ -154,9 +154,9 @@ class WANews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile(r'([0-9,]+) Western Australians who have tested positive'),
-                compile(r'reported ([0-9,]+) new cases'),
-                compile(r'([0-9,]+) new confirmed cases of COVID-19')
+                compile(r'([0-9,]+) Western Australians? who have tested positive'),
+                compile(r'reported ([0-9,]+) new cases?'),
+                compile(r'([0-9,]+) new confirmed cases? of COVID-19')
             ),
             c_html,
             source_url=url,
