@@ -1,4 +1,4 @@
-{% from "base_template.html" import start_head, start_body, end_page %}
+{% from "base_template.html" import start_head, start_body, end_page, new_star %}
 
 {{ start_head() }}
 {{ start_body() }}
@@ -40,7 +40,7 @@
                 <td>
                     {{- datapoint['name'] -}}
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }} {{ datapoint['DT_CASES_BY_REGION text_match']|e }}">
+                <td {{new_star(datapoint, 'DT_CASES_BY_REGION')}} title="{{ datapoint['DT_CASES_BY_REGION date_updated'] }} {{ datapoint['DT_CASES_BY_REGION text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION'] -}}
                     </a>
@@ -55,17 +55,17 @@
                     <!-- description -->
                 </td>
 
-                <td title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_RECOVERED text_match']|e }}">
+                <td {{new_star(datapoint, 'DT_CASES_BY_REGION_RECOVERED')}} title="{{ datapoint['DT_CASES_BY_REGION_RECOVERED date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_RECOVERED text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_RECOVERED source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_RECOVERED'] -}}
                     </a>
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_DEATHS text_match']|e }}">
+                <td {{new_star(datapoint, 'DT_CASES_BY_REGION_DEATHS')}} title="{{ datapoint['DT_CASES_BY_REGION_DEATHS date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_DEATHS text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_DEATHS source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_DEATHS'] -}}
                     </a>
                 </td>
-                <td title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_ACTIVE text_match']|e }}">
+                <td {{new_star(datapoint, 'DT_CASES_BY_REGION_ACTIVE')}} title="{{ datapoint['DT_CASES_BY_REGION_ACTIVE date_updated'] }} {{ datapoint['DT_CASES_BY_REGION_ACTIVE text_match']|e }}">
                     <a href="{{ datapoint['DT_CASES_BY_REGION_ACTIVE source_url'] }}">
                         {{- datapoint['DT_CASES_BY_REGION_ACTIVE'] -}}
                     </a>

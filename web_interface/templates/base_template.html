@@ -60,6 +60,14 @@
               padding: 2px 8px;
               border-radius: 5px;
             }
+
+            .new:after {
+                font-size: 0.8em;
+                opacity: 0.7;
+                color: red;
+                content: ' new';
+                font-style: italic;
+            }
         </style>
 {% endmacro %}
 
@@ -72,3 +80,9 @@
     </body>
     </html>
 {% endmacro %}
+
+{%- macro new_star(datapoint, key, date_today=None) -%}
+    {% if (date_today or datapoint['date_today']) == datapoint[key+' date_updated'] %}
+        class="new"
+    {% endif %}
+{%- endmacro -%}

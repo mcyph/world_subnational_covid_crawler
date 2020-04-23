@@ -14,6 +14,9 @@ from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
 env = Environment(loader=FileSystemLoader('./templates'))
 
+from covid_19_au_grab.normalize_locality_name import \
+    normalize_locality_name
+
 
 OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/state_news_releases/output')
 OUTPUT_GRAPHS_DIR = expanduser('~/dev/covid_19_au_grab/output_graphs')
@@ -302,7 +305,7 @@ class App(object):
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            None,
+            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
@@ -351,7 +354,7 @@ class App(object):
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            None,
+            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
             (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
@@ -370,7 +373,8 @@ class App(object):
                         ('DT_SOURCE_OF_INFECTION', 'Under investigation'),
                     ),
                     from_date=from_date
-                )))
+                )
+            ))
 
         return env.get_template('revision/source_of_infection.html').render(
             rev_date=rev_date,
@@ -460,22 +464,33 @@ class App(object):
                 ),
                 from_date=from_date
             )
+
             out.extend(
                 [(
                     i['date_updated'],
-                    i['state_name'],
-                    i['name'],
+                    i['state_name'].lower(),
+                    normalize_locality_name(i['name']),
                     i['DT_CASES_BY_REGION'],
-                    i.get('DT_CASES_BY_REGION_ACTIVE'),
-                    i.get('DT_CASES_BY_REGION_RECOVERED'),
-                    i.get('DT_CASES_BY_REGION_DEATHS')
+                    i.get('DT_CASES_BY_REGION_ACTIVE', ''),
+                    i.get('DT_CASES_BY_REGION_RECOVERED', ''),
+                    i.get('DT_CASES_BY_REGION_DEATHS', '')
                 ) for i in local_area_case_datapoints
                   if i['date_updated'] == from_date]
             )
 
+        out_new = {}
+        for date_updated, state_name, lga_name, cbr, cbr_a, cbr_r, cbr_d in out:
+            out_new.setdefault((state_name, lga_name), []).append(
+                [date_updated, cbr, cbr_a, cbr_r, cbr_d]
+            )
+
+        out_new_list = []
+        for (state_name, lga_name), values in out_new.items():
+            out_new_list.append([state_name, lga_name, values])
+
         return {
             'sub_headers': ['total', 'active', 'recovered', 'deaths'],
-            'data': out
+            'data': out_new_list
         }
 
     def __get_combined_values_by_datatype(self,
