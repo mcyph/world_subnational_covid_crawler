@@ -71,12 +71,19 @@ class StateNewsBase(ABC):
         """
         if ignore_case:
             text = text.lower()
-        html = pq(html, parser='html_fragments')
+
+        try:
+            html = pq(html, parser='html_fragments')
+        except AssertionError:
+            html = pq(html, parser='html')
 
         out = []
         for i in html(selector):
             o = i
-            i = pq(i, parser='html_fragments')
+            try:
+                i = pq(i, parser='html_fragments')
+            except AssertionError:
+                i = pq(i, parser='html')
             i_text = i.text() or ''
             i_html = i.html() or ''
 
@@ -129,17 +136,30 @@ class StateNewsBase(ABC):
         # print('get_data for:', href, date_str, html)
 
         def do_call(fn, href, html):
+            def check(v):
+                # Make sure the correct kinds of types are returned!
+                if isinstance(v, DataPoint):
+                    return v
+                elif isinstance(v, (list, tuple)):
+                    for i in v:
+                        assert (isinstance(i, DataPoint) or i is None), (fn, i)
+                    return v
+                elif v is None:
+                    return v
+                else:
+                    raise Exception(v)
+
             if not hasattr(fn, 'typ') and href != self.STATS_BY_REGION_URL:
                 # Functions default to for listing pages only!
-                return fn(href, html)
+                return check(fn(href, html))
             elif hasattr(fn, 'typ'):
                 typ = fn.typ
                 if typ == METHOD_TYPE_BOTH:
-                    return fn(href, html)
+                    return check(fn(href, html))
                 elif typ == METHOD_TYPE_FROM_LISTING and href != self.STATS_BY_REGION_URL:
-                    return fn(href, html)
+                    return check(fn(href, html))
                 elif typ == METHOD_TYPE_SINGLE_DAY_STATS and href == self.STATS_BY_REGION_URL:
-                    return fn(href, html)
+                    return check(fn(href, html))
                 else:
                     return None
             return None
@@ -200,9 +220,10 @@ class StateNewsBase(ABC):
         Most (all?) of the state pages are of a very similar
         format with listings of hyperlinks to news articles
         """
-        listing_urls = []
         if isinstance(url, (list, tuple)):
             added = set()
+            listing_urls = []
+
             for i_url in url:
                 for (href, date_str, html) in self._get_listing_urls(
                     i_url, selector
@@ -217,10 +238,36 @@ class StateNewsBase(ABC):
 
         print(f"{self.STATE_NAME}: Getting listing for URL {url}...")
 
-        listing_html = self.listing_ua.get_url_data(
+        # Download the latest listing
+        self.listing_ua.get_url_data(
             url,
             cache=False if ALWAYS_DOWNLOAD_LISTING else True
         )
+
+        # Go thru every listing so far, as some of the press
+        # release listings don't go all the way back (e.g. SA)
+        out_set = set()
+        tried_urls_set = set()
+
+        for period in self.listing_ua.iter_periods(
+            newest_first=False
+        ):
+            for subperiod_id, dir_ in self.listing_ua.iter_paths_for_period(
+                period, newest_first=False
+            ):
+                with open(self.listing_ua.get_path(dir_), 'r',
+                          encoding='utf-8',
+                          errors='replace') as f:
+                    listing_html = f.read()
+                    for i in self.__get_listing_urls(
+                        url, selector, listing_html, tried_urls_set
+                    ):
+                        out_set.add(i)
+
+        return list(sorted(out_set, key=lambda x: x[1], reverse=True))
+
+    def __get_listing_urls(self, url, selector, listing_html, tried_urls_set):
+        listing_urls = []
         q = pq(listing_html, parser='html')
 
         for href_elm in q(selector):
@@ -254,6 +301,10 @@ class StateNewsBase(ABC):
                 ):
                     continue  # HACK!
 
+                if href in tried_urls_set:
+                    continue
+                tried_urls_set.add(href)
+
                 # Get the date
                 # Note that when downloading the data,
                 # I'm assuming the press releases won't change.
@@ -277,6 +328,7 @@ class StateNewsBase(ABC):
 
                 date_str = self._get_date(href, html)
                 listing_urls.append((href, date_str, html))
+
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
