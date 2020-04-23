@@ -139,7 +139,7 @@ class SANews(StateNewsBase):
             c_html = word_to_number(html)
 
             return self._extract_number_using_regex(
-                compile('total of ([0-9,]+) confirmed'),
+                compile('total of ([0-9,]+) (?:confirmed|cases)'),
                 c_html,
                 source_url=href,
                 datatype=DT_CASES,

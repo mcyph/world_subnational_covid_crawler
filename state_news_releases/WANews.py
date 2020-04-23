@@ -112,7 +112,8 @@ class WANews(StateNewsBase):
         return self._extract_number_using_regex(
             (
                 compile(r'total to ([0-9,]+)'),
-                compile(r'total number of cases remains at ([0-9,]+)')
+                compile(r'total number of (?:confirmed )?cases to ([0-9,]+)'),
+                compile(r'total number of (?:confirmed )?cases remains at ([0-9,]+)')
             ),
             html,
             source_url=url,
@@ -153,9 +154,9 @@ class WANews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile('([0-9,]+) Western Australians who have tested positive'),
-                compile('reported ([0-9,]+) new cases'),
-                compile('([0-9,]+) new confirmed cases of COVID-19')
+                compile(r'([0-9,]+) Western Australians who have tested positive'),
+                compile(r'reported ([0-9,]+) new cases'),
+                compile(r'([0-9,]+) new confirmed cases of COVID-19')
             ),
             c_html,
             source_url=url,

@@ -59,11 +59,11 @@ class ACTNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile(r'total to (?:<strong>)?([0-9,]+)'),
-                compile(r'total is(?: now| still)? (?:<strong>)?([0-9,]+)'),
+                compile(r'total to (?:<strong>)?\s?([0-9,]+)'),
+                compile(r'total is(?: now| still)? (?:<strong>)?\s?([0-9,]+)'),
                 # the "-" negative lookbehind is to prevent "COVID-19" matching
-                compile(r'confirmed cases [^0-9.,]+(?:<strong>)?(?<!-)([0-9,]+)'),
-                compile(r'total remains at (?:<strong>)?([0-9,]+)')
+                compile(r'confirmed cases [^0-9.,]+(?:<strong>)?\s?(?<!-)([0-9,]+)'),
+                compile(r'total remains at (?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
             source_url=href,
@@ -78,12 +78,12 @@ class ACTNews(StateNewsBase):
         neg_cases = self._extract_number_using_regex(
             (
                 compile(
-                    'number of negative tests in the ACT '
-                    'is now (?:<strong>)?(?:more than )?([0-9,]+)'
+                    r'number of negative tests in the ACT '
+                    r'is now (?:<strong>)?\s?(?:more than )?([0-9,]+)'
                 ),
-                compile('There have been (?:<strong>)?([0-9,]+)(?:</strong>)? negative'),
-                compile('<p>Number of negative tests</p></td><td><p>(?:<strong>)?([0-9,]+)'),
-                compile(r'tested negative is now (?:<strong>)?([0-9,]+)')
+                compile(r'There have been (?:<strong>)?\s?([0-9,]+)\s?(?:</strong>)? negative'),
+                compile(r'<p>Number of negative tests</p></td><td><p>(?:<strong>)?([0-9,]+)'),
+                compile(r'tested negative is now (?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
             source_url=href,
@@ -111,7 +111,7 @@ class ACTNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             compile(
-                r'([0-9,]+)(?:</strong>)?\)? new (?:confirmed|cases?)'
+                r'([0-9,]+)\s?(?:</strong>)?\)? new (?:confirmed|cases?)'
             ),
             c_html,
             source_url=href,

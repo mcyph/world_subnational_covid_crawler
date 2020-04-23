@@ -124,7 +124,8 @@ class VicNews(StateNewsBase):
         vic_test = self._extract_number_using_regex(
             compile(
                 r'([0-9,]+) (?:Victorians have been tested|'
-                r'tests have been conducted)',
+                r'tests have been conducted|'
+                r'tests have been completed)',
                 IGNORECASE
             ),
             html,
