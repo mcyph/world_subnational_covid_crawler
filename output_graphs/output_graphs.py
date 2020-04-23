@@ -163,9 +163,12 @@ def output_graph(datatype,
 
 
 def output_graphs():
+    # Output basic numbers
     output_graph('DT_CASES')
     output_graph('DT_NEW_CASES')
     output_graph('DT_CASES_TESTED')
+
+    # Output age distribution graphs
     output_graph('DT_AGE_MALE', state_filter='vic')
     output_graph('DT_AGE_FEMALE', state_filter='vic')
     output_graph('DT_AGE_MALE', state_filter='nsw')
@@ -173,6 +176,8 @@ def output_graphs():
     output_graph('DT_AGE_MALE', state_filter='sa')
     output_graph('DT_AGE_FEMALE', state_filter='sa')
     output_graph('DT_AGE', state_filter='act')
+
+    # Output "by region" graphs
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
@@ -183,17 +188,36 @@ def output_graphs():
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
     output_graph('DT_CASES_BY_REGION', state_filter='wa',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
+    output_graph('DT_CASES_BY_REGION', state_filter='sa',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_REGION', state_filter='sa',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
+    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='sa',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='sa',
                  name_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
     output_graph('DT_CASES_BY_LHA', state_filter='nsw')  # LGA??
     output_graph('DT_CASES_BY_REGION', state_filter='qld')
+    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='qld')
+    output_graph('DT_CASES_BY_REGION_DEATHS', state_filter='qld')
+    output_graph('DT_CASES_BY_REGION_RECOVERED', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='qld')
     output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
+
+    # Add source of infection
     output_graph('DT_SOURCE_OF_INFECTION')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='sa')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
+
+    # Add patient status
     output_graph('DT_PATIENT_STATUS', state_filter='sa')
     output_graph('DT_PATIENT_STATUS', state_filter='vic')
     output_graph('DT_PATIENT_STATUS', state_filter='act')
@@ -203,3 +227,4 @@ def output_graphs():
 
 if __name__ == '__main__':
     output_graphs()
+    #output_graph('DT_CASES_BY_REGION', state_filter='qld', name_filter=lambda x: x == 'Darling Downs', append_to_name='TEST')

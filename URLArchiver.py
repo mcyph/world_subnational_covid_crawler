@@ -144,16 +144,19 @@ class URLArchiver:
             assert '-' in dir_
             yield dir_.split('-')[0]
 
-    def iter_paths_for_period(self, period):
+    def iter_paths_for_period(self, period, newest_first=True):
         """
         Iterate through subperiods within a period.
         Yields the subperiod ID (which is 1+) and the subdirectory
         (which is in the [YYYY]_[MM]_[DD]-[subperiod ID] format)
         """
+        out = []
         for dir_ in listdir(f"{self.base_dir}"):
             if dir_.split('-')[0] == period:
                 subperiod_id = int(dir_.split('-')[-1])
-                yield subperiod_id, dir_
+                out.append((subperiod_id, dir_))
+        out.sort(reverse=newest_first)
+        return out
 
     def _get_subperiod_id_for_url(self, period, url=None):
         """
