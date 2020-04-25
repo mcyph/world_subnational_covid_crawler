@@ -306,6 +306,8 @@ class _ACTPowerBI(PowerBIDataReader):
             name = region['C'][0].split('(')[0].strip()
             if name == 'East Canberra':
                 name = 'Canberra East'
+            if name == 'Uriara':
+                name = 'Urriarra - Namadgi'
 
             r.append(DataPoint(
                 name=name,

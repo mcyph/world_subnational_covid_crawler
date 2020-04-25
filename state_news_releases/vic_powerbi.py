@@ -64,7 +64,10 @@ class _VicPowerBI(PowerBIDataReader):
 
     def _get_regions(self, updated_date, response_dict):
         output = []
-        data = response_dict['regions'][1]
+        try:
+            data = response_dict['regions'][1]
+        except KeyError:
+            data = response_dict['regions_2'][1]
 
         for region in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             # print(region)

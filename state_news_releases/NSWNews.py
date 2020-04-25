@@ -9,7 +9,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
     DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, \
     DT_PATIENT_STATUS, \
-    DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION, DT_CASES_BY_LHA
+    DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION, DT_CASES_BY_LHA, DT_CASES_BY_NO_KNOWN_CONTACT
 from covid_19_au_grab.word_to_number import word_to_number
 from covid_19_au_grab.URLArchiver import URLArchiver
 
@@ -19,11 +19,15 @@ class NSWNews(StateNewsBase):
     #LISTING_URL = 'https://www.health.nsw.gov.au/news/Pages/default.aspx'
     LISTING_URL = 'https://www.health.nsw.gov.au/news/pages/2020-nsw-health.aspx'
     LISTING_HREF_SELECTOR = '.dfwp-item a'
-    STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/' \
-                          'diseases/Pages/covid-19-latest.aspx'
 
-    NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lhd.aspx'
-    NSW_LGA_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lga.aspx'
+    #STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx'
+    #NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lhd.aspx'
+    #NSW_LGA_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-lga.aspx'
+
+    # URLs changed around 23rd April
+    STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx'
+    NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-lhd.aspx'
+    NSW_LGA_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-lga.aspx'
 
     def _get_date(self, href, html):
         try:
@@ -57,6 +61,7 @@ class NSWNews(StateNewsBase):
             for period in ua.iter_periods():
                 for subperiod_id, subdir in ua.iter_paths_for_period(period):
                     path = ua.get_path(subdir)
+                    #print("NSW News:", typ, subperiod_id, subdir, url, path)
 
                     with open(path, 'r',
                               encoding='utf-8',
@@ -231,33 +236,51 @@ class NSWNews(StateNewsBase):
         # Why on earth are there zero width spaces!?
         html = html.replace(chr(8203), '')
 
-        c_html = '<table class="moh-rteTable-6"' + \
-                 html.partition(' class="moh-rteTable-6"')[-1]
+        #c_html = '<table class="moh-rteTable-6"' + \
+        #         html.partition(' class="moh-rteTable-6"')[-1]
 
         r = []
         if href == self.NSW_LGA_STATS_URL:
-            # Get LGA stats only at the LGA url
-            table = self._pq_contains(c_html, 'table', 'Local Government Area',
-                                      ignore_case=True)
-            datatype = DT_CASES_BY_REGION
+            for datatype, text in (
+                (
+                    DT_CASES_BY_REGION,
+                    'Confirmed cases'
+                ),
+                (
+                    DT_CASES_BY_NO_KNOWN_CONTACT,
+                    'Cases locally acquired - Contact not identified'
+                )
+            ):
+                # Get LGA stats only at the LGA url
+                table = self._pq_contains(html, 'table', text,
+                                          ignore_case=False)
+                #print("LGA STATS:", table.text())
+                #print(html)
+                r.extend(self.__get_datapoints_from_table(
+                    href, html, table, datatype
+                ))
+            return r or None
         else:
             table = (
-                self._pq_contains(c_html, 'table', '<span>LHD</span>',
+                self._pq_contains(html, 'table', '<span>LHD</span>',
                                   ignore_case=True) or
                 # Earliest stats used a different classifier for region!!!
                 # Might need to use a different graph..
                 #self._pq_contains(c_html, 'table', 'Local Government Area',
                 #                  ignore_case=True) or
-                self._pq_contains(c_html, 'table', 'Local health district',
+                self._pq_contains(html, 'table', 'Local health district',
                                   ignore_case=True) or
-                self._pq_contains(c_html, 'table', 'LHD',
-                                  ignore_case=True) or
-                # omg..why are there zero-width spaces??
-                self._pq_contains(c_html, 'table', 'LH​D​',
+                self._pq_contains(html, 'table', 'LHD',
                                   ignore_case=True)
             )
             datatype = DT_CASES_BY_LHA
+            return self.__get_datapoints_from_table(
+                href, html, table, datatype
+            ) or None
 
+    def __get_datapoints_from_table(self, href, html, table, datatype):
+        # TODO: Support testing data for LHA, etc!!! ============================================================================================================
+        r = []
         trs = pq(table)(
             'tr.moh-rteTableEvenRow-6, '
               'tr.moh-rteTableOddRow-6',
@@ -282,7 +305,7 @@ class NSWNews(StateNewsBase):
                 source_url=href,
                 text_match=None
             ))
-        return r or None
+        return r
 
     #============================================================#
     #                     Totals by Source                       #

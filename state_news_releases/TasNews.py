@@ -1,10 +1,14 @@
 from re import compile, IGNORECASE
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase
+from covid_19_au_grab.state_news_releases.StateNewsBase import \
+    StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TESTED, DT_CASES, DT_NEW_CASES, \
-    DT_MALE, DT_FEMALE
+    DT_MALE, DT_FEMALE, \
+    DT_PATIENT_STATUS
+from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
 
 
@@ -14,13 +18,23 @@ class TasNews(StateNewsBase):
         'https://www.dhhs.tas.gov.au/news/2020',
         'https://www.coronavirus.tas.gov.au/'
     )
-    LISTING_HREF_SELECTOR = 'table.dhhs a, #pills-Media_Releases .card-rows .card a'
+    LISTING_HREF_SELECTOR = 'table.dhhs a, ' \
+                            '#pills-Media_Releases .card-rows .card a'
+    STATS_BY_REGION_URL = 'https://coronavirus.tas.gov.au/facts/' \
+                          'cases-and-testing-updates'
 
     def _get_date(self, url, html):
         # Format 12 March 2020
         # but sometimes it's an h2 or h3, it's
         # probably entered manually each time
         print(url)
+
+        try:
+            # cases and testing updates page
+            date = pq(pq(html)('.page-content h4')[0]).text().split(',')[-1].strip()
+            return self._extract_date_using_format(date)
+        except (ValueError, IndexError):
+            pass
 
         for selector in (
             '#main-banner h2',
@@ -84,6 +98,9 @@ class TasNews(StateNewsBase):
                 compile(
                     r"brings the State(?:’|&rsquo;|')s total to ([0-9,]+)",
                     IGNORECASE
+                ),
+                compile(
+                    'total remains at ([0-9,]+)'
                 )
             ),
             c_html,
@@ -197,8 +214,78 @@ class TasNews(StateNewsBase):
     #               Deaths/Hospitalized/Recovered                #
     #============================================================#
 
+    @singledaystat
     def _get_total_dhr(self, href, html):
-        pass
+        r = []
+
+        cases_map = {
+            'New cases in past 24 hours': (DT_NEW_CASES, None),
+            'Total cases': (DT_CASES, None),
+            'Active': (None, None),
+            'Recovered': (DT_PATIENT_STATUS, 'Recovered'),
+            'Deaths': (DT_PATIENT_STATUS, 'Deaths'),
+        }
+
+        cases_table = self._pq_contains(
+            html, 'table', 'Cases in Tasmania',
+            ignore_case=True
+        )[0]
+
+        for heading, value in cases_table[1]:
+            heading = pq(heading).text().replace('*', '').strip()
+            value = pq(value).text().replace('*', '').replace(',', '').strip()
+
+            datatype, name = cases_map[heading]
+            if not datatype:
+                continue
+
+            r.append(DataPoint(
+                datatype=datatype,
+                name=name,
+                value=int(value),
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match=None
+            ))
+
+        tests_table = self._pq_contains(
+            html, 'tr', 'Total laboratory tests',
+            ignore_case=True
+        )[0]
+
+        r.append(DataPoint(
+            datatype=DT_CASES_TESTED,
+            name=None,
+            value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').strip()),
+            date_updated=self._get_date(href, html),
+            source_url=href,
+            text_match=None
+        ))
+
+        c_html = word_to_number(html)
+        icu = self._extract_number_using_regex(
+            compile(r'includes ([0-9,]+) hospital inpatients', IGNORECASE),
+            c_html,
+            name='Hospitalized',
+            source_url=href,
+            datatype=DT_PATIENT_STATUS,
+            date_updated=self._get_date(href, html)
+        )
+        if icu:
+            r.append(icu)
+
+        hospitalized = self._extract_number_using_regex(
+            compile(r'\(([0-9,]+) in ICU\)', IGNORECASE),
+            c_html,
+            name='ICU',
+            source_url=href,
+            datatype=DT_PATIENT_STATUS,
+            date_updated=self._get_date(href, html)
+        )
+        if hospitalized:
+            r.append(hospitalized)
+
+        return r
 
 
 if __name__ == '__main__':
