@@ -117,7 +117,8 @@ class NSWNews(StateNewsBase):
             value=int(pq(tr[1]).html().split('<')[0]
                                       .strip()
                                       .replace(',', '')
-                                      .replace('*', '')),
+                                      .replace('*', '')
+                                      .replace('\u200b', '')),
             date_updated=self._get_date(href, html),
             source_url=href,
             text_match=None

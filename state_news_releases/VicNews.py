@@ -90,6 +90,17 @@ class VicNews(StateNewsBase):
     def _get_total_new_cases(self, href, html):
         c_html = word_to_number(html)
 
+        if 'same total number as yesterday' in html:
+            # https://www.dhhs.vic.gov.au/coronavirus-update-victoria-27-april-2020
+            return DataPoint(
+                datatype=DT_NEW_CASES,
+                name=None,
+                value=0,
+                date_updated=self._get_date(href, html),
+                source_url=href,
+                text_match='same total number as yesterday'
+            )
+
         return self._extract_number_using_regex(
             compile('increase of ([0-9,]+)'),
             c_html,

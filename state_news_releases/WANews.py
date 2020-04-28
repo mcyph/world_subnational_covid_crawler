@@ -113,7 +113,8 @@ class WANews(StateNewsBase):
             (
                 compile(r'total to ([0-9,]+)'),
                 compile(r'total number of (?:confirmed )?cases to ([0-9,]+)'),
-                compile(r'total number of (?:confirmed )?cases remains at ([0-9,]+)')
+                compile(r'total number of (?:confirmed )?cases remains at ([0-9,]+)'),
+                compile(r'total number of cases stands at ([0-9,]+)'),
             ),
             html,
             source_url=url,
@@ -156,7 +157,8 @@ class WANews(StateNewsBase):
             (
                 compile(r'([0-9,]+) Western Australians? who have tested positive'),
                 compile(r'reported ([0-9,]+) new cases?'),
-                compile(r'([0-9,]+) new confirmed cases? of COVID-19')
+                compile(r'([0-9,]+) new confirmed cases? of COVID-19'),
+                compile(r'([0-9,]+) new COVID-19 cases?'),
             ),
             c_html,
             source_url=url,
@@ -434,12 +436,23 @@ class WANews(StateNewsBase):
         r = []
         c_html = word_to_number(html)
 
+        active = self._extract_number_using_regex(
+            compile('([0-9,]+) active cases'),
+            c_html,
+            datatype=DT_PATIENT_STATUS,
+            name='Active',
+            source_url=href,
+            date_updated=self._get_date(href, html)
+        )
+        if active:
+            r.append(active)
+
         icu = self._extract_number_using_regex(
             compile('([0-9,]+) of whom are in ICU'),
             c_html,
+            datatype=DT_PATIENT_STATUS,
             name='ICU',
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if icu:
@@ -449,9 +462,9 @@ class WANews(StateNewsBase):
             # Sounds like none are in regional hospitals?? ===================================
             compile('([0-9,]+) confirmed COVID-19 patients in Perth metropolitan hospitals'),
             c_html,
+            datatype=DT_PATIENT_STATUS,
             name='Hospitalized',
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if hospitalized:
@@ -464,9 +477,9 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            datatype=DT_PATIENT_STATUS,
             name='Recovered',
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if recovered:
@@ -479,9 +492,9 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            datatype=DT_PATIENT_STATUS,
             name='Deaths',
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:

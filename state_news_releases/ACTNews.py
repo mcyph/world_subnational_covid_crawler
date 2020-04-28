@@ -338,7 +338,7 @@ class ACTNews(StateNewsBase):
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
-            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have recovered'),
+            compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
             name='Recovered',
             source_url=href,

@@ -141,10 +141,10 @@ class QLDNews(StateNewsBase):
         ths = pq(tr)('th,td')
 
         r = {}
-        r['active'] = int(pq(ths[1]).text().strip())
-        r['recovered'] = int(pq(ths[2]).text().strip())
-        r['deaths'] = int(pq(ths[3]).text().strip())
-        r['total'] = int(pq(ths[4]).text().strip().strip('*').strip())
+        r['active'] = int(pq(ths[1]).text().strip().replace(',', ''))
+        r['recovered'] = int(pq(ths[2]).text().strip().replace(',', ''))
+        r['deaths'] = int(pq(ths[3]).text().strip().replace(',', ''))
+        r['total'] = int(pq(ths[4]).text().strip().strip('*').strip().replace(',', ''))
         return r
 
     #============================================================#

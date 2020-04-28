@@ -17,6 +17,8 @@ from covid_19_au_grab.word_to_number import word_to_number
 
 # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
 class SANews(StateNewsBase):
+    # TODO: ADD DASHBOARD: https://www.covid-19.sa.gov.au/home/dashboard ==================================================================================================
+
     STATE_NAME = 'sa'
     #LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
     #              'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
@@ -149,7 +151,10 @@ class SANews(StateNewsBase):
     def _get_total_cases_tested(self, href, html):
         # This is only a rough value - is currently displayed as "> (value)"!
         return self._extract_number_using_regex(
-            compile(r'(?:undertaken (?:almost|more than) )?([0-9,]+)(?: COVID-19)? tests'),
+            (
+                compile(r'SA Pathology has conducted ([0-9,]+) COVID-19 laboratory tests'),
+                compile(r'(?:undertaken (?:almost|more than) )?([0-9,]+)(?: COVID-19)? tests'),
+            ),
             html,
             source_url=href,
             datatype=DT_CASES_TESTED,

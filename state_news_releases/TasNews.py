@@ -236,7 +236,7 @@ class TasNews(StateNewsBase):
             value = pq(value).text().replace('*', '').replace(',', '').strip()
 
             datatype, name = cases_map[heading]
-            if not datatype:
+            if datatype is None:
                 continue
 
             r.append(DataPoint(

@@ -297,7 +297,8 @@ class StateNewsBase(ABC):
                     href.endswith('news/2020/coronavirus_update') or
                     'https://www.worksafe.vic.gov.au' in href or
                     'https://www.fairwork.gov.au' in href or
-                    'https://www.foodstandards.gov.au' in href
+                    'https://www.foodstandards.gov.au' in href or
+                    'coronavirus-tasmania-snapshot' in href
                 ):
                     continue  # HACK!
 
