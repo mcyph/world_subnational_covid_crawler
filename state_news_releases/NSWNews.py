@@ -6,10 +6,16 @@ from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_NEW_CASES, DT_CASES, \
-    DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, \
-    DT_PATIENT_STATUS, \
-    DT_SOURCE_OF_INFECTION, DT_CASES_BY_REGION, DT_CASES_BY_LHA, DT_CASES_BY_NO_KNOWN_CONTACT
+    SCHEMA_LGA, SCHEMA_LHD, \
+    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_CASES_NEW, \
+    DT_TESTS_TOTAL, \
+    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY, \
+    DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE, \
+    DT_SOURCE_OVERSEAS, \
+    DT_STATUS_DEATH, DT_STATUS_RECOVERED, \
+    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU, \
+    DT_STATUS_ICU_VENTILATORS
 from covid_19_au_grab.word_to_number import word_to_number
 from covid_19_au_grab.URLArchiver import URLArchiver
 
@@ -95,8 +101,8 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html.replace('\n', ' '),
+            datatype=DT_CASES_NEW,
             source_url=href,
-            datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
         )
 
@@ -112,16 +118,14 @@ class NSWNews(StateNewsBase):
         tr = tr[0]
 
         return DataPoint(
-            name=None,
-            datatype=DT_CASES,
+            datatype=DT_CASES_TOTAL,
             value=int(pq(tr[1]).html().split('<')[0]
                                       .strip()
                                       .replace(',', '')
                                       .replace('*', '')
                                       .replace('\u200b', '')),
             date_updated=self._get_date(href, html),
-            source_url=href,
-            text_match=None
+            source_url=href
         )
 
     def _get_total_cases_tested(self, href, html):
@@ -145,8 +149,8 @@ class NSWNews(StateNewsBase):
                 )
             ),
             html,
+            datatype=DT_TESTS_TOTAL,
             source_url=href,
-            datatype=DT_CASES_TESTED,
             date_updated=self._get_date(href, html)
         )
 
@@ -196,19 +200,18 @@ class NSWNews(StateNewsBase):
             total = int(pq(tds[3]).text().replace(' ', '').strip() or 0)
 
             for datatype, value in (
-                (DT_AGE_FEMALE, female),
-                (DT_AGE_MALE, male),
-                (DT_AGE, total)
+                (DT_CASES_TOTAL_FEMALE, female),
+                (DT_CASES_TOTAL_MALE, male),
+                (DT_CASES_TOTAL, total)
             ):
                 if value is None:
                     continue
                 r.append(DataPoint(
-                    name=age_group,
                     datatype=datatype,
+                    agerange=age_group,
                     value=value,
                     date_updated=self._get_date(href, html),
-                    source_url=href,
-                    text_match=None
+                    source_url=href
                 ))
         return r
 
@@ -242,13 +245,15 @@ class NSWNews(StateNewsBase):
 
         r = []
         if href == self.NSW_LGA_STATS_URL:
-            for datatype, text in (
+            for datatype, name, text in (
                 (
-                    DT_CASES_BY_REGION,
+                    DT_CASES,
+                    FIXME,
                     'Confirmed cases'
                 ),
                 (
-                    DT_CASES_BY_NO_KNOWN_CONTACT,
+                    DT_SOURCE_OF_INFECTION,
+                    FIXME,
                     'Cases locally acquired - Contact not identified'
                 )
             ):
@@ -258,7 +263,9 @@ class NSWNews(StateNewsBase):
                 #print("LGA STATS:", table.text())
                 #print(html)
                 r.extend(self.__get_datapoints_from_table(
-                    href, html, table, datatype
+                    href, html, table,
+                    datatype=DT_SOURCE_OF_INFECTION,
+                    name=name
                 ))
             return r or None
         else:
@@ -274,12 +281,16 @@ class NSWNews(StateNewsBase):
                 self._pq_contains(html, 'table', 'LHD',
                                   ignore_case=True)
             )
-            datatype = DT_CASES_BY_LHA
             return self.__get_datapoints_from_table(
-                href, html, table, datatype
+                href, html, table,
+                schema=SCHEMA_LHD,
+                datatype=DT_CASES_TOTAL
             ) or None
 
-    def __get_datapoints_from_table(self, href, html, table, datatype):
+    def __get_datapoints_from_table(self,
+                                    href, html, table,
+                                    schema, datatype):
+
         # TODO: Support testing data for LHA, etc!!! ============================================================================================================
         r = []
         trs = pq(table)(
@@ -299,12 +310,12 @@ class NSWNews(StateNewsBase):
             c_icu = int(c_icu) if c_icu not in ('1-4', '1-') else 4     # WARNING: Currently the backend doesn't support ranges!!! ====================================
 
             r.append(DataPoint(
-                name=lhd,
+                schema=schema,
                 datatype=datatype,
+                region=lhd,
                 value=c_icu,
                 date_updated=self._get_date(href, html),
-                source_url=href,
-                text_match=None
+                source_url=href
             ))
         return r
 
@@ -325,16 +336,11 @@ class NSWNews(StateNewsBase):
 
         # Normalise it with other states
         nsw_norm_map = {
-            'Overseas acquired':
-                'Overseas acquired',
-            'Locally acquired – contact of a confirmed case and/or in a known cluster':
-                'Locally acquired - contact of a confirmed case',
-            'Locally acquired – contact not identified':
-                'Locally acquired - contact not identified',
-            'Under investigation':
-                'Under investigation',
-            'Interstate acquired':
-                'Interstate acquired'
+            'Overseas acquired': DT_SOURCE_OVERSEAS,
+            'Locally acquired – contact of a confirmed case and/or in a known cluster': DT_SOURCE_CONFIRMED,
+            'Locally acquired – contact not identified': DT_SOURCE_COMMUNITY,
+            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
+            'Interstate acquired': DT_SOURCE_INTERSTATE
         }
 
         # Wording has changed in NSW reports -
@@ -380,12 +386,10 @@ class NSWNews(StateNewsBase):
             c_value = int(pq(tr[-1]).text().replace(',', '').strip())
 
             r.append(DataPoint(
-                name=nsw_norm_map[old_type_map.get(k, k)],
-                datatype=DT_SOURCE_OF_INFECTION,
+                datatype=nsw_norm_map[old_type_map.get(k, k)],
                 value=c_value,
                 date_updated=self._get_date(url, html),
-                source_url=url,
-                text_match=None
+                source_url=url
             ))
         return r or None
 
@@ -404,9 +408,8 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            name='Hospitalized',
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if hospitalized:
@@ -428,9 +431,8 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html,
-            name='ICU',
+            datatype=DT_STATUS_ICU,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if icu:
@@ -443,9 +445,8 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            name='ICU needing ventilators',
+            datatype=DT_STATUS_ICU_VENTILATORS,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if ventilators:
@@ -471,9 +472,8 @@ class NSWNews(StateNewsBase):
                         IGNORECASE),
             ),
             c_html,
-            name='Deaths',
+            datatype=DT_STATUS_DEATH,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:

@@ -3,7 +3,7 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES, DT_CASES_TESTED, DT_PATIENT_STATUS
+    DT_STATUS_RECOVERED, DT_CASES_TOTAL, DT_TESTS_TOTAL
 
 
 class NTNews(StateNewsBase):
@@ -45,8 +45,8 @@ class NTNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('([0-9,]+) confirmed cases'),
             html,
+            datatype=DT_CASES_TOTAL,
             source_url=href,
-            datatype=DT_CASES,
             date_updated=self._get_date(href, html)
         )
 
@@ -55,8 +55,8 @@ class NTNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('([0-9,]+) tests conducted'),
             html,
+            datatype=DT_TESTS_TOTAL,
             source_url=href,
-            datatype=DT_CASES_TESTED,
             date_updated=self._get_date(href, html)
         )
 
@@ -109,9 +109,8 @@ class NTNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people recovered'),
             html,
-            name='Recovered',
+            datatype=DT_STATUS_RECOVERED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         return [recovered] if recovered else None

@@ -4,12 +4,15 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES, \
-    DT_NEW_MALE, DT_NEW_FEMALE, \
-    DT_FEMALE, DT_MALE, \
-    DT_SOURCE_OF_INFECTION, \
-    DT_PATIENT_STATUS, \
-    DT_AGE
+    DT_CASES_TOTAL, DT_CASES_NEW, \
+    DT_CASES_NEW_MALE, DT_CASES_NEW_FEMALE, \
+    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_TESTS_TOTAL, \
+    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP, \
+    DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION, \
+    DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY, \
+    DT_STATUS_RECOVERED, DT_STATUS_HOSPITALIZED, \
+    DT_STATUS_DEATH
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -66,8 +69,8 @@ class ACTNews(StateNewsBase):
                 compile(r'total remains at\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
+            datatype=DT_CASES_TOTAL,
             source_url=href,
-            datatype=DT_CASES,
             date_updated=self._get_date(href, html)
         )
 
@@ -86,15 +89,15 @@ class ACTNews(StateNewsBase):
                 compile(r'tested negative is now\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
+            datatype=DT_TESTS_TOTAL,
             source_url=href,
-            datatype=DT_CASES_TESTED,
             date_updated=self._get_date(href, html)
         )
         pos_cases = self._get_total_cases(href, html)
 
         if neg_cases is not None and pos_cases is not None:
+            # TODO: ADD negative/positive tests as separate values? =======================================================
             return DataPoint(
-                name=None,
                 datatype=neg_cases.datatype,
                 value=neg_cases.value + pos_cases.value,
                 date_updated=neg_cases.date_updated,
@@ -114,9 +117,9 @@ class ACTNews(StateNewsBase):
                 r'([0-9,]+)\s?(?:</strong>)?\)?\s?new (?:confirmed|cases?)'
             ),
             c_html,
-            source_url=href,
-            datatype=DT_NEW_CASES,
-            date_updated=self._get_date(href, html)
+            datatype=DT_CASES_NEW,
+            date_updated=self._get_date(href, html),
+            source_url=href
         )
 
     #============================================================#
@@ -153,12 +156,11 @@ class ACTNews(StateNewsBase):
         r = []
         for k, v in ages.items():
             r.append(DataPoint(
-                name=k,
-                datatype=DT_AGE,
+                datatype=DT_CASES_TOTAL,
+                agerange=k,
                 value=v,
                 date_updated=self._get_date(href, html),
-                source_url=href,
-                text_match=None  # HACK!
+                source_url=href
             ))
         return r
 
@@ -185,7 +187,7 @@ class ACTNews(StateNewsBase):
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
             source_url=href,
-            datatype=DT_NEW_MALE,
+            datatype=DT_CASES_NEW_MALE,
             date_updated=self._get_date(href, html)
         )
         if male:
@@ -194,8 +196,8 @@ class ACTNews(StateNewsBase):
         female = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?female(?:s)?'),
             c_html,
+            datatype=DT_CASES_NEW_FEMALE,
             source_url=href,
-            datatype=DT_NEW_FEMALE,
             date_updated=self._get_date(href, html)
         )
         if female:
@@ -221,8 +223,8 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            datatype=DT_CASES_TOTAL_FEMALE,
             source_url=href,
-            datatype=DT_FEMALE,
             date_updated=self._get_date(href, html)
         )
         female = self._extract_number_using_regex(
@@ -233,8 +235,8 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            datatype=DT_CASES_TOTAL_MALE,
             source_url=href,
-            datatype=DT_MALE,
             date_updated=self._get_date(href, html)
         )
         if male and female:
@@ -269,18 +271,12 @@ class ACTNews(StateNewsBase):
 
         # Normalise it with other states
         act_norm_map = {
-            'Overseas acquired':
-                'Overseas acquired',
-            'Cruise ship acquired':
-                'Cruise ship acquired (included in overseas acquired)',   # CHECK ME!!!! ===============================
-            'Interstate acquired':
-                'Interstate acquired',
-            'Contact of a confirmed ACT case':
-                'Locally acquired - contact of a confirmed case',
-            'Unknown or local transmission':
-                'Locally acquired - contact not identified',
-            'Under investigation':
-                'Under investigation'
+            'Overseas acquired': DT_SOURCE_OVERSEAS,
+            'Cruise ship acquired': DT_SOURCE_CRUISE_SHIP,
+            'Interstate acquired': DT_SOURCE_INTERSTATE,
+            'Contact of a confirmed ACT case': DT_SOURCE_CONFIRMED,
+            'Unknown or local transmission': DT_SOURCE_COMMUNITY,
+            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
         }
 
         r = []
@@ -310,12 +306,10 @@ class ACTNews(StateNewsBase):
                         continue
 
                     r.append(DataPoint(
-                        name=act_norm_map[k.replace('_', ' ')],
-                        datatype=DT_SOURCE_OF_INFECTION,
+                        datatype=act_norm_map[k.replace('_', ' ')],
                         value=int(v.replace(',', '')),
                         date_updated=self._get_date(url, html),
-                        source_url=url,
-                        text_match=None  # HACK!
+                        source_url=url
                     ))
 
         return r or None
@@ -332,25 +326,22 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
-            name='Hospitalized',
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
-            name='Recovered',
+            datatype=DT_STATUS_RECOVERED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
-            name='Deaths',
+            datatype=DT_STATUS_DEATH,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
 

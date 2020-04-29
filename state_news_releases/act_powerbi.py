@@ -3,11 +3,11 @@ from os import listdir
 from os.path import exists
 from datetime import datetime
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_AGE_MALE, DT_AGE_FEMALE, DT_AGE, \
-    DT_CASES_BY_REGION, \
-    DT_PATIENT_STATUS, \
-    DT_SOURCE_OF_INFECTION, \
-    DT_MALE, DT_FEMALE
+    SCHEMA_LGA, \
+    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP, \
+    DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION, \
+    DT_STATUS_RECOVERED
 from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
     ACTPowerBI, get_globals
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
@@ -103,28 +103,25 @@ class _ACTPowerBI(PowerBIDataReader):
             male = self._to_int(male)
 
             r.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_MALE,
+                datatype=DT_CASES_TOTAL_MALE,
+                agerange=age['G0'].replace('–', '-'),
                 value=male,
                 date_updated=updated_date,
-                source_url=self.source_url,
-                text_match=None
+                source_url=self.source_url
             ))
             r.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_FEMALE,
+                datatype=DT_CASES_TOTAL_FEMALE,
+                agerange=age['G0'].replace('–', '-'),
                 value=female,
                 date_updated=updated_date,
-                source_url=self.source_url,
-                text_match=None
+                source_url=self.source_url
             ))
             r.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE,
+                datatype=DT_CASES_TOTAL,
+                agerange=age['G0'].replace('–', '-'),
                 value=female + male,
                 date_updated=updated_date,
-                source_url=self.source_url,
-                text_match=None
+                source_url=self.source_url
             ))
 
         return r
@@ -166,20 +163,16 @@ class _ACTPowerBI(PowerBIDataReader):
             female = male
 
         r.append(DataPoint(
-            name=None,
-            datatype=DT_MALE,
+            datatype=DT_CASES_TOTAL_MALE,
             value=self._to_int(male),
             date_updated=updated_date,
-            source_url=self.source_url,
-            text_match=None
+            source_url=self.source_url
         ))
         r.append(DataPoint(
-            name=None,
-            datatype=DT_FEMALE,
+            datatype=DT_CASES_TOTAL_FEMALE,
             value=self._to_int(female),
             date_updated=updated_date,
-            source_url=self.source_url,
-            text_match=None
+            source_url=self.source_url
         ))
         return r
 
@@ -191,22 +184,14 @@ class _ACTPowerBI(PowerBIDataReader):
             data = response_dict['infection_source_time_series_2']
 
         act_norm_map = {
-            'Overseas acquired':
-                'Overseas acquired',
-            'Cruise ship acquired':
-                'Cruise ship acquired (included in overseas acquired)',  # CHECK ME!!!! ===============================
-            'Locally acquired - interstate':
-                'Interstate acquired',
-            'Locally acquired - contact of a confirmed ACT case':
-                'Locally acquired - contact of a confirmed case',
-            'Unknown or local transmission':
-                'Locally acquired - contact not identified',
-            'Locally acquired unknown source':
-                'Locally acquired - contact not identified',
-            'Under investigation':
-                'Under investigation'
+            'Overseas acquired': DT_SOURCE_OVERSEAS,
+            'Cruise ship acquired': DT_SOURCE_CRUISE_SHIP,
+            'Locally acquired - interstate': DT_SOURCE_INTERSTATE,
+            'Locally acquired - contact of a confirmed ACT case': DT_SOURCE_CONFIRMED,
+            'Unknown or local transmission': DT_SOURCE_COMMUNITY,
+            'Locally acquired unknown source': DT_SOURCE_COMMUNITY,
+            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION
         }
-
 
         # "Locally acquired - contact of a confirmed ACT case"
         # "Locally acquired - interstate"
@@ -248,12 +233,10 @@ class _ACTPowerBI(PowerBIDataReader):
             if updated_date == i_date_updated:
                 for xx, (key, value) in enumerate(tally.items()):
                     r.append(DataPoint(
-                        name=act_norm_map[keys[xx]],
-                        datatype=DT_SOURCE_OF_INFECTION,
+                        datatype=act_norm_map[key],
                         value=value,
                         date_updated=i_date_updated,
-                        source_url=self.source_url,
-                        text_match=None
+                        source_url=self.source_url
                     ))
         return r
 
@@ -273,12 +256,10 @@ class _ACTPowerBI(PowerBIDataReader):
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            name='Recovered',
-            datatype=DT_PATIENT_STATUS,
+            datatype=DT_STATUS_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
-            source_url=self.source_url,
-            text_match=None
+            source_url=self.source_url
         ))
         return r
 
@@ -310,12 +291,12 @@ class _ACTPowerBI(PowerBIDataReader):
                 name = 'Urriarra - Namadgi'
 
             r.append(DataPoint(
-                name=name,
-                datatype=DT_CASES_BY_REGION,
+                schema=SCHEMA_LGA,
+                datatype=DT_CASES_TOTAL,
+                region=name,
                 value=self._to_int(value),
                 date_updated=updated_date,
-                source_url=self.source_url,
-                text_match=None
+                source_url=self.source_url
             ))
             previous_value = value
         return r

@@ -333,7 +333,8 @@ class StateNewsBase(ABC):
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated=None, name=None):
+                                    date_updated=None, name=None,
+                                    schema=SCHEMA_STATEWIDE):
         """
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()
@@ -347,7 +348,7 @@ class StateNewsBase(ABC):
             for i_regex in regex:
                 dp = self._extract_number_using_regex(
                     i_regex, s, source_url, datatype,
-                    date_updated, name
+                    date_updated, name, schema
                 )
                 if dp:
                     return dp
@@ -366,8 +367,9 @@ class StateNewsBase(ABC):
                     date_updated = self._todays_date()
 
                 return DataPoint(
-                    name=name,
+                    schema=schema,
                     datatype=datatype,
+                    name=name,
                     value=num,
                     date_updated=date_updated,
                     source_url=source_url,
