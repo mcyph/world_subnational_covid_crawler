@@ -7,7 +7,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP, \
     DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION, \
-    DT_STATUS_RECOVERED
+    DT_CASES_RECOVERED
 from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
     ACTPowerBI, get_globals
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
@@ -256,7 +256,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DT_CASES_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
             source_url=self.source_url

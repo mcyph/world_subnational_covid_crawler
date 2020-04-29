@@ -11,8 +11,8 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP, \
     DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION, \
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY, \
-    DT_STATUS_RECOVERED, DT_STATUS_HOSPITALIZED, \
-    DT_STATUS_DEATH
+    DT_CASES_RECOVERED, DT_CASES_HOSPITALIZED, \
+    DT_CASES_DEATHS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -326,21 +326,21 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
-            datatype=DT_STATUS_HOSPITALIZED,
+            datatype=DT_CASES_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DT_CASES_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
-            datatype=DT_STATUS_DEATH,
+            datatype=DT_CASES_DEATHS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
