@@ -120,7 +120,7 @@ class PowerBIBase:
             '--disable-extensions',
             '--disable-gpu',
             '--no-sandbox',
-            '--headless',
+            #'--headless',
         ]
         chrome_options = webdriver.ChromeOptions()
         for arg in args:

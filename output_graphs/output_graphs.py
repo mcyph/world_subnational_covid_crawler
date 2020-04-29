@@ -176,6 +176,9 @@ def output_graphs():
     output_graph('DT_AGE_MALE', state_filter='sa')
     output_graph('DT_AGE_FEMALE', state_filter='sa')
     output_graph('DT_AGE', state_filter='act')
+    output_graph('DT_AGE_MALE', state_filter='qld')
+    output_graph('DT_AGE_FEMALE', state_filter='qld')
+    output_graph('DT_AGE', state_filter='qld')
 
     # Output "by region" graphs
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
@@ -184,6 +187,15 @@ def output_graphs():
     output_graph('DT_CASES_BY_REGION', state_filter='vic',
                  name_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
+    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
+                 name_filter=lambda p: p[0].lower() < 'f',
+                 append_to_name='a-e')
+    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
+                 name_filter=lambda p: 'f' <= p[0].lower() < 'p',
+                 append_to_name='f-o')
+    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
+                 name_filter=lambda p: p[0].lower() >= 'p',
+                 append_to_name='p-z')
     output_graph('DT_CASES_BY_REGION', state_filter='wa',
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
@@ -200,6 +212,18 @@ def output_graphs():
                  name_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
     output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='sa',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
+    output_graph('DT_CASES_BY_LGA', state_filter='qld',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_LGA', state_filter='qld',
+                 name_filter=lambda p: p[0].lower() >= 'm',
+                 append_to_name='m-z')
+    output_graph('DT_CASES_BY_OVERSEAS_ACQUIRED', state_filter='qld',
+                 name_filter=lambda p: p[0].lower() < 'm',
+                 append_to_name='a-l')
+    output_graph('DT_CASES_BY_OVERSEAS_ACQUIRED', state_filter='qld',
                  name_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
     output_graph('DT_CASES_BY_LHA', state_filter='nsw')  # LGA??
@@ -216,6 +240,7 @@ def output_graphs():
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
     output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
+    output_graph('DT_SOURCE_OF_INFECTION', state_filter='qld')
 
     # Add patient status
     output_graph('DT_PATIENT_STATUS', state_filter='sa')
@@ -223,6 +248,7 @@ def output_graphs():
     output_graph('DT_PATIENT_STATUS', state_filter='act')
     output_graph('DT_PATIENT_STATUS', state_filter='nsw')
     output_graph('DT_PATIENT_STATUS', state_filter='wa')
+    output_graph('DT_PATIENT_STATUS', state_filter='qld')
 
 
 if __name__ == '__main__':

@@ -18,7 +18,8 @@ color_map = {
     (207, 228, 150): (5, 6),
     (170, 205, 171): (3, 4),
     (126, 182, 189): (2, 2),
-    (55, 160, 207): (1, 1)
+    (55, 160, 207): (1, 1),
+    (239, 239, 239): (0, 0)
 }
 
 wholesa_relative_to = (347, 561)
@@ -162,7 +163,7 @@ if __name__ == '__main__':
             else:
                 raise Exception(pdf_path)
 
-            if pdf_path.endswith('1.pdf'):
+            if pdf_path.endswith('1.pdf') or 'Metropolitan' in pdf_path:
                 # Metro
                 spe = SAPDFExtract(
                     pdf_path,
@@ -180,7 +181,7 @@ if __name__ == '__main__':
                 x1, y1, x2, y2 = spe.get_bounding_coords()
                 #spe.display(x1, y1, x2, y2)
 
-            elif pdf_path.endswith('2.pdf'):
+            elif pdf_path.endswith('2.pdf') or 'Overall' in pdf_path:
                 # Regional
                 spe = SAPDFExtract(
                     pdf_path,

@@ -420,6 +420,7 @@ class App(object):
         local_area_case_datapoints = self.__get_combined_values_by_datatype(
             datapoints,
             (
+                # TODO: What about by LGA (QLD only, other LGA in DT_CASES_BY_REGION) and LHA (NSW)
                 'DT_CASES_BY_REGION',
                 'DT_CASES_BY_REGION_ACTIVE',
                 'DT_CASES_BY_REGION_RECOVERED',
@@ -441,7 +442,15 @@ class App(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def get_regions_json_data(self, rev_date, rev_subid):
+    def regionsTimeSeriesAutogen(self, rev_date=None, rev_subid=None):
+        if rev_date is None:
+            # Output the last successful run if
+            # rev_date/rev_subid not supplied
+            for rev_date, rev_subid, dt in self.__get_revisions():
+                status_dict = self.__get_status_dict(rev_date, rev_subid)
+                if all(status_dict[k][0] == 'OK' for k in status_dict):
+                    break
+
         datapoints = self.__read_csv(rev_date, rev_subid)
         from_dates = [i['date_updated'] for i in datapoints]
 

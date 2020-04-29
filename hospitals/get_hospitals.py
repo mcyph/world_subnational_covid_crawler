@@ -18,7 +18,7 @@ class _GetHospitals:
             'VIC': self._get_for_vic,
             'NSW': self._get_for_nsw,
             #'WA': self._get_for_wa,
-            'SA': self._get_for_sa,
+            #'SA': self._get_for_sa,
             # Can't seem to find the designated
             # hospitals for Tas for now
             #'TAS': self._get_for_tas,
@@ -329,11 +329,13 @@ class _GetHospitals:
             phone = None
             message = None
 
-            if '\n' in opening_hours:
-                opening_hours, message = opening_hours.split('\n')
+            if opening_hours.count('\n') == 1:
+                print(opening_hours)
+                opening_hours, _, message = opening_hours.partition('\n')
                 if message.startswith('Call prior: '):
                     phone = message.split(': ')[-1]
                     message = 'Call prior'
+                message = message.replace('\n', '; ')
 
             hospitals.append(Hospital(
                 state='nsw',
