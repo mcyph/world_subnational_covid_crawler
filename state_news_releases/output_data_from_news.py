@@ -14,7 +14,7 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.state_news_releases.constants import constant_to_name
+from covid_19_au_grab.state_news_releases.constants import constant_to_name, schema_to_name
 from covid_19_au_grab.get_package_dir import get_package_dir
 
 
@@ -194,7 +194,7 @@ if __name__ == '__main__':
 
     # Override stdout to point to both stdout and the output file
     logger = sys.stdout = Logger(sys.stdout)
-    print('state_name\tdatatype\tname\tvalue\tdate_updated\tsource_url\ttext_match')
+    print('state_name\tdatatype\tagegroup\tregion\tvalue\tdate_updated\tsource_url\ttext_match')
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
             try:
@@ -209,8 +209,10 @@ if __name__ == '__main__':
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
             print(f'{state_name}\t'
+                  f'{schema_to_name(datapoint.schema)}\t'
                   f'{constant_to_name(datapoint.datatype)}\t'
-                  f'{datapoint.name}\t'
+                  f'{datapoint.agerange}\t'
+                  f'{datapoint.region}\t'
                   f'{datapoint.value}\t'
                   f'{backwards_date}\t'
                   f'{datapoint.source_url}\t'

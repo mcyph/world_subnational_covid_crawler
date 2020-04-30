@@ -16,7 +16,7 @@ def DataPoint(schema=SCHEMA_STATEWIDE,
     arguments for this `namedtuple`.
     """
 
-    assert datatype
+    assert datatype is not None
     agerange = agerange or ''
     region = region or ''
     assert date_updated

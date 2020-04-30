@@ -3,6 +3,11 @@ import numpy as np
 import pdf2image
 from covid_19_au_grab.get_package_dir import get_package_dir
 
+
+PDFS_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'pdfs'
+OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
+
+
 LINKS = [
     'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/map+1+number+of+positive+covid-19+cases+in+south+australia+metropolitan+adelaide',
     'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/map+2+number+of+positive+covid-19+cases+in+south+australia+whole+of+sa',
@@ -150,17 +155,16 @@ if __name__ == '__main__':
     from os.path import expanduser
     from glob import glob
 
-    PDFS_DIR = get_package_dir() / 'sa_pdf_extract' / 'pdfs'
-    OUTPUT_DIR = get_package_dir() / 'sa_pdf_extract' / 'output'
-
     output_dict = {}  # {date: [(LGA, amount), ...], ...}
 
     for dir_ in listdir(PDFS_DIR):
         for pdf_path in glob(f'{PDFS_DIR}/{dir_}/*.pdf'):
+            print(pdf_path)
+
             if 'Active' in pdf_path:
-                datatype = 'DT_CASES_BY_REGION_ACTIVE'
+                datatype = 'DT_CASES_ACTIVE'
             elif 'Positive' in pdf_path:
-                datatype = 'DT_CASES_BY_REGION'
+                datatype = 'DT_CASES_TOTAL'
             else:
                 raise Exception(pdf_path)
 

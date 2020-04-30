@@ -4,8 +4,11 @@ from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
 from covid_19_au_grab.state_news_releases.DataPoint import \
-    DataPoint
-from covid_19_au_grab.URLArchiver import URLArchiver
+    DataPoint, _DataPoint
+from covid_19_au_grab.URLArchiver import \
+    URLArchiver
+from covid_19_au_grab.state_news_releases.constants import \
+    SCHEMA_STATEWIDE
 
 
 ALWAYS_DOWNLOAD_LISTING = True
@@ -138,11 +141,11 @@ class StateNewsBase(ABC):
         def do_call(fn, href, html):
             def check(v):
                 # Make sure the correct kinds of types are returned!
-                if isinstance(v, DataPoint):
+                if isinstance(v, _DataPoint):
                     return v
                 elif isinstance(v, (list, tuple)):
                     for i in v:
-                        assert (isinstance(i, DataPoint) or i is None), (fn, i)
+                        assert (isinstance(i, _DataPoint) or i is None), (fn, i)
                     return v
                 elif v is None:
                     return v
@@ -333,7 +336,7 @@ class StateNewsBase(ABC):
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated=None, name=None,
+                                    date_updated=None, agerange=None, region=None,
                                     schema=SCHEMA_STATEWIDE):
         """
         Convenience function for removing numeral grouping X,XXX
@@ -348,7 +351,7 @@ class StateNewsBase(ABC):
             for i_regex in regex:
                 dp = self._extract_number_using_regex(
                     i_regex, s, source_url, datatype,
-                    date_updated, name, schema
+                    date_updated, agerange, region, schema
                 )
                 if dp:
                     return dp
@@ -369,7 +372,8 @@ class StateNewsBase(ABC):
                 return DataPoint(
                     schema=schema,
                     datatype=datatype,
-                    name=name,
+                    region=region,
+                    agerange=agerange,
                     value=num,
                     date_updated=date_updated,
                     source_url=source_url,

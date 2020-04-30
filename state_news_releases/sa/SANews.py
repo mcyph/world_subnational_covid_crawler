@@ -26,6 +26,12 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
 from covid_19_au_grab.word_to_number import (
     word_to_number
 )
+from covid_19_au_grab.get_package_dir import (
+    get_package_dir
+)
+
+
+OUTPUT_DIR = get_package_dir() / 'sa_pdf_extract' / 'output'
 
 
 # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
@@ -86,8 +92,6 @@ class SANews(StateNewsBase):
             return self._extract_date_using_format(date.partition(' ')[-1])
 
     def get_data(self):
-        OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/output')
-
         r = []
         for fnam in listdir(OUTPUT_DIR):
             date = fnam.split('.')[0]

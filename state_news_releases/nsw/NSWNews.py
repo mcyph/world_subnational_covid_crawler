@@ -251,7 +251,7 @@ class NSWNews(StateNewsBase):
 
         r = []
         if href == self.NSW_LGA_STATS_URL:
-            for datatype, name, text in (
+            for datatype, text in (
                 (DT_CASES_TOTAL, 'Confirmed cases'),
                 (DT_SOURCE_COMMUNITY, 'Cases locally acquired - Contact not identified')
             ):
