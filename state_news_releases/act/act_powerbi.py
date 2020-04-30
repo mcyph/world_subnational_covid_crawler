@@ -1,5 +1,3 @@
-import json
-from os import listdir
 from os.path import exists
 from datetime import datetime
 from covid_19_au_grab.state_news_releases.constants import \
@@ -8,9 +6,9 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP, \
     DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION, \
     DT_CASES_RECOVERED
-from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
+from covid_19_au_grab.state_news_releases.act.ACTPowerBI import \
     ACTPowerBI, get_globals
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import \
     PowerBIDataReader

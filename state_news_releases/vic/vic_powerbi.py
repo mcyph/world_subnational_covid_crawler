@@ -1,18 +1,16 @@
-from os import listdir
 from datetime import datetime
 from os.path import expanduser, exists
 
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.constants import \
     SCHEMA_LGA, \
     DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY, \
-    DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE, \
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP
+    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import \
     PowerBIDataReader
-from covid_19_au_grab.powerbi_grabber.VicPowerBI import \
+from covid_19_au_grab.state_news_releases.vic.VicPowerBI import \
     VicPowerBI, get_globals
 
 

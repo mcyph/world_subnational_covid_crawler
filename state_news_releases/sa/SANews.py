@@ -12,11 +12,11 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TOTAL, DT_CASES_TOTAL_MALE, DT_CASES_TOTAL_FEMALE, \
     DT_CASES_NEW, DT_TESTS_TOTAL, \
     DT_CASES_RECOVERED, DT_CASES_DEATHS, \
-    DT_CASES_HOSPITALIZED, DT_CASES_ICU, \
+    DT_CASES_ICU, \
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_OVERSEAS, \
     DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY, \
-    DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+    DT_SOURCE_CONFIRMED
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
 

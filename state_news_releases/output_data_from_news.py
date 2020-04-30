@@ -6,14 +6,14 @@ import unicodedata
 from os import makedirs
 from os.path import dirname
 
-from covid_19_au_grab.state_news_releases.ACTNews import ACTNews
-from covid_19_au_grab.state_news_releases.NSWNews import NSWNews
-from covid_19_au_grab.state_news_releases.NTNews import NTNews
-from covid_19_au_grab.state_news_releases.QLDNews import QLDNews
-from covid_19_au_grab.state_news_releases.SANews import SANews
-from covid_19_au_grab.state_news_releases.TasNews import TasNews
-from covid_19_au_grab.state_news_releases.VicNews import VicNews
-from covid_19_au_grab.state_news_releases.WANews import WANews
+from covid_19_au_grab.state_news_releases.act.ACTNews import ACTNews
+from covid_19_au_grab.state_news_releases.nsw.NSWNews import NSWNews
+from covid_19_au_grab.state_news_releases.nt.NTNews import NTNews
+from covid_19_au_grab.state_news_releases.qld.QLDNews import QLDNews
+from covid_19_au_grab.state_news_releases.sa.SANews import SANews
+from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
+from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
+from covid_19_au_grab.state_news_releases.wa.WANews import WANews
 from covid_19_au_grab.state_news_releases.constants import constant_to_name
 
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     # Run the Vic/ACT PowerBi grabbers as needed
 
     if UPDATE_VIC_POWERBI:
-        from covid_19_au_grab.powerbi_grabber.VicPowerBI import \
+        from covid_19_au_grab.state_news_releases.vic.VicPowerBI import \
             VicPowerBI
         try:
             VicPowerBI().run_powerbi_grabber()
@@ -121,7 +121,7 @@ if __name__ == '__main__':
             )
 
     if UPDATE_ACT_POWERBI:
-        from covid_19_au_grab.powerbi_grabber.ACTPowerBI import \
+        from covid_19_au_grab.state_news_releases.act.ACTPowerBI import \
             ACTPowerBI
         try:
             ACTPowerBI().run_powerbi_grabber()
@@ -135,7 +135,7 @@ if __name__ == '__main__':
             )
 
     if UPDATE_WA_REGIONS:
-        from covid_19_au_grab.state_news_releases.WARegions import \
+        from covid_19_au_grab.state_news_releases.wa.WARegions import \
             run_wa_regions
         try:
             run_wa_regions()

@@ -9,9 +9,9 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TOTAL_MALE, DT_CASES_TOTAL_FEMALE, \
     DT_CASES_HOSPITALIZED, DT_CASES_ICU, \
     DT_CASES_RECOVERED, DT_CASES_DEATHS
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
-from covid_19_au_grab.state_news_releases.vic_powerbi import \
+from covid_19_au_grab.state_news_releases.vic.vic_powerbi import \
     get_powerbi_data
 from covid_19_au_grab.word_to_number import word_to_number
 

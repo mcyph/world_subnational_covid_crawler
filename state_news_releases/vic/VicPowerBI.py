@@ -1,5 +1,5 @@
 import os
-from covid_19_au_grab.powerbi_grabber.PowerBIBase import \
+from covid_19_au_grab.state_news_releases.PowerBIBase import \
     PowerBIBase
 
 

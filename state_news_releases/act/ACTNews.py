@@ -13,10 +13,10 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY, \
     DT_CASES_RECOVERED, DT_CASES_HOSPITALIZED, \
     DT_CASES_DEATHS
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
-from covid_19_au_grab.state_news_releases.act_powerbi import get_powerbi_data
+from covid_19_au_grab.state_news_releases.act.act_powerbi import get_powerbi_data
 
 
 class ACTNews(StateNewsBase):

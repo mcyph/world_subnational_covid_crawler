@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.constants import \
     DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
     DT_CASES_ACTIVE, DT_CASES_RECOVERED, DT_CASES_DEATHS, \
     DT_CASES_ICU, DT_CASES_HOSPITALIZED
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
+from covid_19_au_grab.state_news_releases.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
 

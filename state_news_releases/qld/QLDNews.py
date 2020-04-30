@@ -2,7 +2,7 @@ from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat, bothlistingandstat,
+    StateNewsBase, bothlistingandstat,
     ALWAYS_DOWNLOAD_LISTING
 )
 from covid_19_au_grab.state_news_releases.constants import (
@@ -20,9 +20,8 @@ from covid_19_au_grab.state_news_releases.constants import (
     # Source of infection by region (LGA)
     DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-)
-from covid_19_au_grab.state_news_releases.data_containers.DataPoint import (
+    DT_SOURCE_OVERSEAS, )
+from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import word_to_number
