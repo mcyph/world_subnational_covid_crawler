@@ -1,13 +1,38 @@
+import csv
+import json
 import datetime
+from pytz import timezone
+from os.path import getctime
+from covid_19_au_grab.get_package_dir import get_package_dir
+
+
+OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
 
 
 class CSVDataRevision:
     def __init__(self, period, subperiod_id):
-        self.__data = self.__read_csv(period, subperiod_id)
+        self.__check_period(period)
+        subperiod_id = int(subperiod_id)
+        self.period = period
+        self.subperiod_id = subperiod_id
+        self.__datapoints = self.__read_csv()
 
-    # =============================================================#
+    def __getitem__(self, item):
+        return self.__datapoints[item]
+
+    def __iter__(self):
+        for i in self.__datapoints:
+            yield i
+
+    def __len__(self):
+        return len(self.__datapoints)
+
+    def get_datapoints(self):
+        return self.__datapoints[:]
+
+    #=============================================================#
     #                       Utility Functions                     #
-    # =============================================================#
+    #=============================================================#
 
     def __check_period(self, path):
         assert not '..' in path
@@ -17,13 +42,9 @@ class CSVDataRevision:
         dd, mm, yyyy = path.split('_')
         int(yyyy), int(mm), int(dd)
 
-    def __read_csv(self, period, subperiod_id):
-        self.__check_period(period)
-        subperiod_id = int(subperiod_id)
-        print(f'{period}-{subperiod_id}.tsv')
-
+    def __read_csv(self):
         out = []
-        with open(f'../state_news_releases/output/{period}-{subperiod_id}.tsv',
+        with open(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.tsv',
                   'r', encoding='utf-8', errors='replace') as f:
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
@@ -32,16 +53,13 @@ class CSVDataRevision:
         out.sort(key=self.__date_updated_sort_key)
         return out
 
-    def __get_status_dict(self, period, subperiod_id):
-        self.__check_period(period)
-        subperiod_id = int(subperiod_id)
-
-        with open(f'../state_news_releases/output/{period}-{subperiod_id}.json',
+    def get_status_dict(self, ):
+        with open(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.json',
                   'r', encoding='utf-8', errors='replace') as f:
             return json.loads(f.read())['status']
 
-    def __get_revision_time_string(self, period, subperiod_id):
-        rev_time = getctime(f'{OUTPUT_DIR}/{period}-{subperiod_id}.tsv')
+    def get_revision_time_string(self):
+        rev_time = getctime(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.tsv')
         dt = str(datetime.datetime.fromtimestamp(rev_time) \
                  .astimezone(timezone('Australia/Melbourne'))).split('.')[0]
         return dt
@@ -55,9 +73,9 @@ class CSVDataRevision:
         def sortable_date(i):
             dd, mm, yyyy = i.split('/')
             return (
-                    str(9999 - int(yyyy)) + '_' +
-                    str(99 - int(mm)) + '_' +
-                    str(99 - int(dd))
+                str(9999 - int(yyyy)) + '_' +
+                str(99 - int(mm)) + '_' +
+                str(99 - int(dd))
             )
 
         return (
@@ -78,24 +96,11 @@ class CSVDataRevision:
             x['name']
         )
 
-    def __get_not_most_recent_warning(self, period, subperiod_id):
-        i_period, i_subperiod_id, i_dt = self.__get_revisions()[0]
+    #=============================================================#
+    #                       Get DataPoints                        #
+    #=============================================================#
 
-        if i_period != period or int(i_subperiod_id) != int(subperiod_id):
-            return (
-                '<div style="font-size: 1.2em; font-weight: bold; color: red">'
-                f'WARNING: This is an outdated revision. '
-                f'You can find the newest '
-                f'<a href="/revision?rev_date={i_period}&rev_subid={i_subperiod_id}">here</a>.'
-                '</div>'
-            )
-        return ''
-
-
-    def __get_combined_values_by_datatype(self,
-                                          datapoints,
-                                          datatypes,
-                                          from_date=None):
+    def get_combined_values_by_datatype(self, datatypes, from_date=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -114,10 +119,8 @@ class CSVDataRevision:
 
         combined = {}
         for datatype in datatypes:
-            for datapoint in self.__get_combined_value(
-                datapoints, datatype,
-                from_date=from_date
-            ):
+            for datapoint in self.get_combined_value(datatype, from_date=from_date):
+
                 i_combined = combined.setdefault(datapoint['state_name'], {}) \
                                      .setdefault(datapoint['name'], {})
 
@@ -145,8 +148,7 @@ class CSVDataRevision:
                 out.append(add_me)
         return out
 
-    def __get_combined_values(self, datapoints, filters,
-                              from_date=None):
+    def get_combined_values(self, filters, from_date=None):
         """
         Returns as a combined dict,
         e.g. if filters (a list of ((datatype, name/None), ...) is (
@@ -164,10 +166,8 @@ class CSVDataRevision:
 
         combined = {}
         for datatype, name in filters:
-            for datapoint in self.__get_combined_value(
-                datapoints[:], datatype, name,
-                from_date=from_date
-            ):
+            for datapoint in self.get_combined_value(datatype, name, from_date=from_date):
+
                 i_combined = combined.setdefault(datapoint['state_name'], {})
 
                 if (
@@ -203,11 +203,7 @@ class CSVDataRevision:
             out.append(i_combined)
         return out
 
-    def __get_combined_value(self,
-                             datapoints,
-                             datatype,
-                             name=None,
-                             from_date=None):
+    def get_combined_value(self, datatype, name=None, from_date=None):
         """
         Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
@@ -227,7 +223,7 @@ class CSVDataRevision:
             return x >= y
 
         r = {}
-        for datapoint in datapoints:
+        for datapoint in self.__datapoints[:]:
             if datapoint['datatype'] != datatype:
                 continue
             elif name is not None and datapoint['name'] != name:

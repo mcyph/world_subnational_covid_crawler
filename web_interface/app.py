@@ -7,7 +7,6 @@ import cherrypy
 import datetime
 import mimetypes
 from shlex import quote
-from pytz import timezone
 from os import listdir, system
 from os.path import getctime, expanduser
 from cherrypy.lib.static import serve_file
@@ -16,6 +15,10 @@ env = Environment(loader=FileSystemLoader('./templates'))
 
 from covid_19_au_grab.normalize_locality_name import \
     normalize_locality_name
+from covid_19_au_grab.web_interface.CSVDataRevision import \
+    CSVDataRevision
+from covid_19_au_grab.web_interface.CSVDataRevisions import \
+    CSVDataRevisions
 
 
 OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/state_news_releases/output')
@@ -26,6 +29,7 @@ mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 
 class App(object):
     def __init__(self):
+        self.revisions = CSVDataRevisions()
         _thread.start_new_thread(self.loop, ())
 
     def loop(self):
@@ -63,7 +67,7 @@ class App(object):
     def index(self):
         t = env.get_template('index.html')
         return t.render(
-            revisions=self.__get_revisions()
+            revisions=self.revisions.get_revisions()
         )
 
     @cherrypy.expose
@@ -72,61 +76,27 @@ class App(object):
         TODO: Go thru each version from the
         last 48 hours, and output any changes
         """
-        revisions = self.__get_revisions()[:15]
-        data = [
-            self.__read_csv(period, subperiod_id)
+        revisions = self.revisions.get_revisions()[:15]
+        insts = [
+            CSVDataRevision(period, subperiod_id)
             for period, subperiod_id, _ in revisions
         ]
 
         changes_by_revision = []
-        for x, i_data in enumerate(data):
-            if x == len(data)-1:
+        for x, i_inst in enumerate(insts):
+            if x == len(insts)-1:
                 break
 
             changes_by_revision.append((
                 revisions[x][0],
                 revisions[x][1],
                 revisions[x][2],
-                self.__get_changed(i_data, data[x+1])
+                self.revisions.get_changed(i_inst, insts[x+1])
             ))
 
         return env.get_template('most_recent_changes.html').render(
             changes_by_revision=changes_by_revision
         )
-
-    def __get_changed(self, current_datapoints, previous_datapoints):
-        current_dict = {}
-        previous_dict = {}
-        previous_dict_by_name = {}
-
-        keys = (
-            'state_name',
-            'datatype',
-            'name',
-            'value',
-        )
-
-        for datapoint in current_datapoints:
-            unique_key = tuple([datapoint[k] for k in keys])
-            if unique_key in current_dict:
-                continue
-            current_dict[unique_key] = datapoint
-
-        for datapoint in previous_datapoints:
-            unique_key = tuple([datapoint[k] for k in keys])
-            previous_dict[unique_key] = None
-            if unique_key[:-1] in previous_dict_by_name:
-                continue
-            previous_dict_by_name[unique_key[:-1]] = datapoint
-
-        changed = []
-        for unique_key in current_dict:
-            if unique_key not in previous_dict:
-                changed.append((
-                    current_dict[unique_key],
-                    previous_dict_by_name.get(unique_key[:-1])
-                ))
-        return changed
 
     @cherrypy.expose
     def most_recent_graphs(self):
@@ -143,8 +113,12 @@ class App(object):
 
     @cherrypy.expose
     def revision(self, rev_date, rev_subid):
+        inst = CSVDataRevision(rev_date, rev_subid)
+
         try:
-            status_list = sorted(list(self.__get_status_dict(rev_date, rev_subid).items()))
+            status_list = sorted(
+                list(inst.get_status_dict().items())
+            )
         except FileNotFoundError:
             status_list = []
 
@@ -152,10 +126,8 @@ class App(object):
             status_list=status_list,
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            revision_time_string=inst.get_revision_time_string(),
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
@@ -168,16 +140,14 @@ class App(object):
 
     @cherrypy.expose
     def get_data_as_table(self, rev_date, rev_subid):
-        datapoints = self.__read_csv(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
 
         return env.get_template('revision/get_data_as_table.html').render(
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            datapoints=datapoints,
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            datapoints=inst.get_datapoints(),
+            revision_time_string=inst.get_revision_time_string(),
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
@@ -185,12 +155,10 @@ class App(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def get_json_data(self, rev_date, rev_subid):
-        # TODO: Validate period!! ===========================================================================
-        return self.__read_csv(rev_date, int(rev_subid))
+        return CSVDataRevision(rev_date, rev_subid).get_datapoints()
 
     @cherrypy.expose
     def get_tsv_data(self, rev_date, rev_subid):
-        self.__check_period(rev_date)
         rev_subid = int(rev_subid)
         return serve_file(
             f'{OUTPUT_DIR}/{rev_date}-{rev_subid}.tsv',
@@ -199,7 +167,7 @@ class App(object):
 
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
-        datapoints = self.__read_csv(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
@@ -213,42 +181,41 @@ class App(object):
             print("**FROM DATE:", from_date)
 
             statistics_datapoints.append((
-                from_date, self.__get_combined_values(
-                datapoints,
-                (
-                    ('DT_CASES', 'None'),
-                    ('DT_NEW_CASES', 'None'),
-                    ('DT_PATIENT_STATUS', 'Deaths'),
-                    #('DT_PATIENT_STATUS', 'New Deaths'),
-                    ('DT_PATIENT_STATUS', 'Recovered'),
-                    #('DT_PATIENT_STATUS', 'New Recovered'),
-                    ('DT_CASES_TESTED', 'None'),
-                    ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
-                    ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact not identified'),
-                    ('DT_SOURCE_OF_INFECTION', 'Interstate acquired'),
-                    ('DT_PATIENT_STATUS', 'Hospitalized'),
-                    ('DT_PATIENT_STATUS', 'ICU'),
-                ),
-                from_date=from_date
-            )))
+                from_date,
+                inst.get_combined_values(
+                    (
+                        ('DT_CASES', 'None'),
+                        ('DT_NEW_CASES', 'None'),
+                        ('DT_PATIENT_STATUS', 'Deaths'),
+                        #('DT_PATIENT_STATUS', 'New Deaths'),
+                        ('DT_PATIENT_STATUS', 'Recovered'),
+                        #('DT_PATIENT_STATUS', 'New Recovered'),
+                        ('DT_CASES_TESTED', 'None'),
+                        ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
+                        ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact not identified'),
+                        ('DT_SOURCE_OF_INFECTION', 'Interstate acquired'),
+                        ('DT_PATIENT_STATUS', 'Hospitalized'),
+                        ('DT_PATIENT_STATUS', 'ICU'),
+                    ),
+                    from_date=from_date
+                )
+            ))
 
         return env.get_template('revision/statistics.html').render(
             rev_date=rev_date,
             rev_date_slash_format=datetime.datetime.strptime(rev_date, '%Y_%m_%d').strftime('%d/%m/%Y'),
             rev_subid=rev_subid,
             int=int,
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
+            revision_time_string=inst.get_revision_time_string(),
             statistics_datapoints=statistics_datapoints,
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
 
     @cherrypy.expose
     def source_of_infection(self, rev_date, rev_subid):
-        datapoints = self.__read_csv(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
@@ -262,8 +229,8 @@ class App(object):
             print("**FROM DATE:", from_date)
 
             statistics_datapoints.append((
-                from_date, self.__get_combined_values(
-                    datapoints,
+                from_date,
+                inst.get_combined_values(
                     (
                         ('DT_SOURCE_OF_INFECTION', 'Overseas acquired'),
                         ('DT_SOURCE_OF_INFECTION', 'Locally acquired - contact of a confirmed case'),
@@ -280,20 +247,17 @@ class App(object):
             rev_date_slash_format=datetime.datetime.strptime(rev_date, '%Y_%m_%d').strftime('%d/%m/%Y'),
             rev_subid=rev_subid,
             int=int,
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
+            revision_time_string=inst.get_revision_time_string(),
             statistics_datapoints=statistics_datapoints,
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
 
     @cherrypy.expose
     def gender_age(self, rev_date, rev_subid):
-        datapoints = self.__read_csv(rev_date, rev_subid)
-        gender_age_datapoints = self.__get_combined_values_by_datatype(
-            datapoints,
+        inst = CSVDataRevision(rev_date, rev_subid)
+        gender_age_datapoints = inst.get_combined_values_by_datatype(
             (
                 'DT_AGE_FEMALE',
                 'DT_AGE_MALE',
@@ -304,20 +268,17 @@ class App(object):
             rev_date=rev_date,
             rev_subid=rev_subid,
             int=int,
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
+            revision_time_string=inst.get_revision_time_string(),
             gender_age_datapoints=gender_age_datapoints,
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
 
     @cherrypy.expose
     def local_area_case(self, rev_date, rev_subid):
-        datapoints = self.__read_csv(rev_date, rev_subid)
-        local_area_case_datapoints = self.__get_combined_values_by_datatype(
-            datapoints,
+        inst = CSVDataRevision(rev_date, rev_subid)
+        local_area_case_datapoints = inst.get_combined_values_by_datatype(
             (
                 # TODO: What about by LGA (QLD only, other LGA in DT_CASES_BY_REGION) and LHA (NSW)
                 'DT_CASES_BY_REGION',
@@ -330,11 +291,9 @@ class App(object):
             rev_date=rev_date,
             rev_subid=rev_subid,
             int=int,
-            revision_time_string=self.__get_revision_time_string(
-                rev_date, rev_subid
-            ),
+            revision_time_string=inst.get_revision_time_string(),
             local_area_case_datapoints=local_area_case_datapoints,
-            not_most_recent_warning=self.__get_not_most_recent_warning(
+            not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
         )
@@ -345,13 +304,16 @@ class App(object):
         if rev_date is None:
             # Output the last successful run if
             # rev_date/rev_subid not supplied
-            for rev_date, rev_subid, dt in self.__get_revisions():
-                status_dict = self.__get_status_dict(rev_date, rev_subid)
+            for rev_date, rev_subid, dt in self.revisions.get_revisions():
+                inst = CSVDataRevision(rev_date, rev_subid)
+                status_dict = inst.get_status_dict()
+
                 if all(status_dict[k][0] == 'OK' for k in status_dict):
                     break
+        else:
+            inst = CSVDataRevision(rev_date, rev_subid)
 
-        datapoints = self.__read_csv(rev_date, rev_subid)
-        from_dates = [i['date_updated'] for i in datapoints]
+        from_dates = [i['date_updated'] for i in inst]
 
         out = []
         added = set()
@@ -362,8 +324,7 @@ class App(object):
             added.add(from_date)
 
             print(from_date)
-            local_area_case_datapoints = self.__get_combined_values_by_datatype(
-                datapoints,
+            local_area_case_datapoints = inst.get_combined_values_by_datatype(
                 (
                     'DT_CASES_BY_REGION',
                     'DT_CASES_BY_REGION_ACTIVE',
