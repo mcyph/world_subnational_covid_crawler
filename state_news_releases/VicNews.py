@@ -4,11 +4,11 @@ from re import compile, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES, \
-    DT_CASES_BY_REGION, DT_NEW_CASES_BY_REGION, \
-    DT_MALE, DT_FEMALE, \
-    DT_SOURCE_OF_INFECTION, \
-    DT_PATIENT_STATUS
+    SCHEMA_LGA, \
+    DT_CASES_NEW, DT_CASES_TOTAL, DT_TESTS_TOTAL, \
+    DT_CASES_TOTAL_MALE, DT_CASES_TOTAL_FEMALE, \
+    DT_CASES_HOSPITALIZED, DT_CASES_ICU, \
+    DT_CASES_RECOVERED, DT_CASES_DEATHS
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.vic_powerbi import \
@@ -93,8 +93,7 @@ class VicNews(StateNewsBase):
         if 'same total number as yesterday' in html:
             # https://www.dhhs.vic.gov.au/coronavirus-update-victoria-27-april-2020
             return DataPoint(
-                datatype=DT_NEW_CASES,
-                name=None,
+                datatype=DT_CASES_NEW,
                 value=0,
                 date_updated=self._get_date(href, html),
                 source_url=href,
@@ -104,14 +103,14 @@ class VicNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('increase of ([0-9,]+)'),
             c_html,
+            datatype=DT_CASES_NEW,
             source_url=href,
-            datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
         ) or self._extract_number_using_regex(
             compile('([0-9,]+) new cases'),
             c_html,
+            datatype=DT_CASES_NEW,
             source_url=href,
-            datatype=DT_NEW_CASES,
             date_updated=self._get_date(href, html)
         )
 
@@ -123,8 +122,8 @@ class VicNews(StateNewsBase):
                 '([0-9,]+)'
             ),
             html,
+            datatype=DT_CASES_TOTAL,
             source_url=href,
-            datatype=DT_CASES,
             date_updated=self._get_date(href, html)
         )
         return vic_total_cases
@@ -140,8 +139,8 @@ class VicNews(StateNewsBase):
                 IGNORECASE
             ),
             html,
+            datatype=DT_TESTS_TOTAL,
             source_url=href,
-            datatype=DT_CASES_TESTED,
             date_updated=self._get_date(href, html)
         )
 
@@ -149,9 +148,8 @@ class VicNews(StateNewsBase):
             return vic_test
         elif 'thousand casual contacts have been tested' in html:
             return DataPoint(
-                name=None,
+                datatype=DT_TESTS_TOTAL,
                 value=1000,
-                datatype=DT_CASES_TESTED,
                 date_updated=self._get_date(href, html),
                 source_url=href,
                 text_match='thousand casual contacts have been tested'
@@ -181,14 +179,14 @@ class VicNews(StateNewsBase):
             compile('total[^0-9.]+([0-9,]+) men'),
             html,
             source_url=url,
-            datatype=DT_MALE,
+            datatype=DT_CASES_TOTAL_MALE,
             date_updated=self._get_date(url, html)
         )
         women = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) women'),
             html,
             source_url=url,
-            datatype=DT_FEMALE,
+            datatype=DT_CASES_TOTAL_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if men is not None and women is not None:
@@ -238,12 +236,12 @@ class VicNews(StateNewsBase):
                     continue
 
                 regions.append(DataPoint(
-                    datatype=DT_CASES_BY_REGION,
-                    name=region_name.replace('have all recorded one case', '').strip(),
+                    schema=SCHEMA_LGA,
+                    datatype=DT_CASES_TOTAL,
+                    region=region_name.replace('have all recorded one case', '').strip(),
                     value=int(num_cases),
                     date_updated=self._get_date(href, html),
-                    source_url=href,
-                    text_match=None
+                    source_url=href
                 ))
 
         if 'have all recorded one case' in html:
@@ -256,12 +254,12 @@ class VicNews(StateNewsBase):
                     continue
 
                 regions.append(DataPoint(
-                    datatype=DT_CASES_BY_REGION,
-                    name=region_name,
+                    schema=SCHEMA_LGA,
+                    datatype=DT_CASES_TOTAL,
+                    region=region_name,
                     value=1,
                     date_updated=self._get_date(href, html),
-                    source_url=href,
-                    text_match=None
+                    source_url=href
                 ))
 
         return regions
@@ -300,7 +298,8 @@ class VicNews(StateNewsBase):
 
     def _get_total_dhr(self, href, html):
         """
-        "Currently 26 people are in hospital, including four patients in intensive care, 193 people have recovered. "
+        "Currently 26 people are in hospital, including four
+        patients in intensive care, 193 people have recovered. "
         """
         r = []
         c_html = word_to_number(html)
@@ -318,9 +317,8 @@ class VicNews(StateNewsBase):
                 ),
             ),
             c_html,
-            name='Deaths',
+            datatype=DT_CASES_DEATHS,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if deaths:
@@ -329,9 +327,8 @@ class VicNews(StateNewsBase):
         in_hospital = self._extract_number_using_regex(
             compile('([0-9,]+) people are in hospital'),
             c_html,
-            name='Hospitalized',
+            datatype=DT_CASES_HOSPITALIZED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if in_hospital:
@@ -340,9 +337,8 @@ class VicNews(StateNewsBase):
         in_icu = self._extract_number_using_regex(
             compile('([0-9,]+) patients? in intensive care'),
             c_html,
-            name='ICU',
+            datatype=DT_CASES_ICU,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if in_icu:
@@ -351,9 +347,8 @@ class VicNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people have recovered'),
             c_html,
-            name='Recovered',
+            datatype=DT_CASES_RECOVERED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if recovered:

@@ -246,16 +246,8 @@ class NSWNews(StateNewsBase):
         r = []
         if href == self.NSW_LGA_STATS_URL:
             for datatype, name, text in (
-                (
-                    DT_CASES,
-                    FIXME,
-                    'Confirmed cases'
-                ),
-                (
-                    DT_SOURCE_OF_INFECTION,
-                    FIXME,
-                    'Cases locally acquired - Contact not identified'
-                )
+                (DT_CASES_TOTAL, 'Confirmed cases'),
+                (DT_SOURCE_COMMUNITY, 'Cases locally acquired - Contact not identified')
             ):
                 # Get LGA stats only at the LGA url
                 table = self._pq_contains(html, 'table', text,
@@ -264,8 +256,8 @@ class NSWNews(StateNewsBase):
                 #print(html)
                 r.extend(self.__get_datapoints_from_table(
                     href, html, table,
-                    datatype=DT_SOURCE_OF_INFECTION,
-                    name=name
+                    schema=SCHEMA_LGA,
+                    datatype=datatype
                 ))
             return r or None
         else:

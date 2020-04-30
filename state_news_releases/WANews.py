@@ -6,11 +6,12 @@ from re import compile, IGNORECASE, MULTILINE, DOTALL
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES, \
-    DT_SOURCE_OF_INFECTION, \
-    DT_NEW_CASES_BY_REGION, DT_CASES_BY_REGION, DT_NEW_CASES, \
-    DT_NEW_MALE, DT_NEW_FEMALE, \
-    DT_PATIENT_STATUS
+    SCHEMA_LGA, \
+    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_TESTS_TOTAL, DT_CASES_TOTAL, DT_CASES_NEW, \
+    DT_CASES_DEATHS, DT_CASES_RECOVERED, \
+    DT_CASES_ICU, DT_CASES_HOSPITALIZED, \
+    DT_CASES_ACTIVE
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -117,8 +118,8 @@ class WANews(StateNewsBase):
                 compile(r'total number of cases stands at ([0-9,]+)'),
             ),
             html,
+            datatype=DT_CASES_TOTAL,
             source_url=url,
-            datatype=DT_CASES,
             date_updated=self._get_date(url, html)
         )
 
@@ -131,14 +132,13 @@ class WANews(StateNewsBase):
                     r'[^0-9]*?negative)'),
             html,
             source_url=url,
-            datatype=DT_CASES_TESTED,
+            datatype=DT_TESTS_TOTAL,
             date_updated=self._get_date(url, html)
         )
         pos_cases = self._get_total_cases(url, html)
 
         if neg_cases and pos_cases:
             return DataPoint(
-                name=None,
                 datatype=neg_cases.datatype,
                 value=neg_cases.value+pos_cases.value,
                 date_updated=neg_cases.date_updated,
@@ -161,8 +161,8 @@ class WANews(StateNewsBase):
                 compile(r'([0-9,]+) new COVID-19 cases?'),
             ),
             c_html,
+            datatype=DT_CASES_NEW,
             source_url=url,
-            datatype=DT_NEW_CASES,
             date_updated=self._get_date(url, html)
         )
 
@@ -191,8 +191,8 @@ class WANews(StateNewsBase):
         male = self._extract_number_using_regex(
             compile('[^0-9.]+([0-9,]+) male(?:s)?'),
             c_html,
+            datatype=DT_CASES_TOTAL_MALE,
             source_url=url,
-            datatype=DT_NEW_MALE,
             date_updated=self._get_date(url, html)
         )
         if male:
@@ -202,8 +202,8 @@ class WANews(StateNewsBase):
         female = self._extract_number_using_regex(
             compile('[^0-9.]+([0-9,]+) female(?:s)?'),
             c_html,
+            datatype=DT_CASES_TOTAL_FEMALE,
             source_url=url,
-            datatype=DT_NEW_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if female:
@@ -219,6 +219,8 @@ class WANews(StateNewsBase):
     #============================================================#
 
     def _get_new_cases_by_region(self, url, html):
+        return  # HACK: Disabling this for now, as it doesn't follow LGA etc schema, and not sure how useful the Metro/Regional WA distinction is!
+
         # AFAIK, this information currently isn't
         # available in an easily readable format
 
@@ -386,12 +388,12 @@ class WANews(StateNewsBase):
                             continue # WARNING!!! ============================================================================
 
             num = DataPoint(
-                name=attributes['LGA_NAME19'].split('(')[0].strip(),
-                datatype=DT_CASES_BY_REGION,
+                schema=SCHEMA_LGA,
+                datatype=DT_CASES_TOTAL,
+                region=attributes['LGA_NAME19'].split('(')[0].strip(),
                 value=value,
                 date_updated=period,
-                source_url='https://ww2.health.wa.gov.au/Articles/A_E/Coronavirus/COVID19-statistics',
-                text_match=None
+                source_url='https://ww2.health.wa.gov.au/Articles/A_E/Coronavirus/COVID19-statistics'
             )
             r.append(num)
         return r
@@ -439,8 +441,7 @@ class WANews(StateNewsBase):
         active = self._extract_number_using_regex(
             compile('([0-9,]+) active cases'),
             c_html,
-            datatype=DT_PATIENT_STATUS,
-            name='Active',
+            datatype=DT_CASES_ACTIVE,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -450,8 +451,7 @@ class WANews(StateNewsBase):
         icu = self._extract_number_using_regex(
             compile('([0-9,]+) of whom are in ICU'),
             c_html,
-            datatype=DT_PATIENT_STATUS,
-            name='ICU',
+            datatype=DT_CASES_ICU,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -462,8 +462,7 @@ class WANews(StateNewsBase):
             # Sounds like none are in regional hospitals?? ===================================
             compile('([0-9,]+) confirmed COVID-19 patients in Perth metropolitan hospitals'),
             c_html,
-            datatype=DT_PATIENT_STATUS,
-            name='Hospitalized',
+            datatype=DT_CASES_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -477,8 +476,7 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
-            datatype=DT_PATIENT_STATUS,
-            name='Recovered',
+            datatype=DT_CASES_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -492,8 +490,7 @@ class WANews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
-            datatype=DT_PATIENT_STATUS,
-            name='Deaths',
+            datatype=DT_CASES_DEATHS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )

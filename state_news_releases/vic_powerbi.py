@@ -5,7 +5,11 @@ from os.path import expanduser, exists
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_BY_REGION, DT_AGE, DT_AGE_MALE, DT_AGE_FEMALE, DT_SOURCE_OF_INFECTION
+    SCHEMA_LGA, \
+    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY, \
+    DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE, \
+    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import \
     PowerBIDataReader
 from covid_19_au_grab.powerbi_grabber.VicPowerBI import \
@@ -78,12 +82,12 @@ class _VicPowerBI(PowerBIDataReader):
                 value = region['C'][1]
 
             output.append(DataPoint(
-                name=region['C'][0].split('(')[0].strip(),
-                datatype=DT_CASES_BY_REGION,
+                schema=SCHEMA_LGA,
+                datatype=DT_CASES_TOTAL,
+                region=region['C'][0].split('(')[0].strip(),
                 value=value,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                text_match=None
+                source_url=SOURCE_URL
             ))
             previous_value = value
             # print(output[-1])
@@ -133,20 +137,18 @@ class _VicPowerBI(PowerBIDataReader):
             assert cols[1] in ('Male', 'Female')
 
             output.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_MALE if cols[0] == 'Male' else DT_AGE_FEMALE,
+                datatype=DT_CASES_TOTAL_MALE if cols[0] == 'Male' else DT_CASES_TOTAL_FEMALE,
+                agerange=age['G0'].replace('–', '-'),
                 value=value_1,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                text_match=None
+                source_url=SOURCE_URL
             ))
             output.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE_FEMALE if cols[1] == 'Female' else DT_AGE_MALE,
+                datatype=DT_CASES_TOTAL_FEMALE if cols[1] == 'Female' else DT_CASES_TOTAL_MALE,
+                agerange=age['G0'].replace('–', '-'),
                 value=value_2,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                text_match=None
+                source_url=SOURCE_URL
             ))
             # TODO: support "not stated" separately!!! ====================================================
             general_age = (
@@ -154,12 +156,11 @@ class _VicPowerBI(PowerBIDataReader):
             )
 
             output.append(DataPoint(
-                name=age['G0'].replace('–', '-'),
-                datatype=DT_AGE,
+                datatype=DT_CASES_TOTAL,
+                agerange=age['G0'].replace('–', '-'),
                 value=general_age,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                text_match=None
+                source_url=SOURCE_URL
             ))
 
         return output
@@ -174,14 +175,10 @@ class _VicPowerBI(PowerBIDataReader):
 
         # Normalise it with other states
         vic_norm_map = {
-            'Travel overseas':
-                'Overseas acquired',
-            'Contact with a confirmed case':
-                'Locally acquired - contact of a confirmed case',
-            'Acquired in Australia, unknown source':
-                'Locally acquired - contact not identified',
-            'Under investigation':
-                'Under investigation',
+            'Travel overseas': DT_SOURCE_OVERSEAS,
+            'Contact with a confirmed case': DT_SOURCE_CONFIRMED,
+            'Acquired in Australia, unknown source': DT_SOURCE_COMMUNITY,
+            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION
         }
 
         output = []
@@ -195,12 +192,10 @@ class _VicPowerBI(PowerBIDataReader):
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(
-                name=vic_norm_map[source['C'][0]],
-                datatype=DT_SOURCE_OF_INFECTION,
+                datatype=vic_norm_map[source['C'][0]],
                 value=source['C'][1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                text_match=None
+                source_url=SOURCE_URL
             ))
         return output
 

@@ -4,9 +4,10 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import \
     StateNewsBase, singledaystat
 from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TESTED, DT_CASES, DT_NEW_CASES, \
-    DT_MALE, DT_FEMALE, \
-    DT_PATIENT_STATUS
+    DT_CASES_TOTAL, DT_CASES_NEW, DT_TESTS_TOTAL, \
+    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
+    DT_CASES_ACTIVE, DT_CASES_RECOVERED, DT_CASES_DEATHS, \
+    DT_CASES_ICU, DT_CASES_HOSPITALIZED
 from covid_19_au_grab.state_news_releases.data_containers.DataPoint import \
     DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -82,8 +83,8 @@ class TasNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            datatype=DT_CASES_NEW,
             source_url=url,
-            datatype=DT_NEW_CASES,
             date_updated=self._get_date(url, html)
         )
 
@@ -104,8 +105,8 @@ class TasNews(StateNewsBase):
                 )
             ),
             c_html,
+            datatype=DT_CASES_TOTAL,
             source_url=url,
-            datatype=DT_CASES,
             date_updated=self._get_date(url, html)
         )
 
@@ -130,7 +131,7 @@ class TasNews(StateNewsBase):
             ),
             c_html,
             source_url=url,
-            datatype=DT_CASES_TESTED,
+            datatype=DT_TESTS_TOTAL,
             date_updated=self._get_date(url, html)
         )
         return r
@@ -162,14 +163,14 @@ class TasNews(StateNewsBase):
             compile('([0-9,]+)[^0-9.,]* men', IGNORECASE),
             c_html,
             source_url=url,
-            datatype=DT_MALE,
+            datatype=DT_CASES_TOTAL_MALE,
             date_updated=self._get_date(url, html)
         )
         women = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* women', IGNORECASE),
             c_html,
             source_url=url,
-            datatype=DT_FEMALE,
+            datatype=DT_CASES_TOTAL_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if men is not None or women is not None:
@@ -219,11 +220,11 @@ class TasNews(StateNewsBase):
         r = []
 
         cases_map = {
-            'New cases in past 24 hours': (DT_NEW_CASES, None),
-            'Total cases': (DT_CASES, None),
-            'Active': (None, None),
-            'Recovered': (DT_PATIENT_STATUS, 'Recovered'),
-            'Deaths': (DT_PATIENT_STATUS, 'Deaths'),
+            'New cases in past 24 hours': DT_CASES_NEW,
+            'Total cases': DT_CASES_TOTAL,
+            'Active': DT_CASES_ACTIVE,
+            'Recovered': DT_CASES_RECOVERED,
+            'Deaths': DT_CASES_DEATHS,
         }
 
         cases_table = self._pq_contains(
@@ -235,17 +236,15 @@ class TasNews(StateNewsBase):
             heading = pq(heading).text().replace('*', '').strip()
             value = pq(value).text().replace('*', '').replace(',', '').strip()
 
-            datatype, name = cases_map[heading]
+            datatype = cases_map[heading]
             if datatype is None:
                 continue
 
             r.append(DataPoint(
                 datatype=datatype,
-                name=name,
                 value=int(value),
                 date_updated=self._get_date(href, html),
-                source_url=href,
-                text_match=None
+                source_url=href
             ))
 
         tests_table = self._pq_contains(
@@ -254,21 +253,18 @@ class TasNews(StateNewsBase):
         )[0]
 
         r.append(DataPoint(
-            datatype=DT_CASES_TESTED,
-            name=None,
+            datatype=DT_TESTS_TOTAL,
             value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').strip()),
             date_updated=self._get_date(href, html),
-            source_url=href,
-            text_match=None
+            source_url=href
         ))
 
         c_html = word_to_number(html)
         icu = self._extract_number_using_regex(
             compile(r'includes ([0-9,]+) hospital inpatients', IGNORECASE),
             c_html,
-            name='Hospitalized',
+            datatype=DT_CASES_HOSPITALIZED,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if icu:
@@ -277,9 +273,8 @@ class TasNews(StateNewsBase):
         hospitalized = self._extract_number_using_regex(
             compile(r'\(([0-9,]+) in ICU\)', IGNORECASE),
             c_html,
-            name='ICU',
+            datatype=DT_CASES_ICU,
             source_url=href,
-            datatype=DT_PATIENT_STATUS,
             date_updated=self._get_date(href, html)
         )
         if hospitalized:
