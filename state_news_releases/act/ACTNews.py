@@ -5,15 +5,15 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    DT_CASES_TOTAL, DT_CASES_NEW,
-    DT_CASES_NEW_MALE, DT_CASES_NEW_FEMALE,
-    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    DT_TOTAL, DT_NEW,
+    DT_NEW_MALE, DT_NEW_FEMALE,
+    DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_TESTS_TOTAL,
     DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
     DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
-    DT_CASES_RECOVERED, DT_CASES_HOSPITALIZED,
-    DT_CASES_DEATHS
+    DT_STATUS_RECOVERED, DT_STATUS_HOSPITALIZED,
+    DT_STATUS_DEATHS
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -76,7 +76,7 @@ class ACTNews(StateNewsBase):
                 compile(r'total remains at\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
-            datatype=DT_CASES_TOTAL,
+            datatype=DT_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -124,7 +124,7 @@ class ACTNews(StateNewsBase):
                 r'([0-9,]+)\s?(?:</strong>)?\)?\s?new (?:confirmed|cases?)'
             ),
             c_html,
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             date_updated=self._get_date(href, html),
             source_url=href
         )
@@ -163,7 +163,7 @@ class ACTNews(StateNewsBase):
         r = []
         for k, v in ages.items():
             r.append(DataPoint(
-                datatype=DT_CASES_TOTAL,
+                datatype=DT_TOTAL,
                 agerange=k,
                 value=v,
                 date_updated=self._get_date(href, html),
@@ -194,7 +194,7 @@ class ACTNews(StateNewsBase):
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
             source_url=href,
-            datatype=DT_CASES_NEW_MALE,
+            datatype=DT_NEW_MALE,
             date_updated=self._get_date(href, html)
         )
         if male:
@@ -203,7 +203,7 @@ class ACTNews(StateNewsBase):
         female = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?female(?:s)?'),
             c_html,
-            datatype=DT_CASES_NEW_FEMALE,
+            datatype=DT_NEW_FEMALE,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -230,7 +230,7 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_CASES_TOTAL_FEMALE,
+            datatype=DT_TOTAL_FEMALE,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -242,7 +242,7 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_CASES_TOTAL_MALE,
+            datatype=DT_TOTAL_MALE,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -333,21 +333,21 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
-            datatype=DT_CASES_HOSPITALIZED,
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
-            datatype=DT_CASES_RECOVERED,
+            datatype=DT_STATUS_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
-            datatype=DT_CASES_DEATHS,
+            datatype=DT_STATUS_DEATHS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )

@@ -5,11 +5,11 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_LGA, 
-    DT_CASES_NEW, DT_CASES_TOTAL, DT_TESTS_TOTAL, 
-    DT_CASES_TOTAL_MALE, DT_CASES_TOTAL_FEMALE, 
-    DT_CASES_HOSPITALIZED, DT_CASES_ICU, 
-    DT_CASES_RECOVERED, DT_CASES_DEATHS
+    SCHEMA_LGA,
+    DT_NEW, DT_TOTAL, DT_TESTS_TOTAL,
+    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
+    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -99,7 +99,7 @@ class VicNews(StateNewsBase):
         if 'same total number as yesterday' in html:
             # https://www.dhhs.vic.gov.au/coronavirus-update-victoria-27-april-2020
             return DataPoint(
-                datatype=DT_CASES_NEW,
+                datatype=DT_NEW,
                 value=0,
                 date_updated=self._get_date(href, html),
                 source_url=href,
@@ -109,13 +109,13 @@ class VicNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('increase of ([0-9,]+)'),
             c_html,
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         ) or self._extract_number_using_regex(
             compile('([0-9,]+) new cases'),
             c_html,
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -128,7 +128,7 @@ class VicNews(StateNewsBase):
                 '([0-9,]+)'
             ),
             html,
-            datatype=DT_CASES_TOTAL,
+            datatype=DT_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -185,14 +185,14 @@ class VicNews(StateNewsBase):
             compile('total[^0-9.]+([0-9,]+) men'),
             html,
             source_url=url,
-            datatype=DT_CASES_TOTAL_MALE,
+            datatype=DT_TOTAL_MALE,
             date_updated=self._get_date(url, html)
         )
         women = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) women'),
             html,
             source_url=url,
-            datatype=DT_CASES_TOTAL_FEMALE,
+            datatype=DT_TOTAL_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if men is not None and women is not None:
@@ -243,7 +243,7 @@ class VicNews(StateNewsBase):
 
                 regions.append(DataPoint(
                     schema=SCHEMA_LGA,
-                    datatype=DT_CASES_TOTAL,
+                    datatype=DT_TOTAL,
                     region=region_name.replace('have all recorded one case', '').strip(),
                     value=int(num_cases),
                     date_updated=self._get_date(href, html),
@@ -261,7 +261,7 @@ class VicNews(StateNewsBase):
 
                 regions.append(DataPoint(
                     schema=SCHEMA_LGA,
-                    datatype=DT_CASES_TOTAL,
+                    datatype=DT_TOTAL,
                     region=region_name,
                     value=1,
                     date_updated=self._get_date(href, html),
@@ -323,7 +323,7 @@ class VicNews(StateNewsBase):
                 ),
             ),
             c_html,
-            datatype=DT_CASES_DEATHS,
+            datatype=DT_STATUS_DEATHS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -333,7 +333,7 @@ class VicNews(StateNewsBase):
         in_hospital = self._extract_number_using_regex(
             compile('([0-9,]+) people are in hospital'),
             c_html,
-            datatype=DT_CASES_HOSPITALIZED,
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -343,7 +343,7 @@ class VicNews(StateNewsBase):
         in_icu = self._extract_number_using_regex(
             compile('([0-9,]+) patients? in intensive care'),
             c_html,
-            datatype=DT_CASES_ICU,
+            datatype=DT_STATUS_ICU,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -353,7 +353,7 @@ class VicNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people have recovered'),
             c_html,
-            datatype=DT_CASES_RECOVERED,
+            datatype=DT_STATUS_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )

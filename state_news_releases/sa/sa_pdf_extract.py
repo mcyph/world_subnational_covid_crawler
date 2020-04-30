@@ -162,9 +162,9 @@ if __name__ == '__main__':
             print(pdf_path)
 
             if 'Active' in pdf_path:
-                datatype = 'DT_CASES_ACTIVE'
+                datatype = 'DT_STATUS_ACTIVE'
             elif 'Positive' in pdf_path:
-                datatype = 'DT_CASES_TOTAL'
+                datatype = 'DT_TOTAL'
             else:
                 raise Exception(pdf_path)
 

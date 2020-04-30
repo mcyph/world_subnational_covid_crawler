@@ -6,14 +6,14 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
 )
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
-    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
-    DT_CASES_NEW,
+    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
+    DT_NEW,
     DT_TESTS_TOTAL,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE,
     DT_SOURCE_OVERSEAS,
-    DT_CASES_DEATHS, DT_CASES_HOSPITALIZED, DT_CASES_ICU,
-    DT_CASES_ICU_VENTILATORS
+    DT_STATUS_DEATHS, DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    DT_STATUS_ICU_VENTILATORS
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -107,7 +107,7 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html.replace('\n', ' '),
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -124,7 +124,7 @@ class NSWNews(StateNewsBase):
         tr = tr[0]
 
         return DataPoint(
-            datatype=DT_CASES_TOTAL,
+            datatype=DT_TOTAL,
             value=int(pq(tr[1]).html().split('<')[0]
                                       .strip()
                                       .replace(',', '')
@@ -206,9 +206,9 @@ class NSWNews(StateNewsBase):
             total = int(pq(tds[3]).text().replace(' ', '').strip() or 0)
 
             for datatype, value in (
-                (DT_CASES_TOTAL_FEMALE, female),
-                (DT_CASES_TOTAL_MALE, male),
-                (DT_CASES_TOTAL, total)
+                (DT_TOTAL_FEMALE, female),
+                (DT_TOTAL_MALE, male),
+                (DT_TOTAL, total)
             ):
                 if value is None:
                     continue
@@ -252,7 +252,7 @@ class NSWNews(StateNewsBase):
         r = []
         if href == self.NSW_LGA_STATS_URL:
             for datatype, text in (
-                (DT_CASES_TOTAL, 'Confirmed cases'),
+                (DT_TOTAL, 'Confirmed cases'),
                 (DT_SOURCE_COMMUNITY, 'Cases locally acquired - Contact not identified')
             ):
                 # Get LGA stats only at the LGA url
@@ -282,7 +282,7 @@ class NSWNews(StateNewsBase):
             return self.__get_datapoints_from_table(
                 href, html, table,
                 schema=SCHEMA_LHD,
-                datatype=DT_CASES_TOTAL
+                datatype=DT_TOTAL
             ) or None
 
     def __get_datapoints_from_table(self,
@@ -299,7 +299,7 @@ class NSWNews(StateNewsBase):
         for tr in trs:
             lhd = pq(tr[0]).text().strip()
 
-            if not tr or not lhd or 'total' in lhd.lower().split():
+            if not pq(tr) or not pq(lhd) or 'total' in lhd.lower().split():
                 print("NOT TR:", pq(tr).html())
                 continue
             print("FOUND TR:", lhd)
@@ -406,7 +406,7 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_CASES_HOSPITALIZED,
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -429,7 +429,7 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html,
-            datatype=DT_CASES_ICU,
+            datatype=DT_STATUS_ICU,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -443,7 +443,7 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_CASES_ICU_VENTILATORS,
+            datatype=DT_STATUS_ICU_VENTILATORS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -470,7 +470,7 @@ class NSWNews(StateNewsBase):
                         IGNORECASE),
             ),
             c_html,
-            datatype=DT_CASES_DEATHS,
+            datatype=DT_STATUS_DEATHS,
             source_url=href,
             date_updated=self._get_date(href, html)
         )

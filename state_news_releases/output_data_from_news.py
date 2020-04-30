@@ -194,7 +194,16 @@ if __name__ == '__main__':
 
     # Override stdout to point to both stdout and the output file
     logger = sys.stdout = Logger(sys.stdout)
-    print('state_name\tdatatype\tagegroup\tregion\tvalue\tdate_updated\tsource_url\ttext_match')
+    print('state_name\t'
+          'schema\t'
+          'datatype\t'
+          'agegroup\t'
+          'region\t'
+          'value\t'
+          'date_updated\t'
+          'source_url\t'
+          'text_match')
+    
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
             try:

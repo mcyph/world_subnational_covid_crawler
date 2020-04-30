@@ -12,10 +12,10 @@ from covid_19_au_grab.state_news_releases import (
 )
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA,
-    DT_CASES_TOTAL, DT_CASES_TOTAL_MALE, DT_CASES_TOTAL_FEMALE,
-    DT_CASES_NEW, DT_TESTS_TOTAL,
-    DT_CASES_RECOVERED, DT_CASES_DEATHS,
-    DT_CASES_ICU,
+    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
+    DT_NEW, DT_TESTS_TOTAL,
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
+    DT_STATUS_ICU,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_OVERSEAS,
     DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED
@@ -31,7 +31,7 @@ from covid_19_au_grab.get_package_dir import (
 )
 
 
-OUTPUT_DIR = get_package_dir() / 'sa_pdf_extract' / 'output'
+OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
 
 
 # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
@@ -133,7 +133,7 @@ class SANews(StateNewsBase):
             ),
             c_html,
             source_url=href,
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             date_updated=self._get_date(href, html)
         )
 
@@ -146,7 +146,7 @@ class SANews(StateNewsBase):
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
-                    datatype=DT_CASES_TOTAL,
+                    datatype=DT_TOTAL,
                     value=cc,
                     date_updated=self._get_date(href, html),
                     source_url=href
@@ -159,7 +159,7 @@ class SANews(StateNewsBase):
             return self._extract_number_using_regex(
                 compile('total of ([0-9,]+) (?:confirmed|cases)'),
                 c_html,
-                datatype=DT_CASES_TOTAL,
+                datatype=DT_TOTAL,
                 source_url=href,
                 date_updated=self._get_date(href, html)
             )
@@ -242,9 +242,9 @@ class SANews(StateNewsBase):
                 total = int(pq(tds[3]).text())
 
             for datatype, value in (
-                (DT_CASES_TOTAL_FEMALE, female),
-                (DT_CASES_TOTAL_MALE, male),
-                (DT_CASES_TOTAL, total)
+                (DT_TOTAL_FEMALE, female),
+                (DT_TOTAL_MALE, male),
+                (DT_TOTAL, total)
             ):
                 if value is None:
                     continue
@@ -350,7 +350,7 @@ class SANews(StateNewsBase):
 
         if c_icu is not None:
             r.append(DataPoint(
-                datatype=DT_CASES_ICU,
+                datatype=DT_STATUS_ICU,
                 value=c_icu,
                 date_updated=self._get_date(href, html),
                 source_url=href
@@ -361,7 +361,7 @@ class SANews(StateNewsBase):
         t_d = int(pq(tr[1]).text().strip())
         if t_d is not None:
             r.append(DataPoint(
-                datatype=DT_CASES_DEATHS,
+                datatype=DT_STATUS_DEATHS,
                 value=t_d,
                 date_updated=self._get_date(href, html),
                 source_url=href
@@ -375,7 +375,7 @@ class SANews(StateNewsBase):
 
             if t_d is not None:
                 r.append(DataPoint(
-                    datatype=DT_CASES_RECOVERED,
+                    datatype=DT_STATUS_RECOVERED,
                     value=t_d,
                     date_updated=self._get_date(href, html),
                     source_url=href

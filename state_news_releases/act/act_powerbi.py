@@ -2,11 +2,11 @@ from os.path import exists
 from datetime import datetime
 
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_LGA,
-    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    SCHEMA_SA3,
+    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP,
     DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_CASES_RECOVERED
+    DT_STATUS_RECOVERED
 )
 from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
     ACTPowerBI, get_globals
@@ -106,21 +106,21 @@ class _ACTPowerBI(PowerBIDataReader):
             male = self._to_int(male)
 
             r.append(DataPoint(
-                datatype=DT_CASES_TOTAL_MALE,
+                datatype=DT_TOTAL_MALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=male,
                 date_updated=updated_date,
                 source_url=self.source_url
             ))
             r.append(DataPoint(
-                datatype=DT_CASES_TOTAL_FEMALE,
+                datatype=DT_TOTAL_FEMALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=female,
                 date_updated=updated_date,
                 source_url=self.source_url
             ))
             r.append(DataPoint(
-                datatype=DT_CASES_TOTAL,
+                datatype=DT_TOTAL,
                 agerange=age['G0'].replace('–', '-'),
                 value=female + male,
                 date_updated=updated_date,
@@ -166,13 +166,13 @@ class _ACTPowerBI(PowerBIDataReader):
             female = male
 
         r.append(DataPoint(
-            datatype=DT_CASES_TOTAL_MALE,
+            datatype=DT_TOTAL_MALE,
             value=self._to_int(male),
             date_updated=updated_date,
             source_url=self.source_url
         ))
         r.append(DataPoint(
-            datatype=DT_CASES_TOTAL_FEMALE,
+            datatype=DT_TOTAL_FEMALE,
             value=self._to_int(female),
             date_updated=updated_date,
             source_url=self.source_url
@@ -259,7 +259,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            datatype=DT_CASES_RECOVERED,
+            datatype=DT_STATUS_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
             source_url=self.source_url
@@ -294,8 +294,8 @@ class _ACTPowerBI(PowerBIDataReader):
                 name = 'Urriarra - Namadgi'
 
             r.append(DataPoint(
-                schema=SCHEMA_LGA,
-                datatype=DT_CASES_TOTAL,
+                schema=SCHEMA_SA3,
+                datatype=DT_TOTAL,
                 region=name,
                 value=self._to_int(value),
                 date_updated=updated_date,

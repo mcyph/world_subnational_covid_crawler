@@ -4,7 +4,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    DT_CASES_RECOVERED, DT_CASES_TOTAL, DT_TESTS_TOTAL
+    DT_STATUS_RECOVERED, DT_TOTAL, DT_TESTS_TOTAL
 )
 
 
@@ -47,7 +47,7 @@ class NTNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('([0-9,]+) confirmed cases'),
             html,
-            datatype=DT_CASES_TOTAL,
+            datatype=DT_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -111,7 +111,7 @@ class NTNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people recovered'),
             html,
-            datatype=DT_CASES_RECOVERED,
+            datatype=DT_STATUS_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )

@@ -3,7 +3,7 @@ from os.path import expanduser, exists
 
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA,
-    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS
 )
@@ -88,7 +88,7 @@ class _VicPowerBI(PowerBIDataReader):
 
             output.append(DataPoint(
                 schema=SCHEMA_LGA,
-                datatype=DT_CASES_TOTAL,
+                datatype=DT_TOTAL,
                 region=region['C'][0].split('(')[0].strip(),
                 value=value,
                 date_updated=updated_date,
@@ -142,14 +142,14 @@ class _VicPowerBI(PowerBIDataReader):
             assert cols[1] in ('Male', 'Female')
 
             output.append(DataPoint(
-                datatype=DT_CASES_TOTAL_MALE if cols[0] == 'Male' else DT_CASES_TOTAL_FEMALE,
+                datatype=DT_TOTAL_MALE if cols[0] == 'Male' else DT_TOTAL_FEMALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=value_1,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
             output.append(DataPoint(
-                datatype=DT_CASES_TOTAL_FEMALE if cols[1] == 'Female' else DT_CASES_TOTAL_MALE,
+                datatype=DT_TOTAL_FEMALE if cols[1] == 'Female' else DT_TOTAL_MALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=value_2,
                 date_updated=updated_date,
@@ -161,7 +161,7 @@ class _VicPowerBI(PowerBIDataReader):
             )
 
             output.append(DataPoint(
-                datatype=DT_CASES_TOTAL,
+                datatype=DT_TOTAL,
                 agerange=age['G0'].replace('–', '-'),
                 value=general_age,
                 date_updated=updated_date,

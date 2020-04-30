@@ -5,10 +5,10 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    DT_CASES_TOTAL, DT_CASES_NEW, DT_TESTS_TOTAL,
-    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
-    DT_CASES_ACTIVE, DT_CASES_RECOVERED, DT_CASES_DEATHS,
-    DT_CASES_ICU, DT_CASES_HOSPITALIZED
+    DT_TOTAL, DT_NEW, DT_TESTS_TOTAL,
+    DT_TOTAL_FEMALE, DT_TOTAL_MALE,
+    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
+    DT_STATUS_ICU, DT_STATUS_HOSPITALIZED
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -88,7 +88,7 @@ class TasNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_CASES_NEW,
+            datatype=DT_NEW,
             source_url=url,
             date_updated=self._get_date(url, html)
         )
@@ -110,7 +110,7 @@ class TasNews(StateNewsBase):
                 )
             ),
             c_html,
-            datatype=DT_CASES_TOTAL,
+            datatype=DT_TOTAL,
             source_url=url,
             date_updated=self._get_date(url, html)
         )
@@ -168,14 +168,14 @@ class TasNews(StateNewsBase):
             compile('([0-9,]+)[^0-9.,]* men', IGNORECASE),
             c_html,
             source_url=url,
-            datatype=DT_CASES_TOTAL_MALE,
+            datatype=DT_TOTAL_MALE,
             date_updated=self._get_date(url, html)
         )
         women = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* women', IGNORECASE),
             c_html,
             source_url=url,
-            datatype=DT_CASES_TOTAL_FEMALE,
+            datatype=DT_TOTAL_FEMALE,
             date_updated=self._get_date(url, html)
         )
         if men is not None or women is not None:
@@ -225,11 +225,11 @@ class TasNews(StateNewsBase):
         r = []
 
         cases_map = {
-            'New cases in past 24 hours': DT_CASES_NEW,
-            'Total cases': DT_CASES_TOTAL,
-            'Active': DT_CASES_ACTIVE,
-            'Recovered': DT_CASES_RECOVERED,
-            'Deaths': DT_CASES_DEATHS,
+            'New cases in past 24 hours': DT_NEW,
+            'Total cases': DT_TOTAL,
+            'Active': DT_STATUS_ACTIVE,
+            'Recovered': DT_STATUS_RECOVERED,
+            'Deaths': DT_STATUS_DEATHS,
         }
 
         cases_table = self._pq_contains(
@@ -268,7 +268,7 @@ class TasNews(StateNewsBase):
         icu = self._extract_number_using_regex(
             compile(r'includes ([0-9,]+) hospital inpatients', IGNORECASE),
             c_html,
-            datatype=DT_CASES_HOSPITALIZED,
+            datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -278,7 +278,7 @@ class TasNews(StateNewsBase):
         hospitalized = self._extract_number_using_regex(
             compile(r'\(([0-9,]+) in ICU\)', IGNORECASE),
             c_html,
-            datatype=DT_CASES_ICU,
+            datatype=DT_STATUS_ICU,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
