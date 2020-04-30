@@ -19,6 +19,7 @@ from os import makedirs, environ, pathsep, system
 from os.path import dirname, expanduser
 from browsermobproxy import Server
 from selenium import webdriver
+from covid_19_au_grab.get_package_dir import get_data_dir
 
 
 BROWSER_MOB_PROXY_LOC = expanduser(
@@ -33,9 +34,7 @@ WA_REGIONS_URL = (
     'https://ww2.health.wa.gov.au/Articles/'
     'A_E/Coronavirus/COVID19-statistics'
 )
-PATH_PREFIX = os.path.expanduser(
-    f'~/dev/covid_19_data/wa/custom_map'
-)
+PATH_PREFIX = get_data_dir() / 'wa' / 'custom_map'
 
 
 class _WARegions:

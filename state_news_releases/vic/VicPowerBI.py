@@ -1,12 +1,11 @@
 import os
 from covid_19_au_grab.state_news_releases.PowerBIBase import \
     PowerBIBase
+from covid_19_au_grab.get_package_dir import get_data_dir
 
 
 class VicPowerBI(PowerBIBase):
-    PATH_PREFIX = os.path.expanduser(
-        f'~/dev/covid_19_data/vic/powerbi'
-    )
+    PATH_PREFIX = get_data_dir() / 'vic' / 'powerbi'
     POWERBI_URL = (
         "https://app.powerbi.com/view?r=eyJrIjoiODBmMmE3NWQt"
         "ZWNlNC00OWRkLTk1NjYtMjM2YTY1MjI2NzdjIiwidCI6ImMwZTA"

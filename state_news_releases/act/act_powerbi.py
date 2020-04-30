@@ -1,17 +1,22 @@
 from os.path import exists
 from datetime import datetime
-from covid_19_au_grab.state_news_releases.constants import \
-    SCHEMA_LGA, \
-    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
-    DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP, \
-    DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION, \
+
+from covid_19_au_grab.state_news_releases.constants import (
+    SCHEMA_LGA,
+    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP,
+    DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION,
     DT_CASES_RECOVERED
-from covid_19_au_grab.state_news_releases.act.ACTPowerBI import \
+)
+from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
     ACTPowerBI, get_globals
-from covid_19_au_grab.state_news_releases.DataPoint import \
+)
+from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
-from covid_19_au_grab.state_news_releases.PowerBIDataReader import \
+)
+from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
     PowerBIDataReader
+)
 
 
 class _ACTPowerBI(PowerBIDataReader):

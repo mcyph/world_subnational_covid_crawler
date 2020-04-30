@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pdf2image
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 LINKS = [
     'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/map+1+number+of+positive+covid-19+cases+in+south+australia+metropolitan+adelaide',
@@ -149,8 +150,8 @@ if __name__ == '__main__':
     from os.path import expanduser
     from glob import glob
 
-    PDFS_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/pdfs')
-    OUTPUT_DIR = expanduser('~/dev/covid_19_au_grab/sa_pdf_extract/output')
+    PDFS_DIR = get_package_dir() / 'sa_pdf_extract' / 'pdfs'
+    OUTPUT_DIR = get_package_dir() / 'sa_pdf_extract' / 'output'
 
     output_dict = {}  # {date: [(LGA, amount), ...], ...}
 

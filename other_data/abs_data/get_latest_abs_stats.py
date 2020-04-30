@@ -5,11 +5,13 @@ from covid_19_au_grab.other_data.abs_data.lga_to_state_and_name import \
     get_lga_to_state_and_name_dict
 from covid_19_au_grab.normalize_locality_name import \
     normalize_locality_name
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 
 lga_dict = get_lga_to_state_and_name_dict()
-BASE_PATH = expanduser('~/dev/covid_19_au_grab/other_data/abs_data/stats')
-BASE_EXCEL_PATH = expanduser('~/dev/covid_19_au_grab/other_data/abs_data/excel_stats')
+
+BASE_PATH = get_package_dir() / 'other_data' / 'abs_data' / 'stats'
+BASE_EXCEL_PATH = get_package_dir() / 'other_data' / 'abs_data' / 'excel_stats'
 
 
 # "MEASURE","Data item","REGIONTYPE","Geography Level","LGA_2018","Region","FREQUENCY","Frequency","TIME","Time","Value","Flag Codes","Flags"
@@ -301,5 +303,11 @@ if __name__ == '__main__':
             'lga_names': lga_names,
             'data': out
         }
-        out = json.dumps(json.loads(json.dumps(out), parse_float=lambda x: round(float(x), 1)), separators=(',', ':'))
+        out = json.dumps(
+            json.loads(
+                json.dumps(out),
+                parse_float=lambda x: round(float(x), 1)
+            ),
+            separators=(',', ':')
+        )
         f.write(out)

@@ -20,12 +20,17 @@ from covid_19_au_grab.state_news_releases.constants import (
     # Source of infection by region (LGA)
     DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, )
+    DT_SOURCE_OVERSEAS
+)
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.word_to_number import word_to_number
-from covid_19_au_grab.URLArchiver import URLArchiver
+from covid_19_au_grab.word_to_number import (
+    word_to_number
+)
+from covid_19_au_grab.URLArchiver import (
+    URLArchiver
+)
 
 
 class QLDNews(StateNewsBase):

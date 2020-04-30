@@ -1,22 +1,29 @@
-from re import compile, IGNORECASE
 from pyquery import PyQuery as pq
+from re import compile, IGNORECASE
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import \
+from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
-from covid_19_au_grab.state_news_releases.constants import \
-    DT_CASES_TOTAL, DT_CASES_NEW, \
-    DT_CASES_NEW_MALE, DT_CASES_NEW_FEMALE, \
-    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
-    DT_TESTS_TOTAL, \
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP, \
-    DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION, \
-    DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY, \
-    DT_CASES_RECOVERED, DT_CASES_HOSPITALIZED, \
+)
+from covid_19_au_grab.state_news_releases.constants import (
+    DT_CASES_TOTAL, DT_CASES_NEW,
+    DT_CASES_NEW_MALE, DT_CASES_NEW_FEMALE,
+    DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    DT_TESTS_TOTAL,
+    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
+    DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
+    DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
+    DT_CASES_RECOVERED, DT_CASES_HOSPITALIZED,
     DT_CASES_DEATHS
-from covid_19_au_grab.state_news_releases.DataPoint import \
+)
+from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
-from covid_19_au_grab.word_to_number import word_to_number
-from covid_19_au_grab.state_news_releases.act.act_powerbi import get_powerbi_data
+)
+from covid_19_au_grab.state_news_releases.act.act_powerbi import (
+    get_powerbi_data
+)
+from covid_19_au_grab.word_to_number import (
+    word_to_number
+)
 
 
 class ACTNews(StateNewsBase):

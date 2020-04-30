@@ -5,8 +5,10 @@ from os import listdir, makedirs
 from os.path import isfile, expanduser, exists, dirname
 from urllib.request import urlretrieve, urlopen
 
+from covid_19_au_grab.get_package_dir import get_data_dir
 
-BASE_PATH = expanduser('~/dev/covid_19_data')
+
+BASE_PATH = get_data_dir()
 
 
 def slugify(value):
@@ -25,12 +27,12 @@ def slugify(value):
 
 class URLArchiver:
     def __init__(self, base_dir):
-        self.base_dir = BASE_PATH+'/'+base_dir
+        self.base_dir = BASE_PATH / base_dir
 
     def get_path(self, subdir):
-        dir_ = f'{self.base_dir}/{subdir}'
+        dir_ = self.base_dir / subdir
         fnam = self._get_first_fnam_in_dir(dir_)
-        path = f'{dir_}/{fnam}'
+        path = dir_ / fnam
         return path
 
     def get_url_data(self, url, period=None, cache=True):

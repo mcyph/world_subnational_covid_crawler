@@ -1,11 +1,20 @@
-from os import listdir
-from os.path import expanduser
 import csv
-import numpy as np
 import datetime
-import matplotlib.dates as mdates
+import numpy as np
+from os import listdir
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from matplotlib.ticker import ScalarFormatter
 from matplotlib.font_manager import FontProperties
+from covid_19_au_grab.get_package_dir import get_package_dir
+
+
+OUTPUT_CSV_DIR = (
+    get_package_dir() / 'state_news_releases' / 'output'
+)
+GRAPH_OUTPUT_DIR = (
+    get_package_dir() / 'output_graphs' / 'output'
+)
 
 
 def read_csv(datatype,
@@ -21,19 +30,18 @@ def read_csv(datatype,
     # Get the newest, based on binary sort order
     # (year->month->day->revision id)
     fnam = list(sorted(
-        [i for i in listdir(expanduser(
-            '~/dev/covid_19_au_grab/state_news_releases/output'
-        )) if i.endswith('.tsv')], key=lambda k: (
+        [
+            i for i in listdir(OUTPUT_CSV_DIR)
+            if i.endswith('.tsv')
+        ],
+        key=lambda k: (
             k.split('-')[0],
             int(k.split('-')[1].split('.')[0]
         ))
     ))[-1]
 
-    with open(
-        expanduser(f'~/dev/covid_19_au_grab/'
-                   f'state_news_releases/output/{fnam}',),
-        'r', encoding='utf-8', errors='replace'
-    ) as f:
+    with open(OUTPUT_CSV_DIR / fnam, 'r',
+              encoding='utf-8', errors='replace') as f:
 
         reader = csv.DictReader(f, delimiter='\t')
 
@@ -146,7 +154,6 @@ def output_graph(datatype,
 
     if max_y > 50 and datatype != 'DT_NEW_CASES':
         plt.yscale('log')
-        from matplotlib.ticker import ScalarFormatter
         for axis in [ax.yaxis]:
             axis.set_major_formatter(ScalarFormatter())
             formatter = axis.get_major_formatter()
@@ -156,9 +163,7 @@ def output_graph(datatype,
     plt.grid()
     #plt.show()
 
-    plt.savefig(expanduser(
-        f'~/dev/covid_19_au_grab/output_graphs/{y_label}.png'
-    ))
+    plt.savefig(GRAPH_OUTPUT_DIR / f'{y_label}.png')
     plt.clf()
 
 

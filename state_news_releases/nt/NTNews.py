@@ -1,9 +1,11 @@
 from re import compile
 from pyquery import PyQuery as pq
-from covid_19_au_grab.state_news_releases.StateNewsBase import \
+from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
-from covid_19_au_grab.state_news_releases.constants import \
+)
+from covid_19_au_grab.state_news_releases.constants import (
     DT_CASES_RECOVERED, DT_CASES_TOTAL, DT_TESTS_TOTAL
+)
 
 
 class NTNews(StateNewsBase):

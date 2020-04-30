@@ -1,8 +1,10 @@
 from os.path import expanduser
 import csv
 from glob import glob
+from covid_19_au_grab.get_package_dir import get_package_dir
 
-BASE_PATH = expanduser('~/dev/covid_19_au_grab/other_data/abs_data/lga')
+
+BASE_PATH = get_package_dir() / 'other_data' / 'abs_data' / 'lga'
 
 
 def get_lga_to_state_and_name_dict():
@@ -20,7 +22,7 @@ def get_lga_to_state_and_name_dict():
         'Western Australia': 'wa'
     }
 
-    for path in glob(f'{BASE_PATH}/*.csv'):
+    for path in glob(BASE_PATH / '*.csv'):
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:

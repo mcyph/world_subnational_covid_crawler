@@ -1,20 +1,27 @@
 from datetime import datetime
 from os.path import expanduser, exists
 
-from covid_19_au_grab.state_news_releases.DataPoint import \
-    DataPoint
-from covid_19_au_grab.state_news_releases.constants import \
-    SCHEMA_LGA, \
-    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE, \
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY, \
+from covid_19_au_grab.state_news_releases.constants import (
+    SCHEMA_LGA,
+    DT_CASES_TOTAL, DT_CASES_TOTAL_FEMALE, DT_CASES_TOTAL_MALE,
+    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS
-from covid_19_au_grab.state_news_releases.PowerBIDataReader import \
+)
+from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
     PowerBIDataReader
-from covid_19_au_grab.state_news_releases.vic.VicPowerBI import \
+)
+from covid_19_au_grab.state_news_releases.vic.VicPowerBI import (
     VicPowerBI, get_globals
+)
+from covid_19_au_grab.state_news_releases.DataPoint import (
+    DataPoint
+)
+from covid_19_au_grab.get_package_dir import (
+    get_data_dir
+)
 
 
-BASE_PATH = expanduser('~/dev/covid_19_data/vic/powerbi')
+BASE_PATH = get_data_dir() / 'vic' / 'powerbi'
 SOURCE_URL = 'https://app.powerbi.com/view?r=' \
              'eyJrIjoiODBmMmE3NWQtZWNlNC00OWRkLTk1NjYtM' \
              'jM2YTY1MjI2NzdjIiwidCI6ImMwZTA2MDFmLTBmYW' \

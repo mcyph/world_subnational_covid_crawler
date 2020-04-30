@@ -15,6 +15,7 @@ from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
 from covid_19_au_grab.state_news_releases.constants import constant_to_name
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 
 UPDATE_VIC_POWERBI = False
@@ -60,9 +61,9 @@ class RevisionIDs:
 
     @staticmethod
     def get_path_from_id(time_format, revision_id, ext='tsv'):
-        return os.path.expanduser(
-            f'~/dev/covid_19_au_grab/state_news_releases/output/'
-            f'{time_format}-{revision_id}.{ext}'
+        return (
+            get_package_dir() / 'state_news_releases' / 'output' /
+                f'{time_format}-{revision_id}.{ext}'
         )
 
 
