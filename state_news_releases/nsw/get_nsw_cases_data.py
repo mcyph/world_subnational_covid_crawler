@@ -99,7 +99,7 @@ def get_nsw_cases_data():
 
     r.extend(get_datapoints(SCHEMA_POSTCODE, by_postcode))
     r.extend(get_datapoints(SCHEMA_LGA, by_lga))
-    r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
+    #r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
 
     def get_soi_datapoints(schema, cases_dict):
         r = []
@@ -124,7 +124,7 @@ def get_nsw_cases_data():
 
     r.extend(get_soi_datapoints(SCHEMA_POSTCODE, by_postcode_soi))
     r.extend(get_soi_datapoints(SCHEMA_LGA, by_lga_soi))
-    r.extend(get_soi_datapoints(SCHEMA_LHD, by_lhd_soi))
+    #r.extend(get_soi_datapoints(SCHEMA_LHD, by_lhd_soi))
 
     return r
 

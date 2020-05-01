@@ -4,9 +4,19 @@ import datetime
 from pytz import timezone
 from os.path import getctime
 from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.state_news_releases.constants import \
+    schema_to_name, constant_to_name
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
+
+
+def needsdatapoints(fn):
+    def newfn(self, *args, **kw):
+        if self._datapoints is None:
+            self._read_csv()
+        return fn(self, *args, **kw)
+    return newfn
 
 
 class CSVDataRevision:
@@ -15,20 +25,27 @@ class CSVDataRevision:
         subperiod_id = int(subperiod_id)
         self.period = period
         self.subperiod_id = subperiod_id
-        self.__datapoints = self.__read_csv()
-
+        self._datapoints = None # self.__read_csv()
+    
+    def _read_csv(self):
+        self._datapoints = self.__read_csv()
+    
+    @needsdatapoints
     def __getitem__(self, item):
-        return self.__datapoints[item]
+        return self._datapoints[item]
 
+    @needsdatapoints
     def __iter__(self):
-        for i in self.__datapoints:
+        for i in self._datapoints:
             yield i
 
+    @needsdatapoints
     def __len__(self):
-        return len(self.__datapoints)
+        return len(self._datapoints)
 
+    @needsdatapoints
     def get_datapoints(self):
-        return self.__datapoints[:]
+        return self._datapoints[:]
 
     #=============================================================#
     #                       Utility Functions                     #
@@ -82,7 +99,8 @@ class CSVDataRevision:
             sortable_date(x['date_updated']),
             x['state_name'],
             x['datatype'],
-            x['name']
+            x['agerange'],
+            x['region']
         )
 
     def __generic_sort_key(self, x):
@@ -93,14 +111,15 @@ class CSVDataRevision:
         return (
             x['state_name'],
             x['datatype'],
-            x['name']
+            x['agerange'],
+            x['region']
         )
 
     #=============================================================#
     #                       Get DataPoints                        #
     #=============================================================#
 
-    def get_combined_values_by_datatype(self, datatypes, from_date=None):
+    def get_combined_values_by_datatype(self, schema, datatypes, from_date=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -114,15 +133,29 @@ class CSVDataRevision:
             'DT_AGE_FEMALE': ...
         }, ...]
         """
+        if isinstance(schema, int):
+            schema = schema_to_name(schema)[7:].lower()
+
         def to_datetime(dt):
             return datetime.datetime.strptime(dt, '%d/%m/%Y')
 
         combined = {}
         for datatype in datatypes:
-            for datapoint in self.get_combined_value(datatype, from_date=from_date):
+            if isinstance(datatype, int):
+                datatype = constant_to_name(datatype)[3:].lower()
+
+            for datapoint in self.get_combined_value(schema, datatype,
+                                                     from_date=from_date):
+
+                if datapoint['agerange'] and datapoint['region']:
+                    k = f"{datapoint['agerange']} {datapoint['region']}"
+                elif datapoint['agerange']:
+                    k = datapoint['agerange'] or ''
+                else:
+                    k = datapoint['region'] or ''
 
                 i_combined = combined.setdefault(datapoint['state_name'], {}) \
-                                     .setdefault(datapoint['name'], {})
+                                     .setdefault(k, {})
 
                 if (
                     not 'date_updated' in i_combined or
@@ -134,7 +167,8 @@ class CSVDataRevision:
                     i_combined['date_today'] = datetime.datetime.now() \
                         .strftime('%d/%m/%Y')
 
-                i_combined['name'] = datapoint['name']
+                i_combined['agerange'] = datapoint['agerange']
+                i_combined['region'] = datapoint['region']
                 i_combined['state_name'] = datapoint['state_name']
 
                 if not datatype in i_combined:
@@ -151,9 +185,9 @@ class CSVDataRevision:
     def get_combined_values(self, filters, from_date=None):
         """
         Returns as a combined dict,
-        e.g. if filters (a list of ((datatype, name/None), ...) is (
-            ("DT_PATIENT_STATUS", "Recovered"),
-            ("DT_PATIENT_STATUS", "ICU")
+        e.g. if filters (a list of ((schema, datatype, state_name/None), ...) is (
+            (DT_PATIENT_STATUS, "Recovered"),
+            (DT_PATIENT_STATUS, "ICU")
         )
         it will output as [{
             'date_updated': ...,
@@ -165,8 +199,14 @@ class CSVDataRevision:
             return datetime.datetime.strptime(dt, '%d/%m/%Y')
 
         combined = {}
-        for datatype, name in filters:
-            for datapoint in self.get_combined_value(datatype, name, from_date=from_date):
+        for schema, datatype, state_name in filters:
+            if isinstance(schema, int):
+                schema = schema_to_name(schema)[7:].lower()
+            if isinstance(datatype, int):
+                datatype = constant_to_name(datatype)[3:].lower()
+
+            for datapoint in self.get_combined_value(schema, datatype, state_name,
+                                                     from_date=from_date):
 
                 i_combined = combined.setdefault(datapoint['state_name'], {})
 
@@ -180,11 +220,11 @@ class CSVDataRevision:
                     i_combined['date_today'] = datetime.datetime.now() \
                         .strftime('%d/%m/%Y')
 
-                k = (
-                    f'{datatype} ({datapoint["name"]})'
-                    if datapoint["name"] != 'None'
-                    else datatype
-                )
+                k = datatype
+                if datapoint['agerange']:
+                    k = f"{k} ({datapoint['agerange']})"
+                if datapoint['region']:
+                    k = f"{k} ({datapoint['region']})"
 
                 i_combined['state_name'] = datapoint['state_name']
 
@@ -202,14 +242,19 @@ class CSVDataRevision:
         for i_combined in combined.values():
             out.append(i_combined)
         return out
-
-    def get_combined_value(self, datatype, name=None, from_date=None):
+    
+    @needsdatapoints
+    def get_combined_value(self, schema, datatype, state_name=None, from_date=None):
         """
         Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
 
         Returns only the most recent value (optionally from `from_date`)
         """
+        if isinstance(schema, int):
+            schema = schema_to_name(schema)[7:].lower()
+        if isinstance(datatype, int):
+            datatype = constant_to_name(datatype)[3:].lower()
 
         def date_greater_than(x, y):
             #print(x, y)
@@ -223,10 +268,12 @@ class CSVDataRevision:
             return x >= y
 
         r = {}
-        for datapoint in self.__datapoints[:]:
-            if datapoint['datatype'] != datatype:
+        for datapoint in self._datapoints[:]:
+            if datapoint['schema'] != schema:
                 continue
-            elif name is not None and datapoint['name'] != name:
+            elif datapoint['datatype'] != datatype:
+                continue
+            elif state_name is not None and datapoint['state_name'] != state_name:
                 continue
             elif from_date is not None and not date_greater_than(
                 from_date, datapoint['date_updated']
@@ -237,7 +284,8 @@ class CSVDataRevision:
             # so no need to include it in the key
             unique_k = (
                 datapoint['state_name'],
-                datapoint['name']
+                datapoint['agerange'],
+                datapoint['region']
             )
             if unique_k in r:
                 assert date_greater_than(

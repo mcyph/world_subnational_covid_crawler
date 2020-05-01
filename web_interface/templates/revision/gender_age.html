@@ -20,7 +20,7 @@
             <th>dateOfData</th>
         </tr>
         {% for datapoint in datapoints %}
-            {% if datapoint['state_name'] == 'act' and datapoint['name'] in ('0-29', '70+') %}
+            {% if datapoint['state_name'] == 'act' and datapoint['agerange'] in ('0-29', '70+') %}
                 <!-- ACT HACK!! -->
             {% else %}
             <tr>
@@ -28,16 +28,16 @@
                     <span>{{- datapoint['state_name']|upper -}}</span>
                 </td>
                 <td>
-                    {{- datapoint['name'] -}}
+                    {{- datapoint['agerange'] -}}
                 </td>
-                <td {{new_star(datapoint, 'DT_AGE_FEMALE')}} title="{{ datapoint['DT_AGE_FEMALE date_updated'] }} {{ datapoint['DT_AGE_FEMALE text_match']|e }}"><a href="{{ datapoint['DT_AGE_FEMALE source_url'] }}">
-                        {{- datapoint['DT_AGE_FEMALE'] -}}
+                <td {{new_star(datapoint, 'total_female')}} title="{{ datapoint['total_female date_updated'] }} {{ datapoint['total_female text_match']|e }}"><a href="{{ datapoint['total_female source_url'] }}">
+                        {{- datapoint['total_female'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_AGE_MALE')}} title="{{ datapoint['DT_AGE_MALE date_updated'] }} {{ datapoint['DT_AGE_MALE text_match']|e }}"><a href="{{ datapoint['DT_AGE_MALE source_url'] }}">
-                        {{- datapoint['DT_AGE_MALE'] -}}
+                <td {{new_star(datapoint, 'total_male')}} title="{{ datapoint['total_male date_updated'] }} {{ datapoint['total_male text_match']|e }}"><a href="{{ datapoint['total_male source_url'] }}">
+                        {{- datapoint['total_male'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_AGE')}} title="{{ datapoint['DT_AGE date_updated'] }} {{ datapoint['DT_AGE text_match']|e }}"><a href="{{ datapoint['DT_AGE source_url'] }}">
-                        {{- datapoint['DT_AGE'] -}}
+                <td {{new_star(datapoint, 'total')}} title="{{ datapoint['total date_updated'] }} {{ datapoint['total text_match']|e }}"><a href="{{ datapoint['total source_url'] }}">
+                        {{- datapoint['total'] -}}
                 </a></td>
                 <td>
                     {{- datapoint['date_updated'] -}}

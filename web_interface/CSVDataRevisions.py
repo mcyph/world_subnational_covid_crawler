@@ -38,26 +38,28 @@ class CSVDataRevisions:
         r.sort(reverse=True, key=lambda x: (x[0], x[1], x[2]))
         return r
 
-    def get_changed(self, current_datapoints, previous_datapoints):
+    def get_changed(self, current, previous):
         # Get a diff between current and previous datapoints
         current_dict = {}
         previous_dict = {}
         previous_dict_by_name = {}
 
         keys = (
+            'schema',
             'state_name',
             'datatype',
-            'name',
+            'agerange',
+            'region',
             'value',
         )
 
-        for datapoint in current_datapoints:
+        for datapoint in current.get_datapoints():
             unique_key = tuple([datapoint[k] for k in keys])
             if unique_key in current_dict:
                 continue
             current_dict[unique_key] = datapoint
 
-        for datapoint in previous_datapoints:
+        for datapoint in previous.get_datapoints():
             unique_key = tuple([datapoint[k] for k in keys])
             previous_dict[unique_key] = None
             if unique_key[:-1] in previous_dict_by_name:

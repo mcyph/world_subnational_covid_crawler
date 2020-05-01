@@ -90,9 +90,12 @@ def get_nsw_tests_data():
                 ))
         return r
 
-    r.extend(get_datapoints(SCHEMA_POSTCODE, by_postcode))
+    # I'm really not sure there's much reason to get tests data
+    # by postcode/LHD? It'll take too much space by postcode!
+
+    #r.extend(get_datapoints(SCHEMA_POSTCODE, by_postcode))
     r.extend(get_datapoints(SCHEMA_LGA, by_lga))
-    r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
+    #r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
 
     def get_posneg_datapoints(schema, cases_dict):
         r = []
@@ -115,9 +118,9 @@ def get_nsw_tests_data():
                     ))
         return r
 
-    r.extend(get_posneg_datapoints(SCHEMA_POSTCODE, by_postcode_posneg))
+    #r.extend(get_posneg_datapoints(SCHEMA_POSTCODE, by_postcode_posneg))
     r.extend(get_posneg_datapoints(SCHEMA_LGA, by_lga_posneg))
-    r.extend(get_posneg_datapoints(SCHEMA_LHD, by_lhd_posneg))
+    #r.extend(get_posneg_datapoints(SCHEMA_LHD, by_lhd_posneg))
 
     return r
 

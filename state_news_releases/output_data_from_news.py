@@ -197,13 +197,13 @@ if __name__ == '__main__':
     print('state_name\t'
           'schema\t'
           'datatype\t'
-          'agegroup\t'
+          'agerange\t'
           'region\t'
           'value\t'
           'date_updated\t'
           'source_url\t'
           'text_match')
-    
+
     for state_name, datapoints in data.items():
         for datapoint in datapoints:
             try:
@@ -218,8 +218,8 @@ if __name__ == '__main__':
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
             print(f'{state_name}\t'
-                  f'{schema_to_name(datapoint.schema)}\t'
-                  f'{constant_to_name(datapoint.datatype)}\t'
+                  f'{schema_to_name(datapoint.schema)[7:].lower()}\t'
+                  f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
                   f'{datapoint.agerange}\t'
                   f'{datapoint.region}\t'
                   f'{datapoint.value}\t'

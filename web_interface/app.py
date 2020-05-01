@@ -22,6 +22,7 @@ from covid_19_au_grab.web_interface.CSVDataRevisions import \
     CSVDataRevisions
 
 from covid_19_au_grab.state_news_releases.constants import (
+    constant_to_name,
     SCHEMA_STATEWIDE, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -200,18 +201,18 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (DT_TOTAL, ''),
-                        (DT_NEW, ''),
-                        (DT_STATUS_DEATHS, ''),
-                        #('DT_PATIENT_STATUS', ''),
-                        (DT_STATUS_RECOVERED, ''),
-                        #('DT_PATIENT_STATUS', ''),
-                        (DT_TESTS_TOTAL, ''),
-                        (DT_SOURCE_CONFIRMED, ''),
-                        (DT_SOURCE_COMMUNITY, ''),
-                        (DT_SOURCE_INTERSTATE, ''),
-                        (DT_STATUS_HOSPITALIZED, ''),
-                        (DT_STATUS_ICU, ''),
+                        (SCHEMA_STATEWIDE, DT_TOTAL, None),
+                        (SCHEMA_STATEWIDE, DT_NEW, None),
+                        (SCHEMA_STATEWIDE, DT_STATUS_DEATHS, None),
+                        #(SCHEMA_STATEWIDE, 'DT_PATIENT_STATUS', None),
+                        (SCHEMA_STATEWIDE, DT_STATUS_RECOVERED, None),
+                        #(SCHEMA_STATEWIDE, 'DT_PATIENT_STATUS', None),
+                        (SCHEMA_STATEWIDE, DT_TESTS_TOTAL, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_CONFIRMED, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_COMMUNITY, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_INTERSTATE, None),
+                        (SCHEMA_STATEWIDE, DT_STATUS_HOSPITALIZED, None),
+                        (SCHEMA_STATEWIDE, DT_STATUS_ICU, None),
                     ),
                     from_date=from_date
                 )
@@ -250,11 +251,11 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (DT_SOURCE_OVERSEAS, ''),
-                        (DT_SOURCE_CONFIRMED, ''),
-                        (DT_SOURCE_COMMUNITY, ''),
-                        (DT_SOURCE_INTERSTATE, ''),
-                        (DT_SOURCE_UNDER_INVESTIGATION, ''),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_OVERSEAS, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_CONFIRMED, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_COMMUNITY, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_INTERSTATE, None),
+                        (SCHEMA_STATEWIDE, DT_SOURCE_UNDER_INVESTIGATION, None),
                     ),
                     from_date=from_date
                 )
@@ -278,6 +279,7 @@ class App(object):
     def gender_age(self, rev_date, rev_subid):
         inst = CSVDataRevision(rev_date, rev_subid)
         gender_age_datapoints = inst.get_combined_values_by_datatype(
+            SCHEMA_STATEWIDE,
             (
                 DT_TOTAL_FEMALE,
                 DT_TOTAL_MALE,
@@ -299,6 +301,7 @@ class App(object):
     def local_area_case(self, rev_date, rev_subid):
         inst = CSVDataRevision(rev_date, rev_subid)
         local_area_case_datapoints = inst.get_combined_values_by_datatype(
+            SCHEMA_STATEWIDE,
             (
                 # TODO: What about by LGA (QLD only, other
                 #  LGA in DT_CASES_BY_REGION) and LHA (NSW)
@@ -381,7 +384,6 @@ class App(object):
                                        DT_STATUS_RECOVERED,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
-                                       #DT_STATUS_ICU_VENTILATORS,
                                        DT_STATUS_HOSPITALIZED,
 
                                        DT_SOURCE_OVERSEAS,
@@ -438,7 +440,6 @@ class App(object):
             (SCHEMA_LGA, 'nsw', (DT_TOTAL,
                                  DT_TESTS_TOTAL,
                                  DT_SOURCE_OVERSEAS,
-                                 DT_SOURCE_CRUISE_SHIP, # ???
                                  DT_SOURCE_CONFIRMED,
                                  DT_SOURCE_INTERSTATE,
                                  DT_SOURCE_COMMUNITY,
@@ -461,15 +462,20 @@ class App(object):
             (SCHEMA_LGA, 'wa', (DT_TOTAL,
                                 )),
 
+            # NSW by postcode is possible, debating whether
+            # to leave it as a non-goal for now:
+            # * would require zooming in further
+            # * would take orders of magnitude more time to download
+            # * data comes in later each day than website
             (SCHEMA_POSTCODE, 'nsw', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
                                       DT_SOURCE_OVERSEAS,
-                                      DT_SOURCE_CRUISE_SHIP, # ???
-                                      DT_SOURCE_CONFIRMED,
                                       DT_SOURCE_COMMUNITY,
+                                      DT_SOURCE_CONFIRMED,
                                       DT_SOURCE_INTERSTATE,
                                       DT_SOURCE_UNDER_INVESTIGATION
                                       )),
+
             (SCHEMA_SA3, 'act', (DT_TOTAL,)),
             # Can't think of a reason to use LHD for NSW,
             # as NSW gov provides almost complete dataset
@@ -496,6 +502,10 @@ class App(object):
         out = []
         added = set()
 
+        datatypes = [
+            constant_to_name(i)[3:].lower() for i in datatypes
+        ]
+
         for from_date in from_dates:
             if from_date in added:
                 continue
@@ -509,24 +519,15 @@ class App(object):
                 from_date=from_date
             )
 
-            out.extend(
-                [(
-                    i['date_updated'],
-                    i['state_name'].lower(),
-                    normalize_locality_name(i['region']),
-                    i['total'],
-                    i.get('status_active', ''),
-                    i.get('status_recovered', ''),
-                    i.get('status_deaths', ''),
-                    i.get('source_confirmed', ''),
-                    i.get('source_interstate', ''),
-                    i.get('source_community', ''),
-                    i.get('source_overseas', ''),
-                    i.get('source_under_investigation', '')
-
-                ) for i in local_area_case_datapoints
-                    if i['date_updated'] == from_date]
-            )
+            for datapoint in local_area_case_datapoints:
+                if datapoint['date_updated'] != from_date:
+                    continue
+                i_out = []
+                i_out.append(datapoint['date_updated'])
+                i_out.append(normalize_locality_name(datapoint['region']))
+                for datatype in datatypes:
+                    i_out.append(datapoint[datatype])
+                out.append(tuple(i_out))
 
         out_new = {}
         for date_updated, state_name, lga_name, cbr, cbr_a, cbr_r, cbr_d in out:
@@ -539,7 +540,7 @@ class App(object):
             out_new_list.append([state_name, lga_name, values])
 
         return {
-            'sub_headers': ['total', 'active', 'recovered', 'deaths'],
+            'sub_headers': datatypes,
             # FIXME!!! ================================================
             'data': out_new_list
         }
@@ -549,7 +550,7 @@ if __name__ == '__main__':
     cherrypy.quickstart(App(), '/', config={
         'global': {
             'server.socket_host': '0.0.0.0',
-            'server.socket_port': 5005,
+            'server.socket_port': 6006,
         },
         '/': {
 

@@ -24,20 +24,20 @@
         {% for datapoint in datapoints %}
             <tr>
                 <td>{{ datapoint['state_name']|upper }}</td>
-                <td {{new_star(datapoint, 'DT_SOURCE_OF_INFECTION (Overseas acquired)', date_today)}} title="{{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired) source_url'] }}">
-                        {{- datapoint['DT_SOURCE_OF_INFECTION (Overseas acquired)'] -}}
+                <td {{new_star(datapoint, 'source_overseas', date_today)}} title="{{ datapoint['source_overseas date_updated'] }} {{ datapoint['source_overseas text_match']|e }}"><a href="{{ datapoint['source_overseas source_url'] }}">
+                        {{- datapoint['source_overseas'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case)', date_today)}} title="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case) source_url'] }}">
-                    {{- datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact of a confirmed case)'] -}}
+                <td {{new_star(datapoint, 'source_confirmed', date_today)}} title="{{ datapoint['source_confirmed date_updated'] }} {{ datapoint['source_confirmed text_match']|e }}"><a href="{{ datapoint['source_confirmed source_url'] }}">
+                    {{- datapoint['source_confirmed'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified)', date_today)}} title="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified) source_url'] }}">
-                    {{- datapoint['DT_SOURCE_OF_INFECTION (Locally acquired - contact not identified)'] -}}
+                <td {{new_star(datapoint, 'source_community', date_today)}} title="{{ datapoint['source_community date_updated'] }} {{ datapoint['source_community text_match']|e }}"><a href="{{ datapoint['source_community source_url'] }}">
+                    {{- datapoint['source_community'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_SOURCE_OF_INFECTION (Interstate acquired)', date_today)}} title="{{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired) source_url'] }}">
-                    {{- datapoint['DT_SOURCE_OF_INFECTION (Interstate acquired)'] -}}
+                <td {{new_star(datapoint, 'source_interstate', date_today)}} title="{{ datapoint['source_interstate date_updated'] }} {{ datapoint['source_interstate text_match']|e }}"><a href="{{ datapoint['source_interstate source_url'] }}">
+                    {{- datapoint['source_interstate'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'DT_SOURCE_OF_INFECTION (Under investigation)', date_today)}} title="{{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) date_updated'] }} {{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) text_match']|e }}"><a href="{{ datapoint['DT_SOURCE_OF_INFECTION (Under investigation) source_url'] }}">
-                    {{- datapoint['DT_SOURCE_OF_INFECTION (Under investigation)'] -}}
+                <td {{new_star(datapoint, 'source_under_investigation', date_today)}} title="{{ datapoint['source_under_investigation date_updated'] }} {{ datapoint['source_under_investigation text_match']|e }}"><a href="{{ datapoint['source_under_investigation source_url'] }}">
+                    {{- datapoint['source_under_investigation'] -}}
                 </a></td>
                 <td>
                     {{- datapoint['date_updated'] -}}
