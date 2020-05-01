@@ -119,7 +119,8 @@ class CSVDataRevision:
     #                       Get DataPoints                        #
     #=============================================================#
 
-    def get_combined_values_by_datatype(self, schema, datatypes, from_date=None):
+    def get_combined_values_by_datatype(self, schema, datatypes, 
+                                        from_date=None, state_name=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -145,7 +146,8 @@ class CSVDataRevision:
                 datatype = constant_to_name(datatype)[3:].lower()
 
             for datapoint in self.get_combined_value(schema, datatype,
-                                                     from_date=from_date):
+                                                     from_date=from_date,
+                                                     state_name=state_name):
 
                 if datapoint['agerange'] and datapoint['region']:
                     k = f"{datapoint['agerange']} {datapoint['region']}"
@@ -251,6 +253,9 @@ class CSVDataRevision:
 
         Returns only the most recent value (optionally from `from_date`)
         """
+        if not hasattr(self, '_datapoints_dict'):
+            self.__create_datapoints_dict()
+
         if isinstance(schema, int):
             schema = schema_to_name(schema)[7:].lower()
         if isinstance(datatype, int):
@@ -267,15 +272,17 @@ class CSVDataRevision:
 
             return x >= y
 
+        if state_name is not None:
+            datapoints = self._datapoints_dict2.get((state_name, schema, datatype), [])
+        else:
+            datapoints = self._datapoints_dict.get((schema, datatype), [])
+
+        if not datapoints:
+            print(f"WARNING: not found for {state_name}, {schema}, {datatype}")
+
         r = {}
-        for datapoint in self._datapoints[:]:
-            if datapoint['schema'] != schema:
-                continue
-            elif datapoint['datatype'] != datatype:
-                continue
-            elif state_name is not None and datapoint['state_name'] != state_name:
-                continue
-            elif from_date is not None and not date_greater_than(
+        for datapoint in datapoints:
+            if from_date is not None and not date_greater_than(
                 from_date, datapoint['date_updated']
             ):
                 continue
@@ -298,3 +305,12 @@ class CSVDataRevision:
         r = list(r.values())
         r.sort(key=self.__generic_sort_key)
         return r
+
+    def __create_datapoints_dict(self):
+        d = {}
+        d2 = {}
+        for datapoint in self._datapoints[:]:
+            d.setdefault((datapoint['schema'], datapoint['datatype']), []).append(datapoint)
+            d2.setdefault((datapoint['state_name'], datapoint['schema'], datapoint['datatype']), []).append(datapoint)
+        self._datapoints_dict = d
+        self._datapoints_dict2 = d2

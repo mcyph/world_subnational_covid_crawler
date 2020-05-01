@@ -22,7 +22,7 @@ from covid_19_au_grab.web_interface.CSVDataRevisions import \
     CSVDataRevisions
 
 from covid_19_au_grab.state_news_releases.constants import (
-    constant_to_name,
+    constant_to_name, schema_to_name,
     SCHEMA_STATEWIDE, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -361,7 +361,7 @@ class App(object):
 
                                        DT_STATUS_ACTIVE,
                                        DT_STATUS_RECOVERED,
-                                       DT_STATUS_UNKNOWN,
+                                       #DT_STATUS_UNKNOWN,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
                                        DT_STATUS_ICU_VENTILATORS,
@@ -418,7 +418,7 @@ class App(object):
 
                                        DT_STATUS_ACTIVE,
                                        DT_STATUS_RECOVERED,
-                                       DT_STATUS_UNKNOWN,
+                                       #DT_STATUS_UNKNOWN,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
                                        DT_STATUS_HOSPITALIZED,
@@ -468,7 +468,7 @@ class App(object):
             # * would take orders of magnitude more time to download
             # * data comes in later each day than website
             (SCHEMA_POSTCODE, 'nsw', (DT_TOTAL,
-                                      DT_TESTS_TOTAL,
+                                      #DT_TESTS_TOTAL,
                                       DT_SOURCE_OVERSEAS,
                                       DT_SOURCE_COMMUNITY,
                                       DT_SOURCE_CONFIRMED,
@@ -491,7 +491,7 @@ class App(object):
                                  DT_STATUS_DEATHS
                                  )),
         ):
-            r[f'{state_name}:{schema}'] = self.__get_time_series(
+            r[f'{state_name}:{schema_to_name(schema)[7:].lower()}'] = self.__get_time_series(
                 from_dates, inst,
                 schema, state_name, datatypes
             )
@@ -514,8 +514,8 @@ class App(object):
             print(from_date)
             local_area_case_datapoints = inst.get_combined_values_by_datatype(
                 schema,
-                state_name,
                 datatypes,
+                state_name=state_name,
                 from_date=from_date
             )
 
@@ -525,23 +525,35 @@ class App(object):
                 i_out = []
                 i_out.append(datapoint['date_updated'])
                 i_out.append(normalize_locality_name(datapoint['region']))
+                i_out.append(datapoint['agerange'])
+
                 for datatype in datatypes:
-                    i_out.append(datapoint[datatype])
+                    if datatype in datapoint:
+                        i_out.append(int(datapoint[datatype]))
+                    else:
+                        i_out.append('')
+
+                while i_out[-1] == '':
+                    del i_out[-1]
+
                 out.append(tuple(i_out))
 
         out_new = {}
-        for date_updated, state_name, lga_name, cbr, cbr_a, cbr_r, cbr_d in out:
-            out_new.setdefault((state_name, lga_name), []).append(
-                [date_updated, cbr, cbr_a, cbr_r, cbr_d]
-            )
+        for i in out:
+            date_updated = i[0]
+            region = i[1] or ''
+            agerange = i[2] or ''
+
+            out_new.setdefault(
+                (region, agerange), []
+            ).append((date_updated,)+tuple(i[3:]))
 
         out_new_list = []
-        for (state_name, lga_name), values in out_new.items():
-            out_new_list.append([state_name, lga_name, values])
+        for (region, agerange), values in out_new.items():
+            out_new_list.append([region, agerange, values])
 
         return {
             'sub_headers': datatypes,
-            # FIXME!!! ================================================
             'data': out_new_list
         }
 

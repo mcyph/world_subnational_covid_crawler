@@ -38,7 +38,7 @@
                     {%- endif -%}
                 </td>
                 <td>
-                    {{- datapoint['name'] -}}
+                    {{- datapoint['region'] -}}
                 </td>
                 <td {{new_star(datapoint, 'total')}} title="{{ datapoint['total date_updated'] }} {{ datapoint['total text_match']|e }}">
                     <a href="{{ datapoint['total source_url'] }}">
