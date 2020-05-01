@@ -79,13 +79,18 @@ def get_nsw_cases_data():
 
     def get_datapoints(schema, cases_dict):
         r = []
-        for date, schema_dict in cases_dict.items():
+        current_counts = {}
+
+        for date, schema_dict in sorted(cases_dict.items()):
             for region, cases in schema_dict.items():
+                current_counts.setdefault(region, 0)
+                current_counts[region] += len(cases)
+
                 r.append(DataPoint(
                     schema=schema,
                     datatype=DT_TOTAL,
-                    region=region or DEFAULT_REGION,
-                    value=len(cases),  # TODO: Make cumulative!!! =======================================
+                    region=region.split('(')[0].strip() or DEFAULT_REGION,
+                    value=current_counts[region],
                     date_updated=date,
                     source_url=SOURCE_URL,
                     text_match=None
@@ -98,14 +103,19 @@ def get_nsw_cases_data():
 
     def get_soi_datapoints(schema, cases_dict):
         r = []
-        for date, schema_dict in cases_dict.items():
+        current_counts = {}
+
+        for date, schema_dict in sorted(cases_dict.items()):
             for region, soi_dict in schema_dict.items():
                 for soi, cases in soi_dict.items():
+                    current_counts.setdefault((region, soi), 0)
+                    current_counts[region, soi] += len(cases)
+
                     r.append(DataPoint(
                         schema=schema,
                         datatype=soi,
-                        region=region or DEFAULT_REGION,
-                        value=len(cases),
+                        region=region.split('(')[0].strip() or DEFAULT_REGION,
+                        value=current_counts[region, soi],
                         date_updated=date,
                         source_url=SOURCE_URL,
                         text_match=None

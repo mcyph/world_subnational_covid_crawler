@@ -4,6 +4,12 @@ from re import compile, MULTILINE, DOTALL, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
 )
+from covid_19_au_grab.state_news_releases.nsw.get_nsw_cases_data import (
+    get_nsw_cases_data
+)
+from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import (
+    get_nsw_tests_data
+)
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -24,6 +30,7 @@ from covid_19_au_grab.word_to_number import (
 from covid_19_au_grab.URLArchiver import (
     URLArchiver
 )
+
 
 
 class NSWNews(StateNewsBase):
@@ -84,6 +91,8 @@ class NSWNews(StateNewsBase):
                     if cbr:
                         r.extend(cbr)
 
+        r.extend(get_nsw_cases_data())
+        r.extend(get_nsw_tests_data())
         r.extend(StateNewsBase.get_data(self))
         return r
 
