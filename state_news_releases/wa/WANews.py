@@ -1,6 +1,6 @@
 import glob
-from os.path import dirname
 from pyquery import PyQuery as pq
+from os.path import dirname, exists
 from re import compile, IGNORECASE, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
@@ -57,6 +57,13 @@ class WANews(StateNewsBase):
 
         for period in wa_custom_map_ua.iter_periods():
             for subperiod_id, subdir in wa_custom_map_ua.iter_paths_for_period(period):
+                if exists(
+                    f'{self.STATE_NAME}/custom_map/' +
+                    subdir.rpartition('-')[0]+f'-{subperiod_id+1}'
+                ):
+                    # Only add the most recent revision!
+                    continue
+
                 for path in glob.glob(dirname(
                     wa_custom_map_ua.get_path(subdir)
                 )+'/*'):

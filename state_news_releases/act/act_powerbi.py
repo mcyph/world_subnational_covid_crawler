@@ -182,9 +182,12 @@ class _ACTPowerBI(PowerBIDataReader):
     def _get_infection_source_data(self, updated_date, response_dict):
         # TODO: SHOULD THIS ONLY USE THE MOST RECENT VALUES?? ================================================================================
         try:
-            data = response_dict['infection_source_time_series']
+            try:
+                data = response_dict['infection_source_time_series']
+            except KeyError:
+                data = response_dict['infection_source_time_series_2']
         except KeyError:
-            data = response_dict['infection_source_time_series_2']
+            data = response_dict['infection_source_time_series_3']
 
         act_norm_map = {
             'Overseas acquired': DT_SOURCE_OVERSEAS,

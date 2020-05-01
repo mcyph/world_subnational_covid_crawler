@@ -2469,6 +2469,114 @@ age_groups_6_req = {
         "QueryId": ""
       }
 
+infection_source_time_series_3_req = {
+        "ApplicationContext": {
+          "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",
+          "Sources": [
+            {
+              "ReportId": "6b564b1a-20ea-4707-826f-04a750b77678"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\"},{\"Name\":\"d\",\"Entity\":\"Date\"},{\"Name\":\"s\",\"Entity\":\"Source Table\"}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Notifications\"},\"Name\":\"Table.Epi Curve\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date\"},\"Name\":\"Date.Date\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Source_1\"},\"Name\":\"Sheet1.Source_1\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[1,0],\"ShowItemsWithNoData\":[1]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Sample\":{}},\"Secondary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Sample": {}
+                    },
+                    "Secondary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          1,
+                          0
+                        ],
+                        "ShowItemsWithNoData": [
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Secondary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          2
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Table",
+                      "Name": "t"
+                    },
+                    {
+                      "Entity": "Date",
+                      "Name": "d"
+                    },
+                    {
+                      "Entity": "Source Table",
+                      "Name": "s"
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "t"
+                          }
+                        },
+                        "Property": "Notifications"
+                      },
+                      "Name": "Table.Epi Curve"
+                    },
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d"
+                          }
+                        },
+                        "Property": "Date"
+                      },
+                      "Name": "Date.Date"
+                    },
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "s"
+                          }
+                        },
+                        "Property": "Source_1"
+                      },
+                      "Name": "Sheet1.Source_1"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+
 if __name__ == '__main__':
     apb = ACTPowerBI()
     apb.run_powerbi_grabber()
