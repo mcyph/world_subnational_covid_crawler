@@ -9,7 +9,7 @@
 
 <h1>Revision {{ revision_time_string|e }}</h1>
 
-{% macro statistics(datapoints) %}
+{% macro local_area_cases(datapoints) %}
     <table class="fancy-table">
         <tr>
             <th>state</th>
@@ -29,13 +29,7 @@
                     {{- datapoint['state_name']|upper -}}
                 </td>
                 <td>
-                    {%- if datapoint['state_name'] == 'qld' -%}
-                        HHS
-                    {%- elif datapoint['state_name'] == 'act' -%}
-                        SA3
-                    {%- else -%}
-                        LGA
-                    {%- endif -%}
+                    {{- datapoint['schema'] -}}
                 </td>
                 <td>
                     {{- datapoint['region'] -}}
@@ -75,6 +69,6 @@
     </table>
 {% endmacro %}
 
-{{ statistics(local_area_case_datapoints) }}
+{{ local_area_cases(local_area_case_datapoints) }}
 
 {{ end_page() }}

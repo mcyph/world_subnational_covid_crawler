@@ -172,6 +172,7 @@ class CSVDataRevision:
                 i_combined['agerange'] = datapoint['agerange']
                 i_combined['region'] = datapoint['region']
                 i_combined['state_name'] = datapoint['state_name']
+                i_combined['schema'] = datapoint['schema']
 
                 if not datatype in i_combined:
                     i_combined[datatype] = datapoint['value']
@@ -229,6 +230,9 @@ class CSVDataRevision:
                     k = f"{k} ({datapoint['region']})"
 
                 i_combined['state_name'] = datapoint['state_name']
+                i_combined['region'] = datapoint['region']
+                i_combined['agerange'] = datapoint['agerange']
+                i_combined['schema'] = datapoint['schema']
 
                 if not k in i_combined:
                     i_combined[k] = datapoint['value']
@@ -261,7 +265,7 @@ class CSVDataRevision:
         if isinstance(datatype, int):
             datatype = constant_to_name(datatype)[3:].lower()
 
-        def date_greater_than(x, y):
+        def date_greater_than_or_equal(x, y):
             #print(x, y)
 
             dd1, mm1, yyyy1 = x.split('/')
@@ -282,7 +286,7 @@ class CSVDataRevision:
 
         r = {}
         for datapoint in datapoints:
-            if from_date is not None and not date_greater_than(
+            if from_date is not None and not date_greater_than_or_equal(
                 from_date, datapoint['date_updated']
             ):
                 continue
@@ -295,7 +299,7 @@ class CSVDataRevision:
                 datapoint['region']
             )
             if unique_k in r:
-                assert date_greater_than(
+                assert date_greater_than_or_equal(
                     r[unique_k]['date_updated'],
                     datapoint['date_updated']
                 )
@@ -314,3 +318,29 @@ class CSVDataRevision:
             d2.setdefault((datapoint['state_name'], datapoint['schema'], datapoint['datatype']), []).append(datapoint)
         self._datapoints_dict = d
         self._datapoints_dict2 = d2
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    inst = CSVDataRevision('2020_05_01', 4)
+
+    for day in range(1, 30):
+        print(day)
+
+        if False:
+            pprint([
+                i for i in inst.get_combined_values_by_datatype(
+                    schema='lga',
+                    datatypes=('total', 'source_overseas', 'tests_total'),
+                    from_date=f'{day}/04/2020',
+                    state_name='nsw'
+                ) if i['region'] == 'Penrith'
+            ])
+        elif True:
+            pprint([
+                (i['total (Penrith)'], i['total (Penrith) date_updated'])
+                for i in inst.get_combined_values(
+                    [['lga', 'total', 'nsw']],
+                    from_date=f'{day}/04/2020'
+                )
+            ])

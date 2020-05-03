@@ -231,7 +231,8 @@ def get_output_abs_json(stats_dict, states, lga_names):
 
     data = []
     for (state, lga_name), stat_dict in r.items():
-        if state.lower() in ('tas', 'nt', 'sa', 'ot'):  # HACK - no use outputting if not displaying anyway!
+        if state.lower() in (#'tas', 'nt', 'sa',
+                             'ot',):  # HACK - no use outputting if not displaying anyway!
             continue
 
         #if 'Completed Year 12 or equivalent (%)' in stat_dict:

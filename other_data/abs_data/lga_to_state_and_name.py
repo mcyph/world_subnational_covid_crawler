@@ -22,7 +22,7 @@ def get_lga_to_state_and_name_dict():
         'Western Australia': 'wa'
     }
 
-    for path in glob(BASE_PATH / '*.csv'):
+    for path in glob(str(BASE_PATH / '*.csv')):
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
