@@ -76,9 +76,14 @@ class StateNewsBase(ABC):
             text = text.lower()
 
         try:
+            # HTML fragments doesn't enclose e.g.
+            # <td> in a <div> element but doesn't always work.
+            # both "html" and "html_fragments" use lxml
             html = pq(html, parser='html_fragments')
         except AssertionError:
             html = pq(html, parser='html')
+
+        #print("USING HTML:", html)
 
         out = []
         for i in html(selector):
@@ -87,17 +92,21 @@ class StateNewsBase(ABC):
                 i = pq(i, parser='html_fragments')
             except AssertionError:
                 i = pq(i, parser='html')
+
             i_text = i.text() or ''
             i_html = i.html() or ''
 
             if ignore_case:
-                i_html = i_html.lower()
-                i_text = i_text.lower()
+                i_html = i_html.lower().replace('\u200b', '')
+                i_text = i_text.lower().replace('\u200b', '')
+
+            #print("ITEM:", [i_text, text], text in i_text)
 
             if text in i_text or text in i_html:
                 out.append(o)
 
-        return pq(out)
+        #print("OUT:", out)
+        return pq(out, parser='html_fragments')
 
     def get_data(self):
         """

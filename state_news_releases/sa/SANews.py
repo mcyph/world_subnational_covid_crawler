@@ -298,6 +298,7 @@ class SANews(StateNewsBase):
         Under investigation 27
         TOTAL 367
         """
+        html = html.replace('&nbsp;', ' ')
         r = []
 
         # Normalise it with other states

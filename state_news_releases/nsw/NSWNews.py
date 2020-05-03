@@ -2,7 +2,7 @@ from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL, IGNORECASE
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING
+    StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
 )
 from covid_19_au_grab.state_news_releases.nsw.get_nsw_cases_data import (
     get_nsw_cases_data
@@ -19,7 +19,8 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE,
     DT_SOURCE_OVERSEAS,
     DT_STATUS_DEATHS, DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ICU_VENTILATORS
+    DT_STATUS_ICU_VENTILATORS,
+    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -30,7 +31,6 @@ from covid_19_au_grab.word_to_number import (
 from covid_19_au_grab.URLArchiver import (
     URLArchiver
 )
-
 
 
 class NSWNews(StateNewsBase):
@@ -138,6 +138,7 @@ class NSWNews(StateNewsBase):
                                       .strip()
                                       .replace(',', '')
                                       .replace('*', '')
+                                      .replace('&#8203;', '')
                                       .replace('\u200b', '')),
             date_updated=self._get_date(href, html),
             source_url=href
@@ -338,7 +339,7 @@ class NSWNews(StateNewsBase):
 
         r = []
 
-        c_html = html.replace('  ', ' ').replace('\u200b', '')  # HACK!
+        c_html = html.replace('  ', ' ').replace('&#8203;', '').replace('\u200b', '')  # HACK!
         c_html = self._pq_contains(c_html, 'table', 'Source')
 
         # Normalise it with other states
@@ -404,91 +405,145 @@ class NSWNews(StateNewsBase):
     #               Deaths/Hospitalized/Recovered                #
     #============================================================#
 
+    @bothlistingandstat
     def _get_total_dhr(self, href, html):
         r = []
+        html = html.replace('&#8203;', '').replace('\u200b', '')
         c_html = word_to_number(html)
 
-        hospitalized = self._extract_number_using_regex(
-            compile(
-                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*COVID-19[^0-9<.]+'
-                r'cases[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
-                IGNORECASE
-            ),
-            c_html,
-            datatype=DT_STATUS_HOSPITALIZED,
-            source_url=href,
-            date_updated=self._get_date(href, html)
-        )
-        if hospitalized:
-            r.append(hospitalized)
+        if href == self.STATS_BY_REGION_URL:
+            # TODO: Support recovered numbers by LHD at
+            #  https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx
 
-        icu = self._extract_number_using_regex(
-            (
+            table_ar = self._pq_contains(
+                html, 'table', 'active cases', ignore_case=True
+            )
+            #print("TABLE AR:", table_ar.html())
+
+            if table_ar:
+                tr_active = self._pq_contains(
+                    table_ar[0],
+                    'tr', 'active cases',
+                    ignore_case=True
+                )
+                tr_recovered = self._pq_contains(
+                    table_ar[0],
+                    'tr', 'recovered',
+                    ignore_case=True
+                )
+                #print("TRAR:", [tr_active.html()], [tr_recovered.html()])
+
+                if tr_active and tr_recovered:
+                    # why do I need to coerce to html then reparse with html_fragments!?
+                    # I have no idea, but couldn't get it working otherwise..
+                    active = int(
+                        pq(pq(tr_active.html(),
+                           parser='html_fragments')[1]).text().replace(',', '').strip()
+                    )
+                    recovered = int(
+                        pq(pq(tr_recovered.html(),
+                           parser='html_fragments')[1]).text().replace(',', '').strip()
+                    )
+
+                    r.append(DataPoint(
+                        datatype=DT_STATUS_ACTIVE,
+                        value=active,
+                        date_updated=self._get_date(href, html),
+                        source_url=href
+                    ))
+                    r.append(DataPoint(
+                        datatype=DT_STATUS_RECOVERED,
+                        value=recovered,
+                        date_updated=self._get_date(href, html),
+                        source_url=href
+                    ))
+
+            return r
+
+        else:
+
+            hospitalized = self._extract_number_using_regex(
                 compile(
-                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                    r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
-                    r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*COVID-19[^0-9<.]+'
+                    r'cases[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
                     IGNORECASE
                 ),
+                c_html,
+                datatype=DT_STATUS_HOSPITALIZED,
+                source_url=href,
+                date_updated=self._get_date(href, html)
+            )
+            if hospitalized:
+                r.append(hospitalized)
+
+            icu = self._extract_number_using_regex(
+                (
+                    compile(
+                        r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                        r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
+                        r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                        IGNORECASE
+                    ),
+                    compile(
+                        r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
+                        r'people[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+in[^0-9<.]+'
+                        r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                        IGNORECASE
+                    )
+                ),
+                c_html,
+                datatype=DT_STATUS_ICU,
+                source_url=href,
+                date_updated=self._get_date(href, html)
+            )
+            if icu:
+                r.append(icu)
+
+            ventilators = self._extract_number_using_regex(
                 compile(
                     r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                    r'people[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+in[^0-9<.]+'
-                    r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                    r'require[^0-9<.]+ventilators',
                     IGNORECASE
-                )
-            ),
-            c_html,
-            datatype=DT_STATUS_ICU,
-            source_url=href,
-            date_updated=self._get_date(href, html)
-        )
-        if icu:
-            r.append(icu)
+                ),
+                c_html,
+                datatype=DT_STATUS_ICU_VENTILATORS,
+                source_url=href,
+                date_updated=self._get_date(href, html)
+            )
+            if ventilators:
+                r.append(ventilators)
 
-        ventilators = self._extract_number_using_regex(
-            compile(
-                r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                r'require[^0-9<.]+ventilators',
-                IGNORECASE
-            ),
-            c_html,
-            datatype=DT_STATUS_ICU_VENTILATORS,
-            source_url=href,
-            date_updated=self._get_date(href, html)
-        )
-        if ventilators:
-            r.append(ventilators)
-
-        deaths = self._extract_number_using_regex(
-            (
-                # Prefer from the table if possible, as that's
-                # more guaranteed to not give false positives
-                compile(r'Deaths[^0-9<]+in[^0-9<]+NSW[^0-9<]+from[^0-9<]+'
-                        r'confirmed[^0-9<]+cases[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
-                        MULTILINE | DOTALL | IGNORECASE),
-                compile(r'([0-9,]+)[^0-9<]+death[^0-9<]+in[^0-9<]+NSW',
-                        IGNORECASE),
-                compile(r'have been ([0-9,]+) deaths?',
-                        IGNORECASE),
-                compile(r'total[^0-9<]+deaths[^0-9<]+'
-                        r'COVID-19[^0-9<]+cases[^0-9<]+(?:<strong>)?([0-9,]+)',
-                        IGNORECASE),
-                compile(r'total[^0-9<]+deaths[^0-9<]+(?:<strong>)?([0-9]+)',
-                        IGNORECASE),
-                compile(r'([0-9,]+)[^0-9<]+deaths[^0-9<]+in[^0-9<]+NSW',
-                        IGNORECASE),
-            ),
-            c_html,
-            datatype=DT_STATUS_DEATHS,
-            source_url=href,
-            date_updated=self._get_date(href, html)
-        )
-        if deaths:
-            r.append(deaths)
-        return r
+            deaths = self._extract_number_using_regex(
+                (
+                    # Prefer from the table if possible, as that's
+                    # more guaranteed to not give false positives
+                    compile(r'Deaths[^0-9<]+in[^0-9<]+NSW[^0-9<]+from[^0-9<]+'
+                            r'confirmed[^0-9<]+cases[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
+                            MULTILINE | DOTALL | IGNORECASE),
+                    compile(r'([0-9,]+)[^0-9<]+death[^0-9<]+in[^0-9<]+NSW',
+                            IGNORECASE),
+                    compile(r'have been ([0-9,]+) deaths?',
+                            IGNORECASE),
+                    compile(r'total[^0-9<]+deaths[^0-9<]+'
+                            r'COVID-19[^0-9<]+cases[^0-9<]+(?:<strong>)?([0-9,]+)',
+                            IGNORECASE),
+                    compile(r'total[^0-9<]+deaths[^0-9<]+(?:<strong>)?([0-9]+)',
+                            IGNORECASE),
+                    compile(r'([0-9,]+)[^0-9<]+deaths[^0-9<]+in[^0-9<]+NSW',
+                            IGNORECASE),
+                ),
+                c_html,
+                datatype=DT_STATUS_DEATHS,
+                source_url=href,
+                date_updated=self._get_date(href, html)
+            )
+            if deaths:
+                r.append(deaths)
+            return r
 
 
 if __name__ == '__main__':
     from pprint import pprint
     nn = NSWNews()
+    #print(pq('<td class="moh-rteTableEvenCol-6" rowspan="1">Recovered</td><td align="right" class="moh-rteTableOddCol-6" rowspan="1">2,306</td>', parser='html_fragments')[1])
     pprint(nn.get_data())

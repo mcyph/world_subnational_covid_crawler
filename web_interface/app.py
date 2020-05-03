@@ -373,6 +373,7 @@ class App(object):
             (SCHEMA_STATEWIDE, 'nsw', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
+                                       # Note that active+recovered != total!
                                        DT_STATUS_ACTIVE,
                                        DT_STATUS_RECOVERED,
                                        #DT_STATUS_UNKNOWN,
@@ -415,7 +416,7 @@ class App(object):
                                       DT_STATUS_HOSPITALIZED,
 
                                       DT_SOURCE_OVERSEAS,
-                                      #DT_SOURCE_COMMUNITY, ???? =======================================================
+                                      DT_SOURCE_COMMUNITY,
                                       DT_SOURCE_CONFIRMED,
                                       DT_SOURCE_INTERSTATE,
                                       DT_SOURCE_UNDER_INVESTIGATION
@@ -495,10 +496,10 @@ class App(object):
             # as NSW gov provides almost complete dataset
             # for postcode+LGA
             #(SCHEMA_LHD, 'nsw', (DT_TOTAL,)),
-            (SCHEMA_THS, 'tas', (DT_TOTAL,
-                                 DT_STATUS_ACTIVE,
-                                 DT_STATUS_RECOVERED
-                                 )),
+            #(SCHEMA_THS, 'tas', (DT_TOTAL,        #  TODO: ADD ME!!! ============================================
+            #                     DT_STATUS_ACTIVE,
+            #                     DT_STATUS_RECOVERED
+            #                     )),
             (SCHEMA_HHS, 'qld', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
