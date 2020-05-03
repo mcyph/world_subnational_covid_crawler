@@ -3,6 +3,11 @@ from re import compile, IGNORECASE
 
 
 def word_to_number(s):
+    # HACK: replace no-break spaces; get rid of zero width spaces!
+    s = s.replace('&nbsp;', ' ') \
+         .replace('\u200b', '') \
+         .replace('&#8203;', '')
+
     def longest_first(nums):
         return list(sorted(nums, key=lambda x: -len(x)))
 
@@ -88,7 +93,6 @@ def word_to_number(s):
         # HACK: basic support for hundreds!!!
         s = s.replace(f'{i} hundred and ', str(i))
         s = s.replace(f'{i} Hundred and ', str(i))
-
 
     return s
 

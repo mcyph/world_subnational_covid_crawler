@@ -175,6 +175,7 @@ class WANews(StateNewsBase):
                 compile(r'reported ([0-9,]+) new cases?'),
                 compile(r'([0-9,]+) new confirmed cases? of COVID-19'),
                 compile(r'([0-9,]+) new COVID-19 cases?'),
+                compile(r'([0-9,]+) new cases? of COVID-19')
             ),
             c_html,
             datatype=DT_NEW,

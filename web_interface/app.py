@@ -337,7 +337,7 @@ class App(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def multiRegionsTimeSeries(self, rev_date=None, rev_subid=None):
+    def regionsTimeSeries(self, rev_date=None, rev_subid=None):
         if rev_date is None:
             # Output the last successful run if
             # rev_date/rev_subid not supplied
@@ -413,7 +413,7 @@ class App(object):
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_ICU,
-                                      DT_STATUS_HOSPITALIZED,
+                                      #DT_STATUS_HOSPITALIZED,  # TODO!! ============================================
 
                                       DT_SOURCE_OVERSEAS,
                                       DT_SOURCE_COMMUNITY,
@@ -448,7 +448,7 @@ class App(object):
                                       DT_TESTS_TOTAL,
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_DEATHS,
-                                      DT_STATUS_ICU,
+                                      #DT_STATUS_ICU,   # TODO!!! ===============================================
                                       DT_STATUS_HOSPITALIZED
                                       )),
 
