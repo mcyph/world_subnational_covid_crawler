@@ -17,6 +17,7 @@ import datetime
 from sys import path
 from os import makedirs, environ, pathsep, system
 from os.path import dirname, expanduser
+from urllib.request import urlopen
 from browsermobproxy import Server
 from selenium import webdriver
 from covid_19_au_grab.get_package_dir import get_data_dir
@@ -46,11 +47,17 @@ class _WARegions:
         system('killall browsermob-prox')
 
         for xx, json_data in enumerate(self.__grab()):
-            with open(
-                f"{self.output_dir}/json_output-{xx}.json",
-                'w', encoding='utf-8'
-            ) as f:
-                f.write(json.dumps(json_data, indent=2))
+            if not isinstance(json_data, bytes):
+                with open(
+                    f"{self.output_dir}/json_output-{xx}.json",
+                    'w', encoding='utf-8'
+                ) as f:
+                    f.write(json.dumps(json_data, indent=2))
+            else:
+                with open(
+                    f"{self.output_dir}/bin_output-{xx}.pbf", 'wb'
+                ) as f:
+                    f.write(json_data)
 
     def _get_output_json_dir(self):
         time_format = datetime.datetime \
@@ -139,9 +146,13 @@ class _WARegions:
                 data = brotli.decompress(
                     base64.b64decode(ent['response']['content']['text'])
                 )
-                r.append(
-                    json.loads(data.decode('utf-8'))
-                )
+                try:
+                    r.append(
+                        json.loads(data.decode('utf-8'))
+                    )
+                except UnicodeDecodeError:
+                    with urlopen(req['url'].replace('query?f=pbf', 'query?f=json')) as f:
+                        r.append(json.loads(f.read().decode('utf-8')))
 
         server.stop()
         driver.quit()
