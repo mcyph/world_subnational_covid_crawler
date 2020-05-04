@@ -51,7 +51,7 @@ mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 class App(object):
     def __init__(self):
         self.revisions = CSVDataRevisions()
-        #_thread.start_new_thread(self.loop, ())
+        _thread.start_new_thread(self.loop, ())
 
     def loop(self):
         powerbi_run_1st = False
@@ -69,16 +69,16 @@ class App(object):
 
                 if dt.hour >= 12 and dt.hour < 14 and not powerbi_run_1st:
                     # Run powerbi once only between 12pm and 2pm
-                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)} --update-powerbi')
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --update-powerbi')
                     powerbi_run_1st = True
                     powerbi_run_2nd = False
                 elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_2nd:
                     # Run powerbi once only between 5pm and 7pm
-                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)} --update-powerbi')
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --update-powerbi')
                     powerbi_run_1st = False
                     powerbi_run_2nd = True
                 else:
-                    system(f'python3 {quote(UPDATE_SCRIPT_PATH)}')
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))}')
 
     #=============================================================#
     #                            Index                            #
@@ -431,7 +431,7 @@ class App(object):
             (SCHEMA_STATEWIDE, 'vic', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
-                                       DT_STATUS_ACTIVE,
+                                       #DT_STATUS_ACTIVE,
                                        DT_STATUS_RECOVERED,
                                        #DT_STATUS_UNKNOWN,
                                        DT_STATUS_DEATHS,

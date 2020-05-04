@@ -1,0 +1,30 @@
+{
+  "2020_05_03": {
+    "Northern Tasmania": {
+      "active": 2,
+      "recovered": 25
+    },
+    "North West Tasmania": {
+      "active": 44,
+      "recovered": 91
+    },
+    "Southern Tasmania": {
+      "active": 4,
+      "recovered": 39
+    }
+  },
+  "2020_05_01": {
+    "Northern Tasmania": {
+      "active": 3,
+      "recovered": 24
+    },
+    "North West Tasmania": {
+      "active": 48,
+      "recovered": 87
+    },
+    "Southern Tasmania": {
+      "active": 4,
+      "recovered": 39
+    }
+  }
+}

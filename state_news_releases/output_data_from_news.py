@@ -21,6 +21,7 @@ from covid_19_au_grab.get_package_dir import get_package_dir
 UPDATE_VIC_POWERBI = False
 UPDATE_ACT_POWERBI = False
 UPDATE_WA_REGIONS = False
+UPDATE_SA_REGIONS = False
 UPDATE_GRAPHS = True
 
 
@@ -28,6 +29,7 @@ if '--update-powerbi' in [i.strip() for i in sys.argv]:
     UPDATE_VIC_POWERBI = True
     UPDATE_ACT_POWERBI = True
     UPDATE_WA_REGIONS = True
+    UPDATE_SA_REGIONS = True
 
 
 def remove_control_characters(s):
