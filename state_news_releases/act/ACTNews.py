@@ -65,7 +65,9 @@ class ACTNews(StateNewsBase):
 
     def _get_total_cases(self, href, html):
         # TODO: UPDATE ME and make me work with confirmed case info!!! ====================================
-        c_html = word_to_number(html)
+        c_html = word_to_number(html) \
+            .replace('<b>', '<strong>') \
+            .replace('</b>', '</strong>')
 
         return self._extract_number_using_regex(
             (
@@ -83,7 +85,9 @@ class ACTNews(StateNewsBase):
 
     def _get_total_cases_tested(self, href, html):
         # TODO: UPDATE ME and make me work with confirmed case info!!! ====================================
-        c_html = word_to_number(html)
+        c_html = word_to_number(html) \
+            .replace('<b>', '<strong>') \
+            .replace('</b>', '</strong>')
 
         neg_cases = self._extract_number_using_regex(
             (
@@ -117,7 +121,9 @@ class ACTNews(StateNewsBase):
         return None
 
     def _get_total_new_cases(self, href, html):
-        c_html = word_to_number(html)
+        c_html = word_to_number(html) \
+            .replace('<b>', '<strong>') \
+            .replace('</b>', '</strong>')
 
         return self._extract_number_using_regex(
             compile(
@@ -176,7 +182,9 @@ class ACTNews(StateNewsBase):
     #============================================================#
 
     def _get_new_male_female_breakdown(self, href, html):
-        c_html = word_to_number(html)
+        c_html = word_to_number(html) \
+            .replace('<b>', '<strong>') \
+            .replace('</b>', '</strong>')
 
         # WARNING: Can have multiple entries per article =============================================================
         # (early reports, anyway)
@@ -329,7 +337,10 @@ class ACTNews(StateNewsBase):
         # recovered/lives lost also at
         # https://www.covid19.act.gov.au/updates/confirmed-case-information  ===========================================
 
-        c_html = word_to_number(html)
+        c_html = word_to_number(html) \
+            .replace('<b>', '<strong>') \
+            .replace('</b>', '</strong>')
+        
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,

@@ -107,11 +107,11 @@ class NSWNews(StateNewsBase):
 
         return self._extract_number_using_regex(
             (
-                compile('([0-9,]+) additional cases of COVID-19'),
+                compile('([0-9,]+) additional cases? of COVID-19'),
                 compile(
                     'additional[^0-9.<]+(?:COVID-19[^0-9.<]+)?'
                     '(?:<strong>)?([0-9,]+)[^0-9.<]*(?:</strong>)?'
-                    '[^0-9.<]+cases',
+                    '[^0-9.<]+cases?',
                     IGNORECASE
                 )
             ),
@@ -415,6 +415,47 @@ class NSWNews(StateNewsBase):
             # TODO: Support recovered numbers by LHD at
             #  https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx
 
+            recovered_map = {
+                'Recovered': DT_STATUS_RECOVERED,
+                'Total cases': DT_TOTAL
+            }
+
+            table_recovered = self._pq_contains(
+                html, 'table', 'Local health district​', ignore_case=True
+            )
+            print("**RECOVERED TABLE:", table_recovered.html())
+            if table_recovered:
+                first_tr = table_recovered[0][0]
+                keys = [pq(first_tr[x+1]).text().strip() for x in range(len(first_tr)-1)]
+
+                for tr in table_recovered[0][1:]:
+                    lhd = pq(tr[0]).text().strip()
+                    values = [int(pq(tr[x+1]).text().strip()) for x in range(len(tr)-1)]
+
+                    values_dict = {}
+                    for x, value in enumerate(values):
+                        datatype = recovered_map[keys[x]]
+                        if datatype == DT_STATUS_RECOVERED:
+                            values_dict[datatype] = value
+
+                    r.append(DataPoint(
+                        schema=SCHEMA_LHD,
+                        datatype=DT_STATUS_ACTIVE,
+                        region=lhd,
+                        value=values_dict[DT_TOTAL]-values_dict[DT_STATUS_RECOVERED],
+                        date_updated=self._get_date(href, html),
+                        source_url=href
+                    ))
+                    for datatype, value in values_dict.items():
+                        r.append(DataPoint(
+                            schema=SCHEMA_LHD,
+                            datatype=datatype,
+                            region=lhd,
+                            value=value,
+                            date_updated=self._get_date(href, html),
+                            source_url=href
+                        ))
+
             table_ar = self._pq_contains(
                 html, 'table', 'active cases', ignore_case=True
             )
@@ -465,7 +506,7 @@ class NSWNews(StateNewsBase):
             hospitalized = self._extract_number_using_regex(
                 compile(
                     r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*COVID-19[^0-9<.]+'
-                    r'cases[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
+                    r'cases?[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
                     IGNORECASE
                 ),
                 c_html,
@@ -518,14 +559,14 @@ class NSWNews(StateNewsBase):
                     # Prefer from the table if possible, as that's
                     # more guaranteed to not give false positives
                     compile(r'Deaths[^0-9<]+in[^0-9<]+NSW[^0-9<]+from[^0-9<]+'
-                            r'confirmed[^0-9<]+cases[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
+                            r'confirmed[^0-9<]+cases?[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
                             MULTILINE | DOTALL | IGNORECASE),
                     compile(r'([0-9,]+)[^0-9<]+death[^0-9<]+in[^0-9<]+NSW',
                             IGNORECASE),
                     compile(r'have been ([0-9,]+) deaths?',
                             IGNORECASE),
                     compile(r'total[^0-9<]+deaths[^0-9<]+'
-                            r'COVID-19[^0-9<]+cases[^0-9<]+(?:<strong>)?([0-9,]+)',
+                            r'COVID-19[^0-9<]+cases?[^0-9<]+(?:<strong>)?([0-9,]+)',
                             IGNORECASE),
                     compile(r'total[^0-9<]+deaths[^0-9<]+(?:<strong>)?([0-9]+)',
                             IGNORECASE),

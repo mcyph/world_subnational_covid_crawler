@@ -132,6 +132,7 @@ class WANews(StateNewsBase):
                 compile(r'total number of (?:confirmed )?cases to ([0-9,]+)'),
                 compile(r'total number of (?:confirmed )?cases remains at ([0-9,]+)'),
                 compile(r'total number of cases stands at ([0-9,]+)'),
+                compile(r'State total standing at ([0-9,]+)', IGNORECASE)
             ),
             html,
             datatype=DT_TOTAL,

@@ -72,6 +72,7 @@ class StateNewsBase(ABC):
 
         I'm not sure why this is, but for now...
         """
+        text = text.replace('\u200b', '')
         if ignore_case:
             text = text.lower()
 
