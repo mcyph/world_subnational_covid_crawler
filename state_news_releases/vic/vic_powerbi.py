@@ -4,6 +4,7 @@ from os.path import expanduser, exists
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
+    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS
 )
@@ -39,6 +40,8 @@ class _VicPowerBI(PowerBIDataReader):
 
         r = []
         for updated_date, rev_id, response_dict in self._iter_all_dates():
+            self.totals_dict = {}
+
             subdir = f'{self.base_path}/{updated_date}-{rev_id}'
             # Use a fallback only if can't get from the source
             # TODO: Get the date from the actual data!!! =============================
@@ -53,11 +56,12 @@ class _VicPowerBI(PowerBIDataReader):
 
             try:
                 updated_date = self._get_updated_date(response_dict)
-            except (KeyError, ValueError):
+            except (KeyError, ValueError, AttributeError): # FIXME!!!! ==============================================================================
                 pass
             r.extend(self._get_regions(updated_date, response_dict))
             r.extend(self._get_age_data(updated_date, response_dict))
             r.extend(self._get_source_of_infection(updated_date, response_dict))
+            r.extend(self._get_active_regions(updated_date, response_dict))
         return r
 
     def _get_updated_date(self, response_dict):
@@ -86,14 +90,60 @@ class _VicPowerBI(PowerBIDataReader):
             else:
                 value = region['C'][1]
 
+            region_string = region['C'][0].split('(')[0].strip()
             output.append(DataPoint(
                 schema=SCHEMA_LGA,
                 datatype=DT_TOTAL,
-                region=region['C'][0].split('(')[0].strip(),
+                region=region_string,
                 value=value,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
+            previous_value = value
+            # print(output[-1])
+
+            self.totals_dict[region_string] = value
+
+        return output
+
+    def _get_active_regions(self, updated_date, response_dict):
+        if updated_date < '2020_05_07':
+            # There wasn't this info before this date!
+            return []
+
+        output = []
+        data = response_dict['regions_active'][1]
+
+        for region in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
+            # print(region)
+
+            if region.get('R'):
+                value = previous_value
+            else:
+                value = region['C'][1]
+
+            # Add active info
+            region_string = region['C'][0].split('(')[0].strip()
+            output.append(DataPoint(
+                schema=SCHEMA_LGA,
+                datatype=DT_STATUS_ACTIVE,
+                region=region_string,
+                value=value,
+                date_updated=updated_date,
+                source_url=SOURCE_URL
+            ))
+
+            if region_string in self.totals_dict:
+                # Add recovered info if total available
+                output.append(DataPoint(
+                    schema=SCHEMA_LGA,
+                    datatype=DT_STATUS_RECOVERED,
+                    region=region_string,
+                    value=self.totals_dict[region_string]-value,
+                    date_updated=updated_date,
+                    source_url=SOURCE_URL
+                ))
+
             previous_value = value
             # print(output[-1])
 

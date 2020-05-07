@@ -132,7 +132,7 @@ class PowerBIBase:
                                             'captureContent': True})
         driver.get(self.powerbi_url)
 
-        for x in range(3):
+        for x in range(4):
             time.sleep(25)
 
             proxy.wait_for_traffic_to_stop(10, 60)
