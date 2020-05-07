@@ -368,12 +368,11 @@ class App(object):
                                        DT_SOURCE_COMMUNITY,
                                        DT_SOURCE_CONFIRMED,
                                        DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION
+                                       DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
             (SCHEMA_STATEWIDE, 'nsw', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
-                                       # Note that active+recovered != total!
                                        DT_STATUS_ACTIVE,
                                        DT_STATUS_RECOVERED,
                                        #DT_STATUS_UNKNOWN,
@@ -386,11 +385,14 @@ class App(object):
                                        DT_SOURCE_COMMUNITY,
                                        DT_SOURCE_CONFIRMED,
                                        DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION
+                                       DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
             (SCHEMA_STATEWIDE, 'nt', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
-                                      DT_STATUS_RECOVERED
+                                      DT_STATUS_ICU,
+                                      DT_STATUS_DEATHS,
+                                      DT_STATUS_RECOVERED,
+                                      DT_STATUS_HOSPITALIZED,
                                       )),
             (SCHEMA_STATEWIDE, 'qld', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
@@ -405,7 +407,7 @@ class App(object):
                                        DT_SOURCE_COMMUNITY,
                                        DT_SOURCE_CONFIRMED,
                                        DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION
+                                       DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
             (SCHEMA_STATEWIDE, 'sa', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
@@ -413,20 +415,20 @@ class App(object):
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_ICU,
-                                      #DT_STATUS_HOSPITALIZED,  # TODO!! ============================================
+                                      DT_STATUS_HOSPITALIZED,
 
                                       DT_SOURCE_OVERSEAS,
                                       DT_SOURCE_COMMUNITY,
                                       DT_SOURCE_CONFIRMED,
                                       DT_SOURCE_INTERSTATE,
-                                      DT_SOURCE_UNDER_INVESTIGATION
+                                      DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
             (SCHEMA_STATEWIDE, 'tas', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
                                        DT_STATUS_RECOVERED,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
-                                       DT_STATUS_HOSPITALIZED
+                                       DT_STATUS_HOSPITALIZED,
                                        )),
             (SCHEMA_STATEWIDE, 'vic', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
@@ -442,14 +444,14 @@ class App(object):
                                        DT_SOURCE_COMMUNITY,
                                        DT_SOURCE_CONFIRMED,
                                        DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION
+                                       DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
             (SCHEMA_STATEWIDE, 'wa', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_DEATHS,
-                                      #DT_STATUS_ICU,   # TODO!!! ===============================================
-                                      DT_STATUS_HOSPITALIZED
+                                      DT_STATUS_ICU,
+                                      DT_STATUS_HOSPITALIZED,
                                       )),
 
             (SCHEMA_LGA, 'nsw', (DT_TOTAL,
@@ -472,6 +474,8 @@ class App(object):
             (SCHEMA_LGA, 'sa', (DT_TOTAL,
                                 DT_STATUS_ACTIVE
                                 )),
+            (SCHEMA_LGA, 'tas', (DT_TOTAL,
+                                 )),
             (SCHEMA_LGA, 'vic', (DT_TOTAL,
                                  )),
             (SCHEMA_LGA, 'wa', (DT_TOTAL,
@@ -492,14 +496,14 @@ class App(object):
             #                          )),
 
             (SCHEMA_SA3, 'act', (DT_TOTAL,)),
-            # Can't think of a reason to use LHD for NSW,
-            # as NSW gov provides almost complete dataset
-            # for postcode+LGA
-            #(SCHEMA_LHD, 'nsw', (DT_TOTAL,)),
-            #(SCHEMA_THS, 'tas', (DT_TOTAL,        #  TODO: ADD ME!!! ============================================
-            #                     DT_STATUS_ACTIVE,
-            #                     DT_STATUS_RECOVERED
-            #                     )),
+            # LHD is used for Active/Recovered values
+            # It's also available by postcode on the NSW gov's site
+            (SCHEMA_LHD, 'nsw', (DT_STATUS_ACTIVE,
+                                 DT_STATUS_RECOVERED)),
+            (SCHEMA_THS, 'tas', (DT_TOTAL,
+                                 DT_STATUS_ACTIVE,
+                                 DT_STATUS_RECOVERED
+                                 )),
             (SCHEMA_HHS, 'qld', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,

@@ -1,3 +1,6 @@
+import csv
+from json import loads
+from datetime import datetime
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
@@ -5,6 +8,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
 from covid_19_au_grab.state_news_releases.constants import (
+    SCHEMA_LGA, SCHEMA_THS,
     DT_TOTAL, DT_NEW, DT_TESTS_TOTAL,
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
@@ -16,6 +20,12 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
 from covid_19_au_grab.word_to_number import (
     word_to_number
 )
+from covid_19_au_grab.get_package_dir import (
+    get_package_dir
+)
+
+TAS_BY_LGA = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_lga.json'
+TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv'
 
 
 class TasNews(StateNewsBase):
@@ -28,6 +38,61 @@ class TasNews(StateNewsBase):
                             '#pills-Media_Releases .card-rows .card a'
     STATS_BY_REGION_URL = 'https://coronavirus.tas.gov.au/facts/' \
                           'cases-and-testing-updates'
+
+    def get_data(self):
+        r = []
+
+        # Add manually entered data by THS and LGA
+        with open(TAS_BY_LGA, 'r', encoding='utf-8') as f:
+            for date, date_dict in loads(f.read()).items():
+                for _, region, total in date_dict['data']:
+                    r.append(DataPoint(
+                        schema=SCHEMA_LGA,
+                        datatype=DT_TOTAL,
+                        region=region,
+                        value=total,
+                        date_updated=date,
+                        source_url=date_dict['source_url']
+                    ))
+
+        with open(TAS_BY_THS, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f, delimiter='\t')
+
+            for date_dict in reader:
+                dd, mm, yyyy = date_dict['Date'].split('/')
+                dt = datetime(day=int(dd), month=int(mm), year=int(yyyy)).strftime('%Y_%m_%d')
+
+                for region in (
+                    'North-West', 'North', 'South',
+                ):
+                    r.append(DataPoint(
+                        schema=SCHEMA_THS,
+                        datatype=DT_STATUS_ACTIVE,
+                        region=region,
+                        value=date_dict[f'{region} Active'],
+                        date_updated=dt,
+                        source_url='Peter Gutweins Facebook Page'
+                    ))
+                    r.append(DataPoint(
+                        schema=SCHEMA_THS,
+                        datatype=DT_STATUS_RECOVERED,
+                        region=region,
+                        value=int(date_dict[f'{region} Recovered']),
+                        date_updated=dt,
+                        source_url='Peter Gutweins Facebook Page'
+                    ))
+                    r.append(DataPoint(
+                        schema=SCHEMA_THS,
+                        datatype=DT_TOTAL,
+                        region=region,
+                        value=int(date_dict[f'{region} Active'])+
+                              int(date_dict[f'{region} Recovered']),
+                        date_updated=dt,
+                        source_url='Peter Gutweins Facebook Page'
+                    ))
+
+        r.extend(StateNewsBase.get_data(self))
+        return r
 
     def _get_date(self, url, html):
         # Format 12 March 2020
@@ -226,6 +291,7 @@ class TasNews(StateNewsBase):
 
         cases_map = {
             'New cases in past 24 hours': DT_NEW,
+            'New cases in past 24 hours (as at 9pm last night)': DT_NEW,
             'Total cases': DT_TOTAL,
             'Active': DT_STATUS_ACTIVE,
             'Recovered': DT_STATUS_RECOVERED,

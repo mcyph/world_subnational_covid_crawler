@@ -1,0 +1,18 @@
+{
+    "2020_05_03": {
+        "source_url": "PETER GUTWEINS FACEBOOK",
+        "data": [
+            ["North", 2, 25],
+            ["North-West", 44, 91],
+            ["South", 4, 39]
+        ]
+    },
+    "2020_05_01": {
+        "source_url":  "PETER GUTWEINS FACEBOOK",
+        "data": [
+            ["North", 3, 24],
+            ["North-West", 48, 87],
+            ["South", 4, 39]
+        ]
+    }
+}

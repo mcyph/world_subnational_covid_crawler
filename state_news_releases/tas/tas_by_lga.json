@@ -1,0 +1,29 @@
+{
+    "2020_05_06": {
+        "source_url":
+            "https://www.abc.net.au/news/2020-05-06/coronavirus-tasmania-launceston-hospital-worker-positive/12218612",
+        "data": [
+            ["South", "Brighton", 2],
+            ["South", "Clarence", 5],
+            ["South", "Derwent Valley", 4],
+            ["South", "Glenorchy", 3],
+            ["South", "Hobart", 11],
+            ["South", "Huon Valley", 6],
+            ["South", "Kingborough", 12],
+            ["South", "Sorell", 1],
+            ["North", "George Town", 1],
+            ["North", "Launceston", 20],
+            ["North", "Meander Valley", 2],
+            ["North", "Northern Midlands", 3],
+            ["North", "West Tamar", 2],
+            ["North-West", "Burnie", 63],
+            ["North-West", "Central Coast", 35],
+            ["North-West", "Circular Head", 7],
+            ["North-West", "Devonport", 12],
+            ["North-West", "Kentish", 2],
+            ["North-West", "Latrobe", 4],
+            ["North-West", "Waratah-Wynyard", 23],
+            ["North-West", "West Coast", 2]
+        ]
+    }
+}
