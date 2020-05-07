@@ -460,7 +460,7 @@ class App(object):
                                  DT_SOURCE_CONFIRMED,
                                  DT_SOURCE_INTERSTATE,
                                  DT_SOURCE_COMMUNITY,
-                                 DT_SOURCE_UNDER_INVESTIGATION
+                                 DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use LGA for totals, as don't have a long history
             (SCHEMA_LGA, 'qld', (#DT_TOTAL,
@@ -468,15 +468,17 @@ class App(object):
                                  DT_SOURCE_CONFIRMED,
                                  DT_SOURCE_COMMUNITY,
                                  DT_SOURCE_INTERSTATE,
-                                 DT_SOURCE_UNDER_INVESTIGATION
+                                 DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use SA for now, at least till can increase the accuracy
             (SCHEMA_LGA, 'sa', (DT_TOTAL,
-                                DT_STATUS_ACTIVE
+                                DT_STATUS_ACTIVE,
                                 )),
             (SCHEMA_LGA, 'tas', (DT_TOTAL,
                                  )),
             (SCHEMA_LGA, 'vic', (DT_TOTAL,
+                                 DT_STATUS_ACTIVE,
+                                 DT_STATUS_RECOVERED,
                                  )),
             (SCHEMA_LGA, 'wa', (DT_TOTAL,
                                 )),
