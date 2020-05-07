@@ -1,4 +1,5 @@
 import json
+import datetime
 from os import listdir
 from os.path import expanduser
 from re import compile
@@ -14,7 +15,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA,
     DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_NEW, DT_TESTS_TOTAL,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
+    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
     DT_STATUS_ICU,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_OVERSEAS,
     DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY,
@@ -27,11 +28,12 @@ from covid_19_au_grab.word_to_number import (
     word_to_number
 )
 from covid_19_au_grab.get_package_dir import (
-    get_package_dir
+    get_package_dir, get_data_dir
 )
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
+SA_MAP_DIR = get_data_dir() / 'sa' / 'custom_map'
 
 
 # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
@@ -53,6 +55,8 @@ class SANews(StateNewsBase):
 
     # Changed as of 23/4/2020!
     STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia'
+
+    SA_CUSTOM_MAP_URL = 'https://www.covid-19.sa.gov.au/home/dashboard'
 
     # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia
     def _get_date(self, href, html):
@@ -93,25 +97,36 @@ class SANews(StateNewsBase):
 
     def get_data(self):
         r = []
-        for fnam in listdir(OUTPUT_DIR):
-            date = fnam.split('.')[0]
+        if False:
+            # Data using PDFs: not very accurate!
+            for fnam in listdir(OUTPUT_DIR):
+                date = fnam.split('.')[0]
 
-            with open(f'{OUTPUT_DIR}/{fnam}', 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+                with open(f'{OUTPUT_DIR}/{fnam}', 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
 
-            for region, datatype, value in data:
-                r.append(DataPoint(
-                    schema=SCHEMA_LGA,
-                    datatype=getattr(constants, datatype),
-                    region=region,
-                    value=value,
-                    date_updated=date,
-                    source_url='https://www.sahealth.sa.gov.au/wps/wcm/connect/'
-                               'public+content/sa+health+internet/health+topics/'
-                               'health+topics+a+-+z/covid+2019/latest+updates/'
-                               'confirmed+and+suspected+cases+of+covid-19+in+south+australia',
-                    text_match=None,
-                ))
+                for region, datatype, value in data:
+                    r.append(DataPoint(
+                        schema=SCHEMA_LGA,
+                        datatype=getattr(constants, datatype),
+                        region=region,
+                        value=value,
+                        date_updated=date,
+                        source_url='https://www.sahealth.sa.gov.au/wps/wcm/connect/'
+                                   'public+content/sa+health+internet/health+topics/'
+                                   'health+topics+a+-+z/covid+2019/latest+updates/'
+                                   'confirmed+and+suspected+cases+of+covid-19+in+south+australia',
+                        text_match=None,
+                    ))
+        else:
+            for sub_dir in listdir(SA_MAP_DIR):
+                # OPEN ISSUE: only add the most recent?? ==========================================================================
+                joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
+                for fnam in listdir(joined_dir):
+                    with open(f'{joined_dir}/{fnam}', 'r', encoding='utf-8') as f:
+                        r.extend(self._get_total_cases_by_region(
+                            self.SA_CUSTOM_MAP_URL, f.read()
+                        ))
 
         r.extend(StateNewsBase.get_data(self))
         return r
@@ -278,7 +293,89 @@ class SANews(StateNewsBase):
         pass
 
     def _get_total_cases_by_region(self, href, html):
-        pass
+        if href != self.SA_CUSTOM_MAP_URL:
+            return None
+
+        from json import loads
+        data = loads(html)  # Not actually html
+
+        r = []
+        for feature_dict in data.get('features', []):
+            """
+            {
+                {
+                  "exceededTransferLimit": false,
+                  "features": [
+                    {
+                      "attributes": {
+                        "objectid": 52,
+                        "lga_code18": "49399",
+                        "lga_name18": "Unincorporated SA",
+                        "ste_code16": "4",
+                        "ste_name16": "South Australia",
+                        "areasqkm18": 622489.4848,
+                        "lga": 49399.0,
+                        "lga_name": "Unincorporated SA",
+                        "lga_code": 49399,
+                        "date_time_20200401_1000": "1/4/2020 @ 10:00 am",
+                        "positive_20200401_1000": 0,
+                        "active_20200401_1000": 0,
+                        "date_time_20200402_0000": "2/4/2020",
+                        "positive_20200402_0000": 0,
+                        "active_20200402_0000": 0,
+                        ...
+                      },
+                      "geometry": {
+                        "rings": [
+                          [
+                            }
+            """
+
+            # print(feature_dict)
+            attributes = feature_dict['attributes']
+            if attributes.get('exceedslimit'):
+                continue
+
+            for k, v in attributes.items():
+                if k.startswith('positive'):
+                    du = datetime.datetime.strptime(
+                        k.split('_')[1], '%Y%m%d'
+                    ).strftime('%Y_%m_%d')
+                    if du == '2020_04_12':
+                        # HACK: Ignore this unreliable datapoint!
+                        continue
+
+                    num = DataPoint(
+                        schema=SCHEMA_LGA,
+                        datatype=DT_TOTAL,
+                        region=attributes['lga_name'].split('(')[0].strip(),
+                        value=int(v),
+                        date_updated=du,
+                        source_url=href
+                    )
+                    r.append(num)
+                elif k.startswith('active'):
+                    du = datetime.datetime.strptime(
+                        k.split('_')[1], '%Y%m%d'
+                    ).strftime('%Y_%m_%d')
+                    if du == '2020_04_12':
+                        # HACK: Ignore this unreliable datapoint!
+                        continue
+                    elif du <= '2020_04_15' and not int(v):
+                        # HACK: early datapoints were of very low quality!
+                        continue
+
+                    num = DataPoint(
+                        schema=SCHEMA_LGA,
+                        datatype=DT_STATUS_ACTIVE,
+                        region=attributes['lga_name'].split('(')[0].strip(),
+                        value=int(v),
+                        date_updated=du,
+                        source_url=href
+                    )
+                    r.append(num)
+
+        return r
 
     #============================================================#
     #                     Totals by Source                       #
