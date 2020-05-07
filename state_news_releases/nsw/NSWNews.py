@@ -109,9 +109,9 @@ class NSWNews(StateNewsBase):
             (
                 compile('([0-9,]+) additional cases? of COVID-19'),
                 compile(
-                    'additional[^0-9.<]+(?:COVID-19[^0-9.<]+)?'
-                    '(?:<strong>)?([0-9,]+)[^0-9.<]*(?:</strong>)?'
-                    '[^0-9.<]+cases?',
+                    'additional[^0-9<>.]+(?:COVID-19[^0-9<>.]+)?'
+                    '(?:<strong>)?([0-9,]+)[^0-9<>.]*(?:</strong>)?'
+                    '[^0-9<>.]+cases?',
                     IGNORECASE
                 )
             ),
@@ -152,7 +152,7 @@ class NSWNews(StateNewsBase):
                 compile(
                     # Total (including tested and excluded)
                     r'<td[^>]*?>(?:<[^</>]+>)?'
-                        r'Total[^0-9<]+persons[^0-9<]+tested[^0-9<]*'
+                        r'Total[^0-9<>.]+persons[^0-9<>.]+tested[^0-9<>.]*'
                         r'(?:</[^<>]+>)?</td>'
                     r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
                     MULTILINE | DOTALL | IGNORECASE
@@ -412,31 +412,35 @@ class NSWNews(StateNewsBase):
         c_html = word_to_number(html)
 
         if href == self.STATS_BY_REGION_URL:
-            # TODO: Support recovered numbers by LHD at
-            #  https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx
+            # Support recovered numbers by LHD at
+            # https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx
 
             recovered_map = {
                 'Recovered': DT_STATUS_RECOVERED,
                 'Total cases': DT_TOTAL
             }
 
-            table_recovered = self._pq_contains(
-                html, 'table', 'Local health district​', ignore_case=True
-            )
-            print("**RECOVERED TABLE:", table_recovered.html())
+            table_recovered = [
+                i for i in self._pq_contains(
+                    html, 'table', 'Local health district​', ignore_case=True
+                ) if 'recovered' in pq(i).html().lower()
+            ]
+            #print("**RECOVERED TABLE:", table_recovered.html())
             if table_recovered:
-                first_tr = table_recovered[0][0]
+                table_recovered = table_recovered[0] # table
+                first_tr = table_recovered[0][0] # tbody -> tr
                 keys = [pq(first_tr[x+1]).text().strip() for x in range(len(first_tr)-1)]
+                #print("NSW KEYS:", keys)
 
                 for tr in table_recovered[0][1:]:
                     lhd = pq(tr[0]).text().strip()
-                    values = [int(pq(tr[x+1]).text().strip()) for x in range(len(tr)-1)]
+                    values = [int(pq(tr[x+1]).text().replace(',', '').strip()) for x in range(len(tr)-1)]
 
                     values_dict = {}
                     for x, value in enumerate(values):
                         datatype = recovered_map[keys[x]]
-                        if datatype == DT_STATUS_RECOVERED:
-                            values_dict[datatype] = value
+                        values_dict[datatype] = value
+                    #print("NSW VALUES:", values_dict)
 
                     r.append(DataPoint(
                         schema=SCHEMA_LHD,
@@ -505,8 +509,8 @@ class NSWNews(StateNewsBase):
 
             hospitalized = self._extract_number_using_regex(
                 compile(
-                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*COVID-19[^0-9<.]+'
-                    r'cases?[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+NSW',
+                    r'([0-9,]+)[^0-9<>.]*(?:</strong>)?[^0-9<>.]*COVID-19[^0-9<>.]+'
+                    r'cases?[^0-9<>.]+being[^0-9<>.]+treated[^0-9<>.]+NSW',
                     IGNORECASE
                 ),
                 c_html,
@@ -520,15 +524,15 @@ class NSWNews(StateNewsBase):
             icu = self._extract_number_using_regex(
                 (
                     compile(
-                        r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                        r'(?:COVID-19[^0-9<.]+)?cases?[^0-9<.]+'
-                        r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                        r'([0-9,]+)[^0-9<>.]*(?:</strong>)?[^0-9<>.]*'
+                        r'(?:COVID-19[^0-9<>.]+)?cases?[^0-9<>.]+'
+                        r'Intensive[^0-9<>.]+Care[^0-9<>.]+Units?',
                         IGNORECASE
                     ),
                     compile(
-                        r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                        r'people[^0-9<.]+being[^0-9<.]+treated[^0-9<.]+in[^0-9<.]+'
-                        r'Intensive[^0-9<.]+Care[^0-9<.]+Units?',
+                        r'([0-9,]+)[^0-9<>.]*(?:</strong>)?[^0-9<>.]*'
+                        r'people[^0-9<>.]+being[^0-9<>.]+treated[^0-9<>.]+in[^0-9<>.]+'
+                        r'Intensive[^0-9<>.]+Care[^0-9<>.]+Units?',
                         IGNORECASE
                     )
                 ),
@@ -542,8 +546,8 @@ class NSWNews(StateNewsBase):
 
             ventilators = self._extract_number_using_regex(
                 compile(
-                    r'([0-9,]+)[^0-9<.]*(?:</strong>)?[^0-9<.]*'
-                    r'require[^0-9<.]+ventilators',
+                    r'([0-9,]+)[^0-9<>.]*(?:</strong>)?[^0-9<>.]*'
+                    r'require[^0-9<>.]+ventilators',
                     IGNORECASE
                 ),
                 c_html,
@@ -558,19 +562,19 @@ class NSWNews(StateNewsBase):
                 (
                     # Prefer from the table if possible, as that's
                     # more guaranteed to not give false positives
-                    compile(r'Deaths[^0-9<]+in[^0-9<]+NSW[^0-9<]+from[^0-9<]+'
-                            r'confirmed[^0-9<]+cases?[^0-9<]*</td>[^0-9>]*<td[^>]*>([0-9,]+)',
+                    compile(r'Deaths[^0-9<>.]+in[^0-9<>.]+NSW[^0-9<>.]+from[^0-9<>.]+'
+                            r'confirmed[^0-9<>.]+cases?[^0-9<>.]*</td>[^0-9<>.]*<td[^>]*>([0-9,]+)',
                             MULTILINE | DOTALL | IGNORECASE),
-                    compile(r'([0-9,]+)[^0-9<]+death[^0-9<]+in[^0-9<]+NSW',
+                    compile(r'([0-9,]+)[^0-9<>.]+death[^0-9<>.]+in[^0-9<>.]+NSW',
                             IGNORECASE),
                     compile(r'have been ([0-9,]+) deaths?',
                             IGNORECASE),
-                    compile(r'total[^0-9<]+deaths[^0-9<]+'
-                            r'COVID-19[^0-9<]+cases?[^0-9<]+(?:<strong>)?([0-9,]+)',
+                    compile(r'total[^0-9<>.]+deaths[^0-9<>.]+'
+                            r'COVID-19[^0-9<>.]+cases?[^0-9<>.]+(?:<strong>)?([0-9,]+)',
                             IGNORECASE),
-                    compile(r'total[^0-9<]+deaths[^0-9<]+(?:<strong>)?([0-9]+)',
+                    compile(r'total[^0-9<>.]+deaths[^0-9<>.]+(?:<strong>)?([0-9]+)',
                             IGNORECASE),
-                    compile(r'([0-9,]+)[^0-9<]+deaths[^0-9<]+in[^0-9<]+NSW',
+                    compile(r'([0-9,]+)[^0-9<>.]+deaths[^0-9<>.]+in[^0-9<>.]+NSW',
                             IGNORECASE),
                 ),
                 c_html,
