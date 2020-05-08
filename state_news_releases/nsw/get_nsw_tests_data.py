@@ -1,5 +1,9 @@
 import csv
-import datetime
+from datetime import datetime
+from urllib.request import urlretrieve
+from os import makedirs
+from os.path import dirname, exists
+
 
 from covid_19_au_grab.get_package_dir import (
     get_data_dir
@@ -30,11 +34,18 @@ def get_nsw_tests_data():
     by_lhd_posneg = {}
     by_lga_posneg = {}
 
-    # HACK - should make get most recent!
+    date = datetime.now().strftime('%Y_%m_%d')  # TODO: Make get at 8pm!!!
     path = (
-        get_data_dir() / 'nsw' / 'open_data' / '2020_04_30' /
+        get_data_dir() / 'nsw' / 'open_data' / date /
         'covid-19-tests-by-date-and-location-and-result.csv'
     )
+    if not exists(dirname(path)):
+        makedirs(dirname(path))
+    if not exists(path):
+        urlretrieve(
+            'https://data.nsw.gov.au/data/dataset/5424aa3b-550d-4637-ae50-7f458ce327f4/resource/227f6b65-025c-482c-9f22-a25cf1b8594f/download/covid-19-tests-by-date-and-location-and-result.csv',
+            path
+        )
 
     posneg_map = {
         'Tested & excluded': DT_TESTS_NEGATIVE,
@@ -44,8 +55,12 @@ def get_nsw_tests_data():
     with open(path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            # Date already in the format I use, aside from hyphens
-            date = row['test_date'].replace('-', '_')
+            if '/' in row['test_date']:
+                dd, mm, yyyy = row['test_date'].split('/')
+                date = f'{yyyy}_{mm}_{dd}'
+            else:
+                # Date already in the format I use, aside from hyphens
+                date = row['test_date'].replace('-', '_')
 
             by_postcode.setdefault(date, {}) \
                        .setdefault(row['postcode'], []) \

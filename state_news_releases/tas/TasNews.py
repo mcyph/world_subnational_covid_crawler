@@ -32,7 +32,11 @@ class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
     LISTING_URL = (
         'https://www.dhhs.tas.gov.au/news/2020',
-        'https://www.coronavirus.tas.gov.au/'
+        'https://www.coronavirus.tas.gov.au/',
+        'https://coronavirus.tas.gov.au/media-releases',
+        'https://coronavirus.tas.gov.au/media-releases?result_85500_result_page=2',
+        'https://coronavirus.tas.gov.au/media-releases?result_85500_result_page=3',
+        'https://coronavirus.tas.gov.au/media-releases?result_85500_result_page=4',
     )
     LISTING_HREF_SELECTOR = 'table.dhhs a, ' \
                             '#pills-Media_Releases .card-rows .card a'
@@ -265,7 +269,23 @@ class TasNews(StateNewsBase):
         pass
 
     def _get_total_cases_by_region(self, url, html):
-        pass
+        table = self._pq_contains(
+            html, 'table', 'Local Government Area',
+            ignore_case=True
+        )
+
+        r = []
+        if table:
+            for region, lga, num_cases in table[0][1]:
+                r.append(DataPoint(
+                    schema=SCHEMA_LGA,
+                    region=pq(lga).text().strip(),
+                    datatype=DT_TOTAL,
+                    value=int(pq(num_cases).text().replace(',', '').strip()),
+                    date_updated=self._get_date(url, html),
+                    source_url=url
+                ))
+        return r
 
     #============================================================#
     #                     Totals by Source                       #

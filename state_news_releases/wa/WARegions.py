@@ -32,8 +32,9 @@ GECKO_BROWSER_DIR = expanduser(
     '~/geckodriver-v0.26.0-linux64/'
 )
 WA_REGIONS_URL = (
-    'https://ww2.health.wa.gov.au/Articles/'
-    'A_E/Coronavirus/COVID19-statistics'
+    #'https://ww2.health.wa.gov.au/Articles/'
+    #'A_E/Coronavirus/COVID19-statistics'
+    'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
 )
 PATH_PREFIX = get_data_dir() / 'wa' / 'custom_map'
 
@@ -132,7 +133,7 @@ class _WARegions:
         # print(proxy.har, dir(proxy.har))
         for ent in proxy.har['log']['entries']:
             req = ent['request']
-            print(req['url'])
+            #print(req['url'])
 
             if req['url'].startswith(
                 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/'

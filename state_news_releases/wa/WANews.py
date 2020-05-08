@@ -378,9 +378,11 @@ class WANews(StateNewsBase):
             }
             """
 
-            #print(feature_dict)
+            print(feature_dict)
             attributes = feature_dict['attributes']
             if attributes.get('exceedslimit'):
+                continue
+            elif len(attributes) == 1:
                 continue
 
             if 'Confirmed_cases' in feature_dict:
@@ -453,6 +455,11 @@ class WANews(StateNewsBase):
 
     @singledaystat
     def _get_total_dhr(self, href, html):
+        try:
+            self._get_date(href, html)
+        except AttributeError:
+            return []   # FIXME - transition to new system!!!!! ====================================================================================================================
+
         r = []
         c_html = word_to_number(html)
 

@@ -1,4 +1,8 @@
 import csv
+from datetime import datetime
+from urllib.request import urlretrieve
+from os import makedirs
+from os.path import dirname, exists
 
 from covid_19_au_grab.get_package_dir import (
     get_data_dir
@@ -36,23 +40,36 @@ def get_nsw_cases_data():
     soi_map = {
         'Overseas': DT_SOURCE_OVERSEAS,
         'Locally acquired - contact not identified': DT_SOURCE_COMMUNITY,
+        'Locally acquired - contact not yet identified': DT_SOURCE_COMMUNITY,
         'Locally acquired - contact of a confirmed case and/or in a known cluster': DT_SOURCE_CONFIRMED,
         'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
         'Interstate': DT_SOURCE_INTERSTATE
     }
 
-    # HACK - should make get most recent!
+    date = datetime.now().strftime('%Y_%m_%d')  # TODO: Make get at 8pm!!!
     path = (
-        get_data_dir() / 'nsw' / 'open_data' / '2020_04_30' /
+        get_data_dir() / 'nsw' / 'open_data' / date /
         'covid-19-cases-by-notification-date-location-'
             'and-likely-source-of-infection.csv'
     )
+    if not exists(dirname(path)):
+        makedirs(dirname(path))
+    if not exists(path):
+        urlretrieve(
+            'https://data.nsw.gov.au/data/dataset/97ea2424-abaf-4f3e-a9f2-b5c883f42b6a/resource/2776dbb8-f807-4fb2-b1ed-184a6fc2c8aa/download/covid-19-cases-by-notification-date-location-and-likely-source-of-infection.csv', 
+            path
+        )
 
     with open(path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             # Date already in the format I use, aside from hyphens
-            date = row['notification_date'].replace('-', '_')
+            if '/' in row['notification_date']:
+                dd, mm, yyyy = row['notification_date'].split('/')
+                date = f'{yyyy}_{mm}_{dd}'
+            else:
+                # Date already in the format I use, aside from hyphens
+                date = row['notification_date'].replace('-', '_')
 
             by_postcode.setdefault(date, {}) \
                        .setdefault(row['postcode'], []) \

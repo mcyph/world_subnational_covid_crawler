@@ -124,7 +124,15 @@ class _SARegions:
                                             'captureContent': True,
                                             'captureBinaryContent': True})
         driver.get(SA_REGIONS_URL)
-        time.sleep(20)
+        time.sleep(15)
+        for i in range(5):
+            # Zoom out a few times
+            content = driver.find_element_by_css_selector(
+                '.esriSimpleSliderDecrementButton'
+            )
+            content.click()
+            time.sleep(4)
+
         proxy.wait_for_traffic_to_stop(10, 60)
 
         r = []
