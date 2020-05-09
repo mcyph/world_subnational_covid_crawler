@@ -138,10 +138,10 @@ if __name__ == '__main__':
             )
 
     if UPDATE_WA_REGIONS:
-        from covid_19_au_grab.state_news_releases.wa.WARegions import \
-            run_wa_regions
+        from covid_19_au_grab.state_news_releases.wa.WADash import \
+            run_wa_dash
         try:
-            run_wa_regions()
+            run_wa_dash()
             status['wa_regions'] = ('OK', None)
         except:
             print("Error occurred using WA regions!")

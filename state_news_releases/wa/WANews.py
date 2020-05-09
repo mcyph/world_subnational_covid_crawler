@@ -7,7 +7,6 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_LGA,
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_TESTS_TOTAL, DT_TOTAL, DT_NEW,
     DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
@@ -20,8 +19,8 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
 from covid_19_au_grab.word_to_number import (
     word_to_number
 )
-from covid_19_au_grab.URLArchiver import (
-    URLArchiver
+from covid_19_au_grab.state_news_releases.wa.WADashProcess import (
+    get_wa_dash_datapoints
 )
 
 
@@ -47,42 +46,8 @@ class WANews(StateNewsBase):
 
     def get_data(self):
         r = []
-
-        # WA-specific maps archiver
-        wa_custom_map_ua = URLArchiver(f'{self.STATE_NAME}/custom_map')
-        #wa_custom_map_ua.get_url_data(
-        #    self.WA_CUSTOM_MAP_URL,
-        #    cache=False if ALWAYS_DOWNLOAD_LISTING else True
-        #)
-
-        for period in wa_custom_map_ua.iter_periods():
-            for subperiod_id, subdir in wa_custom_map_ua.iter_paths_for_period(period):
-                if exists(
-                    f'{self.STATE_NAME}/custom_map/' +
-                    subdir.rpartition('-')[0]+f'-{subperiod_id+1}'
-                ):
-                    # Only add the most recent revision!
-                    continue
-
-                for path in glob.glob(dirname(
-                    wa_custom_map_ua.get_path(subdir)
-                )+'/*'):
-                    with open(path, 'r',
-                              encoding='utf-8',
-                              errors='ignore') as f:
-                        json_text = f.read()
-
-                    #print("JSON:", json_text)
-                    cbr = self._get_total_cases_by_region(
-                        self.WA_CUSTOM_MAP_URL,
-                        (json_text, subdir.split('-')[0])
-                    )
-                    if cbr:
-                        r.extend(cbr)
-
-        r.extend(
-            StateNewsBase.get_data(self)
-        )
+        r.extend(get_wa_dash_datapoints())
+        r.extend(StateNewsBase.get_data(self))
         return r
 
     def _get_date(self, url, html):
@@ -350,73 +315,7 @@ class WANews(StateNewsBase):
         return None
 
     def _get_total_cases_by_region(self, url, html):
-        if url != self.WA_CUSTOM_MAP_URL:
-            return None
-
-        json_text, period = html
-        from json import loads
-        data = loads(json_text)  # Not actually html
-
-        r = []
-        for feature_dict in data['features']:
-            """
-            {
-                "attributes":{
-                    "OBJECTID":145,
-                    "LGA_CODE19":"50080",
-                    "LGA_NAME19":"Albany (C)",
-                    "AREASQKM19":4310.8905,
-                    "Metro_WACHS":"WACHS",
-                    "Pop65_plus":7781,
-                    "Pop_total_18":37826,
-                    "Confirmed_cases":6,
-                    "Classification":"6 - 10",
-                    "Shape__Area":6399054898.15234,
-                    "Shape__Length":910942.011045383,
-                    "LGA_Name_Full":"City of Albany  "
-                }, ...
-            }
-            """
-
-            print(feature_dict)
-            attributes = feature_dict['attributes']
-            if attributes.get('exceedslimit'):
-                continue
-            elif len(attributes) == 1:
-                continue
-
-            if 'Confirmed_cases' in feature_dict:
-                value = attributes['Confirmed_cases']
-            else:
-                try:
-                    value = int(attributes['PopUpLabel'])
-                except (ValueError, KeyError, TypeError):
-                    cls = attributes['Classification'].strip()
-                    if cls == 'No case':
-                        continue
-                    elif ' - ' in cls:
-                        from_num, to_num = cls.split(' - ')
-                        from_num = int(from_num)
-                        to_num = int(to_num)
-                        value = (from_num+to_num)//2
-                    else:
-                        try:
-                            value = int(cls.strip('+'))
-                        except ValueError:
-                            import traceback
-                            traceback.print_exc()
-                            continue # WARNING!!! ============================================================================
-
-            num = DataPoint(
-                schema=SCHEMA_LGA,
-                datatype=DT_TOTAL,
-                region=attributes['LGA_NAME19'].split('(')[0].strip(),
-                value=value,
-                date_updated=period,
-                source_url='https://ww2.health.wa.gov.au/Articles/A_E/Coronavirus/COVID19-statistics'
-            )
-            r.append(num)
-        return r
+        pass
 
     #============================================================#
     #                     Totals by Source                       #

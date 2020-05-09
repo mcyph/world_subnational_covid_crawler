@@ -36,29 +36,27 @@ WA_REGIONS_URL = (
     #'A_E/Coronavirus/COVID19-statistics'
     'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
 )
-PATH_PREFIX = get_data_dir() / 'wa' / 'custom_map'
 
 
-class _WARegions:
-    def run_wa_regions(self):
+URL_REGIONS = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/services/confirmed_cases_by_LGA_view_layer/FeatureServer/0/query'
+URL_SOURCE_OF_INFECTION = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/services/Epidemic_curve_date_new_view_layer/FeatureServer/0/query?f=json&where=Total_Confirmed%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Date%20asc&outSR=102100&resultOffset=0&resultRecordCount=32000&resultType=standard&cacheHint=true'
+URL_OTHER_STATS = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/services/COVID19_Dashboard_Chart_ViewLayer/FeatureServer/0/query?f=json&where=new_cases%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=date%20asc&outSR=102100&resultOffset=0&resultRecordCount=32000&resultType=standard&cacheHint=true'
+URL_MF_BALANCE = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/services/Age_sex_total_COVID19_Chart_view_layer/FeatureServer/0/query?f=json&where=Age_Group%3D%27Total%27&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=50&resultType=standard&cacheHint=true'
+URL_AGE_BALANCE = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/services/Age_sex_total_COVID19_Chart_view_layer/FeatureServer/0/query?f=json&where=Age_Group%3C%3E%27Total%27&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=32000&resultType=standard&cacheHint=true'
+
+
+PATH_PREFIX = get_data_dir() / 'wa' / 'custom_dash'
+
+
+class _WADash:
+    def run_wa_dash(self):
         self.output_dir = self._get_output_json_dir()
 
         path.append(GECKO_BROWSER_DIR)
         environ["PATH"] += pathsep + GECKO_BROWSER_DIR
         system('killall browsermob-prox')
 
-        for xx, json_data in enumerate(self.__grab()):
-            if not isinstance(json_data, bytes):
-                with open(
-                    f"{self.output_dir}/json_output-{xx}.json",
-                    'w', encoding='utf-8'
-                ) as f:
-                    f.write(json.dumps(json_data, indent=2))
-            else:
-                with open(
-                    f"{self.output_dir}/bin_output-{xx}.pbf", 'wb'
-                ) as f:
-                    f.write(json_data)
+        self.__grab()
 
     def _get_output_json_dir(self):
         time_format = datetime.datetime \
@@ -126,7 +124,7 @@ class _WARegions:
                                             'captureContent': True,
                                             'captureBinaryContent': True})
         driver.get(WA_REGIONS_URL)
-        time.sleep(20)
+        time.sleep(50)
         proxy.wait_for_traffic_to_stop(10, 60)
 
         r = []
@@ -135,10 +133,20 @@ class _WARegions:
             req = ent['request']
             #print(req['url'])
 
-            if req['url'].startswith(
-                'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/'
-                'services/confirmed_cases_by_LGA_view_layer/FeatureServer/0/query'
+            for fnam_prefix, url in (
+                ('regions', URL_REGIONS),
+                ('infection_source', URL_SOURCE_OF_INFECTION),
+                ('other_stats', URL_OTHER_STATS),
+                ('mf_balance', URL_MF_BALANCE),
+                ('age_balance', URL_AGE_BALANCE)
             ):
+                if url == URL_REGIONS and req['url'].startswith(URL_REGIONS):
+                    pass
+                elif url == req['url']:
+                    pass
+                else:
+                    continue
+
                 print(ent)
                 print(ent.keys())
                 if not 'text' in ent['response']['content']:
@@ -148,21 +156,28 @@ class _WARegions:
                     base64.b64decode(ent['response']['content']['text'])
                 )
                 try:
-                    r.append(
+                    data = (
                         json.loads(data.decode('utf-8'))
                     )
                 except UnicodeDecodeError:
                     with urlopen(req['url'].replace('query?f=pbf', 'query?f=json')) as f:
-                        r.append(json.loads(f.read().decode('utf-8')))
+                        data = json.loads(f.read().decode('utf-8'))
+
+                with open(
+                    f"{self.output_dir}/{fnam_prefix}.json",
+                    'w', encoding='utf-8'
+                ) as f:
+                    f.write(json.dumps(data, indent=2))
+
 
         server.stop()
         driver.quit()
         return r
 
 
-def run_wa_regions():
-    _WARegions().run_wa_regions()
+def run_wa_dash():
+    _WADash().run_wa_dash()
 
 
 if __name__ == '__main__':
-    run_wa_regions()
+    run_wa_dash()
