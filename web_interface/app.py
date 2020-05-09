@@ -309,7 +309,10 @@ class App(object):
         for schema in (
             SCHEMA_LGA,
             SCHEMA_SA3,
-            SCHEMA_HHS
+            SCHEMA_HHS,
+            SCHEMA_LHD,
+            SCHEMA_THS,
+            SCHEMA_POSTCODE
         ):
             local_area_case_datapoints = inst.get_combined_values_by_datatype(
                 schema,
@@ -448,10 +451,19 @@ class App(object):
                                        )),
             (SCHEMA_STATEWIDE, 'wa', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
+
+                                      DT_STATUS_ACTIVE,
                                       DT_STATUS_RECOVERED,
+                                      DT_STATUS_UNKNOWN,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_ICU,
                                       DT_STATUS_HOSPITALIZED,
+
+                                      DT_SOURCE_OVERSEAS,
+                                      DT_SOURCE_COMMUNITY,
+                                      DT_SOURCE_CONFIRMED,
+                                      DT_SOURCE_INTERSTATE,
+                                      DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
 
             (SCHEMA_LGA, 'nsw', (DT_TOTAL,
@@ -501,6 +513,7 @@ class App(object):
             # LHD is used for Active/Recovered values
             # It's also available by postcode on the NSW gov's site
             (SCHEMA_LHD, 'nsw', (DT_STATUS_ACTIVE,
+                                 DT_STATUS_DEATHS,
                                  DT_STATUS_RECOVERED)),
             (SCHEMA_THS, 'tas', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
