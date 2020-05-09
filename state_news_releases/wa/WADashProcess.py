@@ -13,7 +13,10 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_TESTS_TOTAL, DT_TOTAL, DT_NEW,
     DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
     DT_STATUS_HOSPITALIZED,
-    DT_STATUS_ACTIVE
+    DT_STATUS_ACTIVE,
+    DT_SOURCE_COMMUNITY, DT_SOURCE_INTERSTATE,
+    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
+    DT_SOURCE_CRUISE_SHIP, DT_SOURCE_UNDER_INVESTIGATION
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -162,42 +165,42 @@ class WARegionsProcess:
             ))
             # WARNING: Cruise ships isn't included in overseas here!
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DT_SOURCE_OVERSEAS,
                 value=attribute['Oversea_Travel']+
                       attribute['Cruise_Ships'],
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DT_SOURCE_CRUISE_SHIP,
                 value=attribute['Cruise_Ships'],
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DT_SOURCE_CONFIRMED,
                 value=attribute['Close_Contact'],
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DT_SOURCE_COMMUNITY,
                 value=attribute['Unknown'],
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DT_SOURCE_INTERSTATE,
                 value=attribute['Interstate'],
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
-            #r.append(DataPoint(
-            #    datatype=DT_TOTAL,
-            #    value=attribute['Pending'],
-            #    date_updated=dt,
-            #    source_url=SOURCE_URL
-            #))
+            r.append(DataPoint(
+                datatype=DT_SOURCE_UNDER_INVESTIGATION,
+                value=attribute['Pending'],
+                date_updated=dt,
+                source_url=SOURCE_URL
+            ))
             r.append(DataPoint(
                 datatype=DT_TESTS_TOTAL,
                 value=attribute['Total_Confirmed']+
@@ -212,7 +215,7 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             dt = self.__get_date(attribute['date'])
-            
+
             r.append(DataPoint(
                 datatype=DT_NEW,
                 value=attribute['new_cases'],

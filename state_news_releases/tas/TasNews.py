@@ -311,7 +311,6 @@ class TasNews(StateNewsBase):
 
         cases_map = {
             'New cases in past 24 hours': DT_NEW,
-            'New cases in past 24 hours (as at 9pm last night)': DT_NEW,
             'Total cases': DT_TOTAL,
             'Active': DT_STATUS_ACTIVE,
             'Recovered': DT_STATUS_RECOVERED,
@@ -324,7 +323,7 @@ class TasNews(StateNewsBase):
         )[0]
 
         for heading, value in cases_table[1]:
-            heading = pq(heading).text().replace('*', '').strip()
+            heading = pq(heading).text().replace('*', '').strip().split('(')[0].strip()
             value = pq(value).text().replace('*', '').replace(',', '').strip()
 
             datatype = cases_map[heading]

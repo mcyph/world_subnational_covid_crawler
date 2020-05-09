@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.request import urlretrieve
 from os import makedirs
 from os.path import dirname, exists
@@ -34,7 +34,8 @@ def get_nsw_tests_data():
     by_lhd_posneg = {}
     by_lga_posneg = {}
 
-    date = datetime.now().strftime('%Y_%m_%d')  # TODO: Make get at 8pm!!!
+    # Make dates from 8:30pm!
+    date = (datetime.now() - timedelta(hours=20, minutes=30)).strftime('%Y_%m_%d')
     path = (
         get_data_dir() / 'nsw' / 'open_data' / date /
         'covid-19-tests-by-date-and-location-and-result.csv'
