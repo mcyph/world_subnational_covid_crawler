@@ -417,6 +417,7 @@ class NSWNews(StateNewsBase):
 
             recovered_map = {
                 'Recovered': DT_STATUS_RECOVERED,
+                'Lives lost': DT_STATUS_DEATHS,
                 'Total cases': DT_TOTAL
             }
 
@@ -424,7 +425,12 @@ class NSWNews(StateNewsBase):
                 i for i in self._pq_contains(
                     html, 'table', 'Local health district​', ignore_case=True
                 ) if 'recovered' in pq(i).html().lower()
+            ] + [
+                i for i in self._pq_contains(
+                    html, 'table', 'LHD', ignore_case=True
+                ) if 'recovered' in pq(i).html().lower()
             ]
+
             #print("**RECOVERED TABLE:", table_recovered.html())
             if table_recovered:
                 table_recovered = table_recovered[0] # table

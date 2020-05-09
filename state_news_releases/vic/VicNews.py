@@ -2,14 +2,15 @@ from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase
+    StateNewsBase, bothlistingandstat
 )
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA,
     DT_NEW, DT_TOTAL, DT_TESTS_TOTAL,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
+    DT_STATUS_ACTIVE
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
@@ -35,6 +36,9 @@ class VicNews(StateNewsBase):
         '.field.field--name-field-dhhs-rich-text-text'
             '.field--type-text-long.field--label-hidden.field--item a , '
         '.field--name-field-more-updates .field--item a'
+    )
+    STATS_BY_REGION_URL = (
+        'https://www.dhhs.vic.gov.au/coronavirus-covid-19-daily-update'
     )
 
     def get_data(self):
@@ -93,6 +97,7 @@ class VicNews(StateNewsBase):
     #                      General Totals                        #
     #============================================================#
 
+    @bothlistingandstat
     def _get_total_new_cases(self, href, html):
         c_html = word_to_number(html)
 
@@ -120,6 +125,7 @@ class VicNews(StateNewsBase):
             date_updated=self._get_date(href, html)
         )
 
+    @bothlistingandstat
     def _get_total_cases(self, href, html):
         vic_total_cases = self._extract_number_using_regex(
             compile(
@@ -134,6 +140,7 @@ class VicNews(StateNewsBase):
         )
         return vic_total_cases
 
+    @bothlistingandstat
     def _get_total_cases_tested(self, href, html):
         # Victoria's seems to follow a formula (for now), so will hardcode
         print("TT DATE UPDATE:", self._get_date(href, html))
@@ -141,7 +148,8 @@ class VicNews(StateNewsBase):
             compile(
                 r'([0-9,]+) (?:Victorians have been tested|'
                 r'tests have been conducted|'
-                r'tests have been completed)',
+                r'tests have been completed|'
+                r'tests have been performed)',
                 IGNORECASE
             ),
             html,
@@ -180,6 +188,7 @@ class VicNews(StateNewsBase):
     def _get_new_male_female_breakdown(self, url, html):
         pass
 
+    @bothlistingandstat
     def _get_total_male_female_breakdown(self, url, html):
         men = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) men'),
@@ -302,6 +311,7 @@ class VicNews(StateNewsBase):
     #               Deaths/Hospitalized/Recovered                #
     #============================================================#
 
+    @bothlistingandstat
     def _get_total_dhr(self, href, html):
         """
         "Currently 26 people are in hospital, including four
@@ -341,7 +351,7 @@ class VicNews(StateNewsBase):
             r.append(in_hospital)
 
         in_icu = self._extract_number_using_regex(
-            compile('([0-9,]+) patients? in intensive care'),
+            compile('([0-9,]+) (?:patients?|person|people) in intensive care'),
             c_html,
             datatype=DT_STATUS_ICU,
             source_url=href,
@@ -349,6 +359,16 @@ class VicNews(StateNewsBase):
         )
         if in_icu:
             r.append(in_icu)
+
+        active = self._extract_number_using_regex(
+            compile('([0-9,]+) active cases'),
+            c_html,
+            datatype=DT_STATUS_ACTIVE,
+            source_url=href,
+            date_updated=self._get_date(href, html)
+        )
+        if active:
+            r.append(active)
 
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people have recovered'),
