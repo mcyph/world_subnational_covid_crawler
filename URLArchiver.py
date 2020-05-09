@@ -35,7 +35,8 @@ class URLArchiver:
         path = dir_ / fnam
         return path
 
-    def get_url_data(self, url, period=None, cache=True):
+    def get_url_data(self, url, period=None, cache=True,
+                     unicode_fix=True):
         """
         Download data from `url`, optionally
 
@@ -54,6 +55,16 @@ class URLArchiver:
                       when `True` and `period` is a string,
                           FIXME
         """
+        def _unicode_fix(s):
+            if unicode_fix:
+                # Replace no-break spaces with spaces
+                s = s.replace('&nbsp;', ' ')
+                # Replace zero-width spaces with nothing
+                s = s.replace('&#8203;', '')
+                s = s.replace('\u200B', '')
+                return s
+            else:
+                return s
 
         # I'm using YYYY_MM_DD-ID here, so
         #   that it binary sorts in
@@ -82,7 +93,7 @@ class URLArchiver:
                     with open(check_path, 'r',
                               encoding='utf-8',
                               errors='replace') as f:
-                        return f.read()
+                        return _unicode_fix(f.read())
                 elif exists(check_path):
                     # If cache is disabled, overwrite regardless!
                     found_path = check_path
@@ -109,7 +120,7 @@ class URLArchiver:
                       encoding='utf-8',
                       errors='replace') as f:
                 f.write(data)
-            return data
+            return _unicode_fix(data)
 
         else:
             subperiod_id = self._get_subperiod_id_for_url(period, url)
@@ -134,7 +145,7 @@ class URLArchiver:
             with open(f'{dir_}/{fnam}', 'r',
                       encoding='utf-8',
                       errors='replace') as f:
-                return f.read()
+                return _unicode_fix(f.read())
 
     def iter_periods(self, newest_first=True):
         """
