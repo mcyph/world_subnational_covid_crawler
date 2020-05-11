@@ -16,7 +16,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_NEW, DT_TESTS_TOTAL,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_STATUS_ICU,
+    DT_STATUS_ICU, DT_STATUS_HOSPITALIZED,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_OVERSEAS,
     DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED
@@ -29,6 +29,9 @@ from covid_19_au_grab.word_to_number import (
 )
 from covid_19_au_grab.get_package_dir import (
     get_package_dir, get_data_dir
+)
+from covid_19_au_grab.URLArchiver import (
+    URLArchiver
 )
 
 
@@ -97,38 +100,126 @@ class SANews(StateNewsBase):
 
     def get_data(self):
         r = []
-        if False:
-            # Data using PDFs: not very accurate!
-            for fnam in listdir(OUTPUT_DIR):
-                date = fnam.split('.')[0]
 
-                with open(f'{OUTPUT_DIR}/{fnam}', 'r', encoding='utf-8') as f:
+        SA_DASH_JSON_URL = 'https://www.covid-19.sa.gov.au/__data/assets/' \
+                      'file/0004/145849/covid_19_daily.json'
+        SA_DASH_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/' \
+                      'public+content/sa+health+internet/conditions/' \
+                      'infectious+diseases/covid+2019/covid-19+dashboard'
+        ua = URLArchiver(f'sa/dashboard')
+        ua.get_url_data(SA_DASH_JSON_URL, cache=False)
+
+        for period in ua.iter_periods():
+            for subperiod_id, subdir in ua.iter_paths_for_period(period):
+                path = ua.get_path(subdir)
+                with open(path, 'r', encoding='utf-8') as f:
                     data = json.loads(f.read())
-
-                for region, datatype, value in data:
-                    r.append(DataPoint(
-                        schema=SCHEMA_LGA,
-                        datatype=getattr(constants, datatype),
-                        region=region,
-                        value=value,
-                        date_updated=date,
-                        source_url='https://www.sahealth.sa.gov.au/wps/wcm/connect/'
-                                   'public+content/sa+health+internet/health+topics/'
-                                   'health+topics+a+-+z/covid+2019/latest+updates/'
-                                   'confirmed+and+suspected+cases+of+covid-19+in+south+australia',
-                        text_match=None,
+                r.extend(self._get_from_json(SA_DASH_URL, data))
+        
+        for sub_dir in listdir(SA_MAP_DIR):
+            # OPEN ISSUE: only add the most recent?? ==========================================================================
+            joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
+            for fnam in listdir(joined_dir):
+                with open(f'{joined_dir}/{fnam}', 'r', encoding='utf-8') as f:
+                    r.extend(self._get_total_cases_by_region(
+                        self.SA_CUSTOM_MAP_URL, f.read()
                     ))
-        else:
-            for sub_dir in listdir(SA_MAP_DIR):
-                # OPEN ISSUE: only add the most recent?? ==========================================================================
-                joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
-                for fnam in listdir(joined_dir):
-                    with open(f'{joined_dir}/{fnam}', 'r', encoding='utf-8') as f:
-                        r.extend(self._get_total_cases_by_region(
-                            self.SA_CUSTOM_MAP_URL, f.read()
-                        ))
 
         r.extend(StateNewsBase.get_data(self))
+        return r
+
+    def _get_from_json(self, url, data):
+        # Additional time series data is also available:
+        # 'laboratory_char'
+        # 'newcase_sa_char'
+        # travellers/expiations/compliance not currently used
+
+        def parse_date(s):
+            return datetime.datetime.strptime(
+                ' '.join(s.split()[-3:]), '%d %B %Y'
+            ).strftime('%Y_%m_%d')
+
+        r = []
+        base_data_date = parse_date(data['hp_date'])
+
+        r.append(DataPoint(
+            datatype=DT_NEW,
+            value=int(data['newcase_sa']),
+            date_updated=base_data_date,
+            source_url=url
+        ))
+        r.append(DataPoint(
+            datatype=DT_TOTAL,
+            value=int(data['todaycase_sa']),
+            date_updated=base_data_date,
+            source_url=url
+        ))
+        r.append(DataPoint(
+            datatype=DT_STATUS_ICU,
+            value=int(data['icu_sa']),
+            date_updated=base_data_date,
+            source_url=url
+        ))
+        r.append(DataPoint(
+            datatype=DT_STATUS_DEATHS,
+            value=int(data['deaths_sa']),
+            date_updated=base_data_date,
+            source_url=url
+        ))
+        r.append(DataPoint(
+            datatype=DT_STATUS_RECOVERED,
+            value=int(data['recovered_sa']),
+            date_updated=base_data_date,
+            source_url=url
+        ))
+
+        for agerange, value in zip(
+            data['age_char']['field_order'],
+            data['age_char']['data']
+        ):
+            agerange = agerange.replace(' - ', '-')
+            r.append(DataPoint(
+                datatype=DT_TOTAL,
+                agerange=agerange,
+                value=int(data['recovered_sa']),
+                date_updated=parse_date(data['age_char']['datetime']),
+                source_url=url
+            ))
+
+        for gender, value in zip(
+            data['gender_char']['field_order'],
+            data['gender_char']['data']
+        ):
+            datatype = {
+                'male': DT_TOTAL_MALE,
+                'female': DT_TOTAL_FEMALE
+            }[gender.lower()]
+
+            r.append(DataPoint(
+                datatype=datatype,
+                value=int(value),
+                date_updated=parse_date(data['gender_char']['datetime']),
+                source_url=url
+            ))
+
+        for source, value in zip(
+            data['infection_char']['field_order'],
+            data['infection_char']['data']
+        ):
+            datatype = {
+                'overseas acquired': DT_SOURCE_OVERSEAS,
+                'contact confirmed': DT_SOURCE_CONFIRMED,
+                'interstate travel': DT_SOURCE_INTERSTATE,
+                'under investigation': DT_SOURCE_UNDER_INVESTIGATION,
+                'locally acquired': DT_SOURCE_COMMUNITY
+            }[source.lower()]
+
+            r.append(DataPoint(
+                datatype=datatype,
+                value=int(value),
+                date_updated=parse_date(data['infection_char']['datetime']),
+                source_url=url
+            ))
         return r
 
     #============================================================#
@@ -157,7 +248,11 @@ class SANews(StateNewsBase):
         if href == self.STATS_BY_REGION_URL:
             print(href, html)
             tr = self._pq_contains(html, 'tr', 'Confirmed cases',
-                                   ignore_case=True)[0]
+                                   ignore_case=True)
+            if not tr:
+                return None
+            tr = tr[0]
+
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
@@ -172,7 +267,10 @@ class SANews(StateNewsBase):
             c_html = word_to_number(html)
 
             return self._extract_number_using_regex(
-                compile('total of ([0-9,]+) (?:confirmed|cases)'),
+                (
+                    compile('total of ([0-9,]+) (?:confirmed|cases)'),
+                    compile('total number of cases notified in SA remains at ([0-9,]+)')
+                ),
                 c_html,
                 datatype=DT_TOTAL,
                 source_url=href,
@@ -434,51 +532,97 @@ class SANews(StateNewsBase):
     #               Deaths/Hospitalized/Recovered                #
     #============================================================#
 
-    @singledaystat
+    @bothlistingandstat
     def _get_total_dhr(self, href, html):
         # TODO: Also support updates!
         # e.g. https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/covid-19+update+15+april+2020
 
-        r = []
-        print(href)
-        tr = self._pq_contains(html, 'tr', 'Cases in ICU',
-                               ignore_case=True)[0]
-        c_icu = int(pq(tr[1]).text().strip())
-        print(c_icu)
-
-        if c_icu is not None:
-            r.append(DataPoint(
-                datatype=DT_STATUS_ICU,
-                value=c_icu,
-                date_updated=self._get_date(href, html),
-                source_url=href
-            ))
-
-        tr = self._pq_contains(html, 'tr', 'Total deaths reported',
-                               ignore_case=True)[0]
-        t_d = int(pq(tr[1]).text().strip())
-        if t_d is not None:
-            r.append(DataPoint(
-                datatype=DT_STATUS_DEATHS,
-                value=t_d,
-                date_updated=self._get_date(href, html),
-                source_url=href
-            ))
-
-        tr = self._pq_contains(html, 'tr', 'Cases cleared of COVID-19',
-                               ignore_case=True)
-        if tr:
+        if href == self.STATS_BY_REGION_URL:
+            r = []
+            print(href)
+            tr = self._pq_contains(html, 'tr', 'Cases in ICU',
+                                   ignore_case=True)
+            if not tr:
+                return []
             tr = tr[0]
-            t_d = int(pq(tr[1]).text().strip())
 
+            c_icu = int(pq(tr[1]).text().strip())
+            print(c_icu)
+
+            if c_icu is not None:
+                r.append(DataPoint(
+                    datatype=DT_STATUS_ICU,
+                    value=c_icu,
+                    date_updated=self._get_date(href, html),
+                    source_url=href
+                ))
+
+            tr = self._pq_contains(html, 'tr', 'Total deaths reported',
+                                   ignore_case=True)[0]
+            t_d = int(pq(tr[1]).text().strip())
             if t_d is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DT_STATUS_DEATHS,
                     value=t_d,
                     date_updated=self._get_date(href, html),
                     source_url=href
                 ))
-        return r
+
+            tr = self._pq_contains(html, 'tr', 'Cases cleared of COVID-19',
+                                   ignore_case=True)
+            if tr:
+                tr = tr[0]
+                t_d = int(pq(tr[1]).text().strip())
+
+                if t_d is not None:
+                    r.append(DataPoint(
+                        datatype=DT_STATUS_RECOVERED,
+                        value=t_d,
+                        date_updated=self._get_date(href, html),
+                        source_url=href
+                    ))
+            return r
+        else:
+            r = []
+            c_html = word_to_number(html)
+
+            active = self._extract_number_using_regex(
+                compile('([0-9,]+) active cases? in SA'),
+                c_html, href,
+                datatype=DT_STATUS_ACTIVE,
+                date_updated=self._get_date(href, html)
+            )
+            if active:
+                r.append(active)
+
+            recovered = self._extract_number_using_regex(
+                compile('([0-9,]+) people have been cleared'),
+                c_html, href,
+                datatype=DT_STATUS_RECOVERED,
+                date_updated=self._get_date(href, html)
+            )
+            if recovered:
+                r.append(recovered)
+
+            deaths = self._extract_number_using_regex(
+                compile('([0-9,]+) reported deaths'),
+                c_html, href,
+                datatype=DT_STATUS_DEATHS,
+                date_updated=self._get_date(href, html)
+            )
+            if deaths:
+                r.append(deaths)
+
+            hospital = self._extract_number_using_regex(
+                compile('([0-9,]+) (?:person|people) remains in hospital'),
+                c_html, href,
+                datatype=DT_STATUS_HOSPITALIZED,
+                date_updated=self._get_date(href, html)
+            )
+            if hospital:
+                r.append(hospital)
+
+            return r
 
 
 if __name__ == '__main__':
