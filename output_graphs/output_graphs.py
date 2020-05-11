@@ -17,8 +17,10 @@ GRAPH_OUTPUT_DIR = (
 )
 
 
-def read_csv(datatype,
-             name_filter=None,
+def read_csv(schema,
+             datatype,
+             agerange_filter=None,
+             region_filter=None,
              value_filter=None,
              state_filter=None):
 
@@ -47,19 +49,31 @@ def read_csv(datatype,
 
         for row in reader:
             print(row)
+            if schema != row['schema']:
+                continue
             if row['datatype'] != datatype:
                 continue
             if state_filter and row['state_name'] not in state_filter:
                 continue
             if value_filter and not value_filter(row['value']):
                 continue
-            if name_filter and not name_filter(row['name']):
+
+            if agerange_filter and not agerange_filter(row['agerange']):
+                print("IGNORE:", row)
+                continue
+            elif not agerange_filter and row['agerange']:
+                # Only include by agerange if explicit!!
+                continue
+
+            if region_filter and not region_filter(row['region']):
                 print("IGNORE:", row)
                 continue
 
             key = row['state_name']
-            if row['name'] != 'None':
-                key = f'{key} {row["name"]}'
+            if row['region']:
+                key = f'{key} {row["region"]}'
+            if row['agerange']:
+                key = f'{key} {row["agerange"]}'
 
             r.setdefault(key, []).append((
                 datetime.datetime.strptime(
@@ -100,7 +114,9 @@ MARKERS = [
 
 
 def output_graph(datatype,
-                 name_filter=None,
+                 schema='statewide',
+                 agerange_filter=None,
+                 region_filter=None,
                  value_filter=None,
                  state_filter=None,
                  append_to_name=None):
@@ -112,7 +128,7 @@ def output_graph(datatype,
     max_y = 0
 
     for x, (k, v) in enumerate(read_csv(
-        datatype, name_filter, value_filter, state_filter
+        schema, datatype, agerange_filter, region_filter, value_filter, state_filter
     ).items()):
         print(k)
         X = np.array([i[0] for i in v])
@@ -152,7 +168,7 @@ def output_graph(datatype,
     plt.xlabel('Date')
     plt.ylabel(y_label)
 
-    if max_y > 50 and datatype != 'DT_NEW_CASES':
+    if max_y > 50 and datatype != 'new' and False:
         plt.yscale('log')
         for axis in [ax.yaxis]:
             axis.set_major_formatter(ScalarFormatter())
@@ -169,93 +185,108 @@ def output_graph(datatype,
 
 def output_graphs():
     # Output basic numbers
-    output_graph('DT_CASES')
-    output_graph('DT_NEW_CASES')
-    output_graph('DT_CASES_TESTED')
+    output_graph('total', 'statewide')
+    output_graph('new', 'statewide')
+    output_graph('tests_total', 'statewide')
 
     # Output age distribution graphs
-    output_graph('DT_AGE_MALE', state_filter='vic')
-    output_graph('DT_AGE_FEMALE', state_filter='vic')
-    output_graph('DT_AGE_MALE', state_filter='nsw')
-    output_graph('DT_AGE_FEMALE', state_filter='nsw')
-    output_graph('DT_AGE_MALE', state_filter='sa')
-    output_graph('DT_AGE_FEMALE', state_filter='sa')
-    output_graph('DT_AGE', state_filter='act')
-    output_graph('DT_AGE_MALE', state_filter='qld')
-    output_graph('DT_AGE_FEMALE', state_filter='qld')
-    output_graph('DT_AGE', state_filter='qld')
+    output_graph('total_male', state_filter='vic')
+    output_graph('total_female', state_filter='vic')
+    output_graph('total_male', state_filter='nsw')
+    output_graph('total_female', state_filter='nsw')
+    output_graph('total_male', state_filter='sa')
+    output_graph('total_female', state_filter='sa')
+    output_graph('total', state_filter='act')
+    output_graph('total_male', state_filter='qld')
+    output_graph('total_female', state_filter='qld')
+    output_graph('total', state_filter='qld')
 
     # Output "by region" graphs
-    output_graph('DT_CASES_BY_REGION', state_filter='vic',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('total', 'lga',
+                 state_filter='vic',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_REGION', state_filter='vic',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('total', 'lga',
+                 state_filter='vic',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
-                 name_filter=lambda p: p[0].lower() < 'f',
+    output_graph('total', 'lga',
+                 state_filter='nsw',
+                 region_filter=lambda p: p[0].lower() < 'f',
                  append_to_name='a-e')
-    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
-                 name_filter=lambda p: 'f' <= p[0].lower() < 'p',
+    output_graph('total', 'lga',
+                 state_filter='nsw',
+                 region_filter=lambda p: 'f' <= p[0].lower() < 'p',
                  append_to_name='f-o')
-    output_graph('DT_CASES_BY_REGION', state_filter='nsw',
-                 name_filter=lambda p: p[0].lower() >= 'p',
+    output_graph('total', 'lga',
+                 state_filter='nsw',
+                 region_filter=lambda p: p[0].lower() >= 'p',
                  append_to_name='p-z')
-    output_graph('DT_CASES_BY_REGION', state_filter='wa',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('total', 'lga',
+                 state_filter='wa',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_REGION', state_filter='wa',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('total', 'lga',
+                 state_filter='wa',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_REGION', state_filter='sa',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('total', 'lga',
+                 state_filter='sa',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_REGION', state_filter='sa',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('total', 'lga',
+                 state_filter='sa',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='sa',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('status_active', 'lga',
+                 state_filter='sa',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='sa',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('status_active', 'lga',
+                 state_filter='sa',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_LGA', state_filter='qld',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('total', 'lga',
+                 state_filter='qld',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_LGA', state_filter='qld',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('total', 'lga',
+                 state_filter='qld',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_OVERSEAS_ACQUIRED', state_filter='qld',
-                 name_filter=lambda p: p[0].lower() < 'm',
+    output_graph('source_overseas', 'lga',
+                 state_filter='qld',
+                 region_filter=lambda p: p[0].lower() < 'm',
                  append_to_name='a-l')
-    output_graph('DT_CASES_BY_OVERSEAS_ACQUIRED', state_filter='qld',
-                 name_filter=lambda p: p[0].lower() >= 'm',
+    output_graph('source_overseas', 'lga',
+                 state_filter='qld',
+                 region_filter=lambda p: p[0].lower() >= 'm',
                  append_to_name='m-z')
-    output_graph('DT_CASES_BY_LHA', state_filter='nsw')  # LGA??
-    output_graph('DT_CASES_BY_REGION', state_filter='qld')
-    output_graph('DT_CASES_BY_REGION_ACTIVE', state_filter='qld')
-    output_graph('DT_CASES_BY_REGION_DEATHS', state_filter='qld')
-    output_graph('DT_CASES_BY_REGION_RECOVERED', state_filter='qld')
-    output_graph('DT_NEW_CASES_BY_REGION', state_filter='qld')
-    output_graph('DT_NEW_CASES_BY_REGION', state_filter='wa')
+    output_graph('total', 'lha', state_filter='nsw')  # LGA??
+    output_graph('total', 'hhs', state_filter='qld')
+    output_graph('status_active', 'hhs', state_filter='qld')
+    output_graph('status_deaths', 'hhs', state_filter='qld')
+    output_graph('status_recovered', 'hhs', state_filter='qld')
+    output_graph('new', 'hhs', state_filter='qld')
+    output_graph('new', 'lga', state_filter='wa')
 
-    # Add source of infection
-    output_graph('DT_SOURCE_OF_INFECTION')
-    output_graph('DT_SOURCE_OF_INFECTION', state_filter='sa')
-    output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
-    output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
-    output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
-    output_graph('DT_SOURCE_OF_INFECTION', state_filter='qld')
+    # TODO: Add source of infection
+    #output_graph('DT_SOURCE_OF_INFECTION')
+    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='sa')
+    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
+    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
+    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
+    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='qld')
 
-    # Add patient status
-    output_graph('DT_PATIENT_STATUS', state_filter='sa')
-    output_graph('DT_PATIENT_STATUS', state_filter='vic')
-    output_graph('DT_PATIENT_STATUS', state_filter='act')
-    output_graph('DT_PATIENT_STATUS', state_filter='nsw')
-    output_graph('DT_PATIENT_STATUS', state_filter='wa')
-    output_graph('DT_PATIENT_STATUS', state_filter='qld')
+    # TODO: Add patient status
+    #output_graph('DT_PATIENT_STATUS', state_filter='sa')
+    #output_graph('DT_PATIENT_STATUS', state_filter='vic')
+    #output_graph('DT_PATIENT_STATUS', state_filter='act')
+    #output_graph('DT_PATIENT_STATUS', state_filter='nsw')
+    #output_graph('DT_PATIENT_STATUS', state_filter='wa')
+    #output_graph('DT_PATIENT_STATUS', state_filter='qld')
 
 
 if __name__ == '__main__':
     output_graphs()
-    #output_graph('DT_CASES_BY_REGION', state_filter='qld', name_filter=lambda x: x == 'Darling Downs', append_to_name='TEST')
+    #output_graph('total', state_filter='qld', region_filter=lambda x: x == 'Darling Downs', append_to_name='TEST')
