@@ -144,6 +144,11 @@ class VicNews(StateNewsBase):
     def _get_total_cases_tested(self, href, html):
         # Victoria's seems to follow a formula (for now), so will hardcode
         print("TT DATE UPDATE:", self._get_date(href, html))
+
+        if 'have been completed with many more samples still being ' \
+           'processed as part of Victoria’s testing blitz' in html:
+            return None
+
         vic_test = self._extract_number_using_regex(
             compile(
                 r'([0-9,]+) (?:Victorians have been tested|'
