@@ -130,7 +130,9 @@ class StateNewsBase(ABC):
                     path = self.current_status_ua.get_path(subdir)
 
                     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                        html = f.read()
+                        html = self.current_status_ua.unicode_fix(
+                            f.read()
+                        )
                         self._add_to_output(
                             self.STATS_BY_REGION_URL, html, output
                         )
@@ -271,7 +273,10 @@ class StateNewsBase(ABC):
                 with open(self.listing_ua.get_path(dir_), 'r',
                           encoding='utf-8',
                           errors='replace') as f:
-                    listing_html = f.read()
+
+                    listing_html = self.listing_ua.unicode_fix(
+                        f.read()
+                    )
                     for i in self.__get_listing_urls(
                         url, selector, listing_html, tried_urls_set
                     ):

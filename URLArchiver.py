@@ -57,12 +57,7 @@ class URLArchiver:
         """
         def _unicode_fix(s):
             if unicode_fix:
-                # Replace no-break spaces with spaces
-                s = s.replace('&nbsp;', ' ')
-                # Replace zero-width spaces with nothing
-                s = s.replace('&#8203;', '')
-                s = s.replace('\u200B', '')
-                return s
+                return self.unicode_fix(s)
             else:
                 return s
 
@@ -146,6 +141,15 @@ class URLArchiver:
                       encoding='utf-8',
                       errors='replace') as f:
                 return _unicode_fix(f.read())
+
+    def unicode_fix(self, s):
+        # Replace no-break spaces with spaces
+        s = s.replace('&nbsp;', ' ')
+        # Replace zero-width spaces with nothing
+        s = s.replace('&#8203;', '')
+        s = s.replace('\u200B', '')
+        s = re.sub(r'\s+', ' ', s, re.DOTALL)
+        return s
 
     def iter_periods(self, newest_first=True):
         """
