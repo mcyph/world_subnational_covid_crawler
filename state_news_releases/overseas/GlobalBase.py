@@ -1,3 +1,5 @@
+from os import listdir, makedirs
+from os.path import exists
 import datetime
 from pathlib import Path
 from abc import ABC, abstractmethod
@@ -14,6 +16,7 @@ _DEFAULT_DATE_FORMATS = (
     '%d %b %Y',
     '%d %B, %Y',
     '%d %b, %Y',
+    '%d-%b-%y',
 )
 
 
@@ -39,7 +42,8 @@ class GlobalBase(ABC):
 
         for format in formats:
             try:
-                return datetime.datetime.strptime(date, format)
+                return datetime.datetime.strptime(date, format) \
+                    .strftime('%Y_%m_%d')
             except:
                 pass
         raise
@@ -49,10 +53,19 @@ class GlobalBase(ABC):
     #=============================================================#
 
     def get_current_revision_dir(self, include_subid=False):
-        pass
+        if include_subid:
+            raise NotImplementedError  # MAKE SURE to pad when implementing to allow binary sort!!
+        else:
+            return self.output_dir / sorted(listdir(self.output_dir))[-1]
 
     def get_latest_revision_dir(self, include_subid=False):
-        pass
+        if include_subid:
+            raise NotImplementedError
+        else:
+            new_dir = self.output_dir / datetime.datetime.now().strftime('%Y_%m_%d')
+            if not exists(new_dir):
+                makedirs(new_dir)
+            return new_dir
 
     def get_path_in_dir(self, path):
         return self.output_dir / path

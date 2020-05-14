@@ -1,0 +1,20 @@
+JHU Data (by province):
+* State info: Aus
+* Province info: Canada
+* Canada: Northwest Territories, Yukon
+* Province info: China
+
+JHU Data (listed by JHU under province/state but should probably be treated separately)
+* Denmark: Faroe Islands/Greenland
+* France: French Guiana, French Polynesia, Guadeloupe, Mayotte, New Caledonia, Reunion, Saint Barthelemy, St Martin, Martinique, Saint Pierre and Miquelon
+* Netherlands: Aruba, Curacao, Sint Maarten
+* UK: Bermuda, Cayman Islands, Channel Islands, Gibraltar, Isle of Man, Montserrat, Anguilla, British Virgin Islands, Turks and Caicos Islands, Falkland Islands (Malvinas)
+* Netherlands: [Bonaire, Sint Eustatius and Saba]
+* IGNORED: Canada/Diamond Princess; Canada/Recovered
+
+* Japan data by province: https://github.com/kaz-ogiwara/covid19
+* Thailand by province: https://data.go.th/en/dataset/covid-19-daily
+* Singapore by national level only - data mainly supported for extra info like source of infection: https://github.com/alphamodel/COVID-19-SG/
+* Malaysia by district (or by state for Perlis, Putrajaya and WP Labuan): https://github.com/ynshung/covid-19-malaysia
+* India by district: https://www.covid19india.org/ using maps from https://github.com/covid19india/covid19india-react/tree/master/public/maps
+* Philippines by province: https://github.com/hyubs/ncovph and https://drive.google.com/drive/folders/10VkiUA8x7TS2jkibhSZK1gmWxFM-EoZP
