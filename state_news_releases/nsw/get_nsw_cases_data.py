@@ -41,6 +41,7 @@ def get_nsw_cases_data():
         'Overseas': DT_SOURCE_OVERSEAS,
         'Locally acquired - contact not identified': DT_SOURCE_COMMUNITY,
         'Locally acquired - contact not yet identified': DT_SOURCE_COMMUNITY,
+        'Locally acquired - source not identified': DT_SOURCE_COMMUNITY,
         'Locally acquired - contact of a confirmed case and/or in a known cluster': DT_SOURCE_CONFIRMED,
         'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
         'Interstate': DT_SOURCE_INTERSTATE

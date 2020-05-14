@@ -152,9 +152,15 @@ class TasNews(StateNewsBase):
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
-            compile(
-                'confirmed ([0-9,]+)[^0-9.]* cases? of coronavirus',
-                IGNORECASE
+            (
+                compile(
+                    'confirmed ([0-9,]+)[^0-9.]* cases? of coronavirus',
+                    IGNORECASE
+                ),
+                compile(
+                    '([0-9,]+) new cases of (?:coronavirus|COVID-19) confirmed',
+                    IGNORECASE
+                )
             ),
             c_html,
             datatype=DT_NEW,

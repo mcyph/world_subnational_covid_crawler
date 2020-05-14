@@ -102,8 +102,6 @@ class NSWNews(StateNewsBase):
 
     @bothlistingandstat
     def _get_total_new_cases(self, href, html):
-        # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
-
         c_html = word_to_number(html)
 
         return self._extract_number_using_regex(
@@ -124,83 +122,82 @@ class NSWNews(StateNewsBase):
     
     @bothlistingandstat
     def _get_total_cases(self, href, html):
-        # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
-        if href == self.STATS_BY_REGION_URL:
-            return self._extract_number_using_regex(
-                compile('bringing the total to ([0-9,]+)'),
-                html,
-                datatype=DT_TOTAL,
-                source_url=href
-            )
-        
-        else:
-            tr = self._pq_contains(
-                html, 'tr', 'Confirmed cases',
-                ignore_case=True
-            )
-            if not tr:
-                return None
-            tr = tr[0]
-    
-            return DataPoint(
-                datatype=DT_TOTAL,
-                value=int(pq(tr[1]).html().split('<')[0]
-                                          .strip()
-                                          .replace(',', '')
-                                          .replace('*', '')
-                                          .replace('&#8203;', '')
-                                          .replace('\u200b', '')),
-                date_updated=self._get_date(href, html),
-                source_url=href
-            )
+        total = self._extract_number_using_regex(
+            compile('bringing the total to ([0-9,]+)'),
+            html,
+            datatype=DT_TOTAL,
+            source_url=href
+        )
+        if total:
+            return total
+
+        tr = self._pq_contains(
+            html, 'tr', 'Confirmed cases',
+            ignore_case=True
+        )
+        if not tr:
+            return None
+        tr = tr[0]
+
+        return DataPoint(
+            datatype=DT_TOTAL,
+            value=int(pq(tr[1]).html().split('<')[0]
+                                      .strip()
+                                      .replace(',', '')
+                                      .replace('*', '')
+                                      .replace('&#8203;', '')
+                                      .replace('\u200b', '')),
+            date_updated=self._get_date(href, html),
+            source_url=href
+        )
 
     @bothlistingandstat
     def _get_total_cases_tested(self, href, html):
         # TODO: Also support from https://www.health.nsw.gov.au/Infectious/diseases/Pages/covid-19-latest.aspx !!
-        if href == self.STATS_BY_REGION_URL:
-            return self._extract_number_using_regex(
+        tests = self._extract_number_using_regex(
+            compile(
+                'More than ([0-9,]+) people have now been tested for COVID-19',
+                IGNORECASE
+            ),
+            html,
+            datatype=DT_TESTS_TOTAL,
+            source_url=href
+        )
+        if tests:
+            return tests
+
+        table = self._pq_contains(
+            html, 'table', 'Total persons tested',
+            ignore_case=True
+        ) or self._pq_contains(
+            html, 'table', 'Total',
+            ignore_case=True
+        )
+        if not table:
+            return
+
+        return self._extract_number_using_regex(
+            (
                 compile(
-                    'More than ([0-9,]+) people have now been tested for COVID-19',
-                    IGNORECASE
+                    # Total (including tested and excluded)
+                    r'<td[^>]*?>(?:<[^</>]+>)?'
+                        r'Total[^0-9<>.]+persons[^0-9<>.]+tested[^0-9<>.]*'
+                        r'(?:</[^<>]+>)?</td>'
+                    r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
+                    MULTILINE | DOTALL | IGNORECASE
                 ),
-                html,
-                datatype=DT_TOTAL,
-                source_url=href
-            )
-
-        else:
-            table = self._pq_contains(
-                html, 'table', 'Total persons tested',
-                ignore_case=True
-            ) or self._pq_contains(
-                html, 'table', 'Total',
-                ignore_case=True
-            )
-            if not table:
-                return
-
-            return self._extract_number_using_regex(
-                (
-                    compile(
-                        # Total (including tested and excluded)
-                        r'<td[^>]*?>(?:<[^</>]+>)?'
-                            r'Total[^0-9<>.]+persons[^0-9<>.]+tested[^0-9<>.]*'
-                            r'(?:</[^<>]+>)?</td>'
-                        r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
-                        MULTILINE | DOTALL | IGNORECASE
-                    ),
-                    compile(
-                        # Total (including tested and excluded)
-                        r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
-                        r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
-                        MULTILINE | DOTALL
-                    )
-                ),
-                table.html(),
-                datatype=DT_TESTS_TOTAL,
-                source_url=href,
-                date_updated=self._get_date(href, html)
-            )
+                compile(
+                    # Total (including tested and excluded)
+                    r'<td[^>]*?>(?:<[^</>]+>)?Total(?:</[^<>]+>)?</td>'
+                    r'[^<]*?<td[^>]*>.*?([0-9,]+).*?</td>',
+                    MULTILINE | DOTALL
+                )
+            ),
+            table.html(),
+            datatype=DT_TESTS_TOTAL,
+            source_url=href,
+            date_updated=self._get_date(href, html)
+        )
 
     #============================================================#
     #                      Age Breakdown                         #
