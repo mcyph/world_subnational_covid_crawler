@@ -120,7 +120,7 @@ class INData(URLBase):
                     date = self.convert_date(status_dict['date'])
 
                     r.append(DataPoint(
-                        # TODO: Include state as a separate field!!!
+                        statename=state_name,
                         schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_TOTAL,
                         region=district,
@@ -129,7 +129,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        # TODO: Include state as a separate field!!!
+                        statename=state_name,
                         schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_ACTIVE,
                         region=district,
@@ -138,7 +138,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        # TODO: Include state as a separate field!!!
+                        statename=state_name,
                         schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_DEATHS,
                         region=district,
@@ -147,7 +147,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        # TODO: Include state as a separate field!!!
+                        statename=state_name,
                         schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_RECOVERED,
                         region=district,

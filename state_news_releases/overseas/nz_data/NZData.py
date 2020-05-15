@@ -137,6 +137,7 @@ class NZData(GithubRepo):
             ))
 
         for (date, datatype, region), value in dhb.items():
+            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
@@ -148,6 +149,7 @@ class NZData(GithubRepo):
 
         # Regional counters
         for (date, datatype, region), value in origins_by_dhb.items():
+            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
@@ -158,6 +160,7 @@ class NZData(GithubRepo):
             ))
 
         for (date, agerange, region), value in age_groups_by_dhb.items():
+            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=DT_TOTAL,
@@ -169,6 +172,7 @@ class NZData(GithubRepo):
             ))
 
         for (date, datatype, region), value in gender_balances_by_dhb.items():
+            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,

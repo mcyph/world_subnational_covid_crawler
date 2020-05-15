@@ -40,6 +40,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class AFData(URLBase):
+    SOURCE_URL = 'https://docs.google.com/spreadsheets/d/' \
+                 '1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
+
     def __init__(self):
         # Only raw_data4.json is currently being updated,
         # so won't download the others every day
@@ -48,7 +51,8 @@ class AFData(URLBase):
              urls_dict={
                  'provinces_1.csv': URL(
                      'https://docs.google.com/spreadsheet/ccc?'
-                     'key=1F-AMEDtqK78EA6LYME2oOsWQsgJi4CT3V_G4Uo-47Rg&gid=1539509351&output=csv',
+                     'key=1F-AMEDtqK78EA6LYME2oOsWQsgJi4CT3V_G4Uo-47Rg&'
+                     'gid=1539509351&output=csv',
                      static_file=False
                  )
              }
@@ -79,7 +83,7 @@ class AFData(URLBase):
                     region=province,
                     value=int(item['Cases'].replace(',', '')),
                     date_updated=date,
-                    source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
+                    source_url=self.SOURCE_URL
                 ))
 
             r.append(DataPoint(
@@ -88,7 +92,7 @@ class AFData(URLBase):
                 region=province,
                 value=int(item['Deaths'].replace(',', '')),
                 date_updated=date,
-                source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
+                source_url=self.SOURCE_URL
             ))
 
             r.append(DataPoint(
@@ -97,7 +101,7 @@ class AFData(URLBase):
                 region=province,
                 value=int(item['Recoveries'].replace(',', '')),
                 date_updated=date,
-                source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
+                source_url=self.SOURCE_URL
             ))
 
             if item['Active Cases']:
@@ -107,7 +111,7 @@ class AFData(URLBase):
                     region=province,
                     value=int(item['Active Cases'].replace(',', '')),
                     date_updated=date,
-                    source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
+                    source_url=self.SOURCE_URL
                 ))
 
         return r
