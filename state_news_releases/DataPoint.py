@@ -2,7 +2,8 @@ from collections import namedtuple
 from covid_19_au_grab.state_news_releases.constants import SCHEMA_STATEWIDE
 
 
-def DataPoint(schema=SCHEMA_STATEWIDE,
+def DataPoint(statename=None,
+              schema=SCHEMA_STATEWIDE,
               datatype=None,
               agerange=None,
               region=None,
@@ -25,12 +26,14 @@ def DataPoint(schema=SCHEMA_STATEWIDE,
     text_match = text_match or ''
 
     return _DataPoint(
-        schema, datatype, agerange, region, value,
+        statename, schema, datatype,
+        agerange, region, value,
         date_updated, source_url, text_match
     )
 
 
 _DataPoint = namedtuple('DataPoint', [
+    'statename',
     'schema',
     'datatype',
     'agerange',

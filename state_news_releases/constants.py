@@ -11,6 +11,28 @@ SCHEMA_LHD = 4  # NSW Local Health Districts
 SCHEMA_THS = 5  # Tasmania Health Services
 SCHEMA_SA3 = 6  # SA3 for ACT
 
+# https://covid-19-coronavirus.tools/
+SCHEMA_WORLDWIDE = 10
+SCHEMA_UK = 11
+SCHEMA_JP_PREFECTURE = 12
+SCHEMA_NZ_DHB = 13  # District Health Board
+SCHEMA_ID_PROVINCE = 14
+SCHEMA_TH = 15
+SCHEMA_MY = 16
+SCHEMA_SG = 17
+SCHEMA_IN = 18
+SCHEMA_IT = 19
+SCHEMA_KO = 20
+SCHEMA_BR = 21
+SCHEMA_SW = 22
+SCHEMA_US = 23
+SCHEMA_IN_STATE = 24
+SCHEMA_IN_DISTRICT = 25
+SCHEMA_TH_PROVINCE = 26
+SCHEMA_TH_DISTRICT = 27
+SCHEMA_EU = 28
+SCHEMA_AF_PROVINCE = 29
+
 #============================================
 # Datatypes
 #============================================
@@ -42,6 +64,7 @@ DT_SOURCE_INTERSTATE = 18  # Local-transmission from interstate, counted separat
 DT_SOURCE_CONFIRMED = 19  # Local-transmission from confirmed cases, counted separately
 DT_SOURCE_COMMUNITY = 20  # Local-unknown community transmission, counted separately
 DT_SOURCE_UNDER_INVESTIGATION = 21  # "other"
+DT_SOURCE_DOMESTIC = 22  # For in-country which may or may not be community transmission (New Zealand data)
 
 # Test numbers
 DT_TESTS_TOTAL = 13
