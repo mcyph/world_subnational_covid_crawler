@@ -1,7 +1,16 @@
+import urllib
 from os import makedirs
 from os.path import exists, dirname
 from collections import namedtuple
 from urllib.request import urlretrieve
+
+
+proxy = urllib.request.ProxyHandler({})
+opener = urllib.request.build_opener(proxy)
+opener.addheaders = [('User-Agent',
+                      'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0')]
+urllib.request.install_opener(opener)
+
 
 from covid_19_au_grab.state_news_releases.overseas.GlobalBase import \
     GlobalBase
@@ -24,7 +33,7 @@ class URLBase(GlobalBase):
             if url.static_file:
                 path = self.output_dir / 'static' / fnam
             else:
-                revision_dir = self.get_current_revision_dir()
+                revision_dir = self.get_today_revision_dir()
                 path = revision_dir / fnam
 
             if not exists(dirname(path)):

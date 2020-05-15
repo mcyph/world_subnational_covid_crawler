@@ -58,7 +58,7 @@ class GlobalBase(ABC):
         else:
             return self.output_dir / sorted(listdir(self.output_dir))[-1]
 
-    def get_latest_revision_dir(self, include_subid=False):
+    def get_today_revision_dir(self, include_subid=False):
         if include_subid:
             raise NotImplementedError
         else:
