@@ -14,7 +14,7 @@ from covid_19_au_grab.state_news_releases.overseas.in_data.INData import INData
 #from covid_19_au_grab.state_news_releases.overseas.iq_data.IQData import IQData
 from covid_19_au_grab.state_news_releases.overseas.it_data.ITData import ITData
 from covid_19_au_grab.state_news_releases.overseas.jp_data.JPData import JPData
-#from covid_19_au_grab.state_news_releases.overseas.ko_data.KOData import KOData
+from covid_19_au_grab.state_news_releases.overseas.kr_data.KRData import KRData
 #from covid_19_au_grab.state_news_releases.overseas.kz_data.KZData import KZData
 #from covid_19_au_grab.state_news_releases.overseas.ly_data.LYData import LYData
 #from covid_19_au_grab.state_news_releases.overseas.mm_data.MMData import MMData
@@ -33,7 +33,7 @@ def get_overseas_data():
     r = []
     for i in [
         AFData,
-        #BRData,
+        BRData,
         #CHData,
         #COData,
         #DEData,
@@ -43,7 +43,7 @@ def get_overseas_data():
         INData,
         ITData,
         JPData,
-        #KOData,
+        KRData,
         #KZData,
         #MYData,
         NZData,
