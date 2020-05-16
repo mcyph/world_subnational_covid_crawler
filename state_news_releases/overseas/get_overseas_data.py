@@ -5,7 +5,6 @@ from covid_19_au_grab.state_news_releases.overseas.af_data.AFData import AFData
 from covid_19_au_grab.state_news_releases.overseas.br_data.BRData import BRData
 from covid_19_au_grab.state_news_releases.overseas.ch_data.CHData import CHData
 from covid_19_au_grab.state_news_releases.overseas.co_data.COData import COData
-#from covid_19_au_grab.state_news_releases.overseas.de_data.DEData import DEData
 from covid_19_au_grab.state_news_releases.overseas.et_data.ETData import ETData
 from covid_19_au_grab.state_news_releases.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
 from covid_19_au_grab.state_news_releases.overseas.fr_data.FRData import FRData
@@ -21,8 +20,7 @@ from covid_19_au_grab.state_news_releases.overseas.ly_data.LYData import LYData
 from covid_19_au_grab.state_news_releases.overseas.my_data.MYData import MYData
 from covid_19_au_grab.state_news_releases.overseas.nz_data.NZData import NZData
 #from covid_19_au_grab.state_news_releases.overseas.ph_data.PHData import PHData
-#from covid_19_au_grab.state_news_releases.overseas.sg_data.SGData import SGData
-#from covid_19_au_grab.state_news_releases.overseas.so_data.SOData import SOData
+from covid_19_au_grab.state_news_releases.overseas.so_data.SOData import SOData
 from covid_19_au_grab.state_news_releases.overseas.th_data.THData import THData
 from covid_19_au_grab.state_news_releases.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.state_news_releases.overseas.us_nyt_data.USNYTData import USNYTData
@@ -36,7 +34,6 @@ def get_overseas_data():
         BRData,
         CHData,
         #COData,
-        #DEData,
         ETData,
         EUSubNationalData,
         FRData,
@@ -52,7 +49,7 @@ def get_overseas_data():
         MYData,
         NZData,
         #PHData,
-        #SGData,
+        SOData,
         #THData,
         UKData,
         USNYTData,
