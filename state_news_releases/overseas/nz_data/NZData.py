@@ -25,7 +25,7 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class NZData(GithubRepo):
-    SOURCE_URL = ''
+    SOURCE_URL = 'https://github.com/nzherald/nz-covid19-data'
     SOURCE_LICENSE = ''
 
     GEO_DIR = ''
@@ -40,7 +40,6 @@ class NZData(GithubRepo):
 
     def get_datapoints(self):
         r = []
-
         r.extend(self._get_cases())
         r.extend(self._get_days())
         r.extend(self._get_dhb_cases())
@@ -118,92 +117,106 @@ class NZData(GithubRepo):
                 age_groups_by_dhb[date, agerange, item['DHB']] += 1
 
         # Whole of NZ counters
-        for (date, datatype), value in gender_balances.items():
+        cumulative = Counter()
+        for (date, datatype), value in sorted(gender_balances.items()):
+            cumulative[datatype] += value
             r.append(DataPoint(
                 datatype=datatype,
-                value=value,
+                value=cumulative[datatype],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, agerange), value in age_groups.items():
+        cumulative = Counter()
+        for (date, agerange), value in sorted(age_groups.items()):
+            cumulative[agerange] += value
             r.append(DataPoint(
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                value=value,
+                value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, datatype), value in origins.items():
+        cumulative = Counter()
+        for (date, datatype), value in sorted(origins.items()):
+            cumulative[datatype] += value
             r.append(DataPoint(
                 datatype=datatype,
-                value=value,
+                value=cumulative[datatype],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, datatype, region), value in dhb.items():
-            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
+        cumulative = Counter()
+        for (date, datatype, region), value in sorted(dhb.items()):
+            cumulative[datatype, region] += value
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
                 region=region,
-                value=value,
+                value=cumulative[datatype, region],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
         # Regional counters
-        for (date, datatype, region), value in origins_by_dhb.items():
-            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
+        cumulative = Counter()
+        for (date, datatype, region), value in sorted(origins_by_dhb.items()):
+            cumulative[datatype, region] += value
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
                 region=region,
-                value=value,
+                value=cumulative[datatype, region],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, agerange, region), value in age_groups_by_dhb.items():
-            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
+        cumulative = Counter()
+        for (date, agerange, region), value in sorted(age_groups_by_dhb.items()):
+            cumulative[agerange, region] += value
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=DT_TOTAL,
                 agerange=agerange,
                 region=region,
-                value=value,
+                value=cumulative[agerange, region],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, datatype, region), value in gender_balances_by_dhb.items():
-            # FIXME: MAKE A CUMULATIVE TOTAL??? ==========================================================================
+        cumulative = Counter()
+        for (date, datatype, region), value in sorted(gender_balances_by_dhb.items()):
+            cumulative[datatype, region] += value
             r.append(DataPoint(
                 schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
                 region=region,
-                value=value,
+                value=cumulative[datatype, region],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
         # Agerange counters
-        for (date, datatype, agerange), value in origins_by_agerange.items():
+        cumulative = Counter()
+        for (date, datatype, agerange), value in sorted(origins_by_agerange.items()):
+            cumulative[datatype, agerange] += value
             r.append(DataPoint(
                 datatype=datatype,
                 agerange=agerange,
-                value=value,
+                value=cumulative[datatype, agerange],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
-        for (date, datatype, agerange), value in gender_balances_by_agerange.items():
+        cumulative = Counter()
+        for (date, datatype, agerange), value in sorted(gender_balances_by_agerange.items()):
+            cumulative[datatype, agerange] += value
             r.append(DataPoint(
                 datatype=datatype,
                 agerange=agerange,
-                value=value,
+                value=cumulative[datatype, agerange],
                 date_updated=date,
                 source_url=self.github_url
             ))
@@ -217,7 +230,6 @@ class NZData(GithubRepo):
         # recovered,totalRecovered,inHospitalNow,totalBeenInHospital,inIcu,deaths,
         # totalDeaths,overseas,contact,investigating,community,established,tag
         # 2020-02-28T00:00:00Z,1,1,NA,NA,1,1,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,Manual
-
 
         with open(self.get_path_in_dir('days.csv'),
                   'r', encoding='utf-8') as f:

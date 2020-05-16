@@ -93,7 +93,7 @@ class COData(URLBase):
             notification_date = item['Fecha de notificación']
             divipola = item['Codigo DIVIPOLA']
             city = item['Ciudad de ubicación']
-            department_district = item['Departamento o Distrito']
+            department_district = item['Departamento o Distrito ']
             attention = item['atención']
             age = item['Edad']
             gender = item['Sexo']
