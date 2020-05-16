@@ -14,3 +14,11 @@
 # 29-mars,Kayes,Kayes,0,1,0,,
 # 30-mars,Bamako,Bamako,4,0,0,,
 
+class MLData:
+    SOURCE_URL = ''
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
+

@@ -67,6 +67,11 @@ with open(get_package_dir() / 'state_news_releases' /
 
 class INData(URLBase):
     SOURCE_URL = 'https://api.covid19india.org'
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,
@@ -209,7 +214,7 @@ class INData(URLBase):
 
         for state_name, status_dicts in data.items():
             for status_dict in status_dicts:
-                print(status_dict['date'])
+                #print(status_dict['date'])
                 date = self.convert_date(status_dict['date'])
                 datatype = {
                     'Confirmed': DT_TOTAL,

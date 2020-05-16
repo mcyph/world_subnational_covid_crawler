@@ -25,6 +25,13 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class NZData(GithubRepo):
+    SOURCE_URL = ''
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
+
     def __init__(self):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'nz' / 'nz-covid19-data' / 'data',

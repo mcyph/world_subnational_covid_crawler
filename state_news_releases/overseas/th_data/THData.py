@@ -1,4 +1,5 @@
 # https://data.go.th/en/dataset/covid-19-daily
+import csv
 import json
 from collections import Counter
 
@@ -26,7 +27,6 @@ from covid_19_au_grab.get_package_dir import (
 
 
 def get_districts_map():
-    import csv
     r = {}
 
     with open(get_package_dir() / 'state_news_releases' /
@@ -45,6 +45,11 @@ def get_districts_map():
 
 class THData(URLBase):
     SOURCE_URL = 'https://covid19.th-stat.com/th/api'
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

@@ -27,6 +27,11 @@ from covid_19_au_grab.get_package_dir import (
 
 class ITData(GithubRepo):
     SOURCE_URL = 'https://github.com/pcm-dpc/COVID-19'
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
 
     def __init__(self):
         GithubRepo.__init__(self,

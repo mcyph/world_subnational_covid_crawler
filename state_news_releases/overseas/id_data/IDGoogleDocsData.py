@@ -46,6 +46,13 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class IDGoogleDocsData(URLBase):
+    SOURCE_URL = ''
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
+
     def __init__(self):
         # Only raw_data4.json is currently being updated,
         # so won't download the others every day

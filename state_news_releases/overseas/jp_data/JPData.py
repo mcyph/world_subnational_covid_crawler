@@ -78,6 +78,13 @@ def get_prefecture(s):
 
 
 class JPData(GithubRepo):
+    SOURCE_URL = ''
+    SOURCE_LICENSE = ''
+
+    GEO_DIR = ''
+    GEO_URL = ''
+    GEO_LICENSE = ''
+
     def __init__(self):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'jp' / 'covid19' / 'data',
@@ -88,7 +95,7 @@ class JPData(GithubRepo):
         r = []
         #r.extend(self._get_base_data())
         r.extend(self._get_prefectures_data())
-        r.extend(self._get_prefectures_2_data())
+        #r.extend(self._get_prefectures_2_data())
         #r.extend(self._get_summary_data())
         r.extend(self._get_demography_data())
         return r
@@ -107,7 +114,7 @@ class JPData(GithubRepo):
                   'r', encoding='utf-8') as f:
 
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
                 date = f'{item["year"]}_{item["month"]}_{item["date"]}'
                 prefecture = get_prefecture(item['prefectureNameJ'])
 
