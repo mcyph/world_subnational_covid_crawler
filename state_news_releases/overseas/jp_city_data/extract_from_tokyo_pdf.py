@@ -24,6 +24,9 @@ from covid_19_au_grab.state_news_releases.constants import (
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
+from covid_19_au_grab.get_package_dir import (
+    get_package_dir
+)
 
 
 TextItem = namedtuple('TextItem', [
@@ -271,7 +274,12 @@ stats_map = {
 
 def get_tokyo_cities_to_en_map():
     r = {}
-    with open('tokyo_cities.csv', 'r', encoding='utf-8') as f:
+    with open(get_package_dir() /
+              'state_news_releases' /
+              'overseas' /
+              'jp_city_data'/
+              'tokyo_cities.csv', 'r', encoding='utf-8') as f:
+
         for item in csv.DictReader(f, delimiter='\t'):
             r[item['ja'].strip()] = item['en'].strip()
             for c in '区町村市島':
@@ -284,6 +292,12 @@ _tokyo_cities_to_en = get_tokyo_cities_to_en_map()
 
 class ExtractFromTokyoPDF:
     def download_pdfs(self, only_most_recent=True):
+        base_dir = get_package_dir() / \
+                   'state_news_releases' / \
+                   'overseas' / \
+                   'jp_city_data' / \
+                   'tokyocities_pdf'
+
         current_month = datetime.datetime.now().month
 
         if only_most_recent:
@@ -309,8 +323,7 @@ class ExtractFromTokyoPDF:
                 d = int(d)
                 m = int(m)
                 y = int(y)
-                out_path = f'tokyocities_pdf/tokyocities_%04d_%02d_%02d.pdf' \
-                               % (y, m, d)
+                out_path = base_dir / (f'tokyocities_%04d_%02d_%02d.pdf' % (y, m, d))
 
                 if not exists(out_path):
                     self._download_pdfs_from_month_page(
@@ -340,12 +353,17 @@ class ExtractFromTokyoPDF:
         time.sleep(5)
 
     def get_from_pdfs(self):
+        base_dir = get_package_dir() / \
+                   'state_news_releases' / \
+                   'overseas' / \
+                   'jp_city_data' / \
+                   'tokyocities_pdf'
+
         r = []
-        for fnam in sorted(listdir('tokyocities_pdf')):
+        for fnam in sorted(listdir(base_dir)):
             if not '.pdf' in fnam:
                 continue
-            path = f'tokyocities_pdf/{fnam}'
-            #print(path)
+            path = base_dir / fnam
 
             found_fumei = False
             text_items = get_text_from_pdf(path, [0])
@@ -382,7 +400,7 @@ class ExtractFromTokyoPDF:
             if text_item.text == '調査中※':
                 region = 'Unknown'
             elif text_item.text == '都外':
-                region = 'Outside City'
+                region = 'Non-resident'
             else:
                 region = _tokyo_cities_to_en[text_item.text]
 
