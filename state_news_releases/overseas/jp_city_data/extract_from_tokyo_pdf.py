@@ -20,9 +20,9 @@ from covid_19_au_grab.state_news_releases.constants import (
 
 
 TextItem = namedtuple('TextItem', [
-    'text',
-    'x', 'y',
-    'width', 'height'
+    'x1', 'y1', 'x2', 'y2',
+    'width', 'height',
+    'text'
 ])
 
 
@@ -32,10 +32,7 @@ def get_text_from_pdf(path, page_nums=None):
     laparams = LAParams()
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
-    pages = PDFPage.get_pages(fp)
-
-    if page_nums:
-        pages = [pages[i] for i in page_nums]
+    pages = PDFPage.get_pages(fp, pagenos=page_nums)
 
     r = []
     for page in pages:
@@ -45,15 +42,87 @@ def get_text_from_pdf(path, page_nums=None):
 
         for lobj in layout:
             if isinstance(lobj, LTTextBox):
-                x, y, text = lobj.bbox[0], lobj.bbox[3], lobj.get_text()
-                print('At %r is text: %s' % ((x, y), text))
+                x1, y1, x2, y2 = lobj.bbox
+                assert x1 < x2
+                assert y1 < y2
 
-                r.append(TextItem(
-                    text=text,
-                    x=x, y=y,
-                    width=lobj.bbox[1],
-                    height=lobj.bbox[2]
-                ))
+                #x1 = 800-x1
+                #x2 = 800-x2
+                y1 = 1400-y1
+                y2 = 1400-y2
+                y1, y2 = y2, y1
+
+                text = lobj.get_text()
+                width = lobj.width
+                height = lobj.height
+
+                #for line_i, line in enumerate(text.split('\n')):
+                line_i = 0
+                line = text
+
+                for word_j, word in enumerate(line.split()):
+                    each_height = height/text.count('\n')
+                    i_y1 = y1 + each_height * line_i
+                    i_y2 = y2 + each_height * (line_i+1)
+
+                    each_width = width / len(line.split())
+                    i_x1 = x1 + each_width * word_j
+                    i_x2 = x2 + each_width * (word_j+1)
+
+                    r.append(TextItem(
+                        text=word,
+                        x1=i_x1, y1=i_y1,
+                        x2=i_x2, y2=i_y2,
+                        width=each_width,
+                        height=each_height
+                    ))
+
+                    if r[-1].text in ('10', '29'):
+                        print("LINE:", [line_i, line])
+                        print(r[-1], x1, y1, x2, y2, each_width, word_j)
+
+    for xx in range(5):
+        dists = []
+
+        for x in range(len(r)):
+            for y in range(len(r)):
+                text_item_1 = r[x]
+                text_item_2 = r[y]
+
+                dists.append(
+                    (abs(text_item_1.y1-text_item_2.y1), x, y)
+                )
+
+        merged = set()
+        for dist, x, y in sorted(dists):
+            text_item_1 = r[x]
+            text_item_2 = r[y]
+
+            text_1_num = all(i.isnumeric() or i == ',' for i in text_item_1.text.strip())
+            text_2_num = all(i.isnumeric() or i == ',' for i in text_item_2.text.strip())
+
+            if not dist:
+                continue
+            elif text_1_num != text_2_num:
+                continue
+            elif y in merged:
+                continue
+            merged.add(y)
+
+            if dist <= 30:
+                r[y] = TextItem(
+                    text=text_item_2.text,
+                    x1=text_item_2.x1,
+                    y1=text_item_1.y1,
+                    x2=text_item_2.x2,
+                    y2=text_item_1.y1+text_item_2.height,
+                    width=text_item_2.width,
+                    height=text_item_2.height
+                )
+
+    r.sort(key=lambda x: (x.y1, x.x1, x.x2, x.y2))
+    for i in r:
+        print(i)
     return r
 
 
@@ -129,7 +198,9 @@ class ExtractFromTokyoPDF:
             if not '.pdf' in fnam:
                 continue
             path = f'tokyocities_pdf/{fnam}'
-            print(get_text_from_pdf(path, 0))
+            print(path)
+            print(get_text_from_pdf(path, [0]))
+            break
 
     def _get_number_immediately_below(self, text_items, text_item):
         # coords needs to be
