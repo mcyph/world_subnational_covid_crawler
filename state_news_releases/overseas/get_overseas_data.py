@@ -5,7 +5,7 @@ from covid_19_au_grab.state_news_releases.overseas.humdata.af_data import AFData
 from covid_19_au_grab.state_news_releases.overseas.br_data.BRData import BRData
 from covid_19_au_grab.state_news_releases.overseas.ch_data.CHData import CHData
 from covid_19_au_grab.state_news_releases.overseas.de_data.DEData import DEData
-#from covid_19_au_grab.state_news_releases.overseas.humdata.es_data.ESData import ESData
+from covid_19_au_grab.state_news_releases.overseas.es_data.ESData import ESData
 from covid_19_au_grab.state_news_releases.overseas.humdata.et_data.ETData import ETData
 from covid_19_au_grab.state_news_releases.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
 from covid_19_au_grab.state_news_releases.overseas.fr_data.FRData import FRData
@@ -43,6 +43,7 @@ def get_overseas_data():
         CHData,
         #COData,
         DEData,
+        ESData,
         ETData,
         EUSubNationalData,
         FRData,
