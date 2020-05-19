@@ -1,30 +1,38 @@
 import unicodedata
 from covid_19_au_grab.state_news_releases.constants import constant_to_name, schema_to_name
 
-from covid_19_au_grab.state_news_releases.overseas.af_data.AFData import AFData
+from covid_19_au_grab.state_news_releases.overseas.humdata.af_data import AFData
 from covid_19_au_grab.state_news_releases.overseas.br_data.BRData import BRData
 from covid_19_au_grab.state_news_releases.overseas.ch_data.CHData import CHData
-from covid_19_au_grab.state_news_releases.overseas.co_data.COData import COData
-from covid_19_au_grab.state_news_releases.overseas.et_data.ETData import ETData
+from covid_19_au_grab.state_news_releases.overseas.de_data.DEData import DEData
+#from covid_19_au_grab.state_news_releases.overseas.humdata.es_data.ESData import ESData
+from covid_19_au_grab.state_news_releases.overseas.humdata.et_data.ETData import ETData
 from covid_19_au_grab.state_news_releases.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
 from covid_19_au_grab.state_news_releases.overseas.fr_data.FRData import FRData
+#from covid_19_au_grab.state_news_releases.overseas.ht_data.HTData import HTData
 from covid_19_au_grab.state_news_releases.overseas.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.state_news_releases.overseas.in_data.INData import INData
-from covid_19_au_grab.state_news_releases.overseas.iq_data.IQData import IQData
+from covid_19_au_grab.state_news_releases.overseas.humdata.iq_data import IQData
 from covid_19_au_grab.state_news_releases.overseas.it_data.ITData import ITData
 from covid_19_au_grab.state_news_releases.overseas.jp_data.JPData import JPData
+from covid_19_au_grab.state_news_releases.overseas.jp_city_data.JPCityData import JPCityData
 from covid_19_au_grab.state_news_releases.overseas.kr_data.KRData import KRData
 #from covid_19_au_grab.state_news_releases.overseas.kz_data.KZData import KZData
-from covid_19_au_grab.state_news_releases.overseas.ly_data.LYData import LYData
+from covid_19_au_grab.state_news_releases.overseas.humdata.ly_data import LYData
 #from covid_19_au_grab.state_news_releases.overseas.mm_data.MMData import MMData
+#from covid_19_au_grab.state_news_releases.overseas.ml_data.MLData import MLData
 from covid_19_au_grab.state_news_releases.overseas.my_data.MYData import MYData
 from covid_19_au_grab.state_news_releases.overseas.nz_data.NZData import NZData
 #from covid_19_au_grab.state_news_releases.overseas.ph_data.PHData import PHData
-from covid_19_au_grab.state_news_releases.overseas.so_data.SOData import SOData
-from covid_19_au_grab.state_news_releases.overseas.th_data.THData import THData
+#from covid_19_au_grab.state_news_releases.overseas.ps_data.PSData import PSData
+#from covid_19_au_grab.state_news_releases.overseas.sn_data.SNData import SNData
+from covid_19_au_grab.state_news_releases.overseas.humdata.so_data.SOData import SOData
 from covid_19_au_grab.state_news_releases.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.state_news_releases.overseas.us_nyt_data.USNYTData import USNYTData
+#from covid_19_au_grab.state_news_releases.overseas.us_covidtracking_data.USCovidTrackingData import USCovidTrackingData
+#from covid_19_au_grab.state_news_releases.overseas.west_africa_data.WestAfricaData import WestAfricaData
 #from covid_19_au_grab.state_news_releases.overseas.world_eu_data.EUData import EUData
+#from covid_19_au_grab.state_news_releases.overseas.world_jhu_data.WorldJHUData import WorldJHUData
 
 
 def get_overseas_data():
@@ -34,6 +42,7 @@ def get_overseas_data():
         BRData,
         CHData,
         #COData,
+        DEData,
         ETData,
         EUSubNationalData,
         FRData,
@@ -42,6 +51,7 @@ def get_overseas_data():
         IQData,
         ITData,
         JPData,
+        JPCityData,
         KRData,
         #KZData,
         LYData,

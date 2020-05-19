@@ -81,7 +81,7 @@ class AFData(URLBase):
             if not province:
                 break
 
-            if item['Cases']:
+            if item['Cases'].replace('–', ''):
                 r.append(DataPoint(
                     schema=SCHEMA_AF_PROVINCE,
                     datatype=DT_TOTAL,
@@ -91,25 +91,27 @@ class AFData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
 
-            r.append(DataPoint(
-                schema=SCHEMA_AF_PROVINCE,
-                datatype=DT_STATUS_DEATHS,
-                region=province,
-                value=int(item['Deaths'].replace(',', '')),
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            ))
+            if item['Deaths'].replace('–', ''):
+                r.append(DataPoint(
+                    schema=SCHEMA_AF_PROVINCE,
+                    datatype=DT_STATUS_DEATHS,
+                    region=province,
+                    value=int(item['Deaths'].replace(',', '')),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
 
-            r.append(DataPoint(
-                schema=SCHEMA_AF_PROVINCE,
-                datatype=DT_STATUS_RECOVERED,
-                region=province,
-                value=int(item['Recoveries'].replace(',', '')),
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            ))
+            if item['Recoveries'].replace('–', ''):
+                r.append(DataPoint(
+                    schema=SCHEMA_AF_PROVINCE,
+                    datatype=DT_STATUS_RECOVERED,
+                    region=province,
+                    value=int(item['Recoveries'].replace(',', '')),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
 
-            if item['Active Cases']:
+            if item['Active Cases'].replace('–', ''):
                 r.append(DataPoint(
                     schema=SCHEMA_AF_PROVINCE,
                     datatype=DT_STATUS_ACTIVE,

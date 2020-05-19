@@ -70,7 +70,9 @@ class THData(URLBase):
 
     def get_datapoints(self):
         r = []
-
+        r.extend(self._get_cases())
+        r.extend(self._get_sum())
+        r.extend(self._get_timeline())
         return r
 
     def _get_cases(self):
@@ -136,7 +138,7 @@ class THData(URLBase):
             ))
             r.append(DataPoint(
                 schema=SCHEMA_TH_PROVINCE,
-                datatype=DT_FEMALE
+                datatype=DT_TOTAL_FEMALE
             ))
 
 
@@ -158,6 +160,39 @@ class THData(URLBase):
         #  }, ...
         r = []
 
+        text = self.get_text('timeline.json',
+                             include_revision=True)
+        data = json.loads(text)
+
+        for item in data['Data']:
+            date = self.convert_date(item['Date'])
+
+            r.append(DataPoint(
+                datatype=DT_TOTAL,
+                value=int(item['Confirmed']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+            r.append(DataPoint(
+                datatype=DT_STATUS_RECOVERED,
+                value=int(item['Recovered']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+            r.append(DataPoint(
+                datatype=DT_STATUS_HOSPITALIZED,
+                value=int(item['Hospitalized']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+            r.append(DataPoint(
+                datatype=DT_STATUS_DEATHS,
+                value=int(item['Deaths']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+
+        return r
 
     def _get_sum(self):
         # {"Province":{"Bangkok":1547,"Phuket":220,...},
@@ -169,6 +204,8 @@ class THData(URLBase):
         #  "DevBy":"https:\/\/www.kidkarnmai.com\/",
         #  "SeverBy":"https:\/\/smilehost.asia\/"}
         r = []
+
+        return r
 
 
 if __name__ == '__main__':
