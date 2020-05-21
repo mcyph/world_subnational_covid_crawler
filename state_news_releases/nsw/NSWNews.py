@@ -279,9 +279,8 @@ class NSWNews(StateNewsBase):
 
     @singledaystat
     def _get_total_cases_by_region(self, href, html):
-        """
-        # TODO: TRANSITION TO https://data.nsw.gov.au/nsw-covid-19-data !! =============================================
-        """
+        return []   # HACK: Now that we're using open data, it could produce anamolies if we combine the two sources!!! ========================================
+
         # Why on earth are there zero width spaces!?
         html = html.replace(chr(8203), '')
 

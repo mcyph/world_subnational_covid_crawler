@@ -29,9 +29,10 @@ class WANews(StateNewsBase):
     LISTING_URL = 'https://ww2.health.wa.gov.au/News/' \
                   'Media-releases-listing-page'
     LISTING_HREF_SELECTOR = 'div.threeCol-accordian a'
-    STATS_BY_REGION_URL = 'https://ww2.health.wa.gov.au/' \
-                          'Articles/A_E/Coronavirus/' \
-                          'COVID19-statistics'
+    #STATS_BY_REGION_URL = 'https://ww2.health.wa.gov.au/' \
+    #                      'Articles/A_E/Coronavirus/' \
+    #                      'COVID19-statistics'
+    STATS_BY_REGION_URL = 'https://ww2.health.wa.gov.au/en/Articles/A_E/Coronavirus'  # HACK!
 
     # This is only used by the wa map
     WA_CUSTOM_MAP_URL = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/' \

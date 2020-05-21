@@ -85,7 +85,7 @@ class SANews(StateNewsBase):
                 # sa+health+internet/about+us/news+and+media/all+media+releases/
                 # covid-19+update+17+april+2020
                 return self._extract_date_using_format(
-                    pq(html)('div.wysiwyg h1').text().split('Update')[-1].strip()
+                    pq(html)('div.wysiwyg h1, h1.page-heading').text().split('Update')[-1].strip()
                 )
             except (ValueError, IndexError):
                 date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
@@ -361,6 +361,9 @@ class SANews(StateNewsBase):
             ):
                 if value is None:
                     continue
+                elif datatype in (DT_TOTAL_FEMALE, DT_TOTAL_MALE):
+                    continue   # HACK: SA has stopped providing these values, so will stop providing them fullstop for now!!! ===========================================================
+
                 r.append(DataPoint(
                     datatype=datatype,
                     agerange=age_group,
@@ -614,7 +617,7 @@ class SANews(StateNewsBase):
                 r.append(deaths)
 
             hospital = self._extract_number_using_regex(
-                compile('([0-9,]+) (?:person|people) remains in hospital'),
+                compile('([0-9,]+) (?:person|people) remains? in hospital'),
                 c_html, href,
                 datatype=DT_STATUS_HOSPITALIZED,
                 date_updated=self._get_date(href, html)

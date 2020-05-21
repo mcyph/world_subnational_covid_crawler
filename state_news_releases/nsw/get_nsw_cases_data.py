@@ -11,11 +11,13 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_LGA, SCHEMA_POSTCODE, SCHEMA_LHD,
-    DT_TOTAL,
+    SCHEMA_LGA, SCHEMA_POSTCODE, DT_TOTAL,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_INTERSTATE,
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
     DT_SOURCE_OVERSEAS
+)
+from covid_19_au_grab.state_news_releases.gaps_filled_in import (
+    gaps_filled_in
 )
 
 
@@ -145,7 +147,7 @@ def get_nsw_cases_data():
     r.extend(get_soi_datapoints(SCHEMA_LGA, by_lga_soi))
     #r.extend(get_soi_datapoints(SCHEMA_LHD, by_lhd_soi))
 
-    return r
+    return gaps_filled_in(r)
 
 
 if __name__ == '__main__':

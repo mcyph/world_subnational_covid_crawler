@@ -5,7 +5,7 @@ from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat
+    StateNewsBase, singledaystat, bothlistingandstat
 )
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA, SCHEMA_THS,
@@ -274,24 +274,57 @@ class TasNews(StateNewsBase):
         # from Southern Tasmania and one case is from the North West.
         pass
 
+    @bothlistingandstat
     def _get_total_cases_by_region(self, url, html):
-        table = self._pq_contains(
-            html, 'table', 'Local Government Area',
-            ignore_case=True
-        )
+        if url == self.STATS_BY_REGION_URL:
+            tables = self._pq_contains(
+                html, 'table', 'LGA Region',
+                ignore_case=True
+            ) or []
 
-        r = []
-        if table:
-            for region, lga, num_cases in table[0][1]:
-                r.append(DataPoint(
-                    schema=SCHEMA_LGA,
-                    region=pq(lga).text().strip(),
-                    datatype=DT_TOTAL,
-                    value=int(pq(num_cases).text().replace(',', '').strip()),
-                    date_updated=self._get_date(url, html),
-                    source_url=url
-                ))
-        return r
+            r = []
+            for table in tables:
+                for lga, num_cases in table[1]:
+                    lga = pq(lga).text().strip()
+
+                    if lga.lower() == 'total':
+                        r.append(DataPoint(
+                            schema=SCHEMA_THS,
+                            region=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
+                            datatype=DT_TOTAL,
+                            value=int(pq(num_cases).text().replace(',', '').strip()),
+                            date_updated=self._get_date(url, html),
+                            source_url=url
+                        ))
+                    else:
+                        r.append(DataPoint(
+                            schema=SCHEMA_LGA,
+                            region=lga,
+                            datatype=DT_TOTAL,
+                            value=int(pq(num_cases).text().replace(',', '').strip()),
+                            date_updated=self._get_date(url, html),
+                            source_url=url
+                        ))
+            return r
+
+        else:
+            table = self._pq_contains(
+                html, 'table', 'Local Government Area',
+                ignore_case=True
+            )
+
+            r = []
+            if table:
+                for region, lga, num_cases in table[0][1]:
+                    r.append(DataPoint(
+                        schema=SCHEMA_LGA,
+                        region=pq(lga).text().strip(),
+                        datatype=DT_TOTAL,
+                        value=int(pq(num_cases).text().replace(',', '').strip()),
+                        date_updated=self._get_date(url, html),
+                        source_url=url
+                    ))
+            return r
 
     #============================================================#
     #                     Totals by Source                       #
@@ -383,4 +416,3 @@ if __name__ == '__main__':
     from pprint import pprint
     tn = TasNews()
     pprint(tn.get_data())
-

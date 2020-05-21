@@ -63,10 +63,12 @@ class _ACTPowerBI(PowerBIDataReader):
             'age_groups_3',
             'age_groups_4',
             'age_groups_5',
-            'age_groups_6'
+            'age_groups_6',
+            'age_groups_7',
         ):
             try:
                 data = response_dict[key][1]
+                print("USING KEY:", key)
                 break
             except KeyError:
                 pass
@@ -75,12 +77,13 @@ class _ACTPowerBI(PowerBIDataReader):
             raise Exception("age group data not found")
 
         agd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
-
         m_f_column_details = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         assert m_f_column_details[0]['G1'] in ('Female', 'Females')
         assert m_f_column_details[1]['G1'] in ('Male', 'Males')
 
         for age in agd:
+            print(age)
+
             X = age['X']
 
             if len(X) > 0:
@@ -144,7 +147,10 @@ class _ACTPowerBI(PowerBIDataReader):
             except KeyError:
                 data = response_dict['gender_balance_3'][1]
         except KeyError:
-            data = response_dict['gender_balance_4'][1]
+            try:
+                data = response_dict['gender_balance_4'][1]
+            except KeyError:
+                return [] # WARNING!!! ==================================================================================
 
         # WARNING: This sometimes has another query before it!!! =======================================================
         try:
@@ -183,11 +189,14 @@ class _ACTPowerBI(PowerBIDataReader):
         # TODO: SHOULD THIS ONLY USE THE MOST RECENT VALUES?? ================================================================================
         try:
             try:
-                data = response_dict['infection_source_time_series']
+                try:
+                    data = response_dict['infection_source_time_series']
+                except KeyError:
+                    data = response_dict['infection_source_time_series_2']
             except KeyError:
-                data = response_dict['infection_source_time_series_2']
+                data = response_dict['infection_source_time_series_3']
         except KeyError:
-            data = response_dict['infection_source_time_series_3']
+            data = response_dict['infection_source_time_series_4']
 
         act_norm_map = {
             'Overseas acquired': DT_SOURCE_OVERSEAS,
@@ -254,11 +263,14 @@ class _ACTPowerBI(PowerBIDataReader):
         r = []
         try:
             try:
-                data = response_dict['recovered'][1]
+                try:
+                    data = response_dict['recovered'][1]
+                except KeyError:
+                    data = response_dict['recovered_2'][1]
             except KeyError:
-                data = response_dict['recovered_2'][1]
+                data = response_dict['recovered_3'][1]
         except KeyError:
-            data = response_dict['recovered_3'][1]
+            data = response_dict['recovered_4'][1]
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -272,9 +284,12 @@ class _ACTPowerBI(PowerBIDataReader):
     def _get_regions_data(self, updated_date, response_dict):
         r = []
         try:
-            data = response_dict['regions_exact'][1]
+            try:
+                data = response_dict['regions_exact'][1]
+            except KeyError:
+                data = response_dict['regions_exact_2'][1]
         except KeyError:
-            data = response_dict['regions_exact_2'][1]
+            data = response_dict['regions_exact_3'][1]
 
         rd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 

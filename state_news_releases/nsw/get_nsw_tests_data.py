@@ -12,9 +12,10 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_LGA, SCHEMA_POSTCODE, SCHEMA_LHD,
-    DT_TOTAL,
-    DT_TESTS_TOTAL, DT_TESTS_POSITIVE, DT_TESTS_NEGATIVE
+    SCHEMA_LGA, DT_TESTS_TOTAL, DT_TESTS_POSITIVE, DT_TESTS_NEGATIVE
+)
+from covid_19_au_grab.state_news_releases.gaps_filled_in import (
+    gaps_filled_in
 )
 
 
@@ -72,6 +73,10 @@ def get_nsw_tests_data():
             by_lga.setdefault(date, {}) \
                   .setdefault(row['lga_name19'], []) \
                   .append(row)
+
+            if row['result'] is None:
+                print("WARNING!!!")
+                continue
 
             posneg = posneg_map[row['result']]
             by_postcode_posneg.setdefault(date, {}) \
@@ -138,7 +143,7 @@ def get_nsw_tests_data():
     r.extend(get_posneg_datapoints(SCHEMA_LGA, by_lga_posneg))
     #r.extend(get_posneg_datapoints(SCHEMA_LHD, by_lhd_posneg))
 
-    return r
+    return gaps_filled_in(r)
 
 
 if __name__ == '__main__':

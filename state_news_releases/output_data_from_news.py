@@ -207,7 +207,12 @@ if __name__ == '__main__':
           'text_match')
 
     for state_name, datapoints in data.items():
+        added = set()
         for datapoint in datapoints:
+            if datapoint in added:
+                continue
+            added.add(datapoint)
+
             try:
                 text_match = repr(remove_control_characters(
                     str(datapoint.text_match).replace("\t", " ").replace('\n', ' ').replace('\r', ' ')
@@ -219,7 +224,7 @@ if __name__ == '__main__':
             yyyy, mm, dd = datapoint.date_updated.split('_')
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
-            print(f'{state_name}\t'
+            print(f'{datapoint.statename or state_name}\t'
                   f'{schema_to_name(datapoint.schema)[7:].lower()}\t'
                   f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
                   f'{datapoint.agerange}\t'

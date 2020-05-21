@@ -39,7 +39,9 @@ class _VicPowerBI(PowerBIDataReader):
         # Use a fallback only if can't get from the source
 
         r = []
-        for updated_date, rev_id, response_dict in self._iter_all_dates():
+        previously_active_regions = set()
+
+        for updated_date, rev_id, response_dict in sorted(list(self._iter_all_dates())):
             self.totals_dict = {}
 
             subdir = f'{self.base_path}/{updated_date}-{rev_id}'
@@ -58,10 +60,12 @@ class _VicPowerBI(PowerBIDataReader):
                 updated_date = self._get_updated_date(response_dict)
             except (KeyError, ValueError, AttributeError): # FIXME!!!! ==============================================================================
                 pass
+
             r.extend(self._get_regions(updated_date, response_dict))
             r.extend(self._get_age_data(updated_date, response_dict))
             r.extend(self._get_source_of_infection(updated_date, response_dict))
-            r.extend(self._get_active_regions(updated_date, response_dict))
+            r.extend(self._get_active_regions(updated_date, response_dict, previously_active_regions))
+
         return r
 
     def _get_updated_date(self, response_dict):
@@ -106,13 +110,15 @@ class _VicPowerBI(PowerBIDataReader):
 
         return output
 
-    def _get_active_regions(self, updated_date, response_dict):
+    def _get_active_regions(self, updated_date, response_dict,
+                            previously_active_regions):
         if updated_date < '2020_05_07':
             # There wasn't this info before this date!
             return []
 
         output = []
         data = response_dict['regions_active'][1]
+        currently_active_regions = set()
 
         for region in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             # print(region)
@@ -124,6 +130,9 @@ class _VicPowerBI(PowerBIDataReader):
 
             # Add active info
             region_string = region['C'][0].split('(')[0].strip()
+            previously_active_regions.add(region_string)
+            currently_active_regions.add(region_string)
+
             output.append(DataPoint(
                 schema=SCHEMA_LGA,
                 datatype=DT_STATUS_ACTIVE,
@@ -147,69 +156,107 @@ class _VicPowerBI(PowerBIDataReader):
             previous_value = value
             # print(output[-1])
 
+        for region in previously_active_regions-currently_active_regions:
+            # Make sure previous "active" values which are
+            # no longer being reported are reset to 0!
+            output.append(DataPoint(
+                schema=SCHEMA_LGA,
+                datatype=DT_STATUS_ACTIVE,
+                region=region,
+                value=0,
+                date_updated=updated_date,
+                source_url=SOURCE_URL
+            ))
+
+            if region in self.totals_dict:
+                # Add recovered info if total available
+                output.append(DataPoint(
+                    schema=SCHEMA_LGA,
+                    datatype=DT_STATUS_RECOVERED,
+                    region=region,
+                    value=self.totals_dict[region_string],
+                    date_updated=updated_date,
+                    source_url=SOURCE_URL
+                ))
+
         return output
 
     def _get_age_data(self, updated_date, response_dict):
         output = []
+        DT_TOTAL_NOTSTATED = 999999999 # HACK!
         data = response_dict['age_data'][1]
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         cols = [i['G1'].rstrip('s') for i in cols]
-        #print("COLS:", cols)
+        print("COLS:", cols)
+
+        gender_mapping = {
+            '': None,  # HACK!!!
+            'Female': DT_TOTAL_FEMALE,
+            'Male': DT_TOTAL_MALE,
+            'Not stated': DT_TOTAL_NOTSTATED
+        }
+        col_mapping = []
+        for col in cols:
+            col_mapping.append(gender_mapping[col])
+        #print(col_mapping)
+
+        assert DT_TOTAL_MALE in col_mapping
+        assert DT_TOTAL_FEMALE in col_mapping
 
         for age in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            #print(age)
             X = age['X']
+            vals_dict = {}
+            if not X:
+                continue
+            print(X)
 
-            if len(X) > 0:
-                # Note that previous value simply means the very last value seen
-                # That means that if female/not stated is 67 and the following
-                # male stat is also 67 it'll be elided with an R-repeat val
-                value_1 = X[0].get(
-                    'M0', previous_value if X[0].get('R') else 0
-                )
-                previous_value = value_1
-            else:
-                value_1 = 0
+            i = 0
+            X_i = 0
+            while i < len(X):
+                if X[i].get('I'):
+                    # "jump to column index"
+                    X_i = X[X_i]['I']
+                
+                if len(X) > 0:
+                    # Note that previous value simply means the very last value seen
+                    # That means that if female/not stated is 67 and the following
+                    # male stat is also 67 it'll be elided with an R-repeat val
+                    value_1 = X[i].get(
+                        'M0', previous_value if X[i].get('R') else 0
+                    )
+                    previous_value = value_1
+                else:
+                    value_1 = 0
+                
+                vals_dict[col_mapping[X_i]] = value_1
+                X_i += 1
+                i += 1
 
-            if len(X) > 1:
-                value_2 = X[1].get(
-                    'M0', previous_value if X[1].get('R') else 0
-                )  # "R" clearly means "Repeat"
-                previous_value = value_2
-            else:
-                value_2 = 0
+            if DT_TOTAL_MALE in vals_dict:
+                output.append(DataPoint(
+                    datatype=DT_TOTAL_MALE,
+                    agerange=age['G0'].replace('–', '-'),
+                    value=vals_dict[DT_TOTAL_MALE],
+                    date_updated=updated_date,
+                    source_url=SOURCE_URL
+                ))
 
-            if len(X) > 2:
-                not_stated = X[2].get(
-                    'M0', previous_value if X[2].get('R') else 0
-                )
-                previous_value = not_stated
-            else:
-                not_stated = 0
+            if DT_TOTAL_FEMALE in vals_dict:
+                output.append(DataPoint(
+                    datatype=DT_TOTAL_FEMALE,
+                    agerange=age['G0'].replace('–', '-'),
+                    value=vals_dict[DT_TOTAL_FEMALE],
+                    date_updated=updated_date,
+                    source_url=SOURCE_URL
+                ))
 
-            assert cols[0] in ('Male', 'Female')
-            assert cols[1] in ('Male', 'Female')
-
-            output.append(DataPoint(
-                datatype=DT_TOTAL_MALE if cols[0] == 'Male' else DT_TOTAL_FEMALE,
-                agerange=age['G0'].replace('–', '-'),
-                value=value_1,
-                date_updated=updated_date,
-                source_url=SOURCE_URL
-            ))
-            output.append(DataPoint(
-                datatype=DT_TOTAL_FEMALE if cols[1] == 'Female' else DT_TOTAL_MALE,
-                agerange=age['G0'].replace('–', '-'),
-                value=value_2,
-                date_updated=updated_date,
-                source_url=SOURCE_URL
-            ))
             # TODO: support "not stated" separately!!! ====================================================
             general_age = (
-                value_1 + value_2 + not_stated
+                vals_dict.get(DT_TOTAL_MALE, 0) +
+                vals_dict.get(DT_TOTAL_FEMALE, 0) +
+                vals_dict.get(DT_TOTAL_NOTSTATED, 0)
             )
-
             output.append(DataPoint(
                 datatype=DT_TOTAL,
                 agerange=age['G0'].replace('–', '-'),

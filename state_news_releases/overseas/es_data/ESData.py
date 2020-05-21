@@ -247,7 +247,7 @@ class ESData(GithubRepo):
         # 2020-02-27,18,18,,,,,
 
         with open(self.get_path_in_dir('COVID 19/nacional_covid19.csv'),
-                  'r', encoding='utf-8') as f:
+                  'r', encoding='utf-8-sig') as f:
             for item in csv.DictReader(f):
                 date = self.convert_date(item['fecha'])
 
