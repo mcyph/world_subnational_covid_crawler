@@ -58,8 +58,9 @@ class _VicPowerBI(PowerBIDataReader):
 
             try:
                 updated_date = self._get_updated_date(response_dict)
+                print("Specific date found for:", subdir, updated_date)
             except (KeyError, ValueError, AttributeError): # FIXME!!!! ==============================================================================
-                pass
+                print(f"SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
 
             r.extend(self._get_regions(updated_date, response_dict))
             r.extend(self._get_age_data(updated_date, response_dict))
@@ -76,7 +77,6 @@ class _VicPowerBI(PowerBIDataReader):
         updated_date = datetime.strptime(
             updated_str.split('-')[0].strip(), '%d/%m/%Y'
         ).strftime('%Y_%m_%d')
-        print("Vic updated date supplied:", updated_date)
         return updated_date
 
     def _get_regions(self, updated_date, response_dict):
@@ -86,19 +86,19 @@ class _VicPowerBI(PowerBIDataReader):
         except KeyError:
             data = response_dict['regions_2'][1]
 
-        for region in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            # print(region)
+        for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
+            # print(region_child)
 
-            if region.get('R'):
+            if region_child.get('R'):
                 value = previous_value
             else:
-                value = region['C'][1]
+                value = region_child['C'][1]
 
-            region_string = region['C'][0].split('(')[0].strip()
+            region_string = region_child['C'][0].split('(')[0].strip()
             output.append(DataPoint(
-                schema=SCHEMA_LGA,
+                region_schema=SCHEMA_LGA,
                 datatype=DT_TOTAL,
-                region=region_string,
+                region_child=region_string,
                 value=value,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -120,23 +120,23 @@ class _VicPowerBI(PowerBIDataReader):
         data = response_dict['regions_active'][1]
         currently_active_regions = set()
 
-        for region in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            # print(region)
+        for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
+            # print(region_child)
 
-            if region.get('R'):
+            if region_child.get('R'):
                 value = previous_value
             else:
-                value = region['C'][1]
+                value = region_child['C'][1]
 
             # Add active info
-            region_string = region['C'][0].split('(')[0].strip()
+            region_string = region_child['C'][0].split('(')[0].strip()
             previously_active_regions.add(region_string)
             currently_active_regions.add(region_string)
 
             output.append(DataPoint(
-                schema=SCHEMA_LGA,
+                region_schema=SCHEMA_LGA,
                 datatype=DT_STATUS_ACTIVE,
-                region=region_string,
+                region_child=region_string,
                 value=value,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -145,9 +145,9 @@ class _VicPowerBI(PowerBIDataReader):
             if region_string in self.totals_dict:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    schema=SCHEMA_LGA,
+                    region_schema=SCHEMA_LGA,
                     datatype=DT_STATUS_RECOVERED,
-                    region=region_string,
+                    region_child=region_string,
                     value=self.totals_dict[region_string]-value,
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -156,24 +156,24 @@ class _VicPowerBI(PowerBIDataReader):
             previous_value = value
             # print(output[-1])
 
-        for region in previously_active_regions-currently_active_regions:
+        for region_child in previously_active_regions-currently_active_regions:
             # Make sure previous "active" values which are
             # no longer being reported are reset to 0!
             output.append(DataPoint(
-                schema=SCHEMA_LGA,
+                region_schema=SCHEMA_LGA,
                 datatype=DT_STATUS_ACTIVE,
-                region=region,
+                region_child=region_child,
                 value=0,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
 
-            if region in self.totals_dict:
+            if region_child in self.totals_dict:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    schema=SCHEMA_LGA,
+                    region_schema=SCHEMA_LGA,
                     datatype=DT_STATUS_RECOVERED,
-                    region=region,
+                    region_child=region_child,
                     value=self.totals_dict[region_string],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -188,7 +188,7 @@ class _VicPowerBI(PowerBIDataReader):
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         cols = [i['G1'].rstrip('s') for i in cols]
-        print("COLS:", cols)
+        #print("COLS:", cols)
 
         gender_mapping = {
             '': None,  # HACK!!!
@@ -209,7 +209,7 @@ class _VicPowerBI(PowerBIDataReader):
             vals_dict = {}
             if not X:
                 continue
-            print(X)
+            #print(X)
 
             i = 0
             X_i = 0

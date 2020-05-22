@@ -1174,7 +1174,7 @@ gender_balance_3_req = {
         "QueryId": ""
       }
 
-unknown_please_categorize_me_req = {
+updated_date_req = {
         "ApplicationContext": {
           "DatasetId": "3a1dc16f-89aa-4e71-b1f1-0e2e2b04aa42",
           "Sources": [
@@ -1239,6 +1239,72 @@ unknown_please_categorize_me_req = {
         },
         "QueryId": ""
       }
+
+updated_date_2_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date Last Refreshed\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date Last Refreshed\"}},\"Function\":3},\"Name\":\"Min(Date Last Refreshed.Date Last Refreshed)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Date Last Refreshed",
+                                "Name": "d"
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "d"
+                                                }
+                                            },
+                                            "Property": "Date Last Refreshed"
+                                        }
+                                    },
+                                    "Function": 3
+                                },
+                                "Name": "Min(Date Last Refreshed.Date Last Refreshed)"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
 
 gender_balance_req = {
         "ApplicationContext": {

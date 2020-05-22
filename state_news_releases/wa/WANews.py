@@ -203,7 +203,7 @@ class WANews(StateNewsBase):
     #============================================================#
 
     def _get_new_cases_by_region(self, url, html):
-        return  # HACK: Disabling this for now, as it doesn't follow LGA etc schema, and not sure how useful the Metro/Regional WA distinction is!
+        return  # HACK: Disabling this for now, as it doesn't follow LGA etc region_schema, and not sure how useful the Metro/Regional WA distinction is!
 
         # AFAIK, this information currently isn't
         # available in an easily readable format

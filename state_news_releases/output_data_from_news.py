@@ -196,17 +196,17 @@ if __name__ == '__main__':
 
     # Override stdout to point to both stdout and the output file
     logger = sys.stdout = Logger(sys.stdout)
-    print('state_name\t'
-          'schema\t'
+    print('region_schema\t'
+          'region_parent\t'
+          'region_child\t'
           'datatype\t'
           'agerange\t'
-          'region\t'
           'value\t'
           'date_updated\t'
           'source_url\t'
           'text_match')
 
-    for state_name, datapoints in data.items():
+    for region_parent, datapoints in data.items():
         added = set()
         for datapoint in datapoints:
             if datapoint in added:
@@ -224,11 +224,11 @@ if __name__ == '__main__':
             yyyy, mm, dd = datapoint.date_updated.split('_')
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
-            print(f'{datapoint.statename or state_name}\t'
-                  f'{schema_to_name(datapoint.schema)[7:].lower()}\t'
+            print(f'{schema_to_name(datapoint.region_schema)[7:].lower()}\t'
+                  f'{datapoint.region_parent or region_parent}\t'
+                  f'{datapoint.region_child}\t'
                   f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
                   f'{datapoint.agerange}\t'
-                  f'{datapoint.region}\t'
                   f'{datapoint.value}\t'
                   f'{backwards_date}\t'
                   f'{datapoint.source_url}\t'

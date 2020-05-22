@@ -242,23 +242,23 @@ class VicNews(StateNewsBase):
                 'regional local government areas of '
             )[1].split('.')[0].replace(' and ', ', ').replace(') ', '), ')
 
-            for region in multi_region_info.split(', '):
-                print(region)
-                if '(' in region:
-                    region_name, num_cases = region.split('(')
+            for region_child in multi_region_info.split(', '):
+                print(region_child)
+                if '(' in region_child:
+                    region_name, num_cases = region_child.split('(')
                     region_name = region_name.strip()
                     num_cases = num_cases.strip('() ')
                 else:
-                    region_name = region.strip()
+                    region_name = region_child.strip()
                     num_cases = 1
 
                 if region_name == 'org/rss/1':
                     continue
 
                 regions.append(DataPoint(
-                    schema=SCHEMA_LGA,
+                    region_schema=SCHEMA_LGA,
                     datatype=DT_TOTAL,
-                    region=region_name.replace('have all recorded one case', '').strip(),
+                    region_child=region_name.replace('have all recorded one case', '').strip(),
                     value=int(num_cases),
                     date_updated=self._get_date(href, html),
                     source_url=href
@@ -274,9 +274,9 @@ class VicNews(StateNewsBase):
                     continue
 
                 regions.append(DataPoint(
-                    schema=SCHEMA_LGA,
+                    region_schema=SCHEMA_LGA,
                     datatype=DT_TOTAL,
-                    region=region_name,
+                    region_child=region_name,
                     value=1,
                     date_updated=self._get_date(href, html),
                     source_url=href

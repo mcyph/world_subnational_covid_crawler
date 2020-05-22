@@ -91,20 +91,20 @@ def get_nsw_tests_data():
 
     r = []
 
-    def get_datapoints(schema, cases_dict):
+    def get_datapoints(region_schema, cases_dict):
         r = []
         current_counts = {}
 
         for date, schema_dict in cases_dict.items():
-            for region, tests in schema_dict.items():
-                current_counts.setdefault(region, 0)
-                current_counts[region] += len(tests)
+            for region_child, tests in schema_dict.items():
+                current_counts.setdefault(region_child, 0)
+                current_counts[region_child] += len(tests)
 
                 r.append(DataPoint(
-                    schema=schema,
+                    region_schema=region_schema,
                     datatype=DT_TESTS_TOTAL,
-                    region=region.split('(')[0].strip() or DEFAULT_REGION,
-                    value=current_counts[region],
+                    region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
+                    value=current_counts[region_child],
                     date_updated=date,
                     source_url=SOURCE_URL,
                     text_match=None
@@ -118,21 +118,21 @@ def get_nsw_tests_data():
     r.extend(get_datapoints(SCHEMA_LGA, by_lga))
     #r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
 
-    def get_posneg_datapoints(schema, cases_dict):
+    def get_posneg_datapoints(region_schema, cases_dict):
         r = []
         current_counts = {}
 
         for date, schema_dict in cases_dict.items():
-            for region, posneg_dict in schema_dict.items():
+            for region_child, posneg_dict in schema_dict.items():
                 for posneg, tests in posneg_dict.items():
-                    current_counts.setdefault((region, posneg), 0)
-                    current_counts[region, posneg] += len(tests)
+                    current_counts.setdefault((region_child, posneg), 0)
+                    current_counts[region_child, posneg] += len(tests)
 
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
                         datatype=posneg,
-                        region=region.split('(')[0].strip() or DEFAULT_REGION,
-                        value=current_counts[region, posneg],
+                        region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
+                        value=current_counts[region_child, posneg],
                         date_updated=date,
                         source_url=SOURCE_URL,
                         text_match=None

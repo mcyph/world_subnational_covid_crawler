@@ -129,15 +129,15 @@ class THData(URLBase):
             by_age_gender[date, agerange, gender] += 1
 
             r.append(DataPoint(
-                schema=SCHEMA_TH_PROVINCE,
+                region_schema=SCHEMA_TH_PROVINCE,
                 datatype=DT_TOTAL
             ))
             r.append(DataPoint(
-                schema=SCHEMA_TH_PROVINCE,
+                region_schema=SCHEMA_TH_PROVINCE,
                 datatype=DT_TOTAL_MALE
             ))
             r.append(DataPoint(
-                schema=SCHEMA_TH_PROVINCE,
+                region_schema=SCHEMA_TH_PROVINCE,
                 datatype=DT_TOTAL_FEMALE
             ))
 

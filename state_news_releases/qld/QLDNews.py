@@ -17,7 +17,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_STATUS_ACTIVE, DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
     DT_STATUS_HOSPITALIZED,
 
-    # Source of infection by region (LGA)
+    # Source of infection by region_child (LGA)
     DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED,
     DT_SOURCE_OVERSEAS
@@ -102,7 +102,7 @@ class QLDNews(StateNewsBase):
 
     def _infer_missing_info(self, dates_dict):
         # TODO: QLD health now only provides a tally, but previously
-        #  gave number of new cases by region. It makes sense to
+        #  gave number of new cases by region_child. It makes sense to
         #  derive this info as needed.
         pass
 
@@ -385,9 +385,9 @@ class QLDNews(StateNewsBase):
                     value = int(pq(td).text().strip().replace(',', ''))
 
                     regions.append(DataPoint(
-                        schema=SCHEMA_HHS,
+                        region_schema=SCHEMA_HHS,
                         datatype=headers[xx],
-                        region=hhs.title(),
+                        region_child=hhs.title(),
                         value=value,
                         date_updated=self._get_date(href, html),
                         source_url=href
@@ -410,9 +410,9 @@ class QLDNews(StateNewsBase):
                     value = int(pq(td).text().strip().replace(',', ''))
 
                     regions.append(DataPoint(
-                        schema=SCHEMA_LGA,
+                        region_schema=SCHEMA_LGA,
                         datatype=headers[xx],
-                        region=lga.title(),
+                        region_child=lga.title(),
                         value=value,
                         date_updated=self._get_date(href, html),
                         source_url=href
@@ -458,9 +458,9 @@ class QLDNews(StateNewsBase):
                         try:
                             value = int(pq(td).text().strip())
                             regions.append(DataPoint(
-                                schema=SCHEMA_HHS,
+                                region_schema=SCHEMA_HHS,
                                 datatype=datatype,
-                                region=hhs_region.title(),
+                                region_child=hhs_region.title(),
                                 value=value,
                                 date_updated=self._get_date(href, html),
                                 source_url=href
@@ -496,9 +496,9 @@ class QLDNews(StateNewsBase):
                     try:
                         value = int(pq(td).text().strip())
                         regions.append(DataPoint(
-                            schema=SCHEMA_HHS,
+                            region_schema=SCHEMA_HHS,
                             datatype=DT_NEW,
-                            region=hhs_region,
+                            region_child=hhs_region,
                             value=value,
                             date_updated=self._get_date(href, html),
                             source_url=href

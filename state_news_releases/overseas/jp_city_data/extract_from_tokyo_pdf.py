@@ -398,16 +398,16 @@ class ExtractFromTokyoPDF:
 
         if i == CITY:
             if text_item.text == '調査中※':
-                region = 'Unknown'
+                region_child = 'Unknown'
             elif text_item.text == '都外':
-                region = 'Non-resident'
+                region_child = 'Non-resident'
             else:
-                region = _tokyo_cities_to_en[text_item.text]
+                region_child = _tokyo_cities_to_en[text_item.text]
 
             return DataPoint(
-                statename='Tokyo',  # CHECK ME - should this have "city" etc added?
-                schema=SCHEMA_JP_CITY,
-                region=region,
+                region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
+                region_schema=SCHEMA_JP_CITY,
+                region_child=region_child,
                 datatype=DT_TOTAL,
                 value=num_below,
                 source_url='https://www.metro.tokyo.lg.jp', # FIXME!
@@ -417,8 +417,8 @@ class ExtractFromTokyoPDF:
             print(i)
             datatype, agerange = i
             return DataPoint(
-                statename='Tokyo',  # CHECK ME - should this have "city" etc added?
-                schema=SCHEMA_JP_CITY,
+                region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
+                region_schema=SCHEMA_JP_CITY,
                 agerange=agerange,
                 datatype=datatype,
                 value=num_below,

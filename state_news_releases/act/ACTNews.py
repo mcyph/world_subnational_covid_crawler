@@ -222,11 +222,11 @@ class ACTNews(StateNewsBase):
     #@singledaystat
     def _get_total_male_female_breakdown(self, href, html):
         # https://www.covid19.act.gov.au/updates/confirmed-case-information
-        # Only at stats by region URL!!!
+        # Only at stats by region_child URL!!!
         # Well, they had it for one day at the reports, but..)
 
         # ADDITION: This looks to only support the reports(?)
-        # should the stats by region URL be supported(!?) ============================================================
+        # should the stats by region_child URL be supported(!?) ============================================================
 
         c_html = word_to_number(html)
 

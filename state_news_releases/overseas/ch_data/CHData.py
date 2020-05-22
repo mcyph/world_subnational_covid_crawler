@@ -25,6 +25,37 @@ from covid_19_au_grab.get_package_dir import (
 )
 
 
+canton_to_name = dict([i.split('\t') for i in """
+AG	Aargau
+AI	Appenzell Innerrhoden
+AR	Appenzell Ausserrhoden
+BE	Bern
+BL	Basel-Landschaft
+BS	Basel-Stadt
+FR	Fribourg
+GE	Geneva
+GL	Glarus
+GR	Graubünden; Grisons
+JU	Jura
+LU	Luzern
+NE	Neuchâtel
+NW	Nidwalden
+OW	Obwalden
+SG	St. Gallen
+SH	Schaffhausen
+SO	Solothurn
+SZ	Schwyz
+TG	Thurgau
+TI	Ticino
+UR	Uri
+VD	Vaud
+VS	Valais
+ZG	Zug
+ZH	Zürich
+CH	Switzerland
+""".strip().split('\n')])
+
+
 class CHData(GithubRepo):
     SOURCE_URL = 'https://github.com/openZH/covid_19'
     SOURCE_LICENSE = 'Creative Commons Attribution 4.0 International'
@@ -55,58 +86,63 @@ class CHData(GithubRepo):
 
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
-                canton = item['abbreviation_canton_and_fl']  # FIXME!!! ==========================================================
+                canton = canton_to_name[item['abbreviation_canton_and_fl']]
                 source = item['source'] or self.SOURCE_URL
 
                 if item['ncumul_conf']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_TOTAL,
                         value=int(item['ncumul_conf']),
                         source_url=source,
                         date_updated=date
                     ))
+
                 if item['ncumul_tested']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_TESTS_TOTAL,
                         value=int(item['ncumul_tested']),
                         source_url=source,
                         date_updated=date
                     ))
+
                 if item['current_hosp']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['current_hosp']),
                         source_url=canton,
                         date_updated=date
                     ))
+
                 if item['current_icu']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_STATUS_ICU,
                         value=int(item['current_icu']),
                         source_url=canton,
                         date_updated=date
                     ))
+
                 if item['current_vent']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_STATUS_ICU_VENTILATORS,
                         value=int(item['current_vent']),
                         source_url=canton,
                         date_updated=date
                     ))
+
                 if item['ncumul_deceased']:
                     r.append(DataPoint(
-                        schema=SCHEMA_CH_CANTON,
-                        region=canton,
+                        region_schema=SCHEMA_CH_CANTON,
+                        region_child=canton,
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['ncumul_deceased']),
                         source_url=canton,

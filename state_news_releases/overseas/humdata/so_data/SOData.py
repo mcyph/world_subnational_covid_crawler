@@ -1,5 +1,4 @@
 import csv
-import json
 
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
@@ -8,19 +7,13 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_SO_REGION,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    SCHEMA_ADMIN_1,
+    DT_TOTAL,
     DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 
@@ -70,15 +63,17 @@ class SOData(URLBase):
             if first_item:
                 first_item = False
                 continue
+            print(item)
 
             date = self.convert_date(item['Date'],
                                      formats=('%m/%d/%Y',))
-            region = item['Region']
+            region_child = item['State']
 
             if item['Confirmed ']:
                 r.append(DataPoint(
-                    schema=SCHEMA_SO_REGION,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Somalia',
+                    region_child=region_child,
                     datatype=DT_TOTAL,
                     value=int(item['Confirmed ']),
                     source_url=self.SOURCE_URL,
@@ -86,8 +81,9 @@ class SOData(URLBase):
                 ))
             if item['Dead']:
                 r.append(DataPoint(
-                    schema=SCHEMA_SO_REGION,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Somalia',
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
                     value=int(item['Dead']),
                     source_url=self.SOURCE_URL,
@@ -95,8 +91,9 @@ class SOData(URLBase):
                 ))
             if item['Recovered']:
                 r.append(DataPoint(
-                    schema=SCHEMA_SO_REGION,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Somalia',
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
                     value=int(item['Recovered']),
                     source_url=self.SOURCE_URL,
@@ -104,8 +101,9 @@ class SOData(URLBase):
                 ))
             if item['Active']:
                 r.append(DataPoint(
-                    schema=SCHEMA_SO_REGION,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Somalia',
+                    region_child=region_child,
                     datatype=DT_STATUS_ACTIVE,
                     value=int(item['Active']),
                     source_url=self.SOURCE_URL,

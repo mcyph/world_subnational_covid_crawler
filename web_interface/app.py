@@ -27,7 +27,7 @@ from covid_19_au_grab.web_interface.CSVDataRevisions import \
 
 from covid_19_au_grab.state_news_releases.constants import (
     constant_to_name, schema_to_name,
-    SCHEMA_STATEWIDE, SCHEMA_POSTCODE, SCHEMA_LGA,
+    SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_NEW, DT_TESTS_TOTAL,
@@ -205,18 +205,18 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_STATEWIDE, DT_TOTAL, None),
-                        (SCHEMA_STATEWIDE, DT_NEW, None),
-                        (SCHEMA_STATEWIDE, DT_STATUS_DEATHS, None),
-                        #(SCHEMA_STATEWIDE, 'DT_PATIENT_STATUS', None),
-                        (SCHEMA_STATEWIDE, DT_STATUS_RECOVERED, None),
-                        #(SCHEMA_STATEWIDE, 'DT_PATIENT_STATUS', None),
-                        (SCHEMA_STATEWIDE, DT_TESTS_TOTAL, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_CONFIRMED, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_COMMUNITY, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_INTERSTATE, None),
-                        (SCHEMA_STATEWIDE, DT_STATUS_HOSPITALIZED, None),
-                        (SCHEMA_STATEWIDE, DT_STATUS_ICU, None),
+                        (SCHEMA_ADMIN_1, DT_TOTAL, None),
+                        (SCHEMA_ADMIN_1, DT_NEW, None),
+                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS, None),
+                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', None),
+                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED, None),
+                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', None),
+                        (SCHEMA_ADMIN_1, DT_TESTS_TOTAL, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, None),
+                        (SCHEMA_ADMIN_1, DT_STATUS_HOSPITALIZED, None),
+                        (SCHEMA_ADMIN_1, DT_STATUS_ICU, None),
                     ),
                     from_date=from_date
                 )
@@ -255,11 +255,11 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_STATEWIDE, DT_SOURCE_OVERSEAS, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_CONFIRMED, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_COMMUNITY, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_INTERSTATE, None),
-                        (SCHEMA_STATEWIDE, DT_SOURCE_UNDER_INVESTIGATION, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_OVERSEAS, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_UNDER_INVESTIGATION, None),
                     ),
                     from_date=from_date
                 )
@@ -283,7 +283,7 @@ class App(object):
     def gender_age(self, rev_date, rev_subid):
         inst = CSVDataRevision(rev_date, rev_subid)
         gender_age_datapoints = [i for i in inst.get_combined_values_by_datatype(
-            SCHEMA_STATEWIDE,
+            SCHEMA_ADMIN_1,
             (
                 DT_TOTAL_FEMALE,
                 DT_TOTAL_MALE,
@@ -306,7 +306,7 @@ class App(object):
         inst = CSVDataRevision(rev_date, rev_subid)
 
         out = []
-        for schema in (
+        for region_schema in (
             SCHEMA_LGA,
             SCHEMA_SA3,
             SCHEMA_HHS,
@@ -315,7 +315,7 @@ class App(object):
             SCHEMA_POSTCODE
         ):
             local_area_case_datapoints = inst.get_combined_values_by_datatype(
-                schema,
+                region_schema,
                 (
                     # TODO: What about by LGA (QLD only, other
                     #  LGA in DT_CASES_BY_REGION) and LHA (NSW)
@@ -358,8 +358,8 @@ class App(object):
         r = {}
         date_ids_dict = {}
 
-        for schema, state_name, datatypes in (
-            (SCHEMA_STATEWIDE, 'act', (DT_TOTAL,
+        for region_schema, region_parent, datatypes in (
+            (SCHEMA_ADMIN_1, 'act', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_RECOVERED,
@@ -373,7 +373,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_STATEWIDE, 'nsw', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'nsw', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -390,14 +390,14 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_STATEWIDE, 'nt', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'nt', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
                                       DT_STATUS_ICU,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_HOSPITALIZED,
                                       )),
-            (SCHEMA_STATEWIDE, 'qld', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'qld', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -412,7 +412,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_STATEWIDE, 'sa', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'sa', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_RECOVERED,
@@ -426,14 +426,14 @@ class App(object):
                                       DT_SOURCE_INTERSTATE,
                                       DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
-            (SCHEMA_STATEWIDE, 'tas', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'tas', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
                                        DT_STATUS_RECOVERED,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
                                        DT_STATUS_HOSPITALIZED,
                                        )),
-            (SCHEMA_STATEWIDE, 'vic', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'vic', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        #DT_STATUS_ACTIVE,
@@ -449,7 +449,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_STATEWIDE, 'wa', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'wa', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_ACTIVE,
@@ -486,8 +486,8 @@ class App(object):
             (SCHEMA_LGA, 'sa', (DT_TOTAL,
                                 DT_STATUS_ACTIVE,
                                 )),
-            (SCHEMA_LGA, 'tas', (DT_TOTAL,
-                                 )),
+            #(SCHEMA_LGA, 'tas', (DT_TOTAL,
+            #                     )),
             (SCHEMA_LGA, 'vic', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
@@ -525,9 +525,13 @@ class App(object):
                                  DT_STATUS_DEATHS
                                  )),
         ):
-            r[f'{state_name}:{schema_to_name(schema)[7:].lower()}'] = self.__get_time_series(
+            schema_name = schema_to_name(region_schema)[7:].lower()
+            if schema_name == 'admin_1':
+                schema_name = 'statewide'  #  Back-compat HACK! ==========================================================
+
+            r[f'{region_parent}:{schema_name}'] = self.__get_time_series(
                 from_dates, inst,
-                schema, state_name, datatypes,
+                region_schema, region_parent, datatypes,
                 date_ids_dict
             )
 
@@ -541,7 +545,7 @@ class App(object):
         }
 
     def __get_time_series(self, from_dates, inst,
-                          schema, state_name, datatypes,
+                          region_schema, region_parent, datatypes,
                           date_ids_dict):
         out = []
         added = set()
@@ -557,9 +561,9 @@ class App(object):
 
             print(from_date)
             local_area_case_datapoints = inst.get_combined_values_by_datatype(
-                schema,
+                region_schema,
                 datatypes,
-                state_name=state_name,
+                region_parent=region_parent,
                 from_date=from_date
             )
 
@@ -569,7 +573,7 @@ class App(object):
                 #    continue
                 i_out = []
                 i_out.append(from_date)
-                i_out.append(normalize_locality_name(datapoint['region']))
+                i_out.append(normalize_locality_name(datapoint['region_child']))
                 i_out.append(datapoint['agerange'])
 
                 new_for_this_day = False
@@ -592,7 +596,7 @@ class App(object):
         out_new = {}
         for i in out:
             date_updated = i[0]
-            region = i[1] or ''
+            region_child = i[1] or ''
             agerange = i[2] or ''
 
             if not date_updated in date_ids_dict:
@@ -601,12 +605,12 @@ class App(object):
             date_updated = date_ids_dict[date_updated]
 
             out_new.setdefault(
-                (region, agerange), []
+                (region_child, agerange), []
             ).append((date_updated,)+tuple(i[3:]))
 
         out_new_list = []
-        for (region, agerange), values in out_new.items():
-            out_new_list.append([region, agerange, values])
+        for (region_child, agerange), values in out_new.items():
+            out_new_list.append([region_child, agerange, values])
 
         return {
             'sub_headers': datatypes,
@@ -619,6 +623,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
+            'environment': 'production',
         },
         '/': {
 

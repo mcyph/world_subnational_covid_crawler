@@ -7,7 +7,7 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_IN_STATE, SCHEMA_IN_DISTRICT,
+    SCHEMA_ADMIN_1, SCHEMA_IN_DISTRICT,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -119,43 +119,43 @@ class INData(URLBase):
                              include_revision=True)
         data = json.loads(text)
 
-        for state_name, district_dict in data['districtsDaily'].items():
+        for parent_regions, district_dict in data['districtsDaily'].items():
             for district, status_dicts in district_dict.items():
                 for status_dict in status_dicts:
                     date = self.convert_date(status_dict['date'])
 
                     r.append(DataPoint(
-                        statename=state_name,
-                        schema=SCHEMA_IN_DISTRICT,
+                        region_parent=parent_regions,
+                        region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_TOTAL,
-                        region=district,
+                        region_child=district,
                         value=int(status_dict['confirmed']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        statename=state_name,
-                        schema=SCHEMA_IN_DISTRICT,
+                        region_parent=parent_regions,
+                        region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_ACTIVE,
-                        region=district,
+                        region_child=district,
                         value=int(status_dict['active']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        statename=state_name,
-                        schema=SCHEMA_IN_DISTRICT,
+                        region_parent=parent_regions,
+                        region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_DEATHS,
-                        region=district,
+                        region_child=district,
                         value=int(status_dict['deceased']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        statename=state_name,
-                        schema=SCHEMA_IN_DISTRICT,
+                        region_parent=parent_regions,
+                        region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_RECOVERED,
-                        region=district,
+                        region_child=district,
                         value=int(status_dict['recovered']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -212,7 +212,7 @@ class INData(URLBase):
                             include_revision=True)
         data = json.loads(text)
 
-        for state_name, status_dicts in data.items():
+        for parent_regions, status_dicts in data.items():
             for status_dict in status_dicts:
                 #print(status_dict['date'])
                 date = self.convert_date(status_dict['date'])
@@ -231,9 +231,10 @@ class INData(URLBase):
                         continue
 
                     r.append(DataPoint(
-                        schema=SCHEMA_IN_STATE,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='India',
+                        region_child=_state_codes[district_code.upper()],
                         datatype=datatype,
-                        region=_state_codes[district_code.upper()],
                         value=int(value),
                         date_updated=date,
                         source_url=self.SOURCE_URL

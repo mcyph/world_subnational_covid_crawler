@@ -67,6 +67,10 @@ class NSWNews(StateNewsBase):
     def get_data(self):
         r = []
 
+        r.extend(get_nsw_cases_data())
+        self.last_open_data_date = sorted(r, key=lambda x: x.date_updated)[-1].date_updated
+        r.extend(get_nsw_tests_data())
+
         for typ, url in (
             ('lhd', self.NSW_LHD_STATS_URL),
             ('lga', self.NSW_LGA_STATS_URL)
@@ -91,8 +95,6 @@ class NSWNews(StateNewsBase):
                     if cbr:
                         r.extend(cbr)
 
-        r.extend(get_nsw_cases_data())
-        r.extend(get_nsw_tests_data())
         r.extend(StateNewsBase.get_data(self))
         return r
 
@@ -279,7 +281,10 @@ class NSWNews(StateNewsBase):
 
     @singledaystat
     def _get_total_cases_by_region(self, href, html):
-        return []   # HACK: Now that we're using open data, it could produce anamolies if we combine the two sources!!! ========================================
+        date = self._get_date(href, html)
+        if date <= self.last_open_data_date:
+            # Only use website figures if the open data isn't up to this point!! =====================================
+            return []
 
         # Why on earth are there zero width spaces!?
         html = html.replace(chr(8203), '')
@@ -300,7 +305,7 @@ class NSWNews(StateNewsBase):
                 #print(html)
                 r.extend(self.__get_datapoints_from_table(
                     href, html, table,
-                    schema=SCHEMA_LGA,
+                    region_schema=SCHEMA_LGA,
                     datatype=datatype
                 ))
             return r or None
@@ -308,7 +313,7 @@ class NSWNews(StateNewsBase):
             table = (
                 self._pq_contains(html, 'table', '<span>LHD</span>',
                                   ignore_case=True) or
-                # Earliest stats used a different classifier for region!!!
+                # Earliest stats used a different classifier for region_child!!!
                 # Might need to use a different graph..
                 #self._pq_contains(c_html, 'table', 'Local Government Area',
                 #                  ignore_case=True) or
@@ -319,13 +324,13 @@ class NSWNews(StateNewsBase):
             )
             return self.__get_datapoints_from_table(
                 href, html, table,
-                schema=SCHEMA_LHD,
+                region_schema=SCHEMA_LHD,
                 datatype=DT_TOTAL
             ) or None
 
     def __get_datapoints_from_table(self,
                                     href, html, table,
-                                    schema, datatype):
+                                    region_schema, datatype):
 
         # TODO: Support testing data for LHA, etc!!! ============================================================================================================
         r = []
@@ -343,12 +348,12 @@ class NSWNews(StateNewsBase):
             print("FOUND TR:", lhd)
 
             c_icu = pq(tr[1]).text().replace(',', '').strip()
-            c_icu = int(c_icu) if c_icu not in ('1-4', '1-') else 4     # WARNING: Currently the backend doesn't support ranges!!! ====================================
+            c_icu = int(c_icu) if c_icu not in ('1-4', '1-', '<5') else 4     # WARNING: Currently the backend doesn't support ranges!!! ====================================
 
             r.append(DataPoint(
-                schema=schema,
+                region_schema=region_schema,
                 datatype=datatype,
-                region=lhd,
+                region_child=lhd,
                 value=c_icu,
                 date_updated=self._get_date(href, html),
                 source_url=href
@@ -477,18 +482,18 @@ class NSWNews(StateNewsBase):
                     #print("NSW VALUES:", values_dict)
 
                     r.append(DataPoint(
-                        schema=SCHEMA_LHD,
+                        region_schema=SCHEMA_LHD,
                         datatype=DT_STATUS_ACTIVE,
-                        region=lhd,
+                        region_child=lhd,
                         value=values_dict[DT_TOTAL]-values_dict[DT_STATUS_RECOVERED],
                         date_updated=self._get_date(href, html),
                         source_url=href
                     ))
                     for datatype, value in values_dict.items():
                         r.append(DataPoint(
-                            schema=SCHEMA_LHD,
+                            region_schema=SCHEMA_LHD,
                             datatype=datatype,
-                            region=lhd,
+                            region_child=lhd,
                             value=value,
                             date_updated=self._get_date(href, html),
                             source_url=href

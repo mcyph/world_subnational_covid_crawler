@@ -69,14 +69,14 @@ def get_overseas_data():
         # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
         print("Getting using class:", i)
         inst = i()
-        name = i.__class__.__name__.replace('data', '_data')
+        name = inst.__class__.__name__.replace('data', '_data')
         name = (
             name.partition('_')[0].lower().strip('_') +
             '_' +
             name.partition('_')[-1].strip('_')
         ).strip('_')
         name = re.sub(r'(?<!^)(?=[A-Z])', '_', name)
-        yield i.SOURCE_URL, name, inst.get_datapoints()
+        yield inst.SOURCE_URL, name, inst.get_datapoints()
 
 
 def remove_control_characters(s):
@@ -93,11 +93,12 @@ if __name__ == '__main__':
         source_urls.append(source_url)
 
         with open(f'covid_{overseas_name}.tsv', 'w', encoding='utf-8') as f:
-            f.write('state_name\t'
-                    'schema\t'
+            print("WRITING:", f'covid_{overseas_name}.tsv')
+            f.write('region_parent\t'
+                    'region_schema\t'
+                    'region_child\t'
                     'datatype\t'
                     'agerange\t'
-                    'region\t'
                     'value\t'
                     'date_updated\t'
                     'source_url\t'
@@ -122,11 +123,11 @@ if __name__ == '__main__':
                 yyyy, mm, dd = datapoint.date_updated.split('_')
                 backwards_date = f'{dd}/{mm}/{yyyy}'
 
-                f.write(f'{datapoint.statename}\t'
-                        f'{schema_to_name(datapoint.schema)[7:].lower()}\t'
+                f.write(f'{schema_to_name(datapoint.region_schema)[7:].lower()}\t'
+                        f'{datapoint.region_parent}\t'
+                        f'{datapoint.region_child}\t'
                         f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
                         f'{datapoint.agerange}\t'
-                        f'{datapoint.region}\t'
                         f'{datapoint.value}\t'
                         f'{backwards_date}\t'
                         f'{datapoint.source_url}\t'

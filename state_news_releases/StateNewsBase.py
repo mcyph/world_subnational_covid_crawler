@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.DataPoint import \
 from covid_19_au_grab.URLArchiver import \
     URLArchiver
 from covid_19_au_grab.state_news_releases.constants import \
-    SCHEMA_STATEWIDE
+    SCHEMA_ADMIN_1
 
 
 ALWAYS_DOWNLOAD_LISTING = True
@@ -47,7 +47,7 @@ class StateNewsBase(ABC):
     LISTING_URL = None
     # Where to find the COVID-19 news link in the page
     LISTING_HREF_SELECTOR = None
-    # URL if the grabber has a "stats by region"
+    # URL if the grabber has a "stats by region_child"
     # page which is separate to the main news article.
     # Some such as NSW don't keep an archive of this
     # information.
@@ -113,7 +113,7 @@ class StateNewsBase(ABC):
         """
         -> [DataPoint(...), ...]
         """
-        # Download from the stats by region URL,
+        # Download from the stats by region_child URL,
         # even if I don't use the stats for now, daily!!
         # TODO: WHAT IF THERE ARE MULTIPLE UPDATES IN A DAY?? ==========================================================
         output = []
@@ -194,7 +194,7 @@ class StateNewsBase(ABC):
         if new_cases:
             output.append(new_cases)
 
-        # Add total/new cases by region
+        # Add total/new cases by region_child
         tcbr = do_call(self._get_total_cases_by_region, href, html)
         if tcbr:
             output.extend(tcbr)
@@ -230,12 +230,14 @@ class StateNewsBase(ABC):
         if dhr:
             output.extend(dhr)
 
-    def _get_listing_urls(self, url, selector):
+    def _get_listing_urls(self, url, selector, _processed=None):
         """
         Most (all?) of the state pages are of a very similar
         format with listings of hyperlinks to news articles
         """
+        
         if isinstance(url, (list, tuple)):
+            # TODO: MAKE SURE THE SAME CACHED FILES AREN'T PROCESSED MORE THAN ONCE!!!! ================================
             added = set()
             listing_urls = []
 
@@ -351,8 +353,8 @@ class StateNewsBase(ABC):
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated=None, agerange=None, region=None,
-                                    schema=SCHEMA_STATEWIDE):
+                                    date_updated=None, agerange=None, region_child=None,
+                                    region_schema=SCHEMA_ADMIN_1):
         """
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()
@@ -366,7 +368,7 @@ class StateNewsBase(ABC):
             for i_regex in regex:
                 dp = self._extract_number_using_regex(
                     i_regex, s, source_url, datatype,
-                    date_updated, agerange, region, schema
+                    date_updated, agerange, region_child, region_schema
                 )
                 if dp:
                     return dp
@@ -385,9 +387,9 @@ class StateNewsBase(ABC):
                     date_updated = self._todays_date()
 
                 return DataPoint(
-                    schema=schema,
+                    region_schema=region_schema,
                     datatype=datatype,
-                    region=region,
+                    region_child=region_child,
                     agerange=agerange,
                     value=num,
                     date_updated=date_updated,
@@ -477,7 +479,7 @@ class StateNewsBase(ABC):
     def _get_total_cases_by_region(self, href, html):
         """
         A lot of states aren't recording the precise
-        locations any more, only a general region
+        locations any more, only a general region_child
         including NSW, QLD and VIC as of 25/3
         """
         pass

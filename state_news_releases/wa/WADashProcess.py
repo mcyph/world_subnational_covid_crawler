@@ -40,6 +40,7 @@ def get_wa_dash_datapoints():
 class WARegionsProcess:
     def get_old_datapoints(self):
         r = []
+        self.max_date = None
         wa_custom_map_ua = URLArchiver(f'wa/custom_map')
 
         for period in wa_custom_map_ua.iter_periods():
@@ -72,12 +73,13 @@ class WARegionsProcess:
                 # Don't use if there's a newer version!
                 continue
 
+            self.max_date = None
             for fn, fnam_prefix in (
-                (self.get_regions_data, 'regions'),
                 (self.get_source_of_infection, 'infection_source'),
                 (self.get_other_stats, 'other_stats'),
                 (self.get_mf_balance, 'mf_balance'),
-                (self.get_age_balance, 'age_balance')
+                (self.get_age_balance, 'age_balance'),
+                (self.get_regions_data, 'regions'),
             ):
                 path = f'{dir_}/{subdir}/{fnam_prefix}.json'
                 with open(path, 'r', encoding='utf-8', errors='ignore') as f:
@@ -137,11 +139,11 @@ class WARegionsProcess:
                             continue  # WARNING!!! ============================================================================
 
             num = DataPoint(
-                schema=SCHEMA_LGA,
+                region_schema=SCHEMA_LGA,
                 datatype=DT_TOTAL,
-                region=attributes['LGA_NAME19'].split('(')[0].strip(),
+                region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
                 value=value,
-                date_updated=period,
+                date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
                 source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
             )
             r.append(num)
@@ -215,6 +217,9 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             dt = self.__get_date(attribute['date'])
+
+            if self.max_date is None or dt > self.max_date:
+                self.max_date = dt
 
             r.append(DataPoint(
                 datatype=DT_NEW,

@@ -1,21 +1,14 @@
 import csv
-import json
-from collections import Counter
 
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_STATEWIDE, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
-    SCHEMA_FR_REGION, SCHEMA_FR_DEPARTMENT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW, DT_STATUS_ACTIVE,
+    SCHEMA_ADMIN_1, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
+    SCHEMA_FR_PAYS, SCHEMA_FR_DEPARTMENT,
+    DT_TOTAL, DT_STATUS_ACTIVE,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
     GithubRepo
@@ -63,7 +56,7 @@ class FRData(GithubRepo):
         with open(self.get_path_in_dir('dist/chiffres-cles.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
-                region = item['maille_nom']
+                region_child = item['maille_nom']
                 date = self.convert_date(item['date'])
 
                 confirmed = item['cas_confirmes']
@@ -79,14 +72,17 @@ class FRData(GithubRepo):
                 source_url = item['source_url'] or source_name or self.github_url
 
                 if item['granularite'] == 'pays':
-                    schema = SCHEMA_STATEWIDE
-                    region = None
+                    region_schema = SCHEMA_FR_PAYS
+                    region_parent = None
                 elif item['granularite'] in 'departement':
-                    schema = SCHEMA_FR_DEPARTMENT
+                    region_schema = SCHEMA_FR_DEPARTMENT
+                    region_parent = None
                 elif item['granularite'] == 'region':
-                    schema = SCHEMA_FR_REGION
+                    region_schema = SCHEMA_ADMIN_1
+                    region_parent = 'France'
                 elif item['granularite'] == 'collectivite-outremer':
-                    schema = SCHEMA_FR_OVERSEAS_COLLECTIVITY
+                    region_schema = SCHEMA_FR_OVERSEAS_COLLECTIVITY
+                    region_parent = None
                 elif item['granularite'] == 'monde':
                     # World
                     continue
@@ -95,9 +91,10 @@ class FRData(GithubRepo):
 
                 if confirmed:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_TOTAL,
-                        region=region,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url
@@ -105,9 +102,10 @@ class FRData(GithubRepo):
 
                 if deaths:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_STATUS_DEATHS,
-                        region=region,
                         value=int(deaths),
                         date_updated=date,
                         source_url=source_url
@@ -115,9 +113,10 @@ class FRData(GithubRepo):
 
                 if icu:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_STATUS_ICU,
-                        region=region,
                         value=int(icu),
                         date_updated=date,
                         source_url=source_url
@@ -125,9 +124,10 @@ class FRData(GithubRepo):
 
                 if hospitalized:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_STATUS_HOSPITALIZED,
-                        region=region,
                         value=int(hospitalized),
                         date_updated=date,
                         source_url=source_url
@@ -135,18 +135,21 @@ class FRData(GithubRepo):
 
                 if recovered:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_STATUS_RECOVERED,
-                        region=region,
                         value=int(recovered),
                         date_updated=date,
                         source_url=source_url
                     ))
+
                     if confirmed:
                         r.append(DataPoint(
-                            schema=schema,
+                            region_schema=region_schema,
+                            region_parent=region_parent,
+                            region_child=region_child,
                             datatype=DT_STATUS_ACTIVE,
-                            region=region,
                             value=int(recovered)-int(confirmed),
                             date_updated=date,
                             source_url=source_url
@@ -154,9 +157,10 @@ class FRData(GithubRepo):
 
                 if confirmed:
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
+                        region_parent=region_parent,
+                        region_child=region_child,
                         datatype=DT_TOTAL,
-                        region=region,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url

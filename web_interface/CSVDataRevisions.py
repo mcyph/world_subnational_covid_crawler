@@ -45,11 +45,11 @@ class CSVDataRevisions:
         previous_dict_by_name = {}
 
         keys = (
-            'schema',
-            'state_name',
+            'region_schema',
+            'region_parent',
             'datatype',
             'agerange',
-            'region',
+            'region_child',
             'value',
         )
 

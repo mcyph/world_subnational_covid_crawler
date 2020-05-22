@@ -53,7 +53,7 @@ class KRData(KaggleDataset):
         return r
 
     def _get_patient_info(self):
-        # TODO: get age/gender/source of infection info by region!!
+        # TODO: get age/gender/source of infection info by region_child!!
         #
         # PatientInfo.csv
         # patient_id,global_num,sex,birth_year,age,country,province,city,disease,infection_case,infection_order,infected_by,contact_number,symptom_onset_date,confirmed_date,released_date,deceased_date,state
@@ -80,24 +80,24 @@ class KRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    schema=SCHEMA_KR_PROVINCE,
-                    region=item['province'],
+                    region_schema=SCHEMA_KR_PROVINCE,
+                    region_child=item['province'],
                     datatype=DT_TOTAL,
                     value=item['confirmed'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 #r.append(DataPoint(
-                #    schema=SCHEMA_KR_PROVINCE,
-                #    region=item['province'],
+                #    region_schema=SCHEMA_KR_PROVINCE,
+                #    region_child=item['province'],
                 #    datatype=DT_RELEASED,
                 #    value=item['released'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
                 #))
                 r.append(DataPoint(
-                    schema=SCHEMA_KR_PROVINCE,
-                    region=item['province'],
+                    region_schema=SCHEMA_KR_PROVINCE,
+                    region_child=item['province'],
                     datatype=DT_STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,

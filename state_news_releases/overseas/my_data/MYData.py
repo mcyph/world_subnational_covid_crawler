@@ -75,10 +75,10 @@ class MYData(GithubRepo):
                     for district, value in item.items():
                         if value.strip('-'):
                             r.append(DataPoint(
-                                statename=fnam.split('-')[-1].split('.')[0],
-                                schema=SCHEMA_MY_DISTRICT,
+                                region_parent=fnam.split('-')[-1].split('.')[0],
+                                region_schema=SCHEMA_MY_DISTRICT,
                                 datatype=DT_TOTAL,
-                                region=district.replace('under-investigation', 'Unknown'),
+                                region_child=district.replace('under-investigation', 'Unknown'),
                                 value=int(value),
                                 date_updated=date,
                                 source_url=self.SOURCE_URL
@@ -107,9 +107,9 @@ class MYData(GithubRepo):
                 for state, value in item.items():
                     if value.strip('-'):
                         r.append(DataPoint(
-                            schema=SCHEMA_MY_STATE,
+                            region_schema=SCHEMA_MY_STATE,
                             datatype=DT_TOTAL,
-                            region=state.replace('under-investigation', 'Unknown'),
+                            region_child=state.replace('under-investigation', 'Unknown'),
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL

@@ -6,15 +6,9 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_DE_AGS, SCHEMA_DE_STATE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_DE_AGS,
+    DT_TOTAL,
+    DT_STATUS_DEATHS
 )
 from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
     GithubRepo
@@ -90,6 +84,8 @@ class DEData(GithubRepo):
                 for key, value in item.items():
                     if key == 'sum_cases':
                         r.append(DataPoint(
+                            region_schema=SCHEMA_ADMIN_0,
+                            region_child='Germany',
                             datatype=DT_TOTAL,
                             value=int(value),
                             date_updated=date,
@@ -97,6 +93,8 @@ class DEData(GithubRepo):
                         ))
                     elif key == 'sum_deaths':
                         r.append(DataPoint(
+                            region_schema=SCHEMA_ADMIN_0,
+                            region_child='Germany',
                             datatype=DT_STATUS_DEATHS,
                             value=int(value),
                             date_updated=date,
@@ -104,16 +102,20 @@ class DEData(GithubRepo):
                         ))
                     elif key.endswith('_cases'):
                         r.append(DataPoint(
+                            region_schema=SCHEMA_ADMIN_1,
+                            region_parent='Germany',
+                            region_child=state_to_name[key.split('_')[0]],
                             datatype=DT_TOTAL,
-                            region=state_to_name[key.split('_')[0]],
                             value=int(value),
                             date_updated=date,
                             source_url=source
                         ))
                     elif key.endswith('_deaths'):
                         r.append(DataPoint(
+                            region_schema=SCHEMA_ADMIN_1,
+                            region_parent='Germany',
+                            region_child=state_to_name[key.split('_')[0]],
                             datatype=DT_STATUS_DEATHS,
-                            region=state_to_name[key.split('_')[0]],
                             value=int(value),
                             date_updated=date,
                             source_url=source
@@ -146,10 +148,10 @@ class DEData(GithubRepo):
                         ags_dict = ags_id_to_name[ags_id]
 
                         r.append(DataPoint(
-                            schema=SCHEMA_DE_AGS,
-                            statename=ags_dict['state'],
+                            region_schema=SCHEMA_DE_AGS,
+                            region_parent=ags_dict['state'],
+                            region_child=ags_dict['name'],
                             datatype=DT_TOTAL,
-                            region=ags_dict['name'],
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -167,16 +169,17 @@ class DEData(GithubRepo):
                 date = self.convert_date(item['time_iso8601'].split('T')[0])
                 del item['time_iso8601']
 
-                for region, value in item.items():
-                    if region == 'sum_cases':
+                for region_child, value in item.items():
+                    if region_child == 'sum_cases':
                         pass
                     else:
-                        state = state_to_name[region]
+                        state = state_to_name[region_child]
 
                         r.append(DataPoint(
-                            schema=SCHEMA_DE_STATE,
+                            region_schema=SCHEMA_ADMIN_1,
+                            region_parent='Germany',
+                            region_child=state,
                             datatype=DT_TOTAL,
-                            region=state,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -202,10 +205,10 @@ class DEData(GithubRepo):
                         ags_dict = ags_id_to_name[ags_id]
 
                         r.append(DataPoint(
-                            schema=SCHEMA_DE_AGS,
-                            statename=ags_dict['state'],
+                            region_schema=SCHEMA_DE_AGS,
+                            region_parent=ags_dict['state'],
+                            region_child=ags_dict['name'],
                             datatype=DT_STATUS_DEATHS,
-                            region=ags_dict['name'],
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -223,16 +226,17 @@ class DEData(GithubRepo):
                 date = self.convert_date(item['time_iso8601'].split('T')[0])
                 del item['time_iso8601']
 
-                for region, value in item.items():
-                    if region == 'sum_deaths':
+                for region_child, value in item.items():
+                    if region_child == 'sum_deaths':
                         pass
                     else:
-                        state = state_to_name[region]
+                        state = state_to_name[region_child]
 
                         r.append(DataPoint(
-                            schema=SCHEMA_DE_STATE,
+                            region_schema=SCHEMA_ADMIN_1,
+                            region_parent='Germany',
+                            region_child=state,
                             datatype=DT_STATUS_DEATHS,
-                            region=state,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL

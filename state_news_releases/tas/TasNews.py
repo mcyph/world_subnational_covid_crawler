@@ -31,7 +31,7 @@ TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
     LISTING_URL = (
-        'https://www.dhhs.tas.gov.au/news/2020',
+        #'https://www.dhhs.tas.gov.au/news/2020',     # CURRENTLY TIMING OUT!!! ==============================
         'https://www.coronavirus.tas.gov.au/',
         'https://coronavirus.tas.gov.au/media-releases',
         'https://coronavirus.tas.gov.au/media-releases?result_85500_result_page=2',
@@ -49,11 +49,11 @@ class TasNews(StateNewsBase):
         # Add manually entered data by THS and LGA
         with open(TAS_BY_LGA, 'r', encoding='utf-8') as f:
             for date, date_dict in loads(f.read()).items():
-                for _, region, total in date_dict['data']:
+                for _, region_child, total in date_dict['data']:
                     r.append(DataPoint(
-                        schema=SCHEMA_LGA,
+                        region_schema=SCHEMA_LGA,
                         datatype=DT_TOTAL,
-                        region=region,
+                        region_child=region_child,
                         value=total,
                         date_updated=date,
                         source_url=date_dict['source_url']
@@ -66,31 +66,31 @@ class TasNews(StateNewsBase):
                 dd, mm, yyyy = date_dict['Date'].split('/')
                 dt = datetime(day=int(dd), month=int(mm), year=int(yyyy)).strftime('%Y_%m_%d')
 
-                for region in (
+                for region_child in (
                     'North-West', 'North', 'South',
                 ):
                     r.append(DataPoint(
-                        schema=SCHEMA_THS,
+                        region_schema=SCHEMA_THS,
                         datatype=DT_STATUS_ACTIVE,
-                        region=region,
-                        value=date_dict[f'{region} Active'],
+                        region_child=region_child,
+                        value=date_dict[f'{region_child} Active'],
                         date_updated=dt,
                         source_url='Peter Gutweins Facebook Page'
                     ))
                     r.append(DataPoint(
-                        schema=SCHEMA_THS,
+                        region_schema=SCHEMA_THS,
                         datatype=DT_STATUS_RECOVERED,
-                        region=region,
-                        value=int(date_dict[f'{region} Recovered']),
+                        region_child=region_child,
+                        value=int(date_dict[f'{region_child} Recovered']),
                         date_updated=dt,
                         source_url='Peter Gutweins Facebook Page'
                     ))
                     r.append(DataPoint(
-                        schema=SCHEMA_THS,
+                        region_schema=SCHEMA_THS,
                         datatype=DT_TOTAL,
-                        region=region,
-                        value=int(date_dict[f'{region} Active'])+
-                              int(date_dict[f'{region} Recovered']),
+                        region_child=region_child,
+                        value=int(date_dict[f'{region_child} Active'])+
+                              int(date_dict[f'{region_child} Recovered']),
                         date_updated=dt,
                         source_url='Peter Gutweins Facebook Page'
                     ))
@@ -289,8 +289,8 @@ class TasNews(StateNewsBase):
 
                     if lga.lower() == 'total':
                         r.append(DataPoint(
-                            schema=SCHEMA_THS,
-                            region=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
+                            region_schema=SCHEMA_THS,
+                            region_child=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
                             datatype=DT_TOTAL,
                             value=int(pq(num_cases).text().replace(',', '').strip()),
                             date_updated=self._get_date(url, html),
@@ -298,8 +298,8 @@ class TasNews(StateNewsBase):
                         ))
                     else:
                         r.append(DataPoint(
-                            schema=SCHEMA_LGA,
-                            region=lga,
+                            region_schema=SCHEMA_LGA,
+                            region_child=lga,
                             datatype=DT_TOTAL,
                             value=int(pq(num_cases).text().replace(',', '').strip()),
                             date_updated=self._get_date(url, html),
@@ -315,10 +315,10 @@ class TasNews(StateNewsBase):
 
             r = []
             if table:
-                for region, lga, num_cases in table[0][1]:
+                for region_child, lga, num_cases in table[0][1]:
                     r.append(DataPoint(
-                        schema=SCHEMA_LGA,
-                        region=pq(lga).text().strip(),
+                        region_schema=SCHEMA_LGA,
+                        region_child=pq(lga).text().strip(),
                         datatype=DT_TOTAL,
                         value=int(pq(num_cases).text().replace(',', '').strip()),
                         date_updated=self._get_date(url, html),

@@ -97,10 +97,10 @@ class CSVDataRevision:
 
         return (
             sortable_date(x['date_updated']),
-            x['state_name'],
+            x['region_parent'],
             x['datatype'],
             x['agerange'],
-            x['region']
+            x['region_child']
         )
 
     def __generic_sort_key(self, x):
@@ -109,18 +109,18 @@ class CSVDataRevision:
         """
         # print(x)
         return (
-            x['state_name'],
+            x['region_parent'],
             x['datatype'],
             x['agerange'],
-            x['region']
+            x['region_child']
         )
 
     #=============================================================#
     #                       Get DataPoints                        #
     #=============================================================#
 
-    def get_combined_values_by_datatype(self, schema, datatypes, 
-                                        from_date=None, state_name=None):
+    def get_combined_values_by_datatype(self, region_schema, datatypes, 
+                                        from_date=None, region_parent=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -134,8 +134,8 @@ class CSVDataRevision:
             'DT_AGE_FEMALE': ...
         }, ...]
         """
-        if isinstance(schema, int):
-            schema = schema_to_name(schema)[7:].lower()
+        if isinstance(region_schema, int):
+            region_schema = schema_to_name(region_schema)[7:].lower()
 
         def to_datetime(dt):
             return datetime.datetime.strptime(dt, '%d/%m/%Y')
@@ -145,18 +145,18 @@ class CSVDataRevision:
             if isinstance(datatype, int):
                 datatype = constant_to_name(datatype)[3:].lower()
 
-            for datapoint in self.get_combined_value(schema, datatype,
+            for datapoint in self.get_combined_value(region_schema, datatype,
                                                      from_date=from_date,
-                                                     state_name=state_name):
+                                                     region_parent=region_parent):
 
-                if datapoint['agerange'] and datapoint['region']:
-                    k = f"{datapoint['agerange']} {datapoint['region']}"
+                if datapoint['agerange'] and datapoint['region_child']:
+                    k = f"{datapoint['agerange']} {datapoint['region_child']}"
                 elif datapoint['agerange']:
                     k = datapoint['agerange'] or ''
                 else:
-                    k = datapoint['region'] or ''
+                    k = datapoint['region_child'] or ''
 
-                i_combined = combined.setdefault(datapoint['state_name'], {}) \
+                i_combined = combined.setdefault(datapoint['region_parent'], {}) \
                                      .setdefault(k, {})
 
                 if (
@@ -170,9 +170,9 @@ class CSVDataRevision:
                         .strftime('%d/%m/%Y')
 
                 i_combined['agerange'] = datapoint['agerange']
-                i_combined['region'] = datapoint['region']
-                i_combined['state_name'] = datapoint['state_name']
-                i_combined['schema'] = datapoint['schema']
+                i_combined['region_child'] = datapoint['region_child']
+                i_combined['region_parent'] = datapoint['region_parent']
+                i_combined['region_schema'] = datapoint['region_schema']
 
                 if not datatype in i_combined:
                     i_combined[datatype] = datapoint['value']
@@ -188,7 +188,7 @@ class CSVDataRevision:
     def get_combined_values(self, filters, from_date=None):
         """
         Returns as a combined dict,
-        e.g. if filters (a list of ((schema, datatype, state_name/None), ...) is (
+        e.g. if filters (a list of ((region_schema, datatype, region_parent/None), ...) is (
             (DT_PATIENT_STATUS, "Recovered"),
             (DT_PATIENT_STATUS, "ICU")
         )
@@ -202,16 +202,16 @@ class CSVDataRevision:
             return datetime.datetime.strptime(dt, '%d/%m/%Y')
 
         combined = {}
-        for schema, datatype, state_name in filters:
-            if isinstance(schema, int):
-                schema = schema_to_name(schema)[7:].lower()
+        for region_schema, datatype, region_parent in filters:
+            if isinstance(region_schema, int):
+                region_schema = schema_to_name(region_schema)[7:].lower()
             if isinstance(datatype, int):
                 datatype = constant_to_name(datatype)[3:].lower()
 
-            for datapoint in self.get_combined_value(schema, datatype, state_name,
+            for datapoint in self.get_combined_value(region_schema, datatype, region_parent,
                                                      from_date=from_date):
 
-                i_combined = combined.setdefault(datapoint['state_name'], {})
+                i_combined = combined.setdefault(datapoint['region_parent'], {})
 
                 if (
                     not 'date_updated' in i_combined or
@@ -226,13 +226,13 @@ class CSVDataRevision:
                 k = datatype
                 if datapoint['agerange']:
                     k = f"{k} ({datapoint['agerange']})"
-                if datapoint['region']:
-                    k = f"{k} ({datapoint['region']})"
+                if datapoint['region_child']:
+                    k = f"{k} ({datapoint['region_child']})"
 
-                i_combined['state_name'] = datapoint['state_name']
-                i_combined['region'] = datapoint['region']
+                i_combined['region_parent'] = datapoint['region_parent']
+                i_combined['region_child'] = datapoint['region_child']
                 i_combined['agerange'] = datapoint['agerange']
-                i_combined['schema'] = datapoint['schema']
+                i_combined['region_schema'] = datapoint['region_schema']
 
                 if not k in i_combined:
                     i_combined[k] = datapoint['value']
@@ -250,7 +250,7 @@ class CSVDataRevision:
         return out
     
     @needsdatapoints
-    def get_combined_value(self, schema, datatype, state_name=None, from_date=None):
+    def get_combined_value(self, region_schema, datatype, region_parent=None, from_date=None):
         """
         Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
@@ -260,8 +260,8 @@ class CSVDataRevision:
         if not hasattr(self, '_datapoints_dict'):
             self.__create_datapoints_dict()
 
-        if isinstance(schema, int):
-            schema = schema_to_name(schema)[7:].lower()
+        if isinstance(region_schema, int):
+            region_schema = schema_to_name(region_schema)[7:].lower()
         if isinstance(datatype, int):
             datatype = constant_to_name(datatype)[3:].lower()
 
@@ -276,13 +276,13 @@ class CSVDataRevision:
 
             return x >= y
 
-        if state_name is not None:
-            datapoints = self._datapoints_dict2.get((state_name, schema, datatype), [])
+        if region_parent is not None:
+            datapoints = self._datapoints_dict2.get((region_parent, region_schema, datatype), [])
         else:
-            datapoints = self._datapoints_dict.get((schema, datatype), [])
+            datapoints = self._datapoints_dict.get((region_schema, datatype), [])
 
         if not datapoints:
-            print(f"WARNING: not found for {state_name}, {schema}, {datatype}")
+            print(f"WARNING: not found for {region_parent}, {region_schema}, {datatype}")
 
         r = {}
         for datapoint in datapoints:
@@ -294,9 +294,9 @@ class CSVDataRevision:
             # Note we're restricting to only `datatype` already,
             # so no need to include it in the key
             unique_k = (
-                datapoint['state_name'],
+                datapoint['region_parent'],
                 datapoint['agerange'],
-                datapoint['region']
+                datapoint['region_child']
             )
             if unique_k in r:
                 assert date_greater_than_or_equal(
@@ -314,8 +314,8 @@ class CSVDataRevision:
         d = {}
         d2 = {}
         for datapoint in self._datapoints[:]:
-            d.setdefault((datapoint['schema'], datapoint['datatype']), []).append(datapoint)
-            d2.setdefault((datapoint['state_name'], datapoint['schema'], datapoint['datatype']), []).append(datapoint)
+            d.setdefault((datapoint['region_schema'], datapoint['datatype']), []).append(datapoint)
+            d2.setdefault((datapoint['region_parent'], datapoint['region_schema'], datapoint['datatype']), []).append(datapoint)
         self._datapoints_dict = d
         self._datapoints_dict2 = d2
 
@@ -330,11 +330,11 @@ if __name__ == '__main__':
         if False:
             pprint([
                 i for i in inst.get_combined_values_by_datatype(
-                    schema='lga',
+                    region_schema='lga',
                     datatypes=('total', 'source_overseas', 'tests_total'),
                     from_date=f'{day}/04/2020',
-                    state_name='nsw'
-                ) if i['region'] == 'Penrith'
+                    region_parent='nsw'
+                ) if i['region_child'] == 'Penrith'
             ])
         elif True:
             pprint([

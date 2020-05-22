@@ -26,13 +26,13 @@
         {% for datapoint in datapoints %}
             <tr>
                 <td>
-                    {{- datapoint['state_name']|upper -}}
+                    {{- datapoint['region_parent']|upper -}}
                 </td>
                 <td>
-                    {{- datapoint['schema'] -}}
+                    {{- datapoint['region_schema'] -}}
                 </td>
                 <td>
-                    {{- datapoint['region'] -}}
+                    {{- datapoint['region_child'] -}}
                 </td>
                 <td {{new_star(datapoint, 'total')}} title="{{ datapoint['total date_updated'] }} {{ datapoint['total text_match']|e }}">
                     <a href="{{ datapoint['total source_url'] }}">

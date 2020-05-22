@@ -149,51 +149,51 @@ class NZData(GithubRepo):
             ))
 
         cumulative = Counter()
-        for (date, datatype, region), value in sorted(dhb.items()):
-            cumulative[datatype, region] += value
+        for (date, datatype, region_child), value in sorted(dhb.items()):
+            cumulative[datatype, region_child] += value
             r.append(DataPoint(
-                schema=SCHEMA_NZ_DHB,
+                region_schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
-                region=region,
-                value=cumulative[datatype, region],
+                region_child=region_child,
+                value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
         # Regional counters
         cumulative = Counter()
-        for (date, datatype, region), value in sorted(origins_by_dhb.items()):
-            cumulative[datatype, region] += value
+        for (date, datatype, region_child), value in sorted(origins_by_dhb.items()):
+            cumulative[datatype, region_child] += value
             r.append(DataPoint(
-                schema=SCHEMA_NZ_DHB,
+                region_schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
-                region=region,
-                value=cumulative[datatype, region],
+                region_child=region_child,
+                value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
         cumulative = Counter()
-        for (date, agerange, region), value in sorted(age_groups_by_dhb.items()):
-            cumulative[agerange, region] += value
+        for (date, agerange, region_child), value in sorted(age_groups_by_dhb.items()):
+            cumulative[agerange, region_child] += value
             r.append(DataPoint(
-                schema=SCHEMA_NZ_DHB,
+                region_schema=SCHEMA_NZ_DHB,
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                region=region,
-                value=cumulative[agerange, region],
+                region_child=region_child,
+                value=cumulative[agerange, region_child],
                 date_updated=date,
                 source_url=self.github_url
             ))
 
         cumulative = Counter()
-        for (date, datatype, region), value in sorted(gender_balances_by_dhb.items()):
-            cumulative[datatype, region] += value
+        for (date, datatype, region_child), value in sorted(gender_balances_by_dhb.items()):
+            cumulative[datatype, region_child] += value
             r.append(DataPoint(
-                schema=SCHEMA_NZ_DHB,
+                region_schema=SCHEMA_NZ_DHB,
                 datatype=datatype,
-                region=region,
-                value=cumulative[datatype, region],
+                region_child=region_child,
+                value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
             ))
@@ -327,8 +327,8 @@ class NZData(GithubRepo):
 
                 r.append(DataPoint(
                     datatype=DT_TOTAL,
-                    schema=SCHEMA_NZ_DHB,
-                    region=item['DHB'],
+                    region_schema=SCHEMA_NZ_DHB,
+                    region_child=item['DHB'],
                     value=int(item['Count']),
                     date_updated=self.convert_date(item['Date']),
                     source_url=self.github_url

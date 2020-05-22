@@ -212,9 +212,9 @@ class JPCityData(URLBase):
             cumulative[date, prefecture] += value
 
             r.append(DataPoint(
-                schema=SCHEMA_JP_PREFECTURE,
+                region_schema=SCHEMA_JP_PREFECTURE,
                 datatype=DT_TOTAL,
-                region=prefecture,
+                region_child=prefecture,
                 value=cumulative[date, prefecture],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -248,9 +248,9 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, gender] += value
 
             r.append(DataPoint(
-                schema=SCHEMA_JP_PREFECTURE,
+                region_schema=SCHEMA_JP_PREFECTURE,
                 datatype=gender,
-                region=prefecture,
+                region_child=prefecture,
                 value=cumulative[date, prefecture, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -261,10 +261,10 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, agerange] += value
 
             r.append(DataPoint(
-                schema=SCHEMA_JP_PREFECTURE,
+                region_schema=SCHEMA_JP_PREFECTURE,
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                region=prefecture,
+                region_child=prefecture,
                 value=cumulative[date, prefecture, agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -275,10 +275,10 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, agerange, gender] += value
 
             r.append(DataPoint(
-                schema=SCHEMA_JP_PREFECTURE,
+                region_schema=SCHEMA_JP_PREFECTURE,
                 datatype=gender,
                 agerange=agerange,
-                region=prefecture,
+                region_child=prefecture,
                 value=cumulative[date, prefecture, agerange, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -289,10 +289,10 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, city] += value
 
             r.append(DataPoint(
-                statename=prefecture,
-                schema=SCHEMA_JP_CITY,
+                region_parent=prefecture,
+                region_schema=SCHEMA_JP_CITY,
                 datatype=DT_TOTAL,
-                region=city,
+                region_child=city,
                 value=cumulative[date, prefecture, city],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -303,10 +303,10 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, city, gender] += value
 
             r.append(DataPoint(
-                statename=prefecture,
-                schema=SCHEMA_JP_CITY,
+                region_parent=prefecture,
+                region_schema=SCHEMA_JP_CITY,
                 datatype=gender,
-                region=city,
+                region_child=city,
                 value=cumulative[date, prefecture, city, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -317,11 +317,11 @@ class JPCityData(URLBase):
             cumulative[date, prefecture, city, agerange, gender] += value
 
             r.append(DataPoint(
-                statename=prefecture,
-                schema=SCHEMA_JP_CITY,
+                region_parent=prefecture,
+                region_schema=SCHEMA_JP_CITY,
                 datatype=gender,
                 agerange=agerange,
-                region=city,
+                region_child=city,
                 value=cumulative[date, prefecture, city, agerange, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!

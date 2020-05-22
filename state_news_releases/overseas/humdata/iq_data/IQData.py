@@ -1,5 +1,4 @@
 import csv
-import json
 
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
@@ -8,19 +7,13 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_IQ_GOVERNORATE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    SCHEMA_ADMIN_1,
+    DT_TOTAL,
     DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 
@@ -66,39 +59,46 @@ class IQData(URLBase):
                 first_item = False
                 continue
             date = self.convert_date(item['Date'])
-            region = item['Governorate'].title()
+            region_child = item['Governorate'].title()
 
             if item['Cases']:
                 r.append(DataPoint(
-                    schema=SCHEMA_IQ_GOVERNORATE,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Iraq',
+                    region_child=region_child,
                     datatype=DT_TOTAL,
                     value=int(item['Cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
+
             if item['Deaths']:
                 r.append(DataPoint(
-                    schema=SCHEMA_IQ_GOVERNORATE,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Iraq',
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
                     value=int(item['Deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
+
             if item['Recoveries']:
                 r.append(DataPoint(
-                    schema=SCHEMA_IQ_GOVERNORATE,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Iraq',
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
                     value=int(item['Recoveries']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
+
             if item['Active Cases']:
                 r.append(DataPoint(
-                    schema=SCHEMA_IQ_GOVERNORATE,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Iraq',
+                    region_child=region_child,
                     datatype=DT_STATUS_ACTIVE,
                     value=int(item['Active Cases']),
                     source_url=self.SOURCE_URL,

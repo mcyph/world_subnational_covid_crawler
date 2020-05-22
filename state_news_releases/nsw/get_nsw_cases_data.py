@@ -98,20 +98,20 @@ def get_nsw_cases_data():
 
     r = []
 
-    def get_datapoints(schema, cases_dict):
+    def get_datapoints(region_schema, cases_dict):
         r = []
         current_counts = {}
 
         for date, schema_dict in sorted(cases_dict.items()):
-            for region, cases in schema_dict.items():
-                current_counts.setdefault(region, 0)
-                current_counts[region] += len(cases)
+            for region_child, cases in schema_dict.items():
+                current_counts.setdefault(region_child, 0)
+                current_counts[region_child] += len(cases)
 
                 r.append(DataPoint(
-                    schema=schema,
+                    region_schema=region_schema,
                     datatype=DT_TOTAL,
-                    region=region.split('(')[0].strip() or DEFAULT_REGION,
-                    value=current_counts[region],
+                    region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
+                    value=current_counts[region_child],
                     date_updated=date,
                     source_url=SOURCE_URL,
                     text_match=None
@@ -122,21 +122,21 @@ def get_nsw_cases_data():
     r.extend(get_datapoints(SCHEMA_LGA, by_lga))
     #r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
 
-    def get_soi_datapoints(schema, cases_dict):
+    def get_soi_datapoints(region_schema, cases_dict):
         r = []
         current_counts = {}
 
         for date, schema_dict in sorted(cases_dict.items()):
-            for region, soi_dict in schema_dict.items():
+            for region_child, soi_dict in schema_dict.items():
                 for soi, cases in soi_dict.items():
-                    current_counts.setdefault((region, soi), 0)
-                    current_counts[region, soi] += len(cases)
+                    current_counts.setdefault((region_child, soi), 0)
+                    current_counts[region_child, soi] += len(cases)
 
                     r.append(DataPoint(
-                        schema=schema,
+                        region_schema=region_schema,
                         datatype=soi,
-                        region=region.split('(')[0].strip() or DEFAULT_REGION,
-                        value=current_counts[region, soi],
+                        region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
+                        value=current_counts[region_child, soi],
                         date_updated=date,
                         source_url=SOURCE_URL,
                         text_match=None

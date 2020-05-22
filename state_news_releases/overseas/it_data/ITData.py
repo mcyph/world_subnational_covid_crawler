@@ -168,10 +168,10 @@ class ITData(GithubRepo):
                 date = self.convert_date(item['data'].split('T')[0])
 
                 r.append(DataPoint(
-                    statename=item['denominazione_regione'],
-                    schema=SCHEMA_IT_PROVINCE,
+                    region_parent=item['denominazione_regione'],
+                    region_schema=SCHEMA_IT_PROVINCE,
                     datatype=DT_TOTAL,
-                    region=item['denominazione_provincia'],
+                    region_child=item['denominazione_provincia'],
                     value=int(item['totale_casi']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -225,65 +225,65 @@ class ITData(GithubRepo):
                 # tests_total_people = item['casi_testati']
 
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_STATUS_HOSPITALIZED,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(hospitalized),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_STATUS_ACTIVE,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_NEW,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(new),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_STATUS_RECOVERED,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(recovered),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_STATUS_DEATHS,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(deaths),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_TOTAL,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_TESTS_TOTAL,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(tests_total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    schema=SCHEMA_IT_REGION,
+                    region_schema=SCHEMA_IT_REGION,
                     datatype=DT_STATUS_ICU,
-                    region=item['denominazione_regione'],
+                    region_child=item['denominazione_regione'],
                     value=int(icu),
                     date_updated=date,
                     source_url=self.SOURCE_URL

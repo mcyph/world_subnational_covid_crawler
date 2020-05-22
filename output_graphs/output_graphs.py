@@ -17,7 +17,7 @@ GRAPH_OUTPUT_DIR = (
 )
 
 
-def read_csv(schema,
+def read_csv(region_schema,
              datatype,
              agerange_filter=None,
              region_filter=None,
@@ -49,11 +49,11 @@ def read_csv(schema,
 
         for row in reader:
             print(row)
-            if schema != row['schema']:
+            if region_schema != row['region_schema']:
                 continue
             if row['datatype'] != datatype:
                 continue
-            if state_filter and row['state_name'] not in state_filter:
+            if state_filter and row['parent_regions'] not in state_filter:
                 continue
             if value_filter and not value_filter(row['value']):
                 continue
@@ -65,13 +65,13 @@ def read_csv(schema,
                 # Only include by agerange if explicit!!
                 continue
 
-            if region_filter and not region_filter(row['region']):
+            if region_filter and not region_filter(row['region_child']):
                 print("IGNORE:", row)
                 continue
 
-            key = row['state_name']
-            if row['region']:
-                key = f'{key} {row["region"]}'
+            key = row['parent_regions']
+            if row['region_child']:
+                key = f'{key} {row["region_child"]}'
             if row['agerange']:
                 key = f'{key} {row["agerange"]}'
 
@@ -114,7 +114,7 @@ MARKERS = [
 
 
 def output_graph(datatype,
-                 schema='statewide',
+                 region_schema='statewide',
                  agerange_filter=None,
                  region_filter=None,
                  value_filter=None,
@@ -128,7 +128,7 @@ def output_graph(datatype,
     max_y = 0
 
     for x, (k, v) in enumerate(read_csv(
-        schema, datatype, agerange_filter, region_filter, value_filter, state_filter
+        region_schema, datatype, agerange_filter, region_filter, value_filter, state_filter
     ).items()):
         print(k)
         X = np.array([i[0] for i in v])
@@ -201,7 +201,7 @@ def output_graphs():
     output_graph('total_female', state_filter='qld')
     output_graph('total', state_filter='qld')
 
-    # Output "by region" graphs
+    # Output "by region_child" graphs
     output_graph('total', 'lga',
                  state_filter='vic',
                  region_filter=lambda p: p[0].lower() < 'm',

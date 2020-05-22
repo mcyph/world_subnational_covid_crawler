@@ -40,6 +40,10 @@ class _ACTPowerBI(PowerBIDataReader):
                 print(f"ACTPowerBI ignoring {subdir}")
                 continue
 
+            i_updated_date = self._get_updated_date(updated_date, response_dict)
+            if i_updated_date is not None:
+                updated_date = i_updated_date
+
             r.extend(self._get_age_groups_data(updated_date, response_dict))
             r.extend(self._get_confirmed_cases_data(updated_date, response_dict))
             r.extend(self._get_gender_balance_data(updated_date, response_dict))
@@ -53,6 +57,20 @@ class _ACTPowerBI(PowerBIDataReader):
         if not isinstance(i, str):
             return i
         return int(i.rstrip('L'))
+
+    def _get_updated_date(self, updated_date, response_dict):
+        try:
+            ts = response_dict['updated_date'][1]
+        except KeyError:
+            ts = response_dict['updated_date_2'][1]
+
+        ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
+
+        if ts < 1000:
+            # FIXME!! ==================================================================================================
+            return None
+        else:
+            return datetime.fromtimestamp(ts/1000).strftime('%Y_%m_%d')
 
     def _get_age_groups_data(self, updated_date, response_dict):
         r = []
@@ -293,28 +311,28 @@ class _ACTPowerBI(PowerBIDataReader):
 
         rd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
-        for region in rd:
-            print(region)
-            if isinstance(region['C'][0], int):
+        for region_child in rd:
+            print(region_child)
+            if isinstance(region_child['C'][0], int):
                 # {'C': [1], 'Ø': 1}
                 # (what is this for???)
                 continue
 
-            if region.get('R'):
+            if region_child.get('R'):
                 value = previous_value
             else:
-                value = region['C'][1]
+                value = region_child['C'][1]
 
-            name = region['C'][0].split('(')[0].strip()
+            name = region_child['C'][0].split('(')[0].strip()
             if name == 'East Canberra':
                 name = 'Canberra East'
             if name in ('Uriara', 'Uriarra'):
                 name = 'Urriarra - Namadgi'
 
             r.append(DataPoint(
-                schema=SCHEMA_SA3,
+                region_schema=SCHEMA_SA3,
                 datatype=DT_TOTAL,
-                region=name,
+                region_child=name,
                 value=self._to_int(value),
                 date_updated=updated_date,
                 source_url=self.source_url

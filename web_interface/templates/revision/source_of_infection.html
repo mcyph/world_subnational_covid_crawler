@@ -23,7 +23,7 @@
         </tr>
         {% for datapoint in datapoints %}
             <tr>
-                <td>{{ datapoint['state_name']|upper }}</td>
+                <td>{{ datapoint['region_parent']|upper }}</td>
                 <td {{new_star(datapoint, 'source_overseas', date_today)}} title="{{ datapoint['source_overseas date_updated'] }} {{ datapoint['source_overseas text_match']|e }}"><a href="{{ datapoint['source_overseas source_url'] }}">
                         {{- datapoint['source_overseas'] -}}
                 </a></td>

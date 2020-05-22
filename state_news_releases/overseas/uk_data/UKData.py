@@ -65,10 +65,10 @@ class UKData(GithubRepo):
                     continue
 
                 r.append(DataPoint(
-                    statename=item['Country'],
-                    schema=SCHEMA_UK_AREA,
+                    region_parent=item['Country'],
+                    region_schema=SCHEMA_UK_AREA,
                     datatype=DT_TOTAL,
-                    region=item['Area'],
+                    region_child=item['Area'],
                     value=int(item['TotalCases']),
                     date_updated=date,
                     source_url='https://github.com/tomwhite/covid-19-uk-data'
@@ -99,9 +99,9 @@ class UKData(GithubRepo):
                 }
 
                 r.append(DataPoint(
-                    schema=SCHEMA_UK_COUNTRY,
+                    region_schema=SCHEMA_UK_COUNTRY,
                     datatype=datatype_map[item['Indicator'].strip()],
-                    region=item['Country'],
+                    region_child=item['Country'],
                     value=int(item['Value']),
                     date_updated=date,
                     source_url='https://github.com/tomwhite/covid-19-uk-data'

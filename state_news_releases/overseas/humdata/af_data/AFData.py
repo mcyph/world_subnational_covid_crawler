@@ -3,7 +3,6 @@
 # https://docs.google.com/spreadsheets/d/1F-AMEDtqK78EA6LYME2oOsWQsgJi4CT3V_G4Uo-47Rg/edit#gid=1539509351
 
 import csv
-import json
 
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
@@ -12,19 +11,13 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_AF_PROVINCE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    SCHEMA_ADMIN_1,
+    DT_TOTAL,
     DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 
@@ -83,9 +76,10 @@ class AFData(URLBase):
 
             if item['Cases'].replace('–', ''):
                 r.append(DataPoint(
-                    schema=SCHEMA_AF_PROVINCE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Afghanistan',
+                    region_child=province,
                     datatype=DT_TOTAL,
-                    region=province,
                     value=int(item['Cases'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -93,9 +87,10 @@ class AFData(URLBase):
 
             if item['Deaths'].replace('–', ''):
                 r.append(DataPoint(
-                    schema=SCHEMA_AF_PROVINCE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Afghanistan',
+                    region_child=province,
                     datatype=DT_STATUS_DEATHS,
-                    region=province,
                     value=int(item['Deaths'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -103,9 +98,10 @@ class AFData(URLBase):
 
             if item['Recoveries'].replace('–', ''):
                 r.append(DataPoint(
-                    schema=SCHEMA_AF_PROVINCE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Afghanistan',
+                    region_child=province,
                     datatype=DT_STATUS_RECOVERED,
-                    region=province,
                     value=int(item['Recoveries'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -113,9 +109,10 @@ class AFData(URLBase):
 
             if item['Active Cases'].replace('–', ''):
                 r.append(DataPoint(
-                    schema=SCHEMA_AF_PROVINCE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Afghanistan',
+                    region_child=province,
                     datatype=DT_STATUS_ACTIVE,
-                    region=province,
                     value=int(item['Active Cases'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL

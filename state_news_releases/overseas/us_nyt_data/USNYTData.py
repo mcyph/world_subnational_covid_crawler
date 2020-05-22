@@ -61,20 +61,20 @@ class USNYTData(GithubRepo):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    statename=item['state'],
-                    schema=SCHEMA_US_COUNTY,
+                    region_parent=item['state'],
+                    region_schema=SCHEMA_US_COUNTY,
                     datatype=DT_TOTAL,
-                    region=item['county'],
+                    region_child=item['county'],
                     value=int(item['cases']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'
                 ))
 
                 r.append(DataPoint(
-                    statename=item['state'],
-                    schema=SCHEMA_US_COUNTY,
+                    region_parent=item['state'],
+                    region_schema=SCHEMA_US_COUNTY,
                     datatype=DT_STATUS_DEATHS,
-                    region=item['county'],
+                    region_child=item['county'],
                     value=int(item['cases']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'
@@ -97,18 +97,18 @@ class USNYTData(GithubRepo):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    schema=SCHEMA_US_STATE,
+                    region_schema=SCHEMA_US_STATE,
                     datatype=DT_TOTAL,
-                    region=item['state'],
+                    region_child=item['state'],
                     value=int(item['cases']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'
                 ))
 
                 r.append(DataPoint(
-                    schema=SCHEMA_US_STATE,
+                    region_schema=SCHEMA_US_STATE,
                     datatype=DT_TOTAL,
-                    region=item['state'],
+                    region_child=item['state'],
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'

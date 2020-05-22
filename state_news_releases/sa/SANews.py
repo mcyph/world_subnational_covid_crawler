@@ -447,9 +447,9 @@ class SANews(StateNewsBase):
                         continue
 
                     num = DataPoint(
-                        schema=SCHEMA_LGA,
+                        region_schema=SCHEMA_LGA,
                         datatype=DT_TOTAL,
-                        region=attributes['lga_name'].split('(')[0].strip(),
+                        region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
                         source_url=href
@@ -467,9 +467,9 @@ class SANews(StateNewsBase):
                         continue
 
                     num = DataPoint(
-                        schema=SCHEMA_LGA,
+                        region_schema=SCHEMA_LGA,
                         datatype=DT_STATUS_ACTIVE,
-                        region=attributes['lga_name'].split('(')[0].strip(),
+                        region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
                         source_url=href

@@ -10,7 +10,7 @@ def gaps_filled_in(datapoints):
     """
     When there are patient cases in open data, effectively we
     can assume there is updated data for every day for each
-    region, it's just that there are only datapoints
+    region_child, it's just that there are only datapoints
     corresponding to when individual people were diagnosed
     """
     datapoints.sort(key=lambda i: i.date_updated)
@@ -34,11 +34,11 @@ def gaps_filled_in(datapoints):
             assert datapoint.datatype != DT_STATUS_ACTIVE
 
             out.append(DataPoint(
-                statename=datapoint.statename,
-                schema=datapoint.schema,
+                region_parent=datapoint.region_parent,
+                region_schema=datapoint.region_schema,
                 datatype=datapoint.datatype,
                 agerange=datapoint.agerange,
-                region=datapoint.region,
+                region_child=datapoint.region_child,
                 value=datapoint.value,
                 date_updated=current_date,
                 source_url=datapoint.source_url,
@@ -53,9 +53,9 @@ def gaps_filled_in(datapoints):
             added_current_date = {}
 
         key = (
-            datapoint.statename,
-            datapoint.schema, datapoint.datatype,
-            datapoint.region, datapoint.agerange
+            datapoint.region_parent,
+            datapoint.region_schema, datapoint.datatype,
+            datapoint.region_child, datapoint.agerange
         )
         added_current_date[key] = datapoint
         added_all_dates[key] = datapoint

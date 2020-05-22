@@ -1,10 +1,6 @@
-
 # https://data.humdata.org/dataset/haiti-covid-19-subnational-cases
 # https://docs.google.com/spreadsheets/u/1/d/10YxLT870MwYJ3Tm_a3WvvU2r1zQbT5F20TSXzw03BxQ/export?format=csv&id=10YxLT870MwYJ3Tm_a3WvvU2r1zQbT5F20TSXzw03BxQ
-
-
 import csv
-import json
 
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
@@ -13,19 +9,12 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_HT_DEPARTMENT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    SCHEMA_ADMIN_1,
+    DT_TOTAL, DT_NEW,
+    DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 
@@ -72,12 +61,13 @@ class HTData(URLBase):
                 continue
 
             date = self.convert_date(item['Date'])
-            region = item['Département']
+            region_child = item['Département']
 
             if item['Cumulative cases']:
                 r.append(DataPoint(
-                    schema=SCHEMA_HT_DEPARTMENT,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Haiti',
+                    region_child=region_child,
                     datatype=DT_TOTAL,
                     value=int(item['Cumulative cases']),
                     source_url=item['Source'],
@@ -86,8 +76,9 @@ class HTData(URLBase):
 
             if item['New cases (24h)']:
                 r.append(DataPoint(
-                    schema=SCHEMA_HT_DEPARTMENT,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Haiti',
+                    region_child=region_child,
                     datatype=DT_NEW,
                     value=int(item['New cases (24h)']),
                     source_url=item['Source'],
@@ -96,8 +87,9 @@ class HTData(URLBase):
 
             if item['Cumulative Deaths']:
                 r.append(DataPoint(
-                    schema=SCHEMA_HT_DEPARTMENT,
-                    region=region,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Haiti',
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
                     value=int(item['Cumulative Deaths']),
                     source_url=item['Source'],
