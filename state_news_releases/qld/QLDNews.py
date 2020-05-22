@@ -149,6 +149,8 @@ class QLDNews(StateNewsBase):
 
     @bothlistingandstat
     def _get_total_cases(self, href, html):
+        du = self._get_date(href, html)
+
         if href in (self.STATS_BY_REGION_URL, self.STATS_BY_REGION_URL_2):
             # New format as of 22 April
             cases = pq(html)('.qh-fact-wrapper .cases span')
@@ -158,7 +160,7 @@ class QLDNews(StateNewsBase):
                     compile('([0-9,]+)'),
                     pq(cases[0]).text().strip(),
                     datatype=DT_TOTAL,
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 )
             else:
@@ -170,7 +172,7 @@ class QLDNews(StateNewsBase):
             return DataPoint(
                 datatype=DT_TOTAL,
                 value=totals_dict['total'],
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href,
                 text_match=None
             )
@@ -185,7 +187,7 @@ class QLDNews(StateNewsBase):
             c_html,
             source_url=href,
             datatype=DT_TOTAL,
-            date_updated=self._get_date(href, html)
+            date_updated=du
 
         ) or self._extract_number_using_regex(
             compile(
@@ -200,7 +202,7 @@ class QLDNews(StateNewsBase):
             c_html,
             source_url=href,
             datatype=DT_TOTAL,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
 
     @bothlistingandstat
@@ -311,6 +313,7 @@ class QLDNews(StateNewsBase):
         if href == self.STATS_BY_REGION_URL_2:
             r = []
             table = pq(html)('#QLD_CasesByAgeAndGender')[0][1]
+            du = self._get_date(href, html)
 
             for tr in table[1:]:
                 age_group = pq(tr[0]).text().strip()
@@ -329,7 +332,7 @@ class QLDNews(StateNewsBase):
                         datatype=datatype,
                         agerange=age_group,
                         value=value,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
             return r
@@ -367,6 +370,7 @@ class QLDNews(StateNewsBase):
             'Total recovered': DT_STATUS_RECOVERED,
             'Total deaths': DT_STATUS_DEATHS
         }
+        du = self._get_date(href, html)
 
         if href == self.STATS_BY_REGION_URL_2:
             regions = []
@@ -389,7 +393,7 @@ class QLDNews(StateNewsBase):
                         datatype=headers[xx],
                         region_child=hhs.title(),
                         value=value,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
 
@@ -414,7 +418,7 @@ class QLDNews(StateNewsBase):
                         datatype=headers[xx],
                         region_child=lga.title(),
                         value=value,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
             return regions
@@ -462,7 +466,7 @@ class QLDNews(StateNewsBase):
                                 datatype=datatype,
                                 region_child=hhs_region.title(),
                                 value=value,
-                                date_updated=self._get_date(href, html),
+                                date_updated=du,
                                 source_url=href
                             ))
                         except ValueError:
@@ -484,6 +488,8 @@ class QLDNews(StateNewsBase):
             return None
 
         regions = []
+        du = self._get_date(href, html)
+
         for tr in table('tr'):
             text = pq(tr).text().lower()
             if 'total' in text or 'new confirmed' in text:
@@ -500,7 +506,7 @@ class QLDNews(StateNewsBase):
                             datatype=DT_NEW,
                             region_child=hhs_region,
                             value=value,
-                            date_updated=self._get_date(href, html),
+                            date_updated=du,
                             source_url=href
                         ))
                     except ValueError:
@@ -526,6 +532,7 @@ class QLDNews(StateNewsBase):
             'Overseas acquired': DT_SOURCE_OVERSEAS,
             'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
         }
+        du = self._get_date(url, html)
 
         if url == self.STATS_BY_REGION_URL_2:
             table = pq(html)('#QLD_Cases_Sources_Of_Infection')[0]
@@ -541,7 +548,7 @@ class QLDNews(StateNewsBase):
                 r.append(DataPoint(
                     datatype=norm_map[header],
                     value=int(value.replace(',', '')),
-                    date_updated=self._get_date(url, html),
+                    date_updated=du,
                     source_url=url
                 ))
             return r
@@ -565,6 +572,7 @@ class QLDNews(StateNewsBase):
             'Current hospitalisations': DT_STATUS_HOSPITALIZED,
             'Deaths': DT_STATUS_DEATHS
         }
+        du = self._get_date(href, html)
 
         if href in (self.STATS_BY_REGION_URL,
                     self.STATS_BY_REGION_URL_2):
@@ -581,7 +589,7 @@ class QLDNews(StateNewsBase):
                     r.append(DataPoint(
                         datatype=datatype,
                         value=int(pq(tr[1]).text().strip()),
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
 
@@ -590,7 +598,7 @@ class QLDNews(StateNewsBase):
                 r.append(DataPoint(
                     datatype=DT_STATUS_DEATHS,
                     value=int(pq(deaths[0]).text().strip()),
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 ))
             return r
@@ -604,19 +612,19 @@ class QLDNews(StateNewsBase):
             r.append(DataPoint(
                 datatype=DT_STATUS_RECOVERED,
                 value=totals_dict['recovered'],
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
             r.append(DataPoint(
                 datatype=DT_STATUS_DEATHS,
                 value=totals_dict['deaths'],
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
             r.append(DataPoint(
                 datatype=DT_STATUS_ACTIVE,
                 value=totals_dict['active'],
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
             return r

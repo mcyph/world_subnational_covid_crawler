@@ -195,19 +195,20 @@ class VicNews(StateNewsBase):
 
     @bothlistingandstat
     def _get_total_male_female_breakdown(self, url, html):
+        du = self._get_date(url, html)
         men = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) men'),
             html,
             source_url=url,
             datatype=DT_TOTAL_MALE,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         women = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) women'),
             html,
             source_url=url,
             datatype=DT_TOTAL_FEMALE,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         if men is not None and women is not None:
             return (men, women)
@@ -324,6 +325,7 @@ class VicNews(StateNewsBase):
         """
         r = []
         c_html = word_to_number(html)
+        du = self._get_date(href, html)
 
         deaths = self._extract_number_using_regex(
             (
@@ -340,7 +342,7 @@ class VicNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_DEATHS,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if deaths:
             r.append(deaths)
@@ -350,7 +352,7 @@ class VicNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if in_hospital:
             r.append(in_hospital)
@@ -360,7 +362,7 @@ class VicNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_ICU,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if in_icu:
             r.append(in_icu)
@@ -370,7 +372,7 @@ class VicNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_ACTIVE,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if active:
             r.append(active)
@@ -380,7 +382,7 @@ class VicNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_RECOVERED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if recovered:
             r.append(recovered)

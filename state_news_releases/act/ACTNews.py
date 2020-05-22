@@ -89,6 +89,7 @@ class ACTNews(StateNewsBase):
             .replace('<b>', '<strong>') \
             .replace('</b>', '</strong>')
 
+        du = self._get_date(href, html)
         neg_cases = self._extract_number_using_regex(
             (
                 compile(
@@ -102,7 +103,7 @@ class ACTNews(StateNewsBase):
             c_html,
             datatype=DT_TESTS_TOTAL,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         pos_cases = self._get_total_cases(href, html)
 
@@ -111,7 +112,7 @@ class ACTNews(StateNewsBase):
             return DataPoint(
                 datatype=neg_cases.datatype,
                 value=neg_cases.value + pos_cases.value,
-                date_updated=neg_cases.date_updated,
+                date_updated=du,
                 source_url=neg_cases.source_url,
                 text_match=(
                     neg_cases.text_match,
@@ -151,6 +152,7 @@ class ACTNews(StateNewsBase):
         if not table:
             return  # WARNING!!! =======================================================================================
 
+        du = self._get_date(href, html)
         table = table[0]
         tbody = pq(table)('tbody')[0]
         tr = tbody[1]
@@ -172,7 +174,7 @@ class ACTNews(StateNewsBase):
                 datatype=DT_TOTAL,
                 agerange=k,
                 value=v,
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
         return r
@@ -196,6 +198,7 @@ class ACTNews(StateNewsBase):
             i for i in c_html.split('.')
             if 'new case' in i
         ])
+        du = self._get_date(href, html)
 
         r = []
         male = self._extract_number_using_regex(
@@ -203,7 +206,7 @@ class ACTNews(StateNewsBase):
             c_html,
             source_url=href,
             datatype=DT_NEW_MALE,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if male:
             r.append(male)
@@ -213,7 +216,7 @@ class ACTNews(StateNewsBase):
             c_html,
             datatype=DT_NEW_FEMALE,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if female:
             r.append(female)
@@ -229,6 +232,7 @@ class ACTNews(StateNewsBase):
         # should the stats by region_child URL be supported(!?) ============================================================
 
         c_html = word_to_number(html)
+        du = self._get_date(href, html)
 
         male = self._extract_number_using_regex(
             compile(
@@ -240,7 +244,7 @@ class ACTNews(StateNewsBase):
             c_html,
             datatype=DT_TOTAL_FEMALE,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         female = self._extract_number_using_regex(
             compile(
@@ -252,7 +256,7 @@ class ACTNews(StateNewsBase):
             c_html,
             datatype=DT_TOTAL_MALE,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if male and female:
             return (male, female)
@@ -293,6 +297,7 @@ class ACTNews(StateNewsBase):
             'Unknown or local transmission': DT_SOURCE_COMMUNITY,
             'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
         }
+        du = self._get_date(url, html)
 
         r = []
         for re_text in (
@@ -323,7 +328,7 @@ class ACTNews(StateNewsBase):
                     r.append(DataPoint(
                         datatype=act_norm_map[k.replace('_', ' ')],
                         value=int(v.replace(',', '')),
-                        date_updated=self._get_date(url, html),
+                        date_updated=du,
                         source_url=url
                     ))
 
@@ -340,27 +345,28 @@ class ACTNews(StateNewsBase):
         c_html = word_to_number(html) \
             .replace('<b>', '<strong>') \
             .replace('</b>', '</strong>')
+        du = self._get_date(href, html)
         
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
             datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
             datatype=DT_STATUS_RECOVERED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
             datatype=DT_STATUS_DEATHS,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
 
         r = []

@@ -224,6 +224,7 @@ class NSWNews(StateNewsBase):
         if not table:
             return None
         table = table[0]
+        du = self._get_date(href, html)
 
         for age_group in (
             '0-9',
@@ -257,7 +258,7 @@ class NSWNews(StateNewsBase):
                     datatype=datatype,
                     agerange=age_group,
                     value=value,
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 ))
         return r
@@ -293,6 +294,8 @@ class NSWNews(StateNewsBase):
         #         html.partition(' class="moh-rteTable-6"')[-1]
 
         r = []
+        du = self._get_date(href, html)
+
         if href == self.NSW_LGA_STATS_URL:
             for datatype, text in (
                 (DT_TOTAL, 'Confirmed cases'),
@@ -306,7 +309,8 @@ class NSWNews(StateNewsBase):
                 r.extend(self.__get_datapoints_from_table(
                     href, html, table,
                     region_schema=SCHEMA_LGA,
-                    datatype=datatype
+                    datatype=datatype,
+                    du=du
                 ))
             return r or None
         else:
@@ -325,12 +329,13 @@ class NSWNews(StateNewsBase):
             return self.__get_datapoints_from_table(
                 href, html, table,
                 region_schema=SCHEMA_LHD,
-                datatype=DT_TOTAL
+                datatype=DT_TOTAL,
+                du=du
             ) or None
 
     def __get_datapoints_from_table(self,
                                     href, html, table,
-                                    region_schema, datatype):
+                                    region_schema, datatype, du):
 
         # TODO: Support testing data for LHA, etc!!! ============================================================================================================
         r = []
@@ -355,7 +360,7 @@ class NSWNews(StateNewsBase):
                 datatype=datatype,
                 region_child=lhd,
                 value=c_icu,
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
         return r
@@ -374,6 +379,7 @@ class NSWNews(StateNewsBase):
 
         c_html = html.replace('  ', ' ').replace('&#8203;', '').replace('\u200b', '')  # HACK!
         c_html = self._pq_contains(c_html, 'table', 'Source')
+        du = self._get_date(url, html)
 
         # Normalise it with other states
         nsw_norm_map = {
@@ -429,7 +435,7 @@ class NSWNews(StateNewsBase):
             r.append(DataPoint(
                 datatype=nsw_norm_map[old_type_map.get(k, k)],
                 value=c_value,
-                date_updated=self._get_date(url, html),
+                date_updated=du,
                 source_url=url
             ))
         return r or None
@@ -443,6 +449,7 @@ class NSWNews(StateNewsBase):
         r = []
         html = html.replace('&#8203;', '').replace('\u200b', '')
         c_html = word_to_number(html)
+        du = self._get_date(href, html)
 
         if href == self.STATS_BY_REGION_URL:
             # Support recovered numbers by LHD at
@@ -486,7 +493,7 @@ class NSWNews(StateNewsBase):
                         datatype=DT_STATUS_ACTIVE,
                         region_child=lhd,
                         value=values_dict[DT_TOTAL]-values_dict[DT_STATUS_RECOVERED],
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
                     for datatype, value in values_dict.items():
@@ -495,7 +502,7 @@ class NSWNews(StateNewsBase):
                             datatype=datatype,
                             region_child=lhd,
                             value=value,
-                            date_updated=self._get_date(href, html),
+                            date_updated=du,
                             source_url=href
                         ))
 
@@ -532,13 +539,13 @@ class NSWNews(StateNewsBase):
                     r.append(DataPoint(
                         datatype=DT_STATUS_ACTIVE,
                         value=active,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
                     r.append(DataPoint(
                         datatype=DT_STATUS_RECOVERED,
                         value=recovered,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
 
@@ -555,7 +562,7 @@ class NSWNews(StateNewsBase):
                 c_html,
                 datatype=DT_STATUS_HOSPITALIZED,
                 source_url=href,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if hospitalized:
                 r.append(hospitalized)
@@ -578,7 +585,7 @@ class NSWNews(StateNewsBase):
                 c_html,
                 datatype=DT_STATUS_ICU,
                 source_url=href,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if icu:
                 r.append(icu)
@@ -592,7 +599,7 @@ class NSWNews(StateNewsBase):
                 c_html,
                 datatype=DT_STATUS_ICU_VENTILATORS,
                 source_url=href,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if ventilators:
                 r.append(ventilators)
@@ -619,7 +626,7 @@ class NSWNews(StateNewsBase):
                 c_html,
                 datatype=DT_STATUS_DEATHS,
                 source_url=href,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if deaths:
                 r.append(deaths)

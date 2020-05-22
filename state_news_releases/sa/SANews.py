@@ -325,6 +325,7 @@ class SANews(StateNewsBase):
         if not table:
             return None
         table = table[0]
+        du = self._get_date(href, html)
 
         for age_group in (
             '0-9',
@@ -368,7 +369,7 @@ class SANews(StateNewsBase):
                     datatype=datatype,
                     agerange=age_group,
                     value=value,
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 ))
 
@@ -498,6 +499,7 @@ class SANews(StateNewsBase):
         """
         html = html.replace('&nbsp;', ' ')
         r = []
+        du = None
 
         # Normalise it with other states
         sa_norm_map = {
@@ -519,6 +521,8 @@ class SANews(StateNewsBase):
                                    ignore_case=True)
             if not tr:
                 continue
+            if du is None:
+                du = self._get_date(url, html)
 
             tr = tr[0]
             c_icu = int(pq(tr[1]).text().strip())
@@ -526,7 +530,7 @@ class SANews(StateNewsBase):
             r.append(DataPoint(
                 datatype=sa_norm_map[k],
                 value=c_icu,
-                date_updated=self._get_date(url, html),
+                date_updated=du,
                 source_url=url
             ))
         return r or None
@@ -547,7 +551,9 @@ class SANews(StateNewsBase):
                                    ignore_case=True)
             if not tr:
                 return []
+
             tr = tr[0]
+            du = self._get_date(href, html)
 
             c_icu = int(pq(tr[1]).text().strip())
             print(c_icu)
@@ -556,7 +562,7 @@ class SANews(StateNewsBase):
                 r.append(DataPoint(
                     datatype=DT_STATUS_ICU,
                     value=c_icu,
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 ))
 
@@ -567,7 +573,7 @@ class SANews(StateNewsBase):
                 r.append(DataPoint(
                     datatype=DT_STATUS_DEATHS,
                     value=t_d,
-                    date_updated=self._get_date(href, html),
+                    date_updated=du,
                     source_url=href
                 ))
 
@@ -581,19 +587,20 @@ class SANews(StateNewsBase):
                     r.append(DataPoint(
                         datatype=DT_STATUS_RECOVERED,
                         value=t_d,
-                        date_updated=self._get_date(href, html),
+                        date_updated=du,
                         source_url=href
                     ))
             return r
         else:
             r = []
             c_html = word_to_number(html)
+            du = self._get_date(href, html)
 
             active = self._extract_number_using_regex(
                 compile('([0-9,]+) active cases? in SA'),
                 c_html, href,
                 datatype=DT_STATUS_ACTIVE,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if active:
                 r.append(active)
@@ -602,7 +609,7 @@ class SANews(StateNewsBase):
                 compile('([0-9,]+) people have been cleared'),
                 c_html, href,
                 datatype=DT_STATUS_RECOVERED,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if recovered:
                 r.append(recovered)
@@ -611,7 +618,7 @@ class SANews(StateNewsBase):
                 compile('([0-9,]+) reported deaths'),
                 c_html, href,
                 datatype=DT_STATUS_DEATHS,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if deaths:
                 r.append(deaths)
@@ -620,7 +627,7 @@ class SANews(StateNewsBase):
                 compile('([0-9,]+) (?:person|people) remains? in hospital'),
                 c_html, href,
                 datatype=DT_STATUS_HOSPITALIZED,
-                date_updated=self._get_date(href, html)
+                date_updated=du
             )
             if hospital:
                 r.append(hospital)

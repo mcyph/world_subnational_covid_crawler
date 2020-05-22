@@ -168,6 +168,7 @@ class WANews(StateNewsBase):
         #return None  # HACK: This info is likely to be too unreliable at this stage - may add back later!!
 
         c_html = word_to_number(html)
+        du = self._get_date(url, html)
 
         r = []
 
@@ -177,7 +178,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_TOTAL_MALE,
             source_url=url,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         if male:
             r.append(male)
@@ -188,7 +189,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_TOTAL_FEMALE,
             source_url=url,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         if female:
             r.append(female)
@@ -362,13 +363,14 @@ class WANews(StateNewsBase):
 
         r = []
         c_html = word_to_number(html)
+        du = self._get_date(href, html)
 
         active = self._extract_number_using_regex(
             compile('([0-9,]+) active cases'),
             c_html,
             datatype=DT_STATUS_ACTIVE,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if active:
             r.append(active)
@@ -378,7 +380,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_ICU,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if icu:
             r.append(icu)
@@ -389,7 +391,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if hospitalized:
             r.append(hospitalized)
@@ -403,7 +405,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_RECOVERED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if recovered:
             r.append(recovered)
@@ -417,7 +419,7 @@ class WANews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_DEATHS,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if deaths:
             r.append(deaths)

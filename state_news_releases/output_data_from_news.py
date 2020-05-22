@@ -151,6 +151,21 @@ if __name__ == '__main__':
                 'ERROR', traceback.format_exc()
             )
 
+    if UPDATE_SA_REGIONS:
+        from covid_19_au_grab.state_news_releases.sa.SARegions import run_sa_regions
+
+        try:
+            run_sa_regions()
+            status['sa_regions'] = ('OK', None)
+        except:
+            print("Error occurred using SA regions!")
+            import traceback
+
+            traceback.print_exc()
+            status['sa_regions'] = (
+                'ERROR', traceback.format_exc()
+            )
+
     # Run all of the other grabbers
     news_insts = [
         ACTNews(),

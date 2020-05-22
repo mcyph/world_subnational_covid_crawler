@@ -238,20 +238,21 @@ class TasNews(StateNewsBase):
     def _get_new_male_female_breakdown(self, url, html):
         # 'Four of the cases are women; two are men'
         c_html = word_to_number(html)
+        du = self._get_date(url, html)
 
         men = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* men', IGNORECASE),
             c_html,
             source_url=url,
             datatype=DT_TOTAL_MALE,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         women = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* women', IGNORECASE),
             c_html,
             source_url=url,
             datatype=DT_TOTAL_FEMALE,
-            date_updated=self._get_date(url, html)
+            date_updated=du
         )
         if men is not None or women is not None:
             r = []
@@ -281,6 +282,7 @@ class TasNews(StateNewsBase):
                 html, 'table', 'LGA Region',
                 ignore_case=True
             ) or []
+            du = self._get_date(url, html)
 
             r = []
             for table in tables:
@@ -293,7 +295,7 @@ class TasNews(StateNewsBase):
                             region_child=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
                             datatype=DT_TOTAL,
                             value=int(pq(num_cases).text().replace(',', '').strip()),
-                            date_updated=self._get_date(url, html),
+                            date_updated=du,
                             source_url=url
                         ))
                     else:
@@ -302,7 +304,7 @@ class TasNews(StateNewsBase):
                             region_child=lga,
                             datatype=DT_TOTAL,
                             value=int(pq(num_cases).text().replace(',', '').strip()),
-                            date_updated=self._get_date(url, html),
+                            date_updated=du,
                             source_url=url
                         ))
             return r
@@ -312,6 +314,7 @@ class TasNews(StateNewsBase):
                 html, 'table', 'Local Government Area',
                 ignore_case=True
             )
+            du = self._get_date(url, html)
 
             r = []
             if table:
@@ -321,7 +324,7 @@ class TasNews(StateNewsBase):
                         region_child=pq(lga).text().strip(),
                         datatype=DT_TOTAL,
                         value=int(pq(num_cases).text().replace(',', '').strip()),
-                        date_updated=self._get_date(url, html),
+                        date_updated=du,
                         source_url=url
                     ))
             return r
@@ -360,6 +363,7 @@ class TasNews(StateNewsBase):
             html, 'table', 'Cases in Tasmania',
             ignore_case=True
         )[0]
+        du = self._get_date(href, html)
 
         for heading, value in cases_table[1]:
             heading = pq(heading).text().replace('*', '').strip().split('(')[0].strip()
@@ -372,7 +376,7 @@ class TasNews(StateNewsBase):
             r.append(DataPoint(
                 datatype=datatype,
                 value=int(value),
-                date_updated=self._get_date(href, html),
+                date_updated=du,
                 source_url=href
             ))
 
@@ -384,7 +388,7 @@ class TasNews(StateNewsBase):
         r.append(DataPoint(
             datatype=DT_TESTS_TOTAL,
             value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').strip()),
-            date_updated=self._get_date(href, html),
+            date_updated=du,
             source_url=href
         ))
 
@@ -394,7 +398,7 @@ class TasNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_HOSPITALIZED,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if icu:
             r.append(icu)
@@ -404,7 +408,7 @@ class TasNews(StateNewsBase):
             c_html,
             datatype=DT_STATUS_ICU,
             source_url=href,
-            date_updated=self._get_date(href, html)
+            date_updated=du
         )
         if hospitalized:
             r.append(hospitalized)
