@@ -3,34 +3,22 @@
 # https://data.humdata.org/dataset/2ec81cad-04a3-4bfe-b127-c36658947427/resource/22bb4232-897b-4e7a-8e35-bbe030fca37c/download/wca_covid19_data_admin1_master.xlsx
 
 
-import csv
-import json
-
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
-)
-from covid_19_au_grab.state_news_releases.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_HT_DEPARTMENT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
 )
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
+from covid_19_au_grab.state_news_releases.overseas.humdata.west_africa_data.west_africa_powerbi import (
+    get_powerbi_data
+)
+from covid_19_au_grab.state_news_releases.overseas.humdata.west_africa_data.WestAfricaPowerBI import (
+    WestAfricaPowerBI
+)
 
 
 class WestAfricaData(URLBase):
-    SOURCE_URL = ''
+    SOURCE_URL = WestAfricaPowerBI.POWERBI_URL
     SOURCE_LICENSE = ''
 
     GEO_DIR = ''
@@ -49,23 +37,11 @@ class WestAfricaData(URLBase):
                 )
             }
         )
-        self.update()
+        #wapb = WestAfricaPowerBI()
+        #wapb.run_powerbi_grabber()
 
     def get_datapoints(self):
-        r = []
-
-        f = self.get_file('',
-                          include_revision=True)
-        first_item = True
-
-        for item in csv.DictReader(f):
-            if first_item:
-                first_item = False
-                continue
-
-            date = self.convert_date(item['Date'])
-
-        return r
+        return get_powerbi_data()
 
 
 if __name__ == '__main__':

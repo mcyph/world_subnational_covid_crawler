@@ -151,7 +151,10 @@ class PowerBIBase:
             req = ent['request']
             # print(req['url'])
             if req['url'] == 'https://wabi-australia-southeast-api.analysis.windows.net/' \
-                             'public/reports/querydata':
+                             'public/reports/querydata' or \
+               req['url'].split('?')[0] == 'https://wabi-north-europe-api.analysis.windows.net/' \
+                                           'public/reports/querydata':
+
                 if not 'postData' in req:
                     print("ignoring:", req)
                     continue

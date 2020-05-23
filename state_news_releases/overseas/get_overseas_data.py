@@ -31,13 +31,14 @@ from covid_19_au_grab.state_news_releases.overseas.humdata.so_data.SOData import
 from covid_19_au_grab.state_news_releases.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.state_news_releases.overseas.us_nyt_data.USNYTData import USNYTData
 #from covid_19_au_grab.state_news_releases.overseas.us_covidtracking_data.USCovidTrackingData import USCovidTrackingData
-#from covid_19_au_grab.state_news_releases.overseas.west_africa_data.WestAfricaData import WestAfricaData
+from covid_19_au_grab.state_news_releases.overseas.humdata.west_africa_data.WestAfricaData import WestAfricaData
 #from covid_19_au_grab.state_news_releases.overseas.world_eu_data.EUData import EUData
 #from covid_19_au_grab.state_news_releases.overseas.world_jhu_data.WorldJHUData import WorldJHUData
 
 
 def get_overseas_data():
     for i in [
+        WestAfricaData,
         AFData,
         BRData,
         CHData,
