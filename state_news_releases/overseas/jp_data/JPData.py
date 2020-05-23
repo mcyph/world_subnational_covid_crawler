@@ -6,7 +6,7 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_JP_PREFECTURE,
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
@@ -119,7 +119,8 @@ class JPData(GithubRepo):
                 prefecture = get_prefecture(item['prefectureNameJ'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_JP_PREFECTURE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Japan',
                     region_child=prefecture,
                     datatype=DT_TOTAL,
                     value=int(item["testedPositive"]),
@@ -129,7 +130,8 @@ class JPData(GithubRepo):
 
                 if item['peopleTested']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Japan',
                         region_child=prefecture,
                         datatype=DT_TESTS_TOTAL,
                         value=int(item['peopleTested']),
@@ -138,17 +140,19 @@ class JPData(GithubRepo):
                     ))
 
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_JP_PREFECTURE,
+                #    region_schema=SCHEMA_ADMIN_1,
+                #    region_parent='Japan',
                 #    region_child=prefecture,
                 #    datatype=DT_STATUS_HOSPITALIZED,
                 #    value=int(item["患者数（2020年3月28日からは感染者数）"]),
                 #    date_updated=date,
-                #                     source_url=self.github_url
+                #    source_url=self.github_url
                 #))
 
                 if item["discharged"]:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Japan',
                         region_child=prefecture,
                         datatype=DT_STATUS_RECOVERED,
                         value=int(item["discharged"]),
@@ -158,7 +162,8 @@ class JPData(GithubRepo):
 
                 if item['deaths']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Japan',
                         region_child=prefecture,
                         datatype=DT_STATUS_DEATHS,
                         value=int(item["deaths"]),
@@ -180,7 +185,8 @@ class JPData(GithubRepo):
                 # Not sure why PCR検査陽性者数 slightly differs
                 # from the total 患者数 in "prefectures.csv"
                 r.append(DataPoint(
-                    region_schema=SCHEMA_JP_PREFECTURE,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Japan',
                     region_child=prefecture,
                     datatype=DT_TOTAL,
                     value=int(item["PCR検査陽性者数"]),
@@ -190,7 +196,8 @@ class JPData(GithubRepo):
 
                 if item["PCR検査人数"]:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Japan',
                         region_child=prefecture,
                         datatype=DT_TESTS_TOTAL,
                         value=int(item["PCR検査人数"]),
@@ -242,7 +249,8 @@ class JPData(GithubRepo):
             for item in csv.DictReader(f):
 
                 r.append(DataPoint(
-                    #region_schema=SCHEMA_JP_PREFECTURE,
+                    region_schema=SCHEMA_ADMIN_0,
+                    region_child='Japan',
                     agerange=age_map[item['年代']],
                     datatype=DT_TOTAL,
                     value=int(item["陽性者"]),
@@ -252,7 +260,8 @@ class JPData(GithubRepo):
 
                 if item["死亡"]:
                     r.append(DataPoint(
-                        #region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='Japan',
                         agerange=age_map[item['年代']],
                         datatype=DT_STATUS_DEATHS,
                         value=int(item["死亡"]),
@@ -262,7 +271,8 @@ class JPData(GithubRepo):
 
                 if item["重症"]:
                     r.append(DataPoint(
-                        #region_schema=SCHEMA_JP_PREFECTURE,
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='Japan',
                         agerange=age_map[item['年代']],
                         datatype=DT_STATUS_ICU,
                         value=int(item["重症"]),  # WARNING: NOT REALLY ICU - but likely mostly is!! =====================
@@ -275,4 +285,3 @@ class JPData(GithubRepo):
 if __name__ == '__main__':
     from pprint import pprint
     pprint(JPData().get_datapoints())
-

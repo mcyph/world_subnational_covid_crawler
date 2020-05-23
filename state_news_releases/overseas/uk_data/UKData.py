@@ -1,20 +1,12 @@
 import csv
-import json
-from collections import Counter
 
 from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_UK_AREA, SCHEMA_UK_COUNTRY,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_TOTAL, DT_TESTS_TOTAL,
+    DT_STATUS_DEATHS
 )
 from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
     GithubRepo
@@ -25,7 +17,7 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class UKData(GithubRepo):
-    SOURCE_URL = ''
+    SOURCE_URL = 'https://github.com/tomwhite/covid-19-uk-data'
     SOURCE_LICENSE = ''
 
     GEO_DIR = ''
@@ -65,10 +57,10 @@ class UKData(GithubRepo):
                     continue
 
                 r.append(DataPoint(
-                    region_parent=item['Country'],
                     region_schema=SCHEMA_UK_AREA,
-                    datatype=DT_TOTAL,
+                    region_parent=item['Country'],
                     region_child=item['Area'],
+                    datatype=DT_TOTAL,
                     value=int(item['TotalCases']),
                     date_updated=date,
                     source_url='https://github.com/tomwhite/covid-19-uk-data'
@@ -99,12 +91,12 @@ class UKData(GithubRepo):
                 }
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_UK_COUNTRY,
-                    datatype=datatype_map[item['Indicator'].strip()],
+                    region_schema=SCHEMA_UK_COUNTRY,  # TODO: Should this be a separate schema?
                     region_child=item['Country'],
+                    datatype=datatype_map[item['Indicator'].strip()],
                     value=int(item['Value']),
                     date_updated=date,
-                    source_url='https://github.com/tomwhite/covid-19-uk-data'
+                    source_url=self.SOURCE_URL
                 ))
 
         return r

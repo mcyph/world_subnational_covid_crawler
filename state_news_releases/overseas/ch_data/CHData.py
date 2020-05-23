@@ -86,7 +86,10 @@ class CHData(GithubRepo):
 
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
-                canton = canton_to_name[item['abbreviation_canton_and_fl']]
+                if item['abbreviation_canton_and_fl'] == 'FL':
+                    canton = 'Principality of Liechtenstein'  # CHECK ME!!! =============================================================
+                else:
+                    canton = canton_to_name[item['abbreviation_canton_and_fl']]
                 source = item['source'] or self.SOURCE_URL
 
                 if item['ncumul_conf']:

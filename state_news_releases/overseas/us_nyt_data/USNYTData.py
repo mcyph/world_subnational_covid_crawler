@@ -8,7 +8,8 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_US_COUNTY, SCHEMA_US_STATE,
+    SCHEMA_ADMIN_1,
+    SCHEMA_US_COUNTY,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -97,18 +98,20 @@ class USNYTData(GithubRepo):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_US_STATE,
-                    datatype=DT_TOTAL,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='United States of America',
                     region_child=item['state'],
+                    datatype=DT_TOTAL,
                     value=int(item['cases']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_US_STATE,
-                    datatype=DT_TOTAL,
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='United States of America',
                     region_child=item['state'],
+                    datatype=DT_TOTAL,
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'

@@ -6,6 +6,7 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     SCHEMA_NZ_DHB,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
@@ -121,6 +122,8 @@ class NZData(GithubRepo):
         for (date, datatype), value in sorted(gender_balances.items()):
             cumulative[datatype] += value
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='New Zealand',
                 datatype=datatype,
                 value=cumulative[datatype],
                 date_updated=date,
@@ -131,6 +134,8 @@ class NZData(GithubRepo):
         for (date, agerange), value in sorted(age_groups.items()):
             cumulative[agerange] += value
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='New Zealand',
                 datatype=DT_TOTAL,
                 agerange=agerange,
                 value=cumulative[agerange],
@@ -142,6 +147,8 @@ class NZData(GithubRepo):
         for (date, datatype), value in sorted(origins.items()):
             cumulative[datatype] += value
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='New Zealand',
                 datatype=datatype,
                 value=cumulative[datatype],
                 date_updated=date,
@@ -153,8 +160,8 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
-                datatype=datatype,
                 region_child=region_child,
+                datatype=datatype,
                 value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
@@ -166,8 +173,8 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
-                datatype=datatype,
                 region_child=region_child,
+                datatype=datatype,
                 value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
@@ -178,9 +185,9 @@ class NZData(GithubRepo):
             cumulative[agerange, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
+                region_child=region_child,
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                region_child=region_child,
                 value=cumulative[agerange, region_child],
                 date_updated=date,
                 source_url=self.github_url
@@ -191,8 +198,8 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
-                datatype=datatype,
                 region_child=region_child,
+                datatype=datatype,
                 value=cumulative[datatype, region_child],
                 date_updated=date,
                 source_url=self.github_url
@@ -203,6 +210,8 @@ class NZData(GithubRepo):
         for (date, datatype, agerange), value in sorted(origins_by_agerange.items()):
             cumulative[datatype, agerange] += value
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='New Zealand',
                 datatype=datatype,
                 agerange=agerange,
                 value=cumulative[datatype, agerange],
@@ -214,6 +223,8 @@ class NZData(GithubRepo):
         for (date, datatype, agerange), value in sorted(gender_balances_by_agerange.items()):
             cumulative[datatype, agerange] += value
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='New Zealand',
                 datatype=datatype,
                 agerange=agerange,
                 value=cumulative[datatype, agerange],
@@ -238,12 +249,17 @@ class NZData(GithubRepo):
 
                 # Won't add probable for now
                 r.append(DataPoint(
+                    region_schema=SCHEMA_ADMIN_0,
+                    region_child='New Zealand',
                     datatype=DT_NEW,
                     value=int(item['confirmed']),
                     date_updated=date,
                     source_url=self.github_url
                 ))
+                
                 r.append(DataPoint(
+                    region_schema=SCHEMA_ADMIN_0,
+                    region_child='New Zealand',
                     datatype=DT_TOTAL,
                     value=int(item['totalConfirmed']),
                     date_updated=date,
@@ -252,6 +268,8 @@ class NZData(GithubRepo):
 
                 if item['totalRecovered'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_STATUS_RECOVERED,
                         value=int(item['totalRecovered']),
                         date_updated=date,
@@ -260,6 +278,8 @@ class NZData(GithubRepo):
 
                 if item['inHospitalNow'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['inHospitalNow']),
                         date_updated=date,
@@ -267,6 +287,8 @@ class NZData(GithubRepo):
                     ))
                 if item['inIcu'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['inIcu']),
                         date_updated=date,
@@ -274,6 +296,8 @@ class NZData(GithubRepo):
                     ))
                 if item['totalDeaths'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['totalDeaths']),
                         date_updated=date,
@@ -282,27 +306,38 @@ class NZData(GithubRepo):
 
                 if item['overseas'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_SOURCE_OVERSEAS,
                         value=int(item['overseas']),
                         date_updated=date,
                         source_url=self.github_url
                     ))
+
                 if item['contact'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_SOURCE_CONFIRMED,
                         value=int(item['contact']),
                         date_updated=date,
                         source_url=self.github_url
                     ))
+
                 if item['investigating'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_SOURCE_UNDER_INVESTIGATION,
                         value=int(item['investigating']),
                         date_updated=date,
                         source_url=self.github_url
                     ))
+
                 if item['community'] != 'NA':
                     r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='New Zealand',
                         datatype=DT_SOURCE_COMMUNITY,
                         value=int(item['community']),
                         date_updated=date,
@@ -326,9 +361,9 @@ class NZData(GithubRepo):
                     item['Case Status']
 
                 r.append(DataPoint(
-                    datatype=DT_TOTAL,
                     region_schema=SCHEMA_NZ_DHB,
                     region_child=item['DHB'],
+                    datatype=DT_TOTAL,
                     value=int(item['Count']),
                     date_updated=self.convert_date(item['Date']),
                     source_url=self.github_url
