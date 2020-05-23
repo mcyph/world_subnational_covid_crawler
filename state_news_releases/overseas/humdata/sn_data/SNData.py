@@ -1,30 +1,4 @@
-# https://data.humdata.org/dataset/positive-cases-of-covid-19-in-senegal
-
-# https://docs.google.com/spreadsheets/d/e/2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-Hwq3PSPJYI12xTzLbA/pub?gid=1515611831&single=true&output=csv
-# Date,District,Cas,Ordre
-# #date,#loc +name,#affected +infected,
-# 2-Mar,Dakar-Ouest,1,1
-# 3-Mar,Guédiawaye,1,2
-# 4-Mar,Dakar-Ouest,1,3
-# 9-Mar,Non déterminé,1,4
-# 11-Mar,Touba,1,5
-# 12-Mar,Non déterminé,5,6
-# 12-Mar,Touba,11,6
-
-
-# https://docs.google.com/spreadsheets/d/e/2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-Hwq3PSPJYI12xTzLbA/pub?gid=708820609&single=true&output=csv
-# Ordre,Date,Cas
-# ,#date,#affected +infected
-# 1,2-Mar,1
-# 2,3-Mar,1
-# 3,4-Mar,2
-# 4,5-Mar,0
-# 5,6-Mar,0
-# 6,7-Mar,0
-
-
 import csv
-import json
 
 from covid_19_au_grab.state_news_releases.overseas.URLBase import (
     URL, URLBase
@@ -33,24 +7,16 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_HT_DEPARTMENT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
+    DT_TOTAL
 )
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 
 class SNData(URLBase):
-    SOURCE_URL = ''
+    SOURCE_URL = 'https://data.humdata.org/dataset/positive-cases-of-covid-19-in-senegal'
     SOURCE_LICENSE = ''
 
     GEO_DIR = ''
@@ -61,10 +27,18 @@ class SNData(URLBase):
         # Only raw_data4.json is currently being updated,
         # so won't download the others every day
         URLBase.__init__(self,
-            output_dir=get_overseas_dir() / '' / '',
+            output_dir=get_overseas_dir() / 'sn' / 'data',
             urls_dict={
-                '': URL(
-                    '',
+                'by_district.csv': URL(
+                    'https://docs.google.com/spreadsheets/d/e/'
+                    '2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-'
+                    'Hwq3PSPJYI12xTzLbA/pub?gid=1515611831&single=true&output=csv',
+                    static_file=False
+                ),
+                'national_cases.csv': URL(
+                    'https://docs.google.com/spreadsheets/d/e/'
+                    '2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-'
+                    'Hwq3PSPJYI12xTzLbA/pub?gid=708820609&single=true&output=csv',
                     static_file=False
                 )
             }
@@ -73,8 +47,25 @@ class SNData(URLBase):
 
     def get_datapoints(self):
         r = []
+        r.extend(self.get_by_district())
+        r.extend(self.get_national_cases())
+        return r
 
-        f = self.get_file('',
+    def get_by_district(self):
+        r = []
+
+        # https://docs.google.com/spreadsheets/d/e/2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-Hwq3PSPJYI12xTzLbA/pub?gid=1515611831&single=true&output=csv
+        # Date,District,Cas,Ordre
+        # #date,#loc +name,#affected +infected,
+        # 2-Mar,Dakar-Ouest,1,1
+        # 3-Mar,Guédiawaye,1,2
+        # 4-Mar,Dakar-Ouest,1,3
+        # 9-Mar,Non déterminé,1,4
+        # 11-Mar,Touba,1,5
+        # 12-Mar,Non déterminé,5,6
+        # 12-Mar,Touba,11,6
+
+        f = self.get_file('by_district.csv',
                           include_revision=True)
         first_item = True
 
@@ -83,7 +74,52 @@ class SNData(URLBase):
                 first_item = False
                 continue
 
-            date = self.convert_date(item['Date'])
+            date = self.convert_date(item['Date']+'-20')
+            
+            if item['Cas']:
+                r.append(DataPoint(
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Senegal',
+                    region_child=item['District'],
+                    datatype=DT_TOTAL,
+                    value=int(item['Cas']),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
+
+        return r
+
+    def get_national_cases(self):
+        r = []
+
+        # https://docs.google.com/spreadsheets/d/e/2PACX-1vRj1sRWYmyZ2AznFdP5Dr98uZrzsMMudPBRIcMW8FdwAEy-Hwq3PSPJYI12xTzLbA/pub?gid=708820609&single=true&output=csv
+        # Ordre,Date,Cas
+        # ,#date,#affected +infected
+        # 1,2-Mar,1
+        # 2,3-Mar,1
+        # 3,4-Mar,2
+        # 4,5-Mar,0
+        # 5,6-Mar,0
+        # 6,7-Mar,0
+
+        f = self.get_file('national_cases.csv',
+                          include_revision=True)
+        first_item = True
+
+        for item in csv.DictReader(f):
+            if first_item:
+                first_item = False
+                continue
+
+            date = self.convert_date(item['Date']+'-20')
+            r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_child='Senegal',
+                datatype=DT_TOTAL,
+                value=int(item['Cas']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
 
         return r
 
