@@ -367,7 +367,7 @@ class TasNews(StateNewsBase):
 
         for heading, value in cases_table[1]:
             heading = pq(heading).text().replace('*', '').strip().split('(')[0].strip()
-            value = pq(value).text().replace('*', '').replace(',', '').strip()
+            value = pq(value).text().replace('*', '').replace(',', '').replace('.', '').strip()
 
             datatype = cases_map[heading]
             if datatype is None:
@@ -387,7 +387,7 @@ class TasNews(StateNewsBase):
 
         r.append(DataPoint(
             datatype=DT_TESTS_TOTAL,
-            value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').strip()),
+            value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').replace('.', '').strip()),
             date_updated=du,
             source_url=href
         ))

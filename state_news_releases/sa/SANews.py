@@ -181,7 +181,7 @@ class SANews(StateNewsBase):
             r.append(DataPoint(
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                value=int(data['recovered_sa']),
+                value=int(value),
                 date_updated=parse_date(data['age_char']['datetime']),
                 source_url=url
             ))

@@ -154,7 +154,8 @@ class VicNews(StateNewsBase):
                 r'([0-9,]+) (?:Victorians have been tested|'
                 r'tests have been conducted|'
                 r'tests have been completed|'
-                r'tests have been performed)',
+                r'tests have been performed|'
+                r'tests have been processed)',
                 IGNORECASE
             ),
             html,

@@ -67,10 +67,6 @@ class NSWNews(StateNewsBase):
     def get_data(self):
         r = []
 
-        r.extend(get_nsw_cases_data())
-        self.last_open_data_date = sorted(r, key=lambda x: x.date_updated)[-1].date_updated
-        r.extend(get_nsw_tests_data())
-
         for typ, url in (
             ('lhd', self.NSW_LHD_STATS_URL),
             ('lga', self.NSW_LGA_STATS_URL)
@@ -96,6 +92,58 @@ class NSWNews(StateNewsBase):
                         r.extend(cbr)
 
         r.extend(StateNewsBase.get_data(self))
+
+        unique_keys = set()
+        for datapoint in r:
+            k = (
+                datapoint.region_schema,
+                datapoint.region_parent,
+                datapoint.region_child,
+                datapoint.agerange,
+                datapoint.datatype,
+                datapoint.date_updated
+            )
+            unique_keys.add(k)
+
+        for datapoint in get_nsw_cases_data():
+            # Prefer website over csv data
+            import datetime
+            yyyy, mm, dd = datapoint.date_updated.split('_')
+            date = datetime.datetime(year=int(yyyy),
+                                     month=int(mm),
+                                     day=int(dd))
+
+            found = False
+            for i_delta in (
+                datetime.timedelta(days=-4),
+                datetime.timedelta(days=-3),
+                datetime.timedelta(days=-2),
+                datetime.timedelta(days=-1),
+                datetime.timedelta(days=0),
+                datetime.timedelta(days=1),
+                datetime.timedelta(days=2),
+                datetime.timedelta(days=3),
+                datetime.timedelta(days=4)
+            ):
+                # Only add if haven't got data for some
+                # time (as last resort) to reduce anomalies!
+                k = (
+                    datapoint.region_schema,
+                    datapoint.region_parent,
+                    datapoint.region_child,
+                    datapoint.agerange,
+                    datapoint.datatype,
+                    (date+i_delta).strftime('%Y_%m_%d')
+                )
+
+                if k in unique_keys:
+                    found = True
+                    break
+
+            if not found:
+                r.append(datapoint)
+
+        r.extend(get_nsw_tests_data())
         return r
 
     #============================================================#
@@ -283,9 +331,6 @@ class NSWNews(StateNewsBase):
     @singledaystat
     def _get_total_cases_by_region(self, href, html):
         date = self._get_date(href, html)
-        if date <= self.last_open_data_date:
-            # Only use website figures if the open data isn't up to this point!! =====================================
-            return []
 
         # Why on earth are there zero width spaces!?
         html = html.replace(chr(8203), '')
@@ -345,7 +390,7 @@ class NSWNews(StateNewsBase):
         )
 
         for tr in trs:
-            lhd = pq(tr[0]).text().strip()
+            lhd = pq(tr[0]).text().strip().split('(')[0].strip()
 
             if not pq(tr) or not pq(lhd) or 'total' in lhd.lower().split():
                 print("NOT TR:", pq(tr).html())
@@ -353,7 +398,16 @@ class NSWNews(StateNewsBase):
             print("FOUND TR:", lhd)
 
             c_icu = pq(tr[1]).text().replace(',', '').strip()
-            c_icu = int(c_icu) if c_icu not in ('1-4', '1-', '<5') else 4     # WARNING: Currently the backend doesn't support ranges!!! ====================================
+
+            if c_icu in ('1-4', '1-', '<5'):
+                # WARNING: Currently the backend doesn't support ranges!!! ====================================
+                if True:
+                    # I think best not add for now, deferring to open data?
+                    continue
+                else:
+                    c_icu = 0
+            else:
+                c_icu = int(c_icu)
 
             r.append(DataPoint(
                 region_schema=region_schema,
@@ -479,7 +533,7 @@ class NSWNews(StateNewsBase):
                 #print("NSW KEYS:", keys)
 
                 for tr in table_recovered[0][1:]:
-                    lhd = pq(tr[0]).text().strip()
+                    lhd = pq(tr[0]).text().strip().split('(')[0].strip()
                     values = [int(pq(tr[x+1]).text().replace(',', '').strip()) for x in range(len(tr)-1)]
 
                     values_dict = {}
