@@ -11,3 +11,6 @@ def get_data_dir():
     # data in source control can slow down the IDE substantially!
     return Path(os.path.expanduser(f'~/dev/covid_19_data/'))
 
+
+def get_overseas_dir():
+    return Path(os.path.expanduser(f'~/dev/covid_19_gitdata'))

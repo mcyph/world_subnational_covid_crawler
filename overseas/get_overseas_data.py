@@ -13,8 +13,8 @@ from covid_19_au_grab.overseas.humdata.ly_data.LYData import LYData
 #from covid_19_au_grab.overseas.mm_data.MMData import MMData
 #from covid_19_au_grab.overseas.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.humdata.sn_data.SNData import SNData
-from covid_19_au_grab.overseas.humdata.so_data import SOData
-from covid_19_au_grab.overseas.humdata.ve_data import VEData
+from covid_19_au_grab.overseas.humdata.so_data.SOData import SOData
+from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
 from covid_19_au_grab.overseas.humdata.west_africa_data.WestAfricaData import WestAfricaData
 
 from covid_19_au_grab.overseas.br_data.BRData import BRData

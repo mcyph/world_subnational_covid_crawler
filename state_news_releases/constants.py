@@ -33,6 +33,7 @@ SCHEMA_JP_CITY = 38
 SCHEMA_HT_DEPARTMENT = 39
 SCHEMA_DE_AGS = 40
 SCHEMA_ES_MADRID_MUNICIPALITY = 43
+SCHEMA_CO_MUNICIPALITY = 44
 
 #============================================
 # Datatypes
@@ -111,3 +112,4 @@ def constant_to_name(x):
     for k, v in globals().items():
         if k.startswith('DT_') and v == x:
             return k
+
