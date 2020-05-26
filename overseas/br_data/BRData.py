@@ -1,6 +1,6 @@
 import csv
 
-from covid_19_au_grab.state_news_releases.overseas.KaggleDataset import (
+from covid_19_au_grab.overseas.KaggleDataset import (
     KaggleDataset
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (

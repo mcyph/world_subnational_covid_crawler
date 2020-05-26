@@ -12,7 +12,7 @@ opener.addheaders = [('User-Agent',
 urllib.request.install_opener(opener)
 
 
-from covid_19_au_grab.state_news_releases.overseas.GlobalBase import \
+from covid_19_au_grab.overseas.GlobalBase import \
     GlobalBase
 
 

@@ -275,7 +275,6 @@ stats_map = {
 def get_tokyo_cities_to_en_map():
     r = {}
     with open(get_package_dir() /
-              'state_news_releases' /
               'overseas' /
               'jp_city_data'/
               'tokyo_cities.csv', 'r', encoding='utf-8') as f:
@@ -293,7 +292,6 @@ _tokyo_cities_to_en = get_tokyo_cities_to_en_map()
 class ExtractFromTokyoPDF:
     def download_pdfs(self, only_most_recent=True):
         base_dir = get_package_dir() / \
-                   'state_news_releases' / \
                    'overseas' / \
                    'jp_city_data' / \
                    'tokyocities_pdf'
@@ -354,7 +352,6 @@ class ExtractFromTokyoPDF:
 
     def get_from_pdfs(self):
         base_dir = get_package_dir() / \
-                   'state_news_releases' / \
                    'overseas' / \
                    'jp_city_data' / \
                    'tokyocities_pdf'

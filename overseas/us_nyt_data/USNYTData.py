@@ -19,7 +19,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
     DT_SOURCE_DOMESTIC
 )
-from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
+from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
 from covid_19_au_grab.get_package_dir import (

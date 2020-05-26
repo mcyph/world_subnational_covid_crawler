@@ -29,7 +29,7 @@ from covid_19_au_grab.get_package_dir import (
 def get_districts_map():
     r = {}
 
-    with open(get_package_dir() / 'state_news_releases' /
+    with open(get_package_dir() /
               'overseas' / 'th_data' / 'th_districts.csv',
               'r', encoding='utf-8') as f:
 

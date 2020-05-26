@@ -1,6 +1,6 @@
 import json
 
-from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
+from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
 from covid_19_au_grab.state_news_releases.DataPoint import (

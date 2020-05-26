@@ -9,7 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
-from covid_19_au_grab.state_news_releases.overseas.humdata.west_africa_data.west_africa_powerbi import (
+from covid_19_au_grab.overseas.humdata.west_africa_data.west_africa_powerbi import (
     get_powerbi_data
 )
 from covid_19_au_grab.overseas.humdata.west_africa_data.WestAfricaPowerBI import (

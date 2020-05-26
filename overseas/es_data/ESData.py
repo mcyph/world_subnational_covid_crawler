@@ -15,7 +15,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
-from covid_19_au_grab.state_news_releases.overseas.GithubRepo import (
+from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
 from covid_19_au_grab.get_package_dir import (

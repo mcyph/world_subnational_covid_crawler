@@ -47,7 +47,7 @@ from covid_19_au_grab.get_package_dir import (
 #     Recoveries and Deceased information is also available through raw_data3.json now. Use the “Current Status” field to extract that information.
 
 
-with open(get_package_dir() / 'state_news_releases' /
+with open(get_package_dir() /
           'overseas' / 'in_data' /
           'india_states.csv', 'r', encoding='utf-8') as f:
 
