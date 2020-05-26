@@ -1,5 +1,7 @@
+import csv
+import datetime
 from collections import Counter
-from covid_19_au_grab.state_news_releases.overseas.jp_city_data.extract_from_tokyo_pdf import (
+from covid_19_au_grab.overseas.jp_city_data.extract_from_tokyo_pdf import (
     ExtractFromTokyoPDF
 )
 
@@ -90,7 +92,7 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class JPCityData(URLBase):
-    SOURCE_URL = 'https://covid19.wlaboratory.com'
+    SOURCE_URL = 'https://jag-japan.com/covid19map-readme/'
     SOURCE_LICENSE = ''
 
     GEO_DIR = ''
@@ -101,9 +103,10 @@ class JPCityData(URLBase):
         # Only raw_data4.json is currently being updated,
         # so won't download the others every day
         URLBase.__init__(self,
+             # TODO: SUPPORT TOKYO DATA AS WELL from !!!
              output_dir=get_overseas_dir() / 'jp_city_data' / 'data',
              urls_dict={
-                 'jg-jpn.json': URL('https://covid19.wlaboratory.com/data/jg-jpn.json',
+                 'jg-jpn.csv': URL('https://dl.dropboxusercontent.com/s/6mztoeb6xf78g5w/COVID-19.csv',
                                     static_file=False),
              }
         )
@@ -136,17 +139,22 @@ class JPCityData(URLBase):
         by_city_age_gender = Counter()
         by_prefecture_age_gender = Counter()
 
-        text = self.get_text('jg-jpn.json',
-                             include_revision=True)
+        f = self.get_file('jg-jpn.csv', include_revision=True, encoding='utf-8-sig')
 
-        for item in json.loads(text):
+        #for item in json.loads(text)['features']:
+
+        for item in csv.DictReader(f):
             print(item)
-            if not item['確定日']:
+            #item = item['properties']
+
+            if not item:
+                continue
+            elif not item['確定日']:
                 continue  # WARNING!
 
-            if item['年代'] == '0-10':
+            if item.get('年代') == '0-10':
                 agerange = '0-9'
-            elif item['年代'] in ('不明', ''):
+            elif item.get('年代') in ('不明', '', None):
                 agerange = 'Unknown'
             else:
                 agerange = (
@@ -155,15 +163,24 @@ class JPCityData(URLBase):
                     str(int(item['年代'].strip('代')) + 9)
                 )
 
-            gender = {'男性': DT_TOTAL_MALE, '女性': DT_TOTAL_FEMALE, '不明': None, '': None}[item['性別']]
+            gender = {'男性': DT_TOTAL_MALE,
+                      '男性\xa0': DT_TOTAL_MALE,
+                      '女性\xa0': DT_TOTAL_FEMALE,
+                      '女性': DT_TOTAL_FEMALE,
+                      '不明': None,
+                      '': None,
+                      None: None}[item['性別']]
+
             #date_of_onset = self.convert_date(item['発症日'], formats=('%m/%d/%Y',))
             date_diagnosed = self.convert_date(item['確定日'], formats=('%m/%d/%Y',))   # TODO: Should we be recording this number??? ================
-            diagnosed_in = item['Hospital Pref']
-            resident_of = item['Residential Pref']
+            #date_diagnosed = datetime.datetime.fromtimestamp(item['確定日']/1000).strftime('%Y_%m_%d')
+            #diagnosed_in = item['Hospital Pref']
+            #resident_of = item['Residential Pref']
+            resident_of = item.get('Residential Pref') or item['居住都道府県']
             # e.g. 中富良野町 will be different to the English 'Release' field
-            announced_in = item['Release']
-            city = item['居住市区町村'] or 'Unknown'  # Japanese only
-            source = item['ソース'] or item['ソース2'] or item['ソース3'] or 'https://covid19.wlaboratory.com'
+            #announced_in = item['Release']
+            city = item.get('居住市区町村') or 'Unknown'  # Japanese only
+            #source = item['ソース'] or item['ソース2'] or item['ソース3'] or 'https://covid19.wlaboratory.com'
 
             # Maybe it's worth adding status info, but it can be vague e.g. "退院または死亡"
             # Occupation info is also present in many cases.
