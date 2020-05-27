@@ -1,6 +1,7 @@
 import csv
 from collections import namedtuple
 
+
 Coord = namedtuple('Coord', [
     'lat', 'long'
 ])
