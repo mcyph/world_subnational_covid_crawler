@@ -37,12 +37,13 @@ from covid_19_au_grab.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.overseas.us_nyt_data.USNYTData import USNYTData
 #from covid_19_au_grab.overseas.us_covidtracking_data.USCovidTrackingData import USCovidTrackingData
 #from covid_19_au_grab.overseas.world_eu_data.EUData import EUData
-#from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import WorldJHUData
+from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import WorldJHUData
 
 
 def get_overseas_data():
     for i in [
         WestAfricaData,
+        WorldJHUData,
         AFData,
         BRData,
         CHData,
