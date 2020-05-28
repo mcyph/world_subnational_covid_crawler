@@ -35,6 +35,8 @@ def get_nsw_tests_data():
     by_lhd_posneg = {}
     by_lga_posneg = {}
 
+    postcode_to_lga = {}
+
     # Make dates from 8:30pm!
     date = (datetime.now() - timedelta(hours=20, minutes=30)).strftime('%Y_%m_%d')
     path = (
@@ -88,6 +90,12 @@ def get_nsw_tests_data():
             by_lga_posneg.setdefault(date, {}) \
                          .setdefault(row['lga_name19'], {}) \
                          .setdefault(posneg, []).append(row)
+
+            lga = row['lga_name19'].split('(')[0].strip() or 'Unknown'
+            if row['postcode'] in postcode_to_lga:
+                assert postcode_to_lga[row['postcode']] == lga, lga
+            else:
+                postcode_to_lga[row['postcode']] = lga
 
     r = []
 
@@ -143,7 +151,7 @@ def get_nsw_tests_data():
     r.extend(get_posneg_datapoints(SCHEMA_LGA, by_lga_posneg))
     #r.extend(get_posneg_datapoints(SCHEMA_LHD, by_lhd_posneg))
 
-    return gaps_filled_in(r)
+    return postcode_to_lga, r
 
 
 if __name__ == '__main__':

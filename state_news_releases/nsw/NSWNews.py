@@ -108,7 +108,19 @@ class NSWNews(StateNewsBase):
             )
             unique_keys.add(k)
 
-        for datapoint in get_nsw_postcode_data()+get_nsw_cases_data():
+        # Combine+make sure the postcode mappings to LGA are
+        # consistent between the two datasets (regression check)
+        postcode_to_lga_1, nsw_cases_data = get_nsw_cases_data()
+        postcode_to_lga_2, nsw_tests_data = get_nsw_tests_data()
+        r.extend(nsw_tests_data)
+
+        for k, v in postcode_to_lga_1.items():
+            assert postcode_to_lga_2.get(k, v) == v, v
+        for k, v in postcode_to_lga_2.items():
+            assert postcode_to_lga_1.get(k, v) == v, v
+        postcode_to_lga_1.update(postcode_to_lga_2)
+
+        for datapoint in get_nsw_postcode_data(postcode_to_lga_1)+nsw_cases_data:
             # Prefer website over csv data
             import datetime
             yyyy, mm, dd = datapoint.date_updated.split('_')
@@ -118,15 +130,9 @@ class NSWNews(StateNewsBase):
 
             found = False
             for i_delta in (
-                datetime.timedelta(days=-4),
-                datetime.timedelta(days=-3),
-                datetime.timedelta(days=-2),
                 datetime.timedelta(days=-1),
                 datetime.timedelta(days=0),
                 datetime.timedelta(days=1),
-                datetime.timedelta(days=2),
-                datetime.timedelta(days=3),
-                datetime.timedelta(days=4)
             ):
                 # Only add if haven't got data for some
                 # time (as last resort) to reduce anomalies!
@@ -146,7 +152,6 @@ class NSWNews(StateNewsBase):
             if not found:
                 r.append(datapoint)
 
-        r.extend(get_nsw_tests_data())
         return r
 
     #============================================================#

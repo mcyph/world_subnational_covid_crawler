@@ -39,6 +39,8 @@ def get_nsw_cases_data():
     by_lhd_soi = {}
     by_lga_soi = {}
 
+    postcode_to_lga = {}
+
     soi_map = {
         'Overseas': DT_SOURCE_OVERSEAS,
         'Locally acquired - contact not identified': DT_SOURCE_COMMUNITY,
@@ -96,6 +98,12 @@ def get_nsw_cases_data():
                       .setdefault(row['lga_name19'], {}) \
                       .setdefault(soi, []).append(row)
 
+            lga = row['lga_name19'].split('(')[0].strip() or 'Unknown'
+            if row['postcode'] in postcode_to_lga:
+                assert postcode_to_lga[row['postcode']] == lga, lga
+            else:
+                postcode_to_lga[row['postcode']] = lga
+
     r = []
 
     def get_datapoints(region_schema, cases_dict):
@@ -147,10 +155,11 @@ def get_nsw_cases_data():
     r.extend(get_soi_datapoints(SCHEMA_LGA, by_lga_soi))
     #r.extend(get_soi_datapoints(SCHEMA_LHD, by_lhd_soi))
 
-    return gaps_filled_in(r)
+    return postcode_to_lga, r
 
 
 if __name__ == '__main__':
-    for i in get_nsw_cases_data():
+    _, items = get_nsw_cases_data()
+    for i in items:
         print(i)
 
