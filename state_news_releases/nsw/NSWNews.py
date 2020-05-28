@@ -10,6 +10,9 @@ from covid_19_au_grab.state_news_releases.nsw.get_nsw_cases_data import (
 from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import (
     get_nsw_tests_data
 )
+from covid_19_au_grab.state_news_releases.nsw.get_nsw_postcode_data import (
+    get_nsw_postcode_data
+)
 from covid_19_au_grab.state_news_releases.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -105,7 +108,7 @@ class NSWNews(StateNewsBase):
             )
             unique_keys.add(k)
 
-        for datapoint in get_nsw_cases_data():
+        for datapoint in get_nsw_postcode_data()+get_nsw_cases_data():
             # Prefer website over csv data
             import datetime
             yyyy, mm, dd = datapoint.date_updated.split('_')
