@@ -63,7 +63,12 @@ class ETData(URLBase):
                 first_item = False
                 continue
             date = self.convert_date(item['Date'])
-            region_child = item['admin1Name_en'].strip()
+            region_child = {
+                'Amhara': 'Amara',
+                'Oromia': 'Oromiya',
+                'Somali': 'Sumale',
+                'SNNP': 'YeDebub Biheroch Bihereseboch na Hizboch',
+            }.get(item['admin1Name_en'].strip(), item['admin1Name_en'].strip())
 
             if item['Number of confirmed COVID-19']:
                 r.append(DataPoint(

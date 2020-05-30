@@ -70,7 +70,7 @@ class AFData(URLBase):
                 continue
 
             date = self.convert_date(item['Date'])
-            province = item['Province'].strip()
+            province = item['Province'].strip().replace(' Province', '')
             if not province:
                 break
 

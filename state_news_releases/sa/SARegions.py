@@ -32,7 +32,8 @@ GECKO_BROWSER_DIR = expanduser(
     '~/geckodriver-v0.26.0-linux64/'
 )
 SA_REGIONS_URL = (
-    'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=963e7887610146ec813e7889bb658805'
+    #'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=963e7887610146ec813e7889bb658805'
+    'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=1ae1bf4b7b6a46bda4a65b48c2da9406'
 )
 PATH_PREFIX = get_data_dir() / 'sa' / 'custom_map'
 

@@ -217,6 +217,11 @@ class WorldJHUData(GithubRepo):
                         region_parent = None
                         region_child = country_region
 
+
+                    if region_parent:
+                        region_parent = region_parent.strip('*').strip().replace('Mainland China', 'China')
+
+
                     if '(From' in region_child:
                         # HACK: Ignore e.g. 'Omaha, NE (From Diamond Princess)'
                         continue

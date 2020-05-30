@@ -357,6 +357,7 @@ class App(object):
 
         r = {}
         date_ids_dict = {}
+        max_dates = {}
 
         for region_schema, region_parent, datatypes in (
             (SCHEMA_ADMIN_1, 'act', (DT_TOTAL,
@@ -467,6 +468,9 @@ class App(object):
                                       )),
 
             (SCHEMA_LGA, 'nsw', (DT_TOTAL,
+                                 DT_STATUS_ACTIVE,
+                                 DT_STATUS_DEATHS,
+                                 DT_STATUS_RECOVERED,
                                  DT_TESTS_TOTAL,
                                  DT_SOURCE_OVERSEAS,
                                  DT_SOURCE_CONFIRMED,
@@ -501,7 +505,10 @@ class App(object):
             # * would take orders of magnitude more time to download
             # * data comes in later each day than website
             #(SCHEMA_POSTCODE, 'nsw', (DT_TOTAL,
-            #                          #DT_TESTS_TOTAL,
+            #                          DT_STATUS_ACTIVE,
+            #                          DT_STATUS_DEATHS,
+            #                          DT_STATUS_RECOVERED,
+            #                          DT_TESTS_TOTAL,
             #                          DT_SOURCE_OVERSEAS,
             #                          DT_SOURCE_COMMUNITY,
             #                          DT_SOURCE_CONFIRMED,
@@ -529,19 +536,26 @@ class App(object):
             if schema_name == 'admin_1':
                 schema_name = 'statewide'  #  Back-compat HACK! ==========================================================
 
-            r[f'{region_parent}:{schema_name}'] = self.__get_time_series(
+            schema_key = f'{region_parent}:{schema_name}'
+            i_max_date, r[schema_key] = self.__get_time_series(
                 from_dates, inst,
                 region_schema, region_parent, datatypes,
                 date_ids_dict
             )
+            if max_dates.get(schema_key) is None or i_max_date > max_dates[schema_key]:
+                max_dates[schema_key] = i_max_date
 
+        print("** MAX_DATE:", max_dates)
         return {
             'date_ids': {
                 date_id: date_string
                 for (date_string, date_id)
                 in date_ids_dict.items()
             },
-            'time_series_data': r
+            'time_series_data': r,
+            'updated_dates': {
+                k: v.strftime('%d/%m/%Y') for k, v in max_dates.items() if v
+            }
         }
 
     def __get_time_series(self, from_dates, inst,
@@ -549,6 +563,7 @@ class App(object):
                           date_ids_dict):
         out = []
         added = set()
+        max_date = None
 
         datatypes = [
             constant_to_name(i)[3:].lower() for i in datatypes
@@ -599,6 +614,10 @@ class App(object):
             region_child = i[1] or ''
             agerange = i[2] or ''
 
+            i_date_updated = datetime.datetime.strptime(date_updated, '%d/%m/%Y')
+            if max_date is None or i_date_updated > max_date:
+                max_date = i_date_updated
+
             if not date_updated in date_ids_dict:
                 # Store the date as an ID to allow saving space
                 date_ids_dict[date_updated] = len(date_ids_dict)
@@ -612,7 +631,7 @@ class App(object):
         for (region_child, agerange), values in out_new.items():
             out_new_list.append([region_child, agerange, values])
 
-        return {
+        return max_date, {
             'sub_headers': datatypes,
             'data': out_new_list
         }
@@ -623,7 +642,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
-            'environment': 'production',
+            #'environment': 'production',
         },
         '/': {
 

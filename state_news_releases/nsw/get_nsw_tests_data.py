@@ -157,4 +157,3 @@ def get_nsw_tests_data():
 if __name__ == '__main__':
     for i in get_nsw_tests_data():
         print(i)
-

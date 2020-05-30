@@ -6,7 +6,7 @@ from covid_19_au_grab.state_news_releases.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_CH_CANTON,
+    SCHEMA_ADMIN_1,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -94,7 +94,8 @@ class CHData(GithubRepo):
 
                 if item['ncumul_conf']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_TOTAL,
                         value=int(item['ncumul_conf']),
@@ -104,7 +105,8 @@ class CHData(GithubRepo):
 
                 if item['ncumul_tested']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_TESTS_TOTAL,
                         value=int(item['ncumul_tested']),
@@ -114,7 +116,8 @@ class CHData(GithubRepo):
 
                 if item['current_hosp']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['current_hosp']),
@@ -124,7 +127,8 @@ class CHData(GithubRepo):
 
                 if item['current_icu']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_STATUS_ICU,
                         value=int(item['current_icu']),
@@ -134,7 +138,8 @@ class CHData(GithubRepo):
 
                 if item['current_vent']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_STATUS_ICU_VENTILATORS,
                         value=int(item['current_vent']),
@@ -144,7 +149,8 @@ class CHData(GithubRepo):
 
                 if item['ncumul_deceased']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_CH_CANTON,
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='Switzerland',
                         region_child=canton,
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['ncumul_deceased']),

@@ -68,7 +68,9 @@ class EUSubNationalData(URLBase):
                     continue
 
                 date = self.convert_date(item['Date'])
-                country = item['CountryName']
+                country = {
+                    'NOT SPECIFIED': 'Unknown',
+                }.get(item['CountryName'], item['CountryName'])
                 region_child = item['Region']
 
                 r.append(DataPoint(

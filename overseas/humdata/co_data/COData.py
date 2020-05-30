@@ -16,7 +16,8 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
     DT_SOURCE_OVERSEAS, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_UNDER_INVESTIGATION
+    DT_SOURCE_UNDER_INVESTIGATION,
+    DT_SOURCE_COMMUNITY
 )
 
 
@@ -106,7 +107,9 @@ class COData(URLBase):
             notification_date = self.convert_date(item['Fecha de notificación'].split('T')[0])
             divipola = item['Codigo DIVIPOLA']
             municipality = item['Ciudad de ubicación']
-            admin1 = item['Departamento o Distrito ']
+            admin1 = {
+                'Bogotá D.C.': 'Distrito Capital de Bogota',
+            }.get(item['Departamento o Distrito '], item['Departamento o Distrito '])
             attention = item['atención']
             age = self._age_to_range(item['Edad'])
             gender = {
@@ -116,7 +119,8 @@ class COData(URLBase):
             source_of_infection = {
                 'Importado': DT_SOURCE_OVERSEAS,
                 'Relacionado': DT_SOURCE_CONFIRMED,
-                'En estudio': DT_SOURCE_UNDER_INVESTIGATION
+                'En estudio': DT_SOURCE_UNDER_INVESTIGATION,
+                'Desconocido': DT_SOURCE_COMMUNITY
             }[item['Tipo']]
             state = item['Estado']
             country_of_origin = item['País de procedencia']  # TODO: Add support for this!! ============================
@@ -128,13 +132,13 @@ class COData(URLBase):
             by_admin1[notification_date, admin1] += 1
             by_municipality[notification_date, admin1, municipality] += 1
 
-            if item['Fecha de muerte'].strip('-').strip():
+            if item['Fecha de muerte'].strip('-/').strip():
                 date_death = self.convert_date(item['Fecha de muerte'].split('T')[0])
                 by_status[date_death, DT_STATUS_DEATHS] += 1
                 by_admin1_status[date_death, admin1, DT_STATUS_DEATHS] += 1
                 by_municipality_status[date_death, admin1, municipality, DT_STATUS_DEATHS] += 1
 
-            if item['Fecha recuperado'].strip('-').strip():
+            if item['Fecha recuperado'].strip('-/').strip():
                 date_recovered = self.convert_date(item['Fecha recuperado'].split('T')[0])
                 by_status[date_recovered, DT_STATUS_RECOVERED] += 1
                 by_admin1_status[date_recovered, admin1, DT_STATUS_RECOVERED] += 1

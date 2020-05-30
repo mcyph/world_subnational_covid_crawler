@@ -28,7 +28,7 @@ def get_nsw_postcode_data(postcode_to_lga):
 
     # {"data":[{"Recovered":5,"POA_NAME16":"2106","Deaths":0,"Cases":5,"Date":"14-May"},
 
-    date = datetime.now().strftime('%Y_%m_%d')
+    date = (datetime.now() - timedelta(hours=20, minutes=30)).strftime('%Y_%m_%d')
     dir_ = get_data_dir() / 'nsw' / 'open_data' / date
     path_totals = dir_ / 'covid_19_cases_by_postcode_totals.json'
     path_active_deaths = dir_ / 'covid_19_cases_by_postcode_active_deaths.json'
@@ -58,7 +58,7 @@ def get_nsw_postcode_data(postcode_to_lga):
             recovered = int(item['Recovered'])
             deaths = int(item['Deaths'])
             cases = int(item['Cases'])
-            active = cases-recovered
+            active = cases-recovered-deaths
             postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
             r.append(DataPoint(
@@ -110,20 +110,24 @@ def get_nsw_postcode_data(postcode_to_lga):
                 source_url=SOURCE_URL
             ))
 
-    with open(path_totals, 'r', encoding='utf-8') as f:
-        for item in json.loads(f.read())['data']:
-            date = datetime.strptime(item['Date']+'-20', '%d-%b-%y').strftime('%Y_%m_%d')
-            number = int(item['Number'])
-            postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
+    if False:
+        # Pretty sure this is dupe data (for now)
+        # Don't uncomment this without making sure this won't double the result(!)
 
-            r.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
-                region_child=postcode,
-                datatype=DT_TOTAL,
-                value=number,
-                date_updated=date,
-                source_url=SOURCE_URL
-            ))
+        with open(path_totals, 'r', encoding='utf-8') as f:
+            for item in json.loads(f.read())['data']:
+                date = datetime.strptime(item['Date']+'-20', '%d-%b-%y').strftime('%Y_%m_%d')
+                number = int(item['Number'])
+                postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
+
+                r.append(DataPoint(
+                    region_schema=SCHEMA_POSTCODE,
+                    region_child=postcode,
+                    datatype=DT_TOTAL,
+                    value=number,
+                    date_updated=date,
+                    source_url=SOURCE_URL
+                ))
 
     # Convert postcode to LGA where possible
     new_r = []

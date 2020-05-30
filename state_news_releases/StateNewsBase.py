@@ -318,7 +318,8 @@ class StateNewsBase(ABC):
                     'https://www.worksafe.vic.gov.au' in href or
                     'https://www.fairwork.gov.au' in href or
                     'https://www.foodstandards.gov.au' in href or
-                    'coronavirus-tasmania-snapshot' in href
+                    'coronavirus-tasmania-snapshot' in href or
+                    'covid-19+testing+for+transport+workers+begins' in href
                 ):
                     continue  # HACK!
 

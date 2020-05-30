@@ -48,7 +48,8 @@ class NSWNews(StateNewsBase):
 
     # URLs changed around 23rd April
     STATS_BY_REGION_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx'
-    NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-lhd.aspx'
+    #NSW_LHD_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-lhd.aspx'
+    NSW_LHD_STATS_URL = STATS_BY_REGION_URL # HACK: LHD stats have moved here as of 28/5
     NSW_LGA_STATS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-lga.aspx'
 
     def _get_date(self, href, html):
