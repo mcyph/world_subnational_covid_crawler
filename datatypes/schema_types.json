@@ -14,7 +14,7 @@
             "#2": "individual countries above a certain zoom level.",
             "#3": "May contain additional 'cutouts' for cities, when",
             "#4": "additional data is provided within an admin_1 area",
-            "iso_3166": "*",
+            "iso_3166": null,
             "min_zoom": 5,
             "priority": 1,
             "data_file": "admin_1_${iso_3166_2}.json",
@@ -110,7 +110,8 @@
             "underlay_file": null
         },
         "fr_pays": {
-            "iso_3166": "BR",
+            "#1": "TODO: Add separately for for Brittany/Franche-Comté!",
+            "iso_3166": "FR",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
@@ -172,10 +173,14 @@
             "geojson_file": "nz_dhb.geojson",
             "underlay_file": "nz_dhb_underlay.json"
         },
-
-        "uk_country": {},
-        "uk_area": {},
-
+        "uk_area": {
+            "iso_3166": "GB",
+            "min_zoom": 8,
+            "priority": -1,
+            "data_file": "uk_area.json",
+            "geojson_file": "uk_area.geojson",
+            "underlay_file": null
+        },
         "us_county": {
             "iso_3166": "US",
             "min_zoom": 8,

@@ -1,0 +1,122 @@
+original_schema	original_parent	original_child	schema	parent	child
+admin_1	Belgium	Brussels	admin_1	BE	BE-BRU
+admin_1	Belgium	Flanders	admin_1	BE	BE-VLG
+admin_1	Belgium	Wallonia	admin_1	BE	BE-WAL
+admin_1	Canada		admin_0		CA
+admin_1	China	Hong Kong	admin_0		HK
+admin_1	China	Inner Mongolia	admin_1	CN	CN-NM
+admin_1	China	Tibet	admin_1	CN	CN-XZ
+admin_1	Croatia	Istarska	admin_1	HR	HR-18
+admin_1	Croatia	Primorsko-Goranska	admin_1	HR	HR-08
+admin_1	Croatia	Varaždinska	admin_1	HR	HR-05
+admin_1	Denmark	Denmark	admin_0		DK
+admin_1	Denmark	Faroe	admin_0		FO
+admin_1	Denmark	Faroe Islands	admin_0		FO
+admin_1	Denmark	Greenland	admin_0		GL
+admin_1	France	Fench Guiana	admin_1	FR	FR-GF
+admin_1	France	France	admin_0		FR
+admin_1	France	French Guiana	admin_0		GF
+admin_1	France	French Polynesia	admin_0		PF
+admin_1	France	Grand Est	admin_1	FR	FR-GES
+admin_1	France	Guyane	admin_0		GF
+admin_1	France	New Caledonia	admin_0		NC
+admin_1	France	Pays de la Loire	admin_1	FR	FR-PDL
+admin_1	France	Provence-Alpes-Côte d'Azur	admin_1	FR	FR-PAC
+admin_1	France	Reunion	admin_0		RE
+admin_1	France	Saint Barthelemy	admin_0		BL
+admin_1	France	Saint Pierre and Miquelon	admin_0		PM
+admin_1	France	St Martin	admin_0		SX
+admin_1	Germany	NOT SPECIFIED	admin_1	DE	Unknown
+admin_1	Germany	Schleswig Holstein	admin_1	DE	DE-SH
+admin_1	Hungary	NOT SPECIFIED	admin_1	HU	Unknown
+admin_1	Italy	Friuli Venezia Giulia	admin_1	IT	IT-36
+admin_1	Netherlands	Curacao	admin_0		CW
+admin_1	Netherlands	Netherlands	admin_0		NL
+admin_1	Netherlands	North Brabant	admin_1	NL	NL-NB
+admin_1	Netherlands	North Holland	admin_1	NL	NL-NH
+admin_1	Netherlands	NOT SPECIFIED	admin_1	NL	Unknown
+admin_1	Netherlands	South Holland	admin_1	NL	NL-ZH
+admin_1	Portugal	Lisbon	admin_1	PT	PT-11
+admin_1	Slovakia	Bratislava	admin_1	SK	SK-BL
+admin_1	Spain	Cataluña	admin_1	ES	ES-CT
+admin_1	Spain	Comunidad de Madrid	admin_1	ES	ES-MD
+admin_1	Spain	Comunidad Foral de Navarra	admin_1	ES	ES-NA
+admin_1	Spain	Comunidad Valenciana	admin_1	ES	ES-VC
+admin_1	Spain	Principado de Asturias	admin_1	ES	ES-AS
+admin_1	Spain	Región de Murcia	admin_1	ES	ES-MC
+admin_1	Sweden	Blekinge	admin_1	SE	SE-K
+admin_1	Sweden	Gävleborg	admin_1	SE	SE-X
+admin_1	Sweden	Halland	admin_1	SE	SE-N
+admin_1	Sweden	Jämtland	admin_1	SE	SE-Z
+admin_1	Sweden	Jönköping	admin_1	SE	SE-F
+admin_1	Sweden	Kalmar	admin_1	SE	SE-H
+admin_1	Sweden	Kronoberg	admin_1	SE	SE-G
+admin_1	Sweden	Norrbotten	admin_1	SE	SE-BD
+admin_1	Sweden	NOT SPECIFIED	admin_1	SE	Unknown
+admin_1	Sweden	Örebro	admin_1	SE	SE-T
+admin_1	Sweden	Skåne	admin_1	SE	SE-M
+admin_1	Sweden	Södermanland	admin_1	SE	SE-D
+admin_1	Sweden	Stockholm	admin_1	SE	SE-AB
+admin_1	Sweden	Uppsala	admin_1	SE	SE-C
+admin_1	Sweden	Värmland	admin_1	SE	SE-S
+admin_1	Sweden	Västerbotten	admin_1	SE	SE-AC
+admin_1	Sweden	Västernorrland	admin_1	SE	SE-Y
+admin_1	Sweden	Västra Götaland	admin_1	SE	SE-O
+admin_1	Switzerland	Basel City	admin_1	CH	CH-BS
+admin_1	Switzerland	Basel Country	admin_1	CH	CH-BL
+admin_1	Switzerland	Geneva	admin_1	CH	CH-GE
+admin_1	Switzerland	Liechtenstein	admin_0		LI
+admin_1	Switzerland	St. Gallen	admin_1	CH	CH-SG
+admin_1	Taiwan	Taiwan	admin_0		TW
+admin_1	United Kingdom	Anguilla	admin_0		AI
+admin_1	United Kingdom	Bermuda	admin_0		BM
+admin_1	United Kingdom	British Virgin Islands	admin_0		VG
+admin_1	United Kingdom	Cayman Islands	admin_0		KY
+admin_1	United Kingdom	Channel Islands	admin_1	GB	GB-CHA
+admin_1	United Kingdom	Falkland Islands (Malvinas)	admin_0		FK
+admin_1	United Kingdom	Gibraltar	admin_0		GI
+admin_1	United Kingdom	Isle of Man	admin_0		IM
+admin_1	United Kingdom	London	admin_1	GB	GB-LND
+admin_1	United Kingdom	Montserrat	admin_0		MS
+admin_1	United Kingdom	Turks and Caicos Islands	admin_0		TC
+admin_1	US	United States Virgin Islands	admin_0		VI
+admin_0		Cabo Verde	admin_0		CV
+admin_0		Congo (Kinshasa)	admin_0		CD
+admin_0		Czechia	admin_0		CZ
+admin_0		Eswatini	admin_0		SZ
+admin_0		Holy See	admin_0		VA
+admin_0		North Macedonia	admin_0		MK
+admin_0		Palestine	admin_0		PS
+admin_0		Taiwan*	admin_0		TW
+admin_1	Greece	Fthiotis	admin_1	GR	GR-06
+admin_1	Greece	Heraklion	admin_1	GR	GR-91
+admin_1	Greece	Ikaria	admin_1	GR	GR-84
+admin_1	Greece	Kavalas	admin_1	GR	‎GR-55
+admin_1	Greece	Kefalonia	admin_1	GR	GR-23
+admin_1	Greece	Khalkidiki	admin_1	GR	GR-64
+admin_1	Greece	Khios	admin_1	GR	GR-85
+admin_1	Greece	Laconia	admin_1	GR	GR-16
+admin_1	Greece	Larissa	admin_1	GR	GR-42
+admin_1	Greece	Lefkadas	admin_1	GR	GR-26
+admin_1	Greece	Lesbos	admin_1	GR	GR-83
+admin_1	Greece	Magnesia	admin_1	GR	GR-43
+admin_1	Greece	NOT SPECIFIED	admin_1	GR	Unknown
+admin_1	Greece	Pireas	admin_1	GR	GR-A4
+admin_1	Greece	Prevezas	admin_1	GR	GR-34
+admin_1	Greece	Rethymnon	admin_1	GR	GR-93
+admin_1	Greece	Serron	admin_1	GR	GR-62
+admin_1	Greece	Tessaloniki	admin_1	GR	GR-54
+admin_1	Greece	Trikalon	admin_1	GR	GR-44
+admin_1	Greece	West Attica	admin_1	GR	GR-A3
+admin_1	Greece	Xanthis	admin_1	GR	GR-72
+admin_1	Iceland	Abroad	admin_1	IS	Other
+admin_1	Iceland	East Iceland	admin_1	IS	IS-7
+admin_1	Iceland	Greater Reykjavík	admin_1	IS	IS-1
+admin_1	Iceland	Northeast Iceland	admin_1	IS	IS-6
+admin_1	Iceland	Northwest Iceland	admin_1	IS	IS-5
+admin_1	Iceland	NOT SPECIFIED	admin_1	IS	Unknown
+admin_1	Iceland	South Iceland	admin_1	IS	IS-8
+admin_1	Iceland	Suðurnes Peninsula	admin_1	IS	IS-2
+admin_1	Iceland	West Fjords	admin_1	v	IS-4
+admin_1	Iceland	West Iceland	admin_1	IS	IS-3
+admin_1	Portugal	NOT SPECIFIED	admin_1	PT	Unknown
