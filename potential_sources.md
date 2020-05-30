@@ -20,6 +20,32 @@
 
 * https://sedac.ciesin.columbia.edu/data/collection/gpw-v4/sets/browse
 
+* https://www.abs.gov.au/websitedbs/d3310114.nsf/home/additional+abs+products+to+measure+impact+of+covid-19
+
+* https://towardsdatascience.com/a-short-review-of-covid-19-data-sources-ba7f7aa1c342?fbclid=IwAR1KChh5mZqC_eccw0EQ3rjeqrvVNw0hWvCuF2DB8eWegEi-R23Db_r_Nl8
+
+# Geographic resources
+
+* https://gis.stackexchange.com/questions/495/seeking-administrative-boundaries-for-various-countries
+
+* https://gis.stackexchange.com/questions/20294/free-dataset-of-world-cities-including-city-geometry?rq=1
+
+* https://gis.stackexchange.com/questions/146575/city-shapefile-for-free?rq=1
+
+* http://www.geonames.org/
+
+* http://www.naturalearthdata.com/downloads/10m-cultural-vectors/
+
+* https://www.unsalb.org/data
+
+* https://www.geofabrik.de/data/
+
+* https://overpass-turbo.eu/
+
+* https://jakevdp.github.io/PythonDataScienceHandbook/04.13-geographic-data-with-basemap.html (maybe)
+
+* https://wiki.openstreetmap.org/wiki/Potential_Datasources and https://wiki.openstreetmap.org/wiki/Shapefiles
+
 # Global COVID-19 Data-related links (easily machine readable)
 
 * https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
