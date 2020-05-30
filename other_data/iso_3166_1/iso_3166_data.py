@@ -1,5 +1,6 @@
 import csv
 from collections import namedtuple
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 
 Coord = namedtuple('Coord', [
@@ -41,7 +42,9 @@ COWItem = namedtuple('COWItem', [
 
 def _get_data_items():
     r = []
-    f = open('cow.csv', 'r', encoding='utf-8')
+
+    f = open(get_package_dir() / 'other_data' / 'iso_3166_1' / 'cow.csv',
+             'r', encoding='utf-8')
 
     for item in csv.DictReader(
         filter(lambda row: row[0]!='#', f),
