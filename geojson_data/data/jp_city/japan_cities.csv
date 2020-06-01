@@ -1,0 +1,2053 @@
+国コード	第二行政区画コード	日本語表記	英語表記
+JP	00000	判定不明	unknown
+JP	01000	北海道
+JP	01100	札幌市	sapporo-shi
+JP	01101	札幌市中央区	sapporo-shi chuo-ku
+JP	01102	札幌市北区	sapporo-shi kita-ku
+JP	01103	札幌市東区	sapporo-shi higashi-ku
+JP	01104	札幌市白石区	sapporo-shi shiroishi-ku
+JP	01105	札幌市豊平区	sapporo-shi toyohira-ku
+JP	01106	札幌市南区	sapporo-shi minami-ku
+JP	01107	札幌市西区	sapporo-shi nishi-ku
+JP	01108	札幌市厚別区	sapporo-shi atsubetsu-ku
+JP	01109	札幌市手稲区	sapporo-shi teine-ku
+JP	01110	札幌市清田区	sapporo-shi kiyota-ku
+JP	01202	函館市	hakodate-shi
+JP	01203	小樽市	otaru-shi
+JP	01204	旭川市	asahikawa-shi
+JP	01205	室蘭市	muroran-shi
+JP	01206	釧路市	kushiro-shi
+JP	01207	帯広市	obihiro-shi
+JP	01208	北見市	kitami-shi
+JP	01209	夕張市	yubari-shi
+JP	01210	岩見沢市	iwamizawa-shi
+JP	01211	網走市	abashiri-shi
+JP	01212	留萌市	rumoi-shi
+JP	01213	苫小牧市	tomakomai-shi
+JP	01214	稚内市	wakkanai-shi
+JP	01215	美唄市	bibai-shi
+JP	01216	芦別市	ashibetsu-shi
+JP	01217	江別市	ebetsu-shi
+JP	01218	赤平市	akabira-shi
+JP	01219	紋別市	monbetsu-shi
+JP	01220	士別市	shibetsu-shi
+JP	01221	名寄市	nayoro-shi
+JP	01222	三笠市	mikasa-shi
+JP	01223	根室市	nemuro-shi
+JP	01224	千歳市	chitose-shi
+JP	01225	滝川市	takikawa-shi
+JP	01226	砂川市	sunagawa-shi
+JP	01227	歌志内市	utashinai-shi
+JP	01228	深川市	fukagawa-shi
+JP	01229	富良野市	furano-shi
+JP	01230	登別市	noboribetsu-shi
+JP	01231	恵庭市	eniwa-shi
+JP	01233	伊達市	date-shi
+JP	01234	北広島市	kitahiroshima-shi
+JP	01235	石狩市	ishikari-shi
+JP	01236	北斗市	hokuto-shi
+JP	01303	当別町	tobetsu-cho
+JP	01304	新篠津村	shinshinotsu-mura
+JP	01331	松前町	matsumae-cho
+JP	01332	福島町	fukushima-cho
+JP	01333	知内町	shiriuchi-cho
+JP	01334	木古内町	kikonai-cho
+JP	01337	七飯町	nanae-cho
+JP	01343	鹿部町	shikabe-cho
+JP	01345	森町	mori-machi
+JP	01346	八雲町	yakumo-cho
+JP	01347	長万部町	oshamanbe-cho
+JP	01361	江差町	esashi-cho
+JP	01362	上ノ国町	kaminokuni-cho
+JP	01363	厚沢部町	assabu-cho
+JP	01364	乙部町	otobe-cho
+JP	01367	奥尻町	okushiri-cho
+JP	01370	今金町	imakane-cho
+JP	01371	せたな町	setana-cho
+JP	01391	島牧村	shimamaki-mura
+JP	01392	寿都町	suttsu-cho
+JP	01393	黒松内町	kuromatsunai-cho
+JP	01394	蘭越町	rankoshi-cho
+JP	01395	ニセコ町	niseko-cho
+JP	01396	真狩村	makkari-mura
+JP	01397	留寿都村	rusutsu-mura
+JP	01398	喜茂別町	kimobetsu-cho
+JP	01399	京極町	kyogoku-cho
+JP	01400	倶知安町	kucchyan-cho
+JP	01401	共和町	kyowa-cho
+JP	01402	岩内町	iwanai-cho
+JP	01403	泊村	tomari-mura
+JP	01404	神恵内村	kamoenai-mura
+JP	01405	積丹町	shakotan-cho
+JP	01406	古平町	furubira-cho
+JP	01407	仁木町	niki-cho
+JP	01408	余市町	yoichi-cho
+JP	01409	赤井川村	akaigawa-mura
+JP	01423	南幌町	nanporo-cho
+JP	01424	奈井江町	naie-cho
+JP	01425	上砂川町	kamisunagawa-cho
+JP	01427	由仁町	yuni-cho
+JP	01428	長沼町	naganuma-cho
+JP	01429	栗山町	kuriyama-cho
+JP	01430	月形町	tsukigata-cho
+JP	01431	浦臼町	urausu-cho
+JP	01432	新十津川町	shintotsukawa-cho
+JP	01433	妹背牛町	moseushi-cho
+JP	01434	秩父別町	chippubetsu-cho
+JP	01436	雨竜町	uryu-cho
+JP	01437	北竜町	hokuryu-cho
+JP	01438	沼田町	numata-cho
+JP	01439	幌加内町	horokanai-cho
+JP	01452	鷹栖町	takasu-cho
+JP	01453	東神楽町	higashikagura-cho
+JP	01454	当麻町	toma-cho
+JP	01455	比布町	pippu-cho
+JP	01456	愛別町	aibetsu-cho
+JP	01457	上川町	kamikawa-cho
+JP	01458	東川町	higashikawa-cho
+JP	01459	美瑛町	biei-cho
+JP	01460	上富良野町	kamifurano-cho
+JP	01461	中富良野町	nakafurano-cho
+JP	01462	南富良野町	minamifurano-cho
+JP	01463	占冠村	shimukappu-mura
+JP	01464	和寒町	wassamu-cho
+JP	01465	剣淵町	kenbuchi-cho
+JP	01468	下川町	shimokawa-cho
+JP	01469	美深町	bifuka-cho
+JP	01470	音威子府村	otoineppu-mura
+JP	01471	中川町	nakagawa-cho
+JP	01472	幌加内町	horokanai-cho
+JP	01481	増毛町	mashike-cho
+JP	01482	小平町	obira-cho
+JP	01483	苫前町	tomamae-cho
+JP	01484	羽幌町	haboro-cho
+JP	01485	初山別村	shosanbetsu-mura
+JP	01486	遠別町	enbetsu-cho
+JP	01487	天塩町	teshio-cho
+JP	01488	幌延町	horonobe-cho
+JP	01511	猿払村	sarufutsu-mura
+JP	01512	浜頓別町	hamatonbetsu-cho
+JP	01513	中頓別町	nakatonbetsu-cho
+JP	01514	枝幸町	esashi-cho
+JP	01516	豊富町	toyotomi-cho
+JP	01517	礼文町	rebun-cho
+JP	01518	利尻町	rishiri-cho
+JP	01519	利尻富士町	rishirifuji-cho
+JP	01520	幌延町	horonobe-cho
+JP	01543	美幌町	bihoro-cho
+JP	01544	津別町	tsubetsu-cho
+JP	01545	斜里町	shari-cho
+JP	01546	清里町	kiyosato-cho
+JP	01547	小清水町	koshimizu-cho
+JP	01549	訓子府町	kunneppu-cho
+JP	01550	置戸町	oketo-cho
+JP	01552	佐呂間町	saroma-cho
+JP	01555	遠軽町	engaru-cho
+JP	01558	上湧別町	kamiyubetsu-cho
+JP	01559	湧別町	yubetsu-cho
+JP	01560	滝上町	takinoe-cho
+JP	01561	興部町	okoppe-cho
+JP	01562	西興部村	nishiokoppe-mura
+JP	01563	雄武町	omu-cho
+JP	01564	大空町	ozora-cho
+JP	01571	豊浦町	toyora-cho
+JP	01575	壮瞥町	sobetsu-cho
+JP	01578	白老町	shiraoi-cho
+JP	01581	厚真町	atsuma-cho
+JP	01584	洞爺湖町	toyako-cho
+JP	01585	安平町	abira-cho
+JP	01586	むかわ町	mukawa-cho
+JP	01601	日高町	hidaka-cho
+JP	01602	平取町	biratori-cho
+JP	01604	新冠町	niikappu-cho
+JP	01607	浦河町	urakawa-cho
+JP	01608	様似町	samani-cho
+JP	01609	えりも町	erimo-cho
+JP	01610	新ひだか町	shinhidaka-cho
+JP	01631	音更町	otofuke-cho
+JP	01632	士幌町	shihoro-cho
+JP	01633	上士幌町	kamishihoro-cho
+JP	01634	鹿追町	shikaoi-cho
+JP	01635	新得町	shintoku-cho
+JP	01636	清水町	shimizu-cho
+JP	01637	芽室町	memuro-cho
+JP	01638	中札内村	nakasatsunai-mura
+JP	01639	更別村	sarabetsu-mura
+JP	01641	大樹町	taiki-cho
+JP	01642	広尾町	hiro-cho
+JP	01643	幕別町	makubetsu-cho
+JP	01644	池田町	ikeda-cho
+JP	01645	豊頃町	toyokoro-cho
+JP	01646	本別町	honbetsu-cho
+JP	01647	足寄町	ashoro-cho
+JP	01648	陸別町	rikubetsu-cho
+JP	01649	浦幌町	urahoro-cho
+JP	01661	釧路町	kushiro-cho
+JP	01662	厚岸町	akkeshi-cho
+JP	01663	浜中町	hamanaka-cho
+JP	01664	標茶町	shibechya-cho
+JP	01665	弟子屈町	teshikaga-cho
+JP	01667	鶴居村	tsurui-mura
+JP	01668	白糠町	shiranuka-cho
+JP	01691	別海町	betsukai-cho
+JP	01692	中標津町	nakashibetsu-cho
+JP	01693	標津町	shibetsu-cho
+JP	01694	羅臼町	rausu-cho
+JP	02000	青森
+JP	02201	青森市	aomori-shi
+JP	02202	弘前市	hirosaki-shi
+JP	02203	八戸市	hachinohe-shi
+JP	02204	黒石市	kuroishi-shi
+JP	02205	五所川原市	goshogawara-shi
+JP	02206	十和田市	towada-shi
+JP	02207	三沢市	misawa-shi
+JP	02208	むつ市	mutsu-shi
+JP	02209	つがる市	tsugaru-shi
+JP	02210	平川市	hirakawa-shi
+JP	02301	平内町	hiranai-machi
+JP	02303	今別町	imabetsu-machi
+JP	02304	蓬田村	yomogita-mura
+JP	02307	外ヶ浜町	sotogahama-machi
+JP	02321	鰺ヶ沢町	ajigasawa-machi
+JP	02323	深浦町	fukaura-machi
+JP	02343	西目屋村	nishimeya-mura
+JP	02361	藤崎町	fujisaki-machi
+JP	02362	大鰐町	owani-machi
+JP	02367	田舎館村	inakadate-mura
+JP	02381	板柳町	itayanagi-machi
+JP	02384	鶴田町	tsuruta-machi
+JP	02387	中泊町	nakadomari-machi
+JP	02401	野辺地町	noheji-machi
+JP	02402	七戸町	shichinohe-machi
+JP	02405	六戸町	rokunohe-machi
+JP	02406	横浜町	yokohama-machi
+JP	02408	東北町	tohoku-machi
+JP	02411	六ヶ所村	rokkasho-mura
+JP	02412	おいらせ町	oirase-cho
+JP	02423	大間町	oma-machi
+JP	02424	東通村	higashidori-mura
+JP	02425	風間浦村	kazamaura-mura
+JP	02426	佐井村	sai-mura
+JP	02441	三戸町	sannohe-machi
+JP	02442	五戸町	gonohe-machi
+JP	02443	田子町	takko-machi
+JP	02445	南部町	nanbu-cho
+JP	02446	階上町	hashikami-cho
+JP	02450	新郷村	shingo-mura
+JP	03000	岩手
+JP	03201	盛岡市	morioka-shi
+JP	03202	宮古市	miyako-shi
+JP	03203	大船渡市	ofunato-shi
+JP	03205	花巻市	hanamaki-shi
+JP	03206	北上市	kitakami-shi
+JP	03207	久慈市	kuji-shi
+JP	03208	遠野市	tono-shi
+JP	03209	一関市	ichinoseki-shi
+JP	03210	陸前高田市	rikuzentakata-shi
+JP	03211	釜石市	kamaishi-shi
+JP	03213	二戸市	ninohe-shi
+JP	03214	八幡平市	hachimantai-shi
+JP	03215	奥州市	oshu-shi
+JP	03216	滝沢市	takizawa-shi
+JP	03301	雫石町	shizukuishi-cho
+JP	03302	葛巻町	kuzumaki-machi
+JP	03303	岩手町	iwate-machi
+JP	03305	滝沢村	takizawa-mura
+JP	03321	紫波町	shiwa-cho
+JP	03322	矢巾町	yahaba-cho
+JP	03366	西和賀町	nishiwaga-machi
+JP	03381	金ケ崎町	kanegasaki-cho
+JP	03402	平泉町	hiraizumi-cho
+JP	03422	藤沢町	fujisawa-cho
+JP	03441	住田町	sumita-cho
+JP	03461	大槌町	otsuchi-cho
+JP	03482	山田町	yamada-machi
+JP	03483	岩泉町	iwaizumi-cho
+JP	03484	田野畑村	tanohata-mura
+JP	03485	普代村	fudai-mura
+JP	03487	川井村	kawai-mura
+JP	03501	軽米町	karumai-machi
+JP	03503	野田村	noda-mura
+JP	03506	九戸村	kunohe-mura
+JP	03507	洋野町	hirono-cho
+JP	03524	一戸町	ichinohe-machi
+JP	04000	宮城
+JP	04100	仙台市	sendai-shi
+JP	04101	仙台市青葉区	sendai-shi aoba-ku
+JP	04102	仙台市宮城野区	sendai-shi miyagino-ku
+JP	04103	仙台市若林区	sendai-shi wakabayashi-ku
+JP	04104	仙台市太白区	sendai-shi taihaku-ku
+JP	04105	仙台市泉区	sendai-shi izumi-ku
+JP	04202	石巻市	ishinomaki-shi
+JP	04203	塩竈市	shiogama-shi
+JP	04205	気仙沼市	kesennuma-shi
+JP	04206	白石市	shiroishi-shi
+JP	04207	名取市	natori-shi
+JP	04208	角田市	kakuda-shi
+JP	04209	多賀城市	tagajo-shi
+JP	04211	岩沼市	iwanuma-shi
+JP	04212	登米市	tome-shi
+JP	04213	栗原市	kurihara-shi
+JP	04214	東松島市	higashimatsushima-shi
+JP	04215	大崎市	osaki-shi
+JP	04216	富谷市	tomiya-shi
+JP	04301	蔵王町	zao-machi
+JP	04302	七ヶ宿町	shichikashuku-machi
+JP	04321	大河原町	ogawara-machi
+JP	04322	村田町	murata-machi
+JP	04323	柴田町	shibata-machi
+JP	04324	川崎町	kawasaki-machi
+JP	04341	丸森町	marumori-machi
+JP	04361	亘理町	watari-cho
+JP	04362	山元町	yamamoto-cho
+JP	04401	松島町	matsushima-machi
+JP	04404	七ヶ浜町	shichigahama-machi
+JP	04406	利府町	rifu-cho
+JP	04421	大和町	taiwa-cho
+JP	04422	大郷町	osato-cho
+JP	04423	富谷町	tomiya-machi
+JP	04424	大衡村	ohira-mura
+JP	04444	色麻町	shikama-cho
+JP	04445	加美町	kami-machi
+JP	04501	涌谷町	wakuya-cho
+JP	04505	美里町	misato-machi
+JP	04581	女川町	onagawa-cho
+JP	04603	本吉町	motoyoshi-cho
+JP	04606	南三陸町	minamisanriku-cho
+JP	05000	秋田
+JP	05201	秋田市	akita-shi
+JP	05202	能代市	noshiro-shi
+JP	05203	横手市	yokote-shi
+JP	05204	大館市	odate-shi
+JP	05206	男鹿市	oga-shi
+JP	05207	湯沢市	yuzawa-shi
+JP	05209	鹿角市	kadhuno-shi
+JP	05210	由利本荘市	yurihonjo-shi
+JP	05211	潟上市	katagami-shi
+JP	05212	大仙市	daisen-shi
+JP	05213	北秋田市	kitaakita-shi
+JP	05214	にかほ市	nikaho-shi
+JP	05215	仙北市	senboku-shi
+JP	05303	小坂町	kosaka-machi
+JP	05327	上小阿仁村	kamikoani-mura
+JP	05346	藤里町	fujisato-machi
+JP	05348	三種町	mitane-cho
+JP	05349	八峰町	happo-cho
+JP	05361	五城目町	gojome-machi
+JP	05363	八郎潟町	hachirogata-machi
+JP	05366	井川町	ikawa-machi
+JP	05368	大潟村	ogata-mura
+JP	05434	美郷町	misato-cho
+JP	05463	羽後町	ugo-machi
+JP	05464	東成瀬村	higashinaruse-mura
+JP	06000	山形
+JP	06201	山形市	yamagata-shi
+JP	06202	米沢市	yonezawa-shi
+JP	06203	鶴岡市	tsuruoka-shi
+JP	06204	酒田市	sakata-shi
+JP	06205	新庄市	shinjo-shi
+JP	06206	寒河江市	sagae-shi
+JP	06207	上山市	kaminoyama-shi
+JP	06208	村山市	murayama-shi
+JP	06209	長井市	nagai-shi
+JP	06210	天童市	tendo-shi
+JP	06211	東根市	higashine-shi
+JP	06212	尾花沢市	obanazawa-shi
+JP	06213	南陽市	nanyo-shi
+JP	06301	山辺町	yamanobe-machi
+JP	06302	中山町	nakayama-machi
+JP	06321	河北町	kahoku-cho
+JP	06322	西川町	nishikawa-machi
+JP	06323	朝日町	asahi-machi
+JP	06324	大江町	oe-machi
+JP	06341	大石田町	oishida-machi
+JP	06361	金山町	kaneyama-machi
+JP	06362	最上町	mogami-machi
+JP	06363	舟形町	funagata-machi
+JP	06364	真室川町	mamurogawa-machi
+JP	06365	大蔵村	okura-mura
+JP	06366	鮭川村	sakegawa-mura
+JP	06367	戸沢村	tozawa-mura
+JP	06381	高畠町	takahata-machi
+JP	06382	川西町	kawanishi-machi
+JP	06401	小国町	oguni-machi
+JP	06402	白鷹町	shirataka-machi
+JP	06403	飯豊町	iide-machi
+JP	06426	三川町	mikawa-machi
+JP	06428	庄内町	shonai-machi
+JP	06461	遊佐町	yuza-machi
+JP	07000	福島
+JP	07201	福島市	fukushima-shi
+JP	07202	会津若松市	aidhuwakamatsu-shi
+JP	07203	郡山市	koriyama-shi
+JP	07204	いわき市	iwaki-shi
+JP	07205	白河市	shirakawa-shi
+JP	07207	須賀川市	sukagawa-shi
+JP	07208	喜多方市	kitakata-shi
+JP	07209	相馬市	soma-shi
+JP	07210	二本松市	nihonmatsu-shi
+JP	07211	田村市	tamura-shi
+JP	07212	南相馬市	minamisoma-shi
+JP	07213	伊達市	date-shi
+JP	07214	本宮市	motomiya-shi
+JP	07301	桑折町	kori-machi
+JP	07303	国見町	kunimi-machi
+JP	07308	川俣町	kawamata-machi
+JP	07322	大玉村	otama-mura
+JP	07342	鏡石町	kagamiishi-machi
+JP	07344	天栄村	tenei-mura
+JP	07362	下郷町	shimogo-machi
+JP	07364	檜枝岐村	hinoemata-mura
+JP	07367	只見町	tadami-machi
+JP	07368	南会津町	minamiaidhu-machi
+JP	07402	北塩原村	kitashiobara-mura
+JP	07405	西会津町	nishiaidhu-machi
+JP	07407	磐梯町	bandai-machi
+JP	07408	猪苗代町	inawashiro-machi
+JP	07421	会津坂下町	aidhubange-machi
+JP	07422	湯川村	yugawa-mura
+JP	07423	柳津町	yanaidhu-machi
+JP	07444	三島町	mishima-machi
+JP	07445	金山町	kaneyama-machi
+JP	07446	昭和村	showa-mura
+JP	07447	会津美里町	aidhumisato-machi
+JP	07461	西郷村	nishigo-mura
+JP	07464	泉崎村	izumizaki-mura
+JP	07465	中島村	nakajima-mura
+JP	07466	矢吹町	yabuki-machi
+JP	07481	棚倉町	tanagura-machi
+JP	07482	矢祭町	yamatsuri-machi
+JP	07483	塙町	hanawa-machi
+JP	07484	鮫川村	samegawa-mura
+JP	07501	石川町	ishikawa-machi
+JP	07502	玉川村	tamakawa-mura
+JP	07503	平田村	hirata-mura
+JP	07504	浅川町	asakawa-machi
+JP	07505	古殿町	furudono-machi
+JP	07521	三春町	miharu-machi
+JP	07522	小野町	ono-machi
+JP	07541	広野町	hirono-machi
+JP	07542	楢葉町	naraha-machi
+JP	07543	富岡町	tomioka-machi
+JP	07544	川内村	kawauchi-mura
+JP	07545	大熊町	okuma-machi
+JP	07546	双葉町	futaba-machi
+JP	07547	浪江町	namie-machi
+JP	07548	葛尾村	katsurao-mura
+JP	07561	新地町	shinchi-machi
+JP	07564	飯舘村	iitate-mura
+JP	08000	茨城
+JP	08201	水戸市	mito-shi
+JP	08202	日立市	hitachi-shi
+JP	08203	土浦市	tsuchiura-shi
+JP	08204	古河市	koga-shi
+JP	08205	石岡市	ishioka-shi
+JP	08207	結城市	yuki-shi
+JP	08208	龍ケ崎市	ryugasaki-shi
+JP	08210	下妻市	shimotsuma-shi
+JP	08211	常総市	joso-shi
+JP	08212	常陸太田市	hitachiota-shi
+JP	08214	高萩市	takahagi-shi
+JP	08215	北茨城市	kitaibaraki-shi
+JP	08216	笠間市	kasama-shi
+JP	08217	取手市	toride-shi
+JP	08219	牛久市	ushiku-shi
+JP	08220	つくば市	tsukuba-shi
+JP	08221	ひたちなか市	hitachinaka-shi
+JP	08222	鹿嶋市	kashima-shi
+JP	08223	潮来市	itako-shi
+JP	08224	守谷市	moriya-shi
+JP	08225	常陸大宮市	hitachiomiya-shi
+JP	08226	那珂市	naka-shi
+JP	08227	筑西市	chikusei-shi
+JP	08228	坂東市	bando-shi
+JP	08229	稲敷市	inashiki-shi
+JP	08230	かすみがうら市	kasumigaura-shi
+JP	08231	桜川市	sakuragawa-shi
+JP	08232	神栖市	kamisu-shi
+JP	08233	行方市	namegata-shi
+JP	08234	鉾田市	hokota-shi
+JP	08235	つくばみらい市	tsukubamirai-shi
+JP	08236	小美玉市	omitama-shi
+JP	08302	茨城町	ibaraki-machi
+JP	08309	大洗町	oarai-machi
+JP	08310	城里町	shirosato-machi
+JP	08341	東海村	tokai-mura
+JP	08364	大子町	daigo-machi
+JP	08442	美浦村	miho-mura
+JP	08443	阿見町	ami-machi
+JP	08447	河内町	kawachi-machi
+JP	08521	八千代町	yachiyo-machi
+JP	08542	五霞町	goka-machi
+JP	08546	境町	sakai-machi
+JP	08564	利根町	tone-machi
+JP	09000	栃木
+JP	09201	宇都宮市	utsunomiya-shi
+JP	09202	足利市	ashikaga-shi
+JP	09203	栃木市	tochigi-shi
+JP	09204	佐野市	sano-shi
+JP	09205	鹿沼市	kanuma-shi
+JP	09206	日光市	nikko-shi
+JP	09208	小山市	oyama-shi
+JP	09209	真岡市	moka-shi
+JP	09210	大田原市	otawara-shi
+JP	09211	矢板市	yaita-shi
+JP	09213	那須塩原市	nasushiobara-shi
+JP	09214	さくら市	sakura-shi
+JP	09215	那須烏山市	nasukarasuyama-shi
+JP	09216	下野市	shimotsuke-shi
+JP	09301	上三川町	kaminokawa-machi
+JP	09321	西方町	nishikata-machi
+JP	09341	二宮町	ninomiya-machi
+JP	09342	益子町	mashiko-machi
+JP	09343	茂木町	motegi-machi
+JP	09344	市貝町	ichikai-machi
+JP	09345	芳賀町	haga-machi
+JP	09361	壬生町	mibu-machi
+JP	09364	野木町	nogi-machi
+JP	09365	大平町	ohira-machi
+JP	09366	藤岡町	fujioka-machi
+JP	09367	岩舟町	iwafune-machi
+JP	09368	都賀町	tsuga-machi
+JP	09384	塩谷町	shioya-machi
+JP	09386	高根沢町	takanezawa-machi
+JP	09407	那須町	nasu-machi
+JP	09411	那珂川町	nakagawa-machi
+JP	10000	群馬
+JP	10201	前橋市	maebashi-shi
+JP	10202	高崎市	takasaki-shi
+JP	10203	桐生市	kiryu-shi
+JP	10204	伊勢崎市	isesaki-shi
+JP	10205	太田市	ota-shi
+JP	10206	沼田市	numata-shi
+JP	10207	館林市	tatebayashi-shi
+JP	10208	渋川市	shibukawa-shi
+JP	10209	藤岡市	fujioka-shi
+JP	10210	富岡市	tomioka-shi
+JP	10211	安中市	annaka-shi
+JP	10212	みどり市	midori-shi
+JP	10303	富士見村	fujimi-mura
+JP	10344	榛東村	shinto-mura
+JP	10345	吉岡町	yoshioka-machi
+JP	10363	吉井町	yoshii-machi
+JP	10366	上野村	ueno-mura
+JP	10367	神流町	kanna-machi
+JP	10382	下仁田町	shimonita-machi
+JP	10383	南牧村	nanmoku-mura
+JP	10384	甘楽町	kanra-machi
+JP	10421	中之条町	nakanojo-machi
+JP	10424	長野原町	naganohara-machi
+JP	10425	嬬恋村	tsumagoi-mura
+JP	10426	草津町	kusatsu-machi
+JP	10427	六合村	kuni-mura
+JP	10428	高山村	takayama-mura
+JP	10429	東吾妻町	higashiagatsuma-machi
+JP	10443	片品村	katashina-mura
+JP	10444	川場村	kawaba-mura
+JP	10448	昭和村	showa-mura
+JP	10449	みなかみ町	minakami-machi
+JP	10464	玉村町	tamamura-machi
+JP	10521	板倉町	itakura-machi
+JP	10522	明和町	meiwa-machi
+JP	10523	千代田町	chiyoda-machi
+JP	10524	大泉町	oizumi-machi
+JP	10525	邑楽町	ora-machi
+JP	11000	埼玉
+JP	11100	さいたま市	saitama-shi
+JP	11101	さいたま市西区	saitama-shi nishi-ku
+JP	11102	さいたま市北区	saitama-shi kita-ku
+JP	11103	さいたま市大宮区	saitama-shi omiya-ku
+JP	11104	さいたま市見沼区	saitama-shi minuma-ku
+JP	11105	さいたま市中央区	saitama-shi chuo-ku
+JP	11106	さいたま市桜区	saitama-shi sakura-ku
+JP	11107	さいたま市浦和区	saitama-shi urawa-ku
+JP	11108	さいたま市南区	saitama-shi minami-ku
+JP	11109	さいたま市緑区	saitama-shi midori-ku
+JP	11110	さいたま市岩槻区	saitama-shi iwatsuki-ku
+JP	11201	川越市	kawagoe-shi
+JP	11202	熊谷市	kumagaya-shi
+JP	11203	川口市	kawaguchi-shi
+JP	11206	行田市	gyoda-shi
+JP	11207	秩父市	chichibu-shi
+JP	11208	所沢市	tokorozawa-shi
+JP	11209	飯能市	hanno-shi
+JP	11210	加須市	kazo-shi
+JP	11211	本庄市	honjo-shi
+JP	11212	東松山市	higashimatsuyama-shi
+JP	11214	春日部市	kasukabe-shi
+JP	11215	狭山市	sayama-shi
+JP	11216	羽生市	hanyu-shi
+JP	11217	鴻巣市	konosu-shi
+JP	11218	深谷市	fukaya-shi
+JP	11219	上尾市	ageo-shi
+JP	11221	草加市	soka-shi
+JP	11222	越谷市	koshigaya-shi
+JP	11223	蕨市	warabi-shi
+JP	11224	戸田市	toda-shi
+JP	11225	入間市	iruma-shi
+JP	11226	鳩ヶ谷市	hatogaya-shi
+JP	11227	朝霞市	asaka-shi
+JP	11228	志木市	shiki-shi
+JP	11229	和光市	wako-shi
+JP	11230	新座市	niiza-shi
+JP	11231	桶川市	okegawa-shi
+JP	11232	久喜市	kuki-shi
+JP	11233	北本市	kitamoto-shi
+JP	11234	八潮市	yashio-shi
+JP	11235	富士見市	fujimi-shi
+JP	11237	三郷市	misato-shi
+JP	11238	蓮田市	hasuda-shi
+JP	11239	坂戸市	sakado-shi
+JP	11240	幸手市	satte-shi
+JP	11241	鶴ヶ島市	tsurugashima-shi
+JP	11242	日高市	hidaka-shi
+JP	11243	吉川市	yoshikawa-shi
+JP	11245	ふじみ野市	fujimino-shi
+JP	11246	白岡市	shiraoka-shi
+JP	11301	伊奈町	ina-machi
+JP	11324	三芳町	miyoshi-machi
+JP	11326	毛呂山町	moroyama-machi
+JP	11327	越生町	ogose-machi
+JP	11341	滑川町	namegawa-machi
+JP	11342	嵐山町	ranzan-machi
+JP	11343	小川町	ogawa-machi
+JP	11346	川島町	kawajima-machi
+JP	11347	吉見町	yoshimi-machi
+JP	11348	鳩山町	hatoyama-machi
+JP	11349	ときがわ町	tokigawa-machi
+JP	11361	横瀬町	yokoze-machi
+JP	11362	皆野町	minano-machi
+JP	11363	長瀞町	nagatoro-machi
+JP	11365	小鹿野町	ogano-machi
+JP	11369	東秩父村	higashichichibu-mura
+JP	11381	美里町	misato-machi
+JP	11383	神川町	kamikawa-machi
+JP	11385	上里町	kamisato-machi
+JP	11408	寄居町	yorii-machi
+JP	11421	騎西町	kisai-machi
+JP	11424	北川辺町	kitakawabe-machi
+JP	11425	大利根町	otone-machi
+JP	11442	宮代町	miyashiro-machi
+JP	11445	白岡町	shiraoka-machi
+JP	11446	菖蒲町	shobu-machi
+JP	11461	栗橋町	kurihashi-machi
+JP	11462	鷲宮町	washimiya-machi
+JP	11464	杉戸町	sugito-machi
+JP	11465	松伏町	matsubushi-machi
+JP	12000	千葉
+JP	12100	千葉市	chiba-shi
+JP	12101	千葉市中央区	chiba-shi chuo-ku
+JP	12102	千葉市花見川区	chiba-shi hanamigawa-ku
+JP	12103	千葉市稲毛区	chiba-shi inage-ku
+JP	12104	千葉市若葉区	chiba-shi wakaba-ku
+JP	12105	千葉市緑区	chiba-shi midori-ku
+JP	12106	千葉市美浜区	chiba-shi mihama-ku
+JP	12202	銚子市	choshi-shi
+JP	12203	市川市	ichikawa-shi
+JP	12204	船橋市	funabashi-shi
+JP	12205	館山市	tateyama-shi
+JP	12206	木更津市	kisaradhu-shi
+JP	12207	松戸市	matsudo-shi
+JP	12208	野田市	noda-shi
+JP	12210	茂原市	mobara-shi
+JP	12211	成田市	narita-shi
+JP	12212	佐倉市	sakura-shi
+JP	12213	東金市	togane-shi
+JP	12215	旭市	asahi-shi
+JP	12216	習志野市	narashino-shi
+JP	12217	柏市	kashiwa-shi
+JP	12218	勝浦市	katsura-shi
+JP	12219	市原市	ichihara-shi
+JP	12220	流山市	nagareyama-shi
+JP	12221	八千代市	yachiyo-shi
+JP	12222	我孫子市	abiko-shi
+JP	12223	鴨川市	kamogawa-shi
+JP	12224	鎌ケ谷市	kamagaya-shi
+JP	12225	君津市	kimitsu-shi
+JP	12226	富津市	futtsu-shi
+JP	12227	浦安市	urayasu-shi
+JP	12228	四街道市	yotsukaido-shi
+JP	12229	袖ケ浦市	sodegaura-shi
+JP	12230	八街市	yachimata-shi
+JP	12231	印西市	inzai-shi
+JP	12232	白井市	shiroi-shi
+JP	12233	富里市	tomisato-shi
+JP	12234	南房総市	minamiboso-shi
+JP	12235	匝瑳市	sosa-shi
+JP	12236	香取市	katori-shi
+JP	12237	山武市	sanmu-shi
+JP	12238	いすみ市	isumi-shi
+JP	12239	大綱白里市	oamishirasato-shi
+JP	12322	酒々井町	shisui-machi
+JP	12325	印旛村	inba-mura
+JP	12328	本埜村	motono-mura
+JP	12329	栄町	sakae-machi
+JP	12342	神崎町	kozaki-machi
+JP	12347	多古町	tako-machi
+JP	12349	東庄町	tonosho-machi
+JP	12402	大網白里町	oamishirasato-machi
+JP	12403	九十九里町	kujukuri-machi
+JP	12409	芝山町	shibayama-machi
+JP	12410	横芝光町	yokoshibahikari-machi
+JP	12421	一宮町	ichinomiya-machi
+JP	12422	睦沢町	mutsuzawa-machi
+JP	12423	長生村	chosei-mura
+JP	12424	白子町	shirako-machi
+JP	12426	長柄町	nagara-machi
+JP	12427	長南町	chonan-machi
+JP	12441	大多喜町	otaki-machi
+JP	12443	御宿町	onjuku-machi
+JP	12463	鋸南町	kyonan-machi
+JP	13000	東京
+JP	13101	千代田区	chiyoda-ku
+JP	13102	中央区	chuo-ku
+JP	13103	港区	minato-ku
+JP	13104	新宿区	shinjuku-ku
+JP	13105	文京区	bunkyo-ku
+JP	13106	台東区	taito-ku
+JP	13107	墨田区	sumida-ku
+JP	13108	江東区	koto-ku
+JP	13109	品川区	shinagawa-ku
+JP	13110	目黒区	meguro-ku
+JP	13111	大田区	ota-ku
+JP	13112	世田谷区	setagaya-ku
+JP	13113	渋谷区	shibuya-ku
+JP	13114	中野区	nakano-ku
+JP	13115	杉並区	suginami-ku
+JP	13116	豊島区	toshima-ku
+JP	13117	北区	kita-ku
+JP	13118	荒川区	arakawa-ku
+JP	13119	板橋区	itabashi-ku
+JP	13120	練馬区	nerima-ku
+JP	13121	足立区	adachi-ku
+JP	13122	葛飾区	katsushika-ku
+JP	13123	江戸川区	edogawa-ku
+JP	13201	八王子市	hachioji-shi
+JP	13202	立川市	tachikawa-shi
+JP	13203	武蔵野市	musashino-shi
+JP	13204	三鷹市	mitaka-shi
+JP	13205	青梅市	ome-shi
+JP	13206	府中市	fuchyu-shi
+JP	13207	昭島市	akishima-shi
+JP	13208	調布市	chofu-shi
+JP	13209	町田市	machida-shi
+JP	13210	小金井市	koganei-shi
+JP	13211	小平市	kodaira-shi
+JP	13212	日野市	hino-shi
+JP	13213	東村山市	higashimurayama-shi
+JP	13214	国分寺市	kokubunji-shi
+JP	13215	国立市	kunitachi-shi
+JP	13218	福生市	fussa-shi
+JP	13219	狛江市	komae-shi
+JP	13220	東大和市	higashiyamato-shi
+JP	13221	清瀬市	kiyose-shi
+JP	13222	東久留米市	higashikurume-shi
+JP	13223	武蔵村山市	musashimurayama-shi
+JP	13224	多摩市	tama-shi
+JP	13225	稲城市	inagi-shi
+JP	13227	羽村市	hamura-shi
+JP	13228	あきる野市	akiruno-shi
+JP	13229	西東京市	nishitokyo-shi
+JP	13303	瑞穂町	mizuho-machi
+JP	13305	日の出町	hinode-machi
+JP	13307	檜原村	hinohara-mura
+JP	13308	奥多摩町	okutama-machi
+JP	13361	大島町	oshima-machi
+JP	13362	利島村	toshima-mura
+JP	13363	新島村	niijima-mura
+JP	13364	神津島村	kodhushima-mura
+JP	13381	三宅村	miyake-mura
+JP	13382	御蔵島村	mikurajima-mura
+JP	13401	八丈町	hachijo-machi
+JP	13402	青ヶ島村	aogashima-mura
+JP	13421	小笠原村	ogasawara-mura
+JP	14000	神奈川
+JP	14100	横浜市	yokohama-shi
+JP	14101	横浜市鶴見区	yokohama-shi tsurumi-ku
+JP	14102	横浜市神奈川区	yokohama-shi kanagawa-ku
+JP	14103	横浜市西区	yokohama-shi nishi-ku
+JP	14104	横浜市中区	yokohama-shi naka-ku
+JP	14105	横浜市南区	yokohama-shi minami-ku
+JP	14106	横浜市保土ケ谷区	yokohama-shi hodogaya-ku
+JP	14107	横浜市磯子区	yokohama-shi isogo-ku
+JP	14108	横浜市金沢区	yokohama-shi kanazawa-ku
+JP	14109	横浜市港北区	yokohama-shi kohoku-ku
+JP	14110	横浜市戸塚区	yokohama-shi totsuka-ku
+JP	14111	横浜市港南区	yokohama-shi konan-ku
+JP	14112	横浜市旭区	yokohama-shi asahi-ku
+JP	14113	横浜市緑区	yokohama-shi midori-ku
+JP	14114	横浜市瀬谷区	yokohama-shi seya-ku
+JP	14115	横浜市栄区	yokohama-shi sakae-ku
+JP	14116	横浜市泉区	yokohama-shi izumi-ku
+JP	14117	横浜市青葉区	yokohama-shi aoba-ku
+JP	14118	横浜市都筑区	yokohama-shi tsudhuki-ku
+JP	14130	川崎市	kawasaki-shi
+JP	14131	川崎市川崎区	kawasaki-shi kawasaki-ku
+JP	14132	川崎市幸区	kawasaki-shi saiwai-ku
+JP	14133	川崎市中原区	kawasaki-shi nakahara-ku
+JP	14134	川崎市高津区	kawasaki-shi takatsu-ku
+JP	14135	川崎市多摩区	kawasaki-shi tama-ku
+JP	14136	川崎市宮前区	kawasaki-shi miyamae-ku
+JP	14137	川崎市麻生区	kawasaki-shi asao-ku
+JP	14150	相模原市	sagamihara-shi
+JP	14151	相模原市緑区	sagamihara-shi midori-ku
+JP	14152	相模原市中央区	sagamihara-shi chuo-ku
+JP	14153	相模原市南区	sagamihara-shi minami-ku
+JP	14201	横須賀市	yokosuka-shi
+JP	14203	平塚市	hiratsuka-shi
+JP	14204	鎌倉市	kamakura-shi
+JP	14205	藤沢市	fujisawa-shi
+JP	14206	小田原市	odawara-shi
+JP	14207	茅ヶ崎市	chigasaki-shi
+JP	14208	逗子市	zushi-shi
+JP	14209	相模原市	sagamihara-shi
+JP	14210	三浦市	miura-shi
+JP	14211	秦野市	hadano-shi
+JP	14212	厚木市	atsugi-shi
+JP	14213	大和市	yamato-shi
+JP	14214	伊勢原市	isehara-shi
+JP	14215	海老名市	ebina-shi
+JP	14216	座間市	zama-shi
+JP	14217	南足柄市	minamiashigara-shi
+JP	14218	綾瀬市	ayase-shi
+JP	14301	葉山町	hayama-machi
+JP	14321	寒川町	samukawa-machi
+JP	14341	大磯町	oiso-machi
+JP	14342	二宮町	ninomiya-machi
+JP	14361	中井町	nakai-machi
+JP	14362	大井町	oi-machi
+JP	14363	松田町	matsuda-machi
+JP	14364	山北町	yamakita-machi
+JP	14366	開成町	kaisei-machi
+JP	14382	箱根町	hakone-machi
+JP	14383	真鶴町	manadhuru-machi
+JP	14384	湯河原町	yugawara-machi
+JP	14401	愛川町	aikawa-machi
+JP	14402	清川村	kiyokawa-mura
+JP	15000	新潟
+JP	15100	新潟市	niigata-shi
+JP	15101	新潟市北区	niigata-shi kita-ku
+JP	15102	新潟市東区	niigata-shi higashi-ku
+JP	15103	新潟市中央区	niigata-shi chuo-ku
+JP	15104	新潟市江南区	niigata-shi konan-ku
+JP	15105	新潟市秋葉区	niigata-shi akiha-ku
+JP	15106	新潟市南区	niigata-shi minami-ku
+JP	15107	新潟市西区	niigata-shi nishi-ku
+JP	15108	新潟市西蒲区	niigata-shi nishikan-ku
+JP	15202	長岡市	nagaoka-shi
+JP	15204	三条市	sanjo-shi
+JP	15205	柏崎市	kashiwazaki-shi
+JP	15206	新発田市	shibata-shi
+JP	15208	小千谷市	odhiya-shi
+JP	15209	加茂市	kamo-shi
+JP	15210	十日町市	tokamachi-shi
+JP	15211	見附市	mitsuke-shi
+JP	15212	村上市	murakami-shi
+JP	15213	燕市	tsubame-shi
+JP	15216	糸魚川市	itoigawa-shi
+JP	15217	妙高市	myoko-shi
+JP	15218	五泉市	gosen-shi
+JP	15222	上越市	joetsu-shi
+JP	15223	阿賀野市	agano-shi
+JP	15224	佐渡市	sado-shi
+JP	15225	魚沼市	uonuma-shi
+JP	15226	南魚沼市	minamiuonuma-shi
+JP	15227	胎内市	tainai-shi
+JP	15307	聖籠町	seiro-machi
+JP	15342	弥彦村	yahiko-mura
+JP	15361	田上町	tagami-machi
+JP	15385	阿賀町	aga-machi
+JP	15405	出雲崎町	izumozaki-machi
+JP	15441	川口町	kawaguchi-machi
+JP	15461	湯沢町	yuzawa-machi
+JP	15482	津南町	tsunan-machi
+JP	15504	刈羽村	kariwa-mura
+JP	15581	関川村	sekikawa-mura
+JP	15586	粟島浦村	awashimaura-mura
+JP	16000	富山
+JP	16201	富山市	toyama-shi
+JP	16202	高岡市	takaoka-shi
+JP	16204	魚津市	uodhu-shi
+JP	16205	氷見市	himi-shi
+JP	16206	滑川市	namerikawa-shi
+JP	16207	黒部市	kurobe-shi
+JP	16208	砺波市	tonami-shi
+JP	16209	小矢部市	oyabe-shi
+JP	16210	南砺市	nanto-shi
+JP	16211	射水市	imizu-shi
+JP	16321	舟橋村	funahashi-mura
+JP	16322	上市町	kamiichi-machi
+JP	16323	立山町	tateyama-machi
+JP	16342	入善町	nyuzen-machi
+JP	16343	朝日町	asahi-machi
+JP	17000	石川
+JP	17201	金沢市	kanazawa-shi
+JP	17202	七尾市	nanao-shi
+JP	17203	小松市	komatsu-shi
+JP	17204	輪島市	wajima-shi
+JP	17205	珠洲市	suzu-shi
+JP	17206	加賀市	kaga-shi
+JP	17207	羽咋市	hakui-shi
+JP	17209	かほく市	kahoku-shi
+JP	17210	白山市	hakusan-shi
+JP	17211	能美市	nomi-shi
+JP	17212	野々市市	nonoichi-shi
+JP	17324	川北町	kawakita-machi
+JP	17344	野々市町	nonoichi-machi
+JP	17361	津幡町	tsubata-machi
+JP	17365	内灘町	uchinada-machi
+JP	17384	志賀町	shika-machi
+JP	17386	宝達志水町	hodatsushimizu-cho
+JP	17407	中能登町	nakanoto-machi
+JP	17461	穴水町	anamizu-machi
+JP	17463	能登町	noto-cho
+JP	18000	福井
+JP	18201	福井市	fukui-shi
+JP	18202	敦賀市	tsuruga-shi
+JP	18204	小浜市	obama-shi
+JP	18205	大野市	ono-shi
+JP	18206	勝山市	katsuyama-shi
+JP	18207	鯖江市	sabae-shi
+JP	18208	あわら市	awara-shi
+JP	18209	越前市	echizen-shi
+JP	18210	坂井市	sakai-shi
+JP	18322	永平寺町	eiheiji-cho
+JP	18382	池田町	ikeda-cho
+JP	18404	南越前町	minamiechizen-cho
+JP	18423	越前町	echizen-cho
+JP	18442	美浜町	mihama-cho
+JP	18481	高浜町	takahama-cho
+JP	18483	おおい町	oi-cho
+JP	18501	若狭町	wakasa-cho
+JP	19000	山梨
+JP	19201	甲府市	kofu-shi
+JP	19202	富士吉田市	fujiyoshida-shi
+JP	19204	都留市	tsuru-shi
+JP	19205	山梨市	yamanashi-shi
+JP	19206	大月市	otsuki-shi
+JP	19207	韮崎市	nirasaki-shi
+JP	19208	南アルプス市	minamiarupusu-shi
+JP	19209	北杜市	hokuto-shi
+JP	19210	甲斐市	kai-shi
+JP	19211	笛吹市	fuefuki-shi
+JP	19212	上野原市	uenohara-shi
+JP	19213	甲州市	koshu-shi
+JP	19214	中央市	chuo-shi
+JP	19346	市川三郷町	ichikawamisato-cho
+JP	19361	増穂町	masuho-cho
+JP	19362	鰍沢町	kajikazawa-cho
+JP	19364	早川町	hayakawa-cho
+JP	19365	身延町	minobu-cho
+JP	19366	南部町	nanbu-cho
+JP	19368	富士川町	fujikawa-cho
+JP	19384	昭和町	showa-cho
+JP	19422	道志村	doshi-mura
+JP	19423	西桂町	nishikatsura-cho
+JP	19424	忍野村	oshino-mura
+JP	19425	山中湖村	yamanakako-mura
+JP	19429	鳴沢村	narusawa-mura
+JP	19430	富士河口湖町	fujikawaguchiko-machi
+JP	19442	小菅村	kosuge-mura
+JP	19443	丹波山村	tabayama-mura
+JP	20000	長野
+JP	20201	長野市	nagano-shi
+JP	20202	松本市	matsumoto-shi
+JP	20203	上田市	ueda-shi
+JP	20204	岡谷市	okaya-shi
+JP	20205	飯田市	iida-shi
+JP	20206	諏訪市	suwa-shi
+JP	20207	須坂市	suzaka-shi
+JP	20208	小諸市	komoro-shi
+JP	20209	伊那市	ina-shi
+JP	20210	駒ヶ根市	komagane-shi
+JP	20211	中野市	nakano-shi
+JP	20212	大町市	omachi-shi
+JP	20213	飯山市	iiyama-shi
+JP	20214	茅野市	chino-shi
+JP	20215	塩尻市	shiojiri-shi
+JP	20217	佐久市	saku-shi
+JP	20218	千曲市	chikuma-shi
+JP	20219	東御市	tomi-shi
+JP	20220	安曇野市	adhumino-shi
+JP	20303	小海町	komi-machi
+JP	20304	川上村	kawakami-mura
+JP	20305	南牧村	minamimaki-mura
+JP	20306	南相木村	minamiaiki-mura
+JP	20307	北相木村	kitaaiki-mura
+JP	20309	佐久穂町	sakuho-machi
+JP	20321	軽井沢町	karuizawa-machi
+JP	20323	御代田町	miyota-machi
+JP	20324	立科町	tateshina-machi
+JP	20349	青木村	aoki-mura
+JP	20350	長和町	nagawa-machi
+JP	20361	下諏訪町	shimosuwa-machi
+JP	20362	富士見町	fujimi-machi
+JP	20363	原村	hara-mura
+JP	20382	辰野町	tatsuno-machi
+JP	20383	箕輪町	minowa-machi
+JP	20384	飯島町	iijima-machi
+JP	20385	南箕輪村	minamiminowa-mura
+JP	20386	中川村	nakagawa-mura
+JP	20388	宮田村	miyada-mura
+JP	20402	松川町	matsukawa-machi
+JP	20403	高森町	takamori-machi
+JP	20404	阿南町	anan-cho
+JP	20406	清内路村	seinaiji-mura
+JP	20407	阿智村	achi-mura
+JP	20409	平谷村	hiraya-mura
+JP	20410	根羽村	neba-mura
+JP	20411	下條村	shimojo-mura
+JP	20412	売木村	urugi-mura
+JP	20413	天龍村	tenryu-mura
+JP	20414	泰阜村	yasuoka-mura
+JP	20415	喬木村	takagi-mura
+JP	20416	豊丘村	toyoka-mura
+JP	20417	大鹿村	oshika-mura
+JP	20422	上松町	agematsu-machi
+JP	20423	南木曽町	nagiso-machi
+JP	20425	木祖村	kiso-mura
+JP	20429	王滝村	otaki-mura
+JP	20430	大桑村	okuwa-mura
+JP	20432	木曽町	kiso-machi
+JP	20446	麻績村	omi-mura
+JP	20448	生坂村	ikusaka-mura
+JP	20449	波田町	hata-machi
+JP	20450	山形村	yamagata-mura
+JP	20451	朝日村	asahi-mura
+JP	20452	筑北村	chikuhoku-mura
+JP	20481	池田町	ikeda-machi
+JP	20482	松川村	matsukawa-mura
+JP	20485	白馬村	hakuba-mura
+JP	20486	小谷村	otari-mura
+JP	20521	坂城町	sakaki-machi
+JP	20541	小布施町	obuse-machi
+JP	20543	高山村	takayama-mura
+JP	20561	山ノ内町	yamanochi-machi
+JP	20562	木島平村	kijimadaira-mura
+JP	20563	野沢温泉村	nozawaonsen-mura
+JP	20581	信州新町	shinshushin-machi
+JP	20583	信濃町	shinano-machi
+JP	20588	小川村	ogawa-mura
+JP	20589	中条村	nakajo-mura
+JP	20590	飯綱町	iidhuna-machi
+JP	20602	栄村	sakae-mura
+JP	21000	岐阜
+JP	21201	岐阜市	gifu-shi
+JP	21202	大垣市	ogaki-shi
+JP	21203	高山市	takayama-shi
+JP	21204	多治見市	tajimi-shi
+JP	21205	関市	seki-shi
+JP	21206	中津川市	nakatsugawa-shi
+JP	21207	美濃市	mino-shi
+JP	21208	瑞浪市	mizunami-shi
+JP	21209	羽島市	hashima-shi
+JP	21210	恵那市	ena-shi
+JP	21211	美濃加茂市	minokamo-shi
+JP	21212	土岐市	toki-shi
+JP	21213	各務原市	kakamigahara-shi
+JP	21214	可児市	kani-shi
+JP	21215	山県市	yamagata-shi
+JP	21216	瑞穂市	mizuho-shi
+JP	21217	飛騨市	hida-shi
+JP	21218	本巣市	motosu-shi
+JP	21219	郡上市	gujo-shi
+JP	21220	下呂市	gero-shi
+JP	21221	海津市	kaidhu-shi
+JP	21302	岐南町	ginan-cho
+JP	21303	笠松町	kasamatsu-cho
+JP	21341	養老町	yoro-cho
+JP	21361	垂井町	tarui-cho
+JP	21362	関ケ原町	sekigahara-cho
+JP	21381	神戸町	godo-cho
+JP	21382	輪之内町	wanochi-cho
+JP	21383	安八町	anpachi-cho
+JP	21401	揖斐川町	ibigawa-cho
+JP	21403	大野町	ono-cho
+JP	21404	池田町	ikeda-cho
+JP	21421	北方町	kitagata-cho
+JP	21501	坂祝町	sakahogi-cho
+JP	21502	富加町	tomika-cho
+JP	21503	川辺町	kawabe-cho
+JP	21504	七宗町	hichiso-cho
+JP	21505	八百津町	yaotsu-cho
+JP	21506	白川町	shirakawa-cho
+JP	21507	東白川村	higashishirakawa-mura
+JP	21521	御嵩町	mitake-cho
+JP	21604	白川村	shirakawa-mura
+JP	22000	静岡
+JP	22100	静岡市	shizuoka-shi
+JP	22101	静岡市葵区	shizuoka-shi aoi-ku
+JP	22102	静岡市駿河区	shizuoka-shi suruga-ku
+JP	22103	静岡市清水区	shizuoka-shi shimizu-ku
+JP	22130	浜松市	hamamatsu-shi
+JP	22131	浜松市中区	hamamatsu-shi naka-ku
+JP	22132	浜松市東区	hamamatsu-shi higashi-ku
+JP	22133	浜松市西区	hamamatsu-shi nishi-ku
+JP	22134	浜松市南区	hamamatsu-shi minami-ku
+JP	22135	浜松市北区	hamamatsu-shi kita-ku
+JP	22136	浜松市浜北区	hamamatsu-shi hamakita-ku
+JP	22137	浜松市天竜区	hamamatsu-shi tenryu-ku
+JP	22203	沼津市	numadhu-shi
+JP	22205	熱海市	atami-shi
+JP	22206	三島市	mishima-shi
+JP	22207	富士宮市	fujinomiya-shi
+JP	22208	伊東市	ito-shi
+JP	22209	島田市	shimada-shi
+JP	22210	富士市	fuji-shi
+JP	22211	磐田市	iwata-shi
+JP	22212	焼津市	yaidhu-shi
+JP	22213	掛川市	kakegawa-shi
+JP	22214	藤枝市	fujieda-shi
+JP	22215	御殿場市	gotenba-shi
+JP	22216	袋井市	fukuroi-shi
+JP	22219	下田市	shimoda-shi
+JP	22220	裾野市	susono-shi
+JP	22221	湖西市	kosai-shi
+JP	22222	伊豆市	izu-shi
+JP	22223	御前崎市	omaezaki-shi
+JP	22224	菊川市	kikugawa-shi
+JP	22225	伊豆の国市	izunokuni-shi
+JP	22226	牧之原市	makinohara-shi
+JP	22301	東伊豆町	higashiizu-cho
+JP	22302	河津町	kawadhu-cho
+JP	22304	南伊豆町	minamiizu-cho
+JP	22305	松崎町	matsuzaki-cho
+JP	22306	西伊豆町	nishiizu-cho
+JP	22325	函南町	kannami-cho
+JP	22341	清水町	shimizu-cho
+JP	22342	長泉町	nagaizumi-cho
+JP	22344	小山町	oyama-cho
+JP	22361	芝川町	shibakawa-cho
+JP	22381	富士川町	fujikawa-cho
+JP	22383	由比町	yui-cho
+JP	22401	岡部町	okabe-cho
+JP	22402	大井川町	oigawa-cho
+JP	22424	吉田町	yoshida-cho
+JP	22429	川根本町	kawanehon-cho
+JP	22461	森町	mori-machi
+JP	22503	新居町	arai-cho
+JP	23000	愛知
+JP	23100	名古屋市	nagoya-shi
+JP	23101	名古屋市千種区	nagoya-shi chikusa-ku
+JP	23102	名古屋市東区	nagoya-shi higashi-ku
+JP	23103	名古屋市北区	nagoya-shi kita-ku
+JP	23104	名古屋市西区	nagoya-shi nishi-ku
+JP	23105	名古屋市中村区	nagoya-shi nakamura-ku
+JP	23106	名古屋市中区	nagoya-shi naka-ku
+JP	23107	名古屋市昭和区	nagoya-shi showa-ku
+JP	23108	名古屋市瑞穂区	nagoya-shi mizuho-ku
+JP	23109	名古屋市熱田区	nagoya-shi atsuta-ku
+JP	23110	名古屋市中川区	nagoya-shi nakagawa-ku
+JP	23111	名古屋市港区	nagoya-shi minato-ku
+JP	23112	名古屋市南区	nagoya-shi minami-ku
+JP	23113	名古屋市守山区	nagoya-shi moriyama-ku
+JP	23114	名古屋市緑区	nagoya-shi midori-ku
+JP	23115	名古屋市名東区	nagoya-shi meito-ku
+JP	23116	名古屋市天白区	nagoya-shi tenpaku-ku
+JP	23201	豊橋市	toyohashi-shi
+JP	23202	岡崎市	okazaki-shi
+JP	23203	一宮市	ichinomiya-shi
+JP	23204	瀬戸市	seto-shi
+JP	23205	半田市	handa-shi
+JP	23206	春日井市	kasugai-shi
+JP	23207	豊川市	toyokawa-shi
+JP	23208	津島市	tsushima-shi
+JP	23209	碧南市	hekinan-shi
+JP	23210	刈谷市	kariya-shi
+JP	23211	豊田市	toyota-shi
+JP	23212	安城市	anjo-shi
+JP	23213	西尾市	nishio-shi
+JP	23214	蒲郡市	gamagori-shi
+JP	23215	犬山市	inuyama-shi
+JP	23216	常滑市	tokoname-shi
+JP	23217	江南市	konan-shi
+JP	23219	小牧市	komaki-shi
+JP	23220	稲沢市	inazawa-shi
+JP	23221	新城市	shinshiro-shi
+JP	23222	東海市	tokai-shi
+JP	23223	大府市	obu-shi
+JP	23224	知多市	chita-shi
+JP	23225	知立市	chiryu-shi
+JP	23226	尾張旭市	owariasahi-shi
+JP	23227	高浜市	takahama-shi
+JP	23228	岩倉市	iwakura-shi
+JP	23229	豊明市	toyoake-shi
+JP	23230	日進市	nisshin-shi
+JP	23231	田原市	tahara-shi
+JP	23232	愛西市	aisai-shi
+JP	23233	清須市	kiyosu-shi
+JP	23234	北名古屋市	kitanagoya-shi
+JP	23235	弥富市	yatomi-shi
+JP	23236	みよし市	miyoshi-shi
+JP	23237	あま市	ama-shi
+JP	23238	長久手市	nagakute-shi
+JP	23302	東郷町	togo-cho
+JP	23304	長久手町	nagakute-cho
+JP	23342	豊山町	toyoyama-cho
+JP	23345	春日町	haruhi-cho
+JP	23361	大口町	oguchi-cho
+JP	23362	扶桑町	fuso-cho
+JP	23421	七宝町	shippo-cho
+JP	23422	美和町	miwa-cho
+JP	23423	甚目寺町	jimokuji-cho
+JP	23424	大治町	oharu-cho
+JP	23425	蟹江町	kanie-cho
+JP	23427	飛島村	tobishima-mura
+JP	23441	阿久比町	agui-cho
+JP	23442	東浦町	higashiura-cho
+JP	23445	南知多町	minamichita-cho
+JP	23446	美浜町	mihama-cho
+JP	23447	武豊町	taketoyo-cho
+JP	23481	一色町	isshiki-cho
+JP	23482	吉良町	kira-cho
+JP	23483	幡豆町	hazu-cho
+JP	23501	幸田町	kota-cho
+JP	23521	三好町	miyoshi-cho
+JP	23561	設楽町	shitara-cho
+JP	23562	東栄町	toei-cho
+JP	23563	豊根村	toyone-mura
+JP	23603	小坂井町	kozakai-cho
+JP	24000	三重
+JP	24201	津市	tsu-shi
+JP	24202	四日市市	yokkaichi-shi
+JP	24203	伊勢市	ise-shi
+JP	24204	松阪市	matsusaka-shi
+JP	24205	桑名市	kuwana-shi
+JP	24207	鈴鹿市	suzuka-shi
+JP	24208	名張市	nabari-shi
+JP	24209	尾鷲市	owase-shi
+JP	24210	亀山市	kameyama-shi
+JP	24211	鳥羽市	toba-shi
+JP	24212	熊野市	kumano-shi
+JP	24214	いなべ市	inabe-shi
+JP	24215	志摩市	shima-shi
+JP	24216	伊賀市	iga-shi
+JP	24303	木曽岬町	kisosaki-cho
+JP	24324	東員町	toin-cho
+JP	24341	菰野町	komono-cho
+JP	24343	朝日町	asahi-cho
+JP	24344	川越町	kawagoe-cho
+JP	24441	多気町	taki-cho
+JP	24442	明和町	meiwa-cho
+JP	24443	大台町	odai-cho
+JP	24461	玉城町	tamaki-cho
+JP	24470	度会町	watarai-cho
+JP	24471	大紀町	taiki-cho
+JP	24472	南伊勢町	minamiise-cho
+JP	24543	紀北町	kihoku-cho
+JP	24561	御浜町	mihama-cho
+JP	24562	紀宝町	kiho-cho
+JP	25000	滋賀
+JP	25201	大津市	otsu-shi
+JP	25202	彦根市	hikone-shi
+JP	25203	長浜市	nagahama-shi
+JP	25204	近江八幡市	omihachiman-shi
+JP	25206	草津市	kusatsu-shi
+JP	25207	守山市	moriyama-shi
+JP	25208	栗東市	ritto-shi
+JP	25209	甲賀市	koka-shi
+JP	25210	野洲市	yasu-shi
+JP	25211	湖南市	konan-shi
+JP	25212	高島市	takashima-shi
+JP	25213	東近江市	higashiomi-shi
+JP	25214	米原市	maibara-shi
+JP	25381	安土町	adhuchi-cho
+JP	25383	日野町	hino-cho
+JP	25384	竜王町	ryuo-cho
+JP	25425	愛荘町	aisho-cho
+JP	25441	豊郷町	toyosato-cho
+JP	25442	甲良町	kora-cho
+JP	25443	多賀町	taga-cho
+JP	25482	虎姫町	torahime-cho
+JP	25483	湖北町	kohoku-cho
+JP	25501	高月町	takatsuki-cho
+JP	25502	木之本町	kinomoto-cho
+JP	25503	余呉町	yogo-cho
+JP	25504	西浅井町	nishiazai-cho
+JP	26000	京都
+JP	26100	京都市	kyoto-shi
+JP	26101	京都市北区	kyoto-shi kita-ku
+JP	26102	京都市上京区	kyoto-shi kamigyo-ku
+JP	26103	京都市左京区	kyoto-shi sakyo-ku
+JP	26104	京都市中京区	kyoto-shi nakagyo-ku
+JP	26105	京都市東山区	kyoto-shi higashiyama-ku
+JP	26106	京都市下京区	kyoto-shi shimogyo-ku
+JP	26107	京都市南区	kyoto-shi minami-ku
+JP	26108	京都市右京区	kyoto-shi ukyo-ku
+JP	26109	京都市伏見区	kyoto-shi fushimi-ku
+JP	26110	京都市山科区	kyoto-shi yamashina-ku
+JP	26111	京都市西京区	kyoto-shi nishikyo-ku
+JP	26201	福知山市	fukuchiyama-shi
+JP	26202	舞鶴市	maidhuru-shi
+JP	26203	綾部市	ayabe-shi
+JP	26204	宇治市	uji-shi
+JP	26205	宮津市	miyadhu-shi
+JP	26206	亀岡市	kameoka-shi
+JP	26207	城陽市	joyo-shi
+JP	26208	向日市	muko-shi
+JP	26209	長岡京市	nagaokakyo-shi
+JP	26210	八幡市	yawata-shi
+JP	26211	京田辺市	kyotanabe-shi
+JP	26212	京丹後市	kyotango-shi
+JP	26213	南丹市	nantan-shi
+JP	26214	木津川市	kidhugawa-shi
+JP	26303	大山崎町	oyamazaki-cho
+JP	26322	久御山町	kumiyama-cho
+JP	26343	井手町	ide-cho
+JP	26344	宇治田原町	ujitawara-cho
+JP	26364	笠置町	kasagi-cho
+JP	26365	和束町	wadhuka-cho
+JP	26366	精華町	seika-cho
+JP	26367	南山城村	minamiyamashiro-mura
+JP	26407	京丹波町	kyotanba-cho
+JP	26463	伊根町	ine-cho
+JP	26465	与謝野町	yosano-cho
+JP	27000	大阪
+JP	27100	大阪市	osaka-shi
+JP	27102	大阪市都島区	osaka-shi miyakojima-ku
+JP	27103	大阪市福島区	osaka-shi fukushima-ku
+JP	27104	大阪市此花区	osaka-shi konohana-ku
+JP	27106	大阪市西区	osaka-shi nishi-ku
+JP	27107	大阪市港区	osaka-shi minato-ku
+JP	27108	大阪市大正区	osaka-shi taisho-ku
+JP	27109	大阪市天王寺区	osaka-shi tennoji-ku
+JP	27111	大阪市浪速区	osaka-shi naniwa-ku
+JP	27113	大阪市西淀川区	osaka-shi nishiyodogawa-ku
+JP	27114	大阪市東淀川区	osaka-shi higashiyodogawa-ku
+JP	27115	大阪市東成区	osaka-shi higashinari-ku
+JP	27116	大阪市生野区	osaka-shi ikuno-ku
+JP	27117	大阪市旭区	osaka-shi asahi-ku
+JP	27118	大阪市城東区	osaka-shi joto-ku
+JP	27119	大阪市阿倍野区	osaka-shi abeno-ku
+JP	27120	大阪市住吉区	osaka-shi sumiyoshi-ku
+JP	27121	大阪市東住吉区	osaka-shi higashisumiyoshi-ku
+JP	27122	大阪市西成区	osaka-shi nishinari-ku
+JP	27123	大阪市淀川区	osaka-shi yodogawa-ku
+JP	27124	大阪市鶴見区	osaka-shi tsurumi-ku
+JP	27125	大阪市住之江区	osaka-shi suminoe-ku
+JP	27126	大阪市平野区	osaka-shi hirano-ku
+JP	27127	大阪市北区	osaka-shi kita-ku
+JP	27128	大阪市中央区	osaka-shi chuo-ku
+JP	27140	堺市	sakai-shi
+JP	27141	堺市堺区	sakai-shi sakai-ku
+JP	27142	堺市中区	sakai-shi naka-ku
+JP	27143	堺市東区	sakai-shi higashi-ku
+JP	27144	堺市西区	sakai-shi nishi-ku
+JP	27145	堺市南区	sakai-shi minami-ku
+JP	27146	堺市北区	sakai-shi kita-ku
+JP	27147	堺市美原区	sakai-shi mihara-ku
+JP	27202	岸和田市	kishiwada-shi
+JP	27203	豊中市	toyonaka-shi
+JP	27204	池田市	ikeda-shi
+JP	27205	吹田市	suita-shi
+JP	27206	泉大津市	izumiotsu-shi
+JP	27207	高槻市	takatsuki-shi
+JP	27208	貝塚市	kaidhuka-shi
+JP	27209	守口市	moriguchi-shi
+JP	27210	枚方市	hirakata-shi
+JP	27211	茨木市	ibaraki-shi
+JP	27212	八尾市	yao-shi
+JP	27213	泉佐野市	izumisano-shi
+JP	27214	富田林市	tondabayashi-shi
+JP	27215	寝屋川市	neyagawa-shi
+JP	27216	河内長野市	kawachinagano-shi
+JP	27217	松原市	matsubara-shi
+JP	27218	大東市	daito-shi
+JP	27219	和泉市	izumi-shi
+JP	27220	箕面市	mino-shi
+JP	27221	柏原市	kashiwara-shi
+JP	27222	羽曳野市	habikino-shi
+JP	27223	門真市	kadoma-shi
+JP	27224	摂津市	settsu-shi
+JP	27225	高石市	takaishi-shi
+JP	27226	藤井寺市	fujiidera-shi
+JP	27227	東大阪市	higashiosaka-shi
+JP	27228	泉南市	sennan-shi
+JP	27229	四條畷市	shijonawate-shi
+JP	27230	交野市	katano-shi
+JP	27231	大阪狭山市	osakasayama-shi
+JP	27232	阪南市	hannan-shi
+JP	27301	島本町	shimamoto-cho
+JP	27321	豊能町	toyono-cho
+JP	27322	能勢町	nose-cho
+JP	27341	忠岡町	tadaoka-cho
+JP	27361	熊取町	kumatori-cho
+JP	27362	田尻町	tajiri-cho
+JP	27366	岬町	misaki-cho
+JP	27381	太子町	taishi-cho
+JP	27382	河南町	kanan-cho
+JP	27383	千早赤阪村	chihayaakasaka-mura
+JP	28000	兵庫
+JP	28100	神戸市	kobe-shi
+JP	28101	神戸市東灘区	kobe-shi higashinada-ku
+JP	28102	神戸市灘区	kobe-shi nada-ku
+JP	28105	神戸市兵庫区	kobe-shi hyogo-ku
+JP	28106	神戸市長田区	kobe-shi nagata-ku
+JP	28107	神戸市須磨区	kobe-shi suma-ku
+JP	28108	神戸市垂水区	kobe-shi tarumi-ku
+JP	28109	神戸市北区	kobe-shi kita-ku
+JP	28110	神戸市中央区	kobe-shi chuo-ku
+JP	28111	神戸市西区	kobe-shi nishi-ku
+JP	28201	姫路市	himeji-shi
+JP	28202	尼崎市	amagasaki-shi
+JP	28203	明石市	akashi-shi
+JP	28204	西宮市	nishinomiya-shi
+JP	28205	洲本市	sumoto-shi
+JP	28206	芦屋市	ashiya-shi
+JP	28207	伊丹市	itami-shi
+JP	28208	相生市	aioi-shi
+JP	28209	豊岡市	toyoka-shi
+JP	28210	加古川市	kakogawa-shi
+JP	28212	赤穂市	ako-shi
+JP	28213	西脇市	nishiwaki-shi
+JP	28214	宝塚市	takaradhuka-shi
+JP	28215	三木市	miki-shi
+JP	28216	高砂市	takasago-shi
+JP	28217	川西市	kawanishi-shi
+JP	28218	小野市	ono-shi
+JP	28219	三田市	sanda-shi
+JP	28220	加西市	kasai-shi
+JP	28221	篠山市	sasayama-shi
+JP	28222	養父市	yabu-shi
+JP	28223	丹波市	tanba-shi
+JP	28224	南あわじ市	minamiawaji-shi
+JP	28225	朝来市	asago-shi
+JP	28226	淡路市	awaji-shi
+JP	28227	宍粟市	shiso-shi
+JP	28228	加東市	kato-shi
+JP	28229	たつの市	tatsuno-shi
+JP	28301	猪名川町	inagawa-cho
+JP	28365	多可町	taka-cho
+JP	28381	稲美町	inami-cho
+JP	28382	播磨町	harima-cho
+JP	28442	市川町	ichikawa-cho
+JP	28443	福崎町	fukusaki-cho
+JP	28446	神河町	kamikawa-cho
+JP	28464	太子町	taishi-cho
+JP	28481	上郡町	kamigori-cho
+JP	28501	佐用町	sayo-cho
+JP	28585	香美町	kami-cho
+JP	28586	新温泉町	shinonsen-cho
+JP	29000	奈良
+JP	29201	奈良市	nara-shi
+JP	29202	大和高田市	yamatotakada-shi
+JP	29203	大和郡山市	yamatokoriyama-shi
+JP	29204	天理市	tenri-shi
+JP	29205	橿原市	kashihara-shi
+JP	29206	桜井市	sakurai-shi
+JP	29207	五條市	gojo-shi
+JP	29208	御所市	gose-shi
+JP	29209	生駒市	ikoma-shi
+JP	29210	香芝市	kashiba-shi
+JP	29211	葛城市	katsuragi-shi
+JP	29212	宇陀市	uda-shi
+JP	29322	山添村	yamazoe-mura
+JP	29342	平群町	heguri-cho
+JP	29343	三郷町	sango-cho
+JP	29344	斑鳩町	ikaruga-cho
+JP	29345	安堵町	ando-cho
+JP	29361	川西町	kawanishi-cho
+JP	29362	三宅町	miyake-cho
+JP	29363	田原本町	tawaramoto-cho
+JP	29385	曽爾村	soni-mura
+JP	29386	御杖村	mitsue-mura
+JP	29401	高取町	takatori-cho
+JP	29402	明日香村	asuka-mura
+JP	29424	上牧町	kanmaki-cho
+JP	29425	王寺町	oji-cho
+JP	29426	広陵町	koryo-cho
+JP	29427	河合町	kawai-cho
+JP	29441	吉野町	yoshino-cho
+JP	29442	大淀町	oyodo-cho
+JP	29443	下市町	shimoichi-cho
+JP	29444	黒滝村	kurotaki-mura
+JP	29446	天川村	tenkawa-mura
+JP	29447	野迫川村	nosegawa-mura
+JP	29449	十津川村	totsukawa-mura
+JP	29450	下北山村	shimokitayama-mura
+JP	29451	上北山村	kamikitayama-mura
+JP	29452	川上村	kawakami-mura
+JP	29453	東吉野村	higashiyoshino-mura
+JP	30000	和歌山
+JP	30201	和歌山市	wakayama-shi
+JP	30202	海南市	kainan-shi
+JP	30203	橋本市	hashimoto-shi
+JP	30204	有田市	arida-shi
+JP	30205	御坊市	gobo-shi
+JP	30206	田辺市	tanabe-shi
+JP	30207	新宮市	shingu-shi
+JP	30208	紀の川市	kinokawa-shi
+JP	30209	岩出市	iwade-shi
+JP	30304	紀美野町	kimino-cho
+JP	30341	かつらぎ町	katsuragi-cho
+JP	30343	九度山町	kudoyama-cho
+JP	30344	高野町	koya-cho
+JP	30361	湯浅町	yuasa-cho
+JP	30362	広川町	hirogawa-cho
+JP	30366	有田川町	aridagawa-cho
+JP	30381	美浜町	mihama-cho
+JP	30382	日高町	hidaka-cho
+JP	30383	由良町	yura-cho
+JP	30390	印南町	inami-cho
+JP	30391	みなべ町	minabe-cho
+JP	30392	日高川町	hidakagawa-cho
+JP	30401	白浜町	shirahama-cho
+JP	30404	上富田町	kamitonda-cho
+JP	30406	すさみ町	susami-cho
+JP	30421	那智勝浦町	nachikatsura-cho
+JP	30422	太地町	taiji-cho
+JP	30424	古座川町	kozagawa-cho
+JP	30427	北山村	kitayama-mura
+JP	30428	串本町	kushimoto-cho
+JP	31000	鳥取
+JP	31201	鳥取市	tottori-shi
+JP	31202	米子市	yonago-shi
+JP	31203	倉吉市	kurayoshi-shi
+JP	31204	境港市	sakaiminato-shi
+JP	31302	岩美町	iwami-cho
+JP	31325	若桜町	wakasa-cho
+JP	31328	智頭町	chidhu-cho
+JP	31329	八頭町	yazu-cho
+JP	31364	三朝町	misasa-cho
+JP	31370	湯梨浜町	yurihama-cho
+JP	31371	琴浦町	kotora-cho
+JP	31372	北栄町	hokuei-cho
+JP	31384	日吉津村	hiedhu-son
+JP	31386	大山町	daisen-cho
+JP	31389	南部町	nanbu-cho
+JP	31390	伯耆町	hoki-cho
+JP	31401	日南町	nichinan-cho
+JP	31402	日野町	hino-cho
+JP	31403	江府町	kofu-cho
+JP	32000	島根
+JP	32201	松江市	matsue-shi
+JP	32202	浜田市	hamada-shi
+JP	32203	出雲市	izumo-shi
+JP	32204	益田市	masuda-shi
+JP	32205	大田市	oda-shi
+JP	32206	安来市	yasugi-shi
+JP	32207	江津市	gotsu-shi
+JP	32209	雲南市	unnan-shi
+JP	32304	東出雲町	higashiizumo-cho
+JP	32343	奥出雲町	okuizumo-cho
+JP	32386	飯南町	iinan-cho
+JP	32401	斐川町	hikawa-cho
+JP	32441	川本町	kawamoto-machi
+JP	32448	美郷町	misato-cho
+JP	32449	邑南町	onan-cho
+JP	32501	津和野町	tsuwano-cho
+JP	32505	吉賀町	yoshika-cho
+JP	32525	海士町	ama-cho
+JP	32526	西ノ島町	nishinoshima-cho
+JP	32527	知夫村	chibu-mura
+JP	32528	隠岐の島町	okinoshima-cho
+JP	33000	岡山
+JP	33100	岡山市	okayama-shi
+JP	33101	岡山市北区	okayama-shi kita-ku
+JP	33102	岡山市中区	okayama-shi naka-ku
+JP	33103	岡山市東区	okayama-shi higashi-ku
+JP	33104	岡山市南区	okayama-shi minami-ku
+JP	33201	岡山市	okayama-shi
+JP	33202	倉敷市	kurashiki-shi
+JP	33203	津山市	tsuyama-shi
+JP	33204	玉野市	tamano-shi
+JP	33205	笠岡市	kasaoka-shi
+JP	33207	井原市	ibara-shi
+JP	33208	総社市	soja-shi
+JP	33209	高梁市	takahashi-shi
+JP	33210	新見市	niimi-shi
+JP	33211	備前市	bizen-shi
+JP	33212	瀬戸内市	setochi-shi
+JP	33213	赤磐市	akaiwa-shi
+JP	33214	真庭市	maniwa-shi
+JP	33215	美作市	mimasaka-shi
+JP	33216	浅口市	asakuchi-shi
+JP	33346	和気町	wake-cho
+JP	33423	早島町	hayashima-cho
+JP	33445	里庄町	satosho-cho
+JP	33461	矢掛町	yakage-cho
+JP	33586	新庄村	shinjo-son
+JP	33606	鏡野町	kagamino-cho
+JP	33622	勝央町	shoo-cho
+JP	33623	奈義町	nagi-cho
+JP	33643	西粟倉村	nishiawakura-son
+JP	33663	久米南町	kumenan-cho
+JP	33666	美咲町	misaki-cho
+JP	33681	吉備中央町	kibichuo-cho
+JP	34000	広島
+JP	34100	広島市	hiroshima-shi
+JP	34101	広島市中区	hiroshima-shi naka-ku
+JP	34102	広島市東区	hiroshima-shi higashi-ku
+JP	34103	広島市南区	hiroshima-shi minami-ku
+JP	34104	広島市西区	hiroshima-shi nishi-ku
+JP	34105	広島市安佐南区	hiroshima-shi asaminami-ku
+JP	34106	広島市安佐北区	hiroshima-shi asakita-ku
+JP	34107	広島市安芸区	hiroshima-shi aki-ku
+JP	34108	広島市佐伯区	hiroshima-shi saeki-ku
+JP	34202	呉市	kure-shi
+JP	34203	竹原市	takehara-shi
+JP	34204	三原市	mihara-shi
+JP	34205	尾道市	onomichi-shi
+JP	34207	福山市	fukuyama-shi
+JP	34208	府中市	fuchyu-shi
+JP	34209	三次市	miyoshi-shi
+JP	34210	庄原市	shobara-shi
+JP	34211	大竹市	otake-shi
+JP	34212	東広島市	higashihiroshima-shi
+JP	34213	廿日市市	hatsukaichi-shi
+JP	34214	安芸高田市	akitakata-shi
+JP	34215	江田島市	etajima-shi
+JP	34302	府中町	fuchyu-cho
+JP	34304	海田町	kaita-cho
+JP	34307	熊野町	kumano-cho
+JP	34309	坂町	saka-cho
+JP	34368	安芸太田町	akiota-cho
+JP	34369	北広島町	kitahiroshima-cho
+JP	34431	大崎上島町	osakikamijima-cho
+JP	34462	世羅町	sera-cho
+JP	34545	神石高原町	jinsekikogen-cho
+JP	35000	山口
+JP	35201	下関市	shimonoseki-shi
+JP	35202	宇部市	ube-shi
+JP	35203	山口市	yamaguchi-shi
+JP	35204	萩市	hagi-shi
+JP	35206	防府市	hofu-shi
+JP	35207	下松市	kudamatsu-shi
+JP	35208	岩国市	iwakuni-shi
+JP	35210	光市	hikari-shi
+JP	35211	長門市	nagato-shi
+JP	35212	柳井市	yanai-shi
+JP	35213	美祢市	mine-shi
+JP	35215	周南市	shunan-shi
+JP	35216	山陽小野田市	sanyoonoda-shi
+JP	35305	周防大島町	suooshima-cho
+JP	35321	和木町	waki-cho
+JP	35341	上関町	kaminoseki-cho
+JP	35343	田布施町	tabuse-cho
+JP	35344	平生町	hirao-cho
+JP	35502	阿武町	abu-cho
+JP	35504	阿東町	ato-cho
+JP	36000	徳島
+JP	36201	徳島市	tokushima-shi
+JP	36202	鳴門市	naruto-shi
+JP	36203	小松島市	komatsushima-shi
+JP	36204	阿南市	anan-shi
+JP	36205	吉野川市	yoshinogawa-shi
+JP	36206	阿波市	awa-shi
+JP	36207	美馬市	mima-shi
+JP	36208	三好市	miyoshi-shi
+JP	36301	勝浦町	katsura-cho
+JP	36302	上勝町	kamikatsu-cho
+JP	36321	佐那河内村	sanagochi-son
+JP	36341	石井町	ishii-cho
+JP	36342	神山町	kamiyama-cho
+JP	36368	那賀町	naka-cho
+JP	36383	牟岐町	mugi-cho
+JP	36387	美波町	minami-cho
+JP	36388	海陽町	kaiyo-cho
+JP	36401	松茂町	matsushige-cho
+JP	36402	北島町	kitajima-cho
+JP	36403	藍住町	aizumi-cho
+JP	36404	板野町	itano-cho
+JP	36405	上板町	kamiita-cho
+JP	36468	つるぎ町	tsurugi-cho
+JP	36489	東みよし町	higashimiyoshi-cho
+JP	37000	香川
+JP	37201	高松市	takamatsu-shi
+JP	37202	丸亀市	marugame-shi
+JP	37203	坂出市	sakaide-shi
+JP	37204	善通寺市	zentsuji-shi
+JP	37205	観音寺市	kanonji-shi
+JP	37206	さぬき市	sanuki-shi
+JP	37207	東かがわ市	higashikagawa-shi
+JP	37208	三豊市	mitoyo-shi
+JP	37322	土庄町	tonosho-cho
+JP	37324	小豆島町	shodoshima-cho
+JP	37341	三木町	miki-cho
+JP	37364	直島町	naoshima-cho
+JP	37386	宇多津町	utadhu-cho
+JP	37387	綾川町	ayagawa-cho
+JP	37403	琴平町	kotohira-cho
+JP	37404	多度津町	tadotsu-cho
+JP	37406	まんのう町	manno-cho
+JP	38000	愛媛
+JP	38201	松山市	matsuyama-shi
+JP	38202	今治市	imabari-shi
+JP	38203	宇和島市	uwajima-shi
+JP	38204	八幡浜市	yawatahama-shi
+JP	38205	新居浜市	niihama-shi
+JP	38206	西条市	saijo-shi
+JP	38207	大洲市	ozu-shi
+JP	38210	伊予市	iyo-shi
+JP	38213	四国中央市	shikokuchuo-shi
+JP	38214	西予市	seiyo-shi
+JP	38215	東温市	toon-shi
+JP	38356	上島町	kamijima-cho
+JP	38386	久万高原町	kumakogen-cho
+JP	38401	松前町	masaki-cho
+JP	38402	砥部町	tobe-cho
+JP	38422	内子町	uchiko-cho
+JP	38442	伊方町	ikata-cho
+JP	38484	松野町	matsuno-cho
+JP	38488	鬼北町	kihoku-cho
+JP	38506	愛南町	ainan-cho
+JP	39000	高知
+JP	39201	高知市	kochi-shi
+JP	39202	室戸市	muroto-shi
+JP	39203	安芸市	aki-shi
+JP	39204	南国市	nankoku-shi
+JP	39205	土佐市	tosa-shi
+JP	39206	須崎市	susaki-shi
+JP	39208	宿毛市	sukumo-shi
+JP	39209	土佐清水市	tosashimizu-shi
+JP	39210	四万十市	shimanto-shi
+JP	39211	香南市	konan-shi
+JP	39212	香美市	kami-shi
+JP	39301	東洋町	toyo-cho
+JP	39302	奈半利町	nahari-cho
+JP	39303	田野町	tano-cho
+JP	39304	安田町	yasuda-cho
+JP	39305	北川村	kitagawa-mura
+JP	39306	馬路村	umaji-mura
+JP	39307	芸西村	geisei-mura
+JP	39341	本山町	motoyama-cho
+JP	39344	大豊町	otoyo-cho
+JP	39363	土佐町	tosa-cho
+JP	39364	大川村	okawa-mura
+JP	39386	いの町	ino-cho
+JP	39387	仁淀川町	niyodogawa-cho
+JP	39401	中土佐町	nakatosa-cho
+JP	39402	佐川町	sakawa-cho
+JP	39403	越知町	ochi-cho
+JP	39405	檮原町	yusuhara-cho
+JP	39410	日高村	hidaka-mura
+JP	39411	津野町	tsuno-cho
+JP	39412	四万十町	shimanto-cho
+JP	39424	大月町	otsuki-cho
+JP	39427	三原村	mihara-mura
+JP	39428	黒潮町	kuroshio-cho
+JP	40000	福岡
+JP	40100	北九州市	kitakyushu-shi
+JP	40101	北九州市門司区	kitakyushu-shi moji-ku
+JP	40103	北九州市若松区	kitakyushu-shi wakamatsu-ku
+JP	40105	北九州市戸畑区	kitakyushu-shi tobata-ku
+JP	40106	北九州市小倉北区	kitakyushu-shi kokurakita-ku
+JP	40107	北九州市小倉南区	kitakyushu-shi kokuraminami-ku
+JP	40108	北九州市八幡東区	kitakyushu-shi yahatahigashi-ku
+JP	40109	北九州市八幡西区	kitakyushu-shi yahatanishi-ku
+JP	40130	福岡市	fukuoka-shi
+JP	40131	福岡市東区	fukuoka-shi higashi-ku
+JP	40132	福岡市博多区	fukuoka-shi hakata-ku
+JP	40133	福岡市中央区	fukuoka-shi chuo-ku
+JP	40134	福岡市南区	fukuoka-shi minami-ku
+JP	40135	福岡市西区	fukuoka-shi nishi-ku
+JP	40136	福岡市城南区	fukuoka-shi jonan-ku
+JP	40137	福岡市早良区	fukuoka-shi sawara-ku
+JP	40202	大牟田市	omuta-shi
+JP	40203	久留米市	kurume-shi
+JP	40204	直方市	nogata-shi
+JP	40205	飯塚市	iidhuka-shi
+JP	40206	田川市	tagawa-shi
+JP	40207	柳川市	yanagawa-shi
+JP	40210	八女市	yame-shi
+JP	40211	筑後市	chikugo-shi
+JP	40212	大川市	okawa-shi
+JP	40213	行橋市	yukuhashi-shi
+JP	40214	豊前市	buzen-shi
+JP	40215	中間市	nakama-shi
+JP	40216	小郡市	ogori-shi
+JP	40217	筑紫野市	chikushino-shi
+JP	40218	春日市	kasuga-shi
+JP	40219	大野城市	onojo-shi
+JP	40220	宗像市	munakata-shi
+JP	40221	太宰府市	dazaifu-shi
+JP	40222	前原市	maebaru-shi
+JP	40223	古賀市	koga-shi
+JP	40224	福津市	fukutsu-shi
+JP	40225	うきは市	ukiha-shi
+JP	40226	宮若市	miyawaka-shi
+JP	40227	嘉麻市	kama-shi
+JP	40228	朝倉市	asakura-shi
+JP	40229	みやま市	miyama-shi
+JP	40230	糸島市	itoshima-shi
+JP	40305	那珂川町	nakagawa-machi
+JP	40341	宇美町	umi-machi
+JP	40342	篠栗町	sasaguri-machi
+JP	40343	志免町	shime-machi
+JP	40344	須恵町	sue-machi
+JP	40345	新宮町	shingu-machi
+JP	40348	久山町	hisayama-machi
+JP	40349	粕屋町	kasuya-machi
+JP	40381	芦屋町	ashiya-machi
+JP	40382	水巻町	mizumaki-machi
+JP	40383	岡垣町	okagaki-machi
+JP	40384	遠賀町	onga-cho
+JP	40401	小竹町	kotake-machi
+JP	40402	鞍手町	kurate-machi
+JP	40421	桂川町	keisen-machi
+JP	40447	筑前町	chikuzen-machi
+JP	40448	東峰村	toho-mura
+JP	40462	二丈町	nijo-machi
+JP	40463	志摩町	shima-machi
+JP	40503	大刀洗町	tachiarai-machi
+JP	40522	大木町	oki-machi
+JP	40541	黒木町	kurogi-machi
+JP	40543	立花町	tachibana-machi
+JP	40544	広川町	hirokawa-machi
+JP	40545	矢部村	yabe-mura
+JP	40546	星野村	hoshino-mura
+JP	40601	香春町	kawara-machi
+JP	40602	添田町	soeda-machi
+JP	40604	糸田町	itoda-machi
+JP	40605	川崎町	kawasaki-machi
+JP	40608	大任町	oto-machi
+JP	40609	赤村	aka-mura
+JP	40610	福智町	fukuchi-machi
+JP	40621	苅田町	kanda-machi
+JP	40625	みやこ町	miyako-machi
+JP	40642	吉富町	yoshitomi-machi
+JP	40646	上毛町	koge-machi
+JP	40647	築上町	chikujo-machi
+JP	41000	佐賀
+JP	41201	佐賀市	saga-shi
+JP	41202	唐津市	karatsu-shi
+JP	41203	鳥栖市	tosu-shi
+JP	41204	多久市	taku-shi
+JP	41205	伊万里市	imari-shi
+JP	41206	武雄市	takeo-shi
+JP	41207	鹿島市	kashima-shi
+JP	41208	小城市	ogi-shi
+JP	41209	嬉野市	ureshino-shi
+JP	41210	神埼市	kanzaki-shi
+JP	41327	吉野ヶ里町	yoshinogari-cho
+JP	41341	基山町	kiyama-cho
+JP	41345	上峰町	kamimine-cho
+JP	41346	みやき町	miyaki-cho
+JP	41387	玄海町	genkai-cho
+JP	41401	有田町	arita-cho
+JP	41423	大町町	omachi-cho
+JP	41424	江北町	kohoku-machi
+JP	41425	白石町	shiroishi-cho
+JP	41441	太良町	tara-cho
+JP	42000	長崎
+JP	42201	長崎市	nagasaki-shi
+JP	42202	佐世保市	sasebo-shi
+JP	42203	島原市	shimabara-shi
+JP	42204	諫早市	isahaya-shi
+JP	42205	大村市	omura-shi
+JP	42207	平戸市	hirado-shi
+JP	42208	松浦市	matsura-shi
+JP	42209	対馬市	tsushima-shi
+JP	42210	壱岐市	iki-shi
+JP	42211	五島市	goto-shi
+JP	42212	西海市	saikai-shi
+JP	42213	雲仙市	unzen-shi
+JP	42214	南島原市	minamishimabara-shi
+JP	42307	長与町	nagayo-cho
+JP	42308	時津町	togitsu-cho
+JP	42321	東彼杵町	higashisonogi-cho
+JP	42322	川棚町	kawatana-cho
+JP	42323	波佐見町	hasami-cho
+JP	42383	小値賀町	odhika-cho
+JP	42388	江迎町	emukae-cho
+JP	42389	鹿町町	shikamachi-cho
+JP	42391	佐々町	saza-cho
+JP	42411	新上五島町	shinkamigoto-cho
+JP	43000	熊本
+JP	43100	熊本市	kumamoto-shi
+JP	43101	熊本市中央区	kumamoto-shi chuo-ku
+JP	43102	熊本市東区	kumamoto-shi higashi-ku
+JP	43103	熊本市西区	kumamoto-shi nishi-ku
+JP	43104	熊本市南区	kumamoto-shi minami-ku
+JP	43105	熊本市北区	kumamoto-shi kita-ku
+JP	43201	熊本市	kumamoto-shi
+JP	43202	八代市	yatsushiro-shi
+JP	43203	人吉市	hitoyoshi-shi
+JP	43204	荒尾市	arao-shi
+JP	43205	水俣市	minamata-shi
+JP	43206	玉名市	tamana-shi
+JP	43208	山鹿市	yamaga-shi
+JP	43210	菊池市	kikuchi-shi
+JP	43211	宇土市	uto-shi
+JP	43212	上天草市	kamiamakusa-shi
+JP	43213	宇城市	uki-shi
+JP	43214	阿蘇市	aso-shi
+JP	43215	天草市	amakusa-shi
+JP	43216	合志市	koshi-shi
+JP	43341	城南町	jonan-machi
+JP	43342	富合町	tomiai-machi
+JP	43348	美里町	misato-machi
+JP	43364	玉東町	gyokuto-machi
+JP	43367	南関町	nankan-machi
+JP	43368	長洲町	nagasu-machi
+JP	43369	和水町	nagomi-machi
+JP	43385	植木町	ueki-machi
+JP	43403	大津町	odhu-machi
+JP	43404	菊陽町	kikuyo-machi
+JP	43423	南小国町	minamioguni-machi
+JP	43424	小国町	oguni-machi
+JP	43425	産山村	ubuyama-mura
+JP	43428	高森町	takamori-machi
+JP	43432	西原村	nishihara-mura
+JP	43433	南阿蘇村	minamiaso-mura
+JP	43441	御船町	mifune-machi
+JP	43442	嘉島町	kashima-machi
+JP	43443	益城町	mashiki-machi
+JP	43444	甲佐町	kosa-machi
+JP	43447	山都町	yamato-cho
+JP	43468	氷川町	hikawa-cho
+JP	43482	芦北町	ashikita-machi
+JP	43484	津奈木町	tsunagi-machi
+JP	43501	錦町	nishiki-machi
+JP	43505	多良木町	taragi-machi
+JP	43506	湯前町	yunomae-machi
+JP	43507	水上村	mizukami-mura
+JP	43510	相良村	sagara-mura
+JP	43511	五木村	itsuki-mura
+JP	43512	山江村	yamae-mura
+JP	43513	球磨村	kuma-mura
+JP	43514	あさぎり町	asagiri-cho
+JP	43531	苓北町	reihoku-machi
+JP	44000	大分
+JP	44201	大分市	oita-shi
+JP	44202	別府市	beppu-shi
+JP	44203	中津市	nakatsu-shi
+JP	44204	日田市	hita-shi
+JP	44205	佐伯市	saiki-shi
+JP	44206	臼杵市	usuki-shi
+JP	44207	津久見市	tsukumi-shi
+JP	44208	竹田市	taketa-shi
+JP	44209	豊後高田市	bungotakada-shi
+JP	44210	杵築市	kitsuki-shi
+JP	44211	宇佐市	usa-shi
+JP	44212	豊後大野市	bungoono-shi
+JP	44213	由布市	yufu-shi
+JP	44214	国東市	kunisaki-shi
+JP	44322	姫島村	himeshima-mura
+JP	44341	日出町	hiji-machi
+JP	44461	九重町	kokonoe-machi
+JP	44462	玖珠町	kusu-machi
+JP	45000	宮崎
+JP	45201	宮崎市	miyazaki-shi
+JP	45202	都城市	miyakonojo-shi
+JP	45203	延岡市	nobeoka-shi
+JP	45204	日南市	nichinan-shi
+JP	45205	小林市	kobayashi-shi
+JP	45206	日向市	hyuga-shi
+JP	45207	串間市	kushima-shi
+JP	45208	西都市	saito-shi
+JP	45209	えびの市	ebino-shi
+JP	45301	清武町	kiyotake-cho
+JP	45321	北郷町	kitago-cho
+JP	45322	南郷町	nango-cho
+JP	45341	三股町	mimata-cho
+JP	45361	高原町	takaharu-cho
+JP	45362	野尻町	nojiri-cho
+JP	45382	国富町	kunitomi-cho
+JP	45383	綾町	aya-cho
+JP	45401	高鍋町	takanabe-cho
+JP	45402	新富町	shintomi-cho
+JP	45403	西米良村	nishimera-son
+JP	45404	木城町	kijo-cho
+JP	45405	川南町	kawaminami-cho
+JP	45406	都農町	tsuno-cho
+JP	45421	門川町	kadogawa-cho
+JP	45429	諸塚村	morotsuka-son
+JP	45430	椎葉村	shiiba-son
+JP	45431	美郷町	misato-cho
+JP	45441	高千穂町	takachiho-cho
+JP	45442	日之影町	hinokage-cho
+JP	45443	五ヶ瀬町	gokase-cho
+JP	46000	鹿児島
+JP	46201	鹿児島市	kagoshima-shi
+JP	46203	鹿屋市	kanoya-shi
+JP	46204	枕崎市	makurazaki-shi
+JP	46206	阿久根市	akune-shi
+JP	46208	出水市	izumi-shi
+JP	46209	大口市	okuchi-shi
+JP	46210	指宿市	ibusuki-shi
+JP	46213	西之表市	nishinomote-shi
+JP	46214	垂水市	tarumizu-shi
+JP	46215	薩摩川内市	satsumasendai-shi
+JP	46216	日置市	hioki-shi
+JP	46217	曽於市	so-shi
+JP	46218	霧島市	kirishima-shi
+JP	46219	いちき串木野市	ichikikushikino-shi
+JP	46220	南さつま市	minamisatsuma-shi
+JP	46221	志布志市	shibushi-shi
+JP	46222	奄美市	amami-shi
+JP	46223	南九州市	minamikyushu-shi
+JP	46224	伊佐市	isa-shi
+JP	46225	姶良市	aira-shi
+JP	46303	三島村	mishima-mura
+JP	46304	十島村	toshima-mura
+JP	46392	さつま町	satsuma-cho
+JP	46404	長島町	nagashima-cho
+JP	46421	菱刈町	hishikari-cho
+JP	46441	加治木町	kajiki-cho
+JP	46442	姶良町	aira-cho
+JP	46443	蒲生町	kamo-cho
+JP	46452	湧水町	yusui-cho
+JP	46468	大崎町	osaki-cho
+JP	46482	東串良町	higashikushira-cho
+JP	46490	錦江町	kinko-cho
+JP	46491	南大隅町	minamiosumi-cho
+JP	46492	肝付町	kimotsuki-cho
+JP	46501	中種子町	nakatane-cho
+JP	46502	南種子町	minamitane-cho
+JP	46505	屋久島町	yakushima-cho
+JP	46523	大和村	yamato-son
+JP	46524	宇検村	uken-son
+JP	46525	瀬戸内町	setochi-cho
+JP	46527	龍郷町	tatsugo-cho
+JP	46529	喜界町	kikai-cho
+JP	46530	徳之島町	tokunoshima-cho
+JP	46531	天城町	amagi-cho
+JP	46532	伊仙町	isen-cho
+JP	46533	和泊町	wadomari-cho
+JP	46534	知名町	china-cho
+JP	46535	与論町	yoron-cho
+JP	47000	沖縄
+JP	47201	那覇市	naha-shi
+JP	47205	宜野湾市	ginowan-shi
+JP	47207	石垣市	ishigaki-shi
+JP	47208	浦添市	urasoe-shi
+JP	47209	名護市	nago-shi
+JP	47210	糸満市	itoman-shi
+JP	47211	沖縄市	okinawa-shi
+JP	47212	豊見城市	tomigusuku-shi
+JP	47213	うるま市	uruma-shi
+JP	47214	宮古島市	miyakojima-shi
+JP	47215	南城市	nanjo-shi
+JP	47301	国頭村	kunigami-son
+JP	47302	大宜味村	ogimi-son
+JP	47303	東村	higashi-son
+JP	47306	今帰仁村	nakijin-son
+JP	47308	本部町	motobu-cho
+JP	47311	恩納村	onna-son
+JP	47313	宜野座村	ginoza-son
+JP	47314	金武町	kin-cho
+JP	47315	伊江村	ie-son
+JP	47324	読谷村	yomitan-son
+JP	47325	嘉手納町	kadena-cho
+JP	47326	北谷町	chyatan-cho
+JP	47327	北中城村	kitanakagusuku-son
+JP	47328	中城村	nakagusuku-son
+JP	47329	西原町	nishihara-cho
+JP	47348	与那原町	yonabaru-cho
+JP	47350	南風原町	haebaru-cho
+JP	47353	渡嘉敷村	tokashiki-son
+JP	47354	座間味村	zamami-son
+JP	47355	粟国村	aguni-son
+JP	47356	渡名喜村	tonaki-son
+JP	47357	南大東村	minamidaito-son
+JP	47358	北大東村	kitadaito-son
+JP	47359	伊平屋村	iheya-son
+JP	47360	伊是名村	izena-son
+JP	47361	久米島町	kumejima-cho
+JP	47362	八重瀬町	yaese-cho
+JP	47375	多良間村	tarama-son
+JP	47381	竹富町	taketomi-cho
+JP	47382	与那国町	yonaguni-cho
+JP	N/A	判定不明	unknown
+JP	unknown	判定不明	unknown
