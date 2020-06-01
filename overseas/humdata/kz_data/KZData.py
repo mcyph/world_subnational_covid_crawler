@@ -1,14 +1,10 @@
 import csv
-import json
 
 from covid_19_au_grab.overseas.URLBase import (
     URL, URLBase
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
-    DataPoint
-)
 from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
+    get_overseas_dir
 )
 
 

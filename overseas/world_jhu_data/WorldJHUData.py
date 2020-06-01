@@ -1,22 +1,14 @@
 import csv
-import json
 from os import listdir
-from collections import Counter
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_US_COUNTY,
     SCHEMA_ADMIN_1, SCHEMA_ADMIN_0,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW, DT_STATUS_ACTIVE,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_TOTAL, DT_TESTS_TOTAL, DT_STATUS_ACTIVE,
+    DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
@@ -189,11 +181,11 @@ class WorldJHUData(GithubRepo):
                         date = self.convert_date(date, formats=('%m/%d/%y', '%m/%d/%Y'))
 
                     if 'Province/State' in item:
-                        province_state = item['Province/State']
-                        country_region = item['Country/Region']
+                        province_state = item['Province/State'].strip('*')
+                        country_region = item['Country/Region'].strip('*')
                     else:
-                        province_state = item['Province_State']
-                        country_region = item['Country_Region']
+                        province_state = item['Province_State'].strip('*')
+                        country_region = item['Country_Region'].strip('*')
 
                     if item.get('Admin2'):
                         assert item['Country_Region'] == 'US', item['Country_Region']

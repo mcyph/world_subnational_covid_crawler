@@ -3,10 +3,10 @@ import json
 from covid_19_au_grab.overseas.URLBase import (
     URL, URLBase
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1, SCHEMA_IN_DISTRICT,
     DT_TOTAL, DT_STATUS_ACTIVE,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS

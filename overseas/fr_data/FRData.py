@@ -1,11 +1,11 @@
 import csv
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
-    SCHEMA_FR_PAYS, SCHEMA_FR_DEPARTMENT,
+from covid_19_au_grab.datatypes.constants import (
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
+    SCHEMA_FR_DEPARTMENT,
     DT_TOTAL, DT_STATUS_ACTIVE,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
@@ -72,7 +72,7 @@ class FRData(GithubRepo):
                 source_url = item['source_url'] or source_name or self.github_url
 
                 if item['granularite'] == 'pays':
-                    region_schema = SCHEMA_FR_PAYS
+                    region_schema = SCHEMA_ADMIN_0
                     region_parent = None
                 elif item['granularite'] in 'departement':
                     region_schema = SCHEMA_FR_DEPARTMENT
@@ -83,6 +83,7 @@ class FRData(GithubRepo):
                 elif item['granularite'] == 'collectivite-outremer':
                     region_schema = SCHEMA_FR_OVERSEAS_COLLECTIVITY
                     region_parent = None
+                    continue  # HACK: Won't support these in this data for now, as most of this info is in the JHU data!! ============================
                 elif item['granularite'] == 'monde':
                     # World
                     continue

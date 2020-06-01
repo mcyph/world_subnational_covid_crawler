@@ -2,7 +2,7 @@ from math import log
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_HOSPITALIZED,
@@ -12,7 +12,7 @@ from covid_19_au_grab.state_news_releases.constants import (
 from covid_19_au_grab.overseas.humdata.west_africa_data.WestAfricaPowerBI import (
     WestAfricaPowerBI, get_globals
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import (

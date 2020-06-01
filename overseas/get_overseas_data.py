@@ -1,6 +1,6 @@
 import re
 import unicodedata
-from covid_19_au_grab.state_news_releases.constants import constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import constant_to_name, schema_to_name
 
 from covid_19_au_grab.overseas.humdata.af_data.AFData import AFData
 from covid_19_au_grab.overseas.humdata.co_data.COData import COData

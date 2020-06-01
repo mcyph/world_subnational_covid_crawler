@@ -1,22 +1,17 @@
 import csv
-import json
 from os import listdir
-from collections import Counter
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     SCHEMA_MY_DISTRICT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
+    DT_TOTAL, DT_STATUS_ICU,
+    DT_STATUS_DEATHS,
     DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_DOMESTIC
+    DT_SOURCE_CONFIRMED,
+    DT_SOURCE_OVERSEAS
 )
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo

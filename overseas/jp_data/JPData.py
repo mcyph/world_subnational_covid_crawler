@@ -2,13 +2,13 @@
 import csv
 import json
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL, DT_TESTS_TOTAL,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
+    DT_STATUS_ICU,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.overseas.GithubRepo import (
@@ -30,7 +30,7 @@ _prefectures = {
     '千葉県': 'Chiba',
     '京都府': 'Kyoto',
     '新潟県': 'Niigata',
-    '和歌山県': 'Wagayama',
+    '和歌山県': 'Wakayama',
     '高知県': 'Kochi',
     '群馬県': 'Gunma',
     '熊本県': 'Kumamoto',

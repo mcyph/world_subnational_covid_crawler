@@ -5,10 +5,10 @@
 
 import csv
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL,

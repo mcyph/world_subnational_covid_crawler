@@ -7,10 +7,10 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_CO_MUNICIPALITY,
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,

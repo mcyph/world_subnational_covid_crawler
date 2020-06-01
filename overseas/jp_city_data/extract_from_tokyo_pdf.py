@@ -6,14 +6,14 @@ from os import listdir
 from os.path import exists
 from pyquery import PyQuery as _pq
 from collections import namedtuple
-from urllib.request import urlopen, urlretrieve
+from urllib.request import urlopen
 from pdfminer.layout import LAParams, LTTextBox, LTTextLine, LTTextBoxHorizontal, LTFigure
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_JP_CITY,
     DT_NEW, DT_TOTAL,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
@@ -21,7 +21,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_OVERSEAS,
     DT_STATUS_ICU, DT_STATUS_DEATHS
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.get_package_dir import (

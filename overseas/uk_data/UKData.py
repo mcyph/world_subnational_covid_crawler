@@ -1,10 +1,10 @@
 import csv
 
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_UK_AREA, SCHEMA_UK_COUNTRY,
+from covid_19_au_grab.datatypes.constants import (
+    SCHEMA_UK_AREA, SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_DEATHS
 )
@@ -89,10 +89,18 @@ class UKData(GithubRepo):
                     'Tests': DT_TESTS_TOTAL,
                     'Deaths': DT_STATUS_DEATHS
                 }
+                schema, parent, country = {
+                    'UK': (SCHEMA_ADMIN_0, None, 'GB'),
+                    'England': (SCHEMA_ADMIN_1, 'GB', 'GB-ENG'),
+                    'Wales': (SCHEMA_ADMIN_1, 'GB', 'GB-WLS'),
+                    'Scotland': (SCHEMA_ADMIN_1, 'GB', 'GB-SCT'),
+                    'Northern Ireland': (SCHEMA_ADMIN_1, 'GB', 'GB-NIR'),
+                }[item['Country']]
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_UK_COUNTRY,  # TODO: Should this be a separate schema?
-                    region_child=item['Country'],
+                    region_schema=schema,  # TODO: Should this be a separate schema?
+                    region_parent=parent,
+                    region_child=country,
                     datatype=datatype_map[item['Indicator'].strip()],
                     value=int(item['Value']),
                     date_updated=date,

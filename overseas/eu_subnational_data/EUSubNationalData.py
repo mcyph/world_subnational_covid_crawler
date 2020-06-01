@@ -5,11 +5,11 @@ import csv
 from covid_19_au_grab.overseas.URLBase import (
     URL, URLBase
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
-    SCHEMA_ADMIN_1,
+from covid_19_au_grab.datatypes.constants import (
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
     DT_TOTAL,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
     DT_STATUS_ACTIVE,
@@ -70,11 +70,21 @@ class EUSubNationalData(URLBase):
                 date = self.convert_date(item['Date'])
                 country = {
                     'NOT SPECIFIED': 'Unknown',
-                }.get(item['CountryName'], item['CountryName'])
+                }.get(item['CountryName'], item['CountryName'])\
+                    .replace('Russian Fed.', 'Russian Federation')\
+                    .replace('Czech Republic', '')
+
                 region_child = item['Region']
 
+                if region_child == country:
+                    region_child = country
+                    country = None
+                    schema = SCHEMA_ADMIN_0
+                else:
+                    schema = SCHEMA_ADMIN_1
+
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_TOTAL,
@@ -83,7 +93,7 @@ class EUSubNationalData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
@@ -92,7 +102,7 @@ class EUSubNationalData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
@@ -101,7 +111,7 @@ class EUSubNationalData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_STATUS_ACTIVE,
@@ -110,7 +120,7 @@ class EUSubNationalData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_STATUS_HOSPITALIZED,
@@ -119,7 +129,7 @@ class EUSubNationalData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=schema,
                     region_parent=country,
                     region_child=region_child,
                     datatype=DT_STATUS_ICU,
