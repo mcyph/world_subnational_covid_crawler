@@ -14,6 +14,7 @@ from covid_19_au_grab.overseas.humdata.sn_data.SNData import SNData
 from covid_19_au_grab.overseas.humdata.so_data.SOData import SOData
 from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
 
+from covid_19_au_grab.overseas.bd_data.BDData import BDData
 from covid_19_au_grab.overseas.br_data.BRData import BRData
 from covid_19_au_grab.overseas.ch_data.CHData import CHData
 from covid_19_au_grab.overseas.de_data.DEData import DEData
@@ -49,6 +50,7 @@ def get_overseas_data():
         WestAfricaData,
         WorldJHUData,
         AFData,
+        BDData,
         BRData,
         CHData,
         COData,

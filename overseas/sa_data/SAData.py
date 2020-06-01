@@ -96,7 +96,7 @@ class SAData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
 
-            return r
+        return r
 
     def _get_tested_sum(self):
         r = []
