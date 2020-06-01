@@ -33,10 +33,12 @@ from covid_19_au_grab.overseas.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.my_data.MYData import MYData
 from covid_19_au_grab.overseas.nz_data.NZData import NZData
 #from covid_19_au_grab.overseas.ph_data.PHData import PHData
+from covid_19_au_grab.overseas.sa_data.SAData import SAData
 from covid_19_au_grab.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.overseas.us_nyt_data.USNYTData import USNYTData
 #from covid_19_au_grab.overseas.us_covidtracking_data.USCovidTrackingData import USCovidTrackingData
 #from covid_19_au_grab.overseas.world_eu_data.EUData import EUData
+from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
 from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import WorldJHUData
 
 
@@ -70,10 +72,12 @@ def get_overseas_data():
         NZData,
         #PHData,
         #PSData,
+        SAData,
         SNData,
         SOData,
         #THData,
         UKData,
+        WorldBingData,
         USNYTData,
         VEData,
     ]:
