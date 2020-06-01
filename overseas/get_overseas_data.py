@@ -10,12 +10,9 @@ from covid_19_au_grab.overseas.humdata.iq_data.IQData import IQData
 #from covid_19_au_grab.overseas.kz_data.KZData import KZData
 from covid_19_au_grab.overseas.humdata.ly_data.LYData import LYData
 #from covid_19_au_grab.overseas.ml_data.MLData import MLData
-#from covid_19_au_grab.overseas.mm_data.MMData import MMData
-#from covid_19_au_grab.overseas.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.humdata.sn_data.SNData import SNData
 from covid_19_au_grab.overseas.humdata.so_data.SOData import SOData
 from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
-from covid_19_au_grab.overseas.humdata.west_africa_data.WestAfricaData import WestAfricaData
 
 from covid_19_au_grab.overseas.br_data.BRData import BRData
 from covid_19_au_grab.overseas.ch_data.CHData import CHData
@@ -30,14 +27,19 @@ from covid_19_au_grab.overseas.it_data.ITData import ITData
 from covid_19_au_grab.overseas.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.jp_city_data.JPCityData import JPCityData
 from covid_19_au_grab.overseas.kr_data.KRData import KRData
+from covid_19_au_grab.overseas.kz_data.KZData import KZData
+#from covid_19_au_grab.overseas.mm_data.MMData import MMData
 from covid_19_au_grab.overseas.my_data.MYData import MYData
 from covid_19_au_grab.overseas.nz_data.NZData import NZData
 #from covid_19_au_grab.overseas.ph_data.PHData import PHData
+from covid_19_au_grab.overseas.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.sa_data.SAData import SAData
 from covid_19_au_grab.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.overseas.us_nyt_data.USNYTData import USNYTData
+from covid_19_au_grab.overseas.vn_data.VNData import VNData
 #from covid_19_au_grab.overseas.us_covidtracking_data.USCovidTrackingData import USCovidTrackingData
 #from covid_19_au_grab.overseas.world_eu_data.EUData import EUData
+from covid_19_au_grab.overseas.west_africa_data.WestAfricaData import WestAfricaData
 from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
 from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import WorldJHUData
 
@@ -64,14 +66,14 @@ def get_overseas_data():
         JPData,
         JPCityData,
         KRData,
-        #KZData,
+        KZData,
         LYData,
         #MLData,
         #MMData,
         MYData,
         NZData,
         #PHData,
-        #PSData,
+        PSData,
         SAData,
         SNData,
         SOData,
@@ -80,6 +82,7 @@ def get_overseas_data():
         WorldBingData,
         USNYTData,
         VEData,
+        VNData,
     ]:
         # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
         print("Getting using class:", i)
