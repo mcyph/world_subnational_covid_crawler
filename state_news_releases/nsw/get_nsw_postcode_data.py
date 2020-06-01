@@ -1,23 +1,19 @@
-import csv
 import json
 from collections import Counter
 from datetime import datetime, timedelta
 from urllib.request import urlretrieve
 from os import makedirs
-from os.path import dirname, exists
+from os.path import exists
 
 from covid_19_au_grab.get_package_dir import (
     get_data_dir
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_POSTCODE, DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
-from covid_19_au_grab.state_news_releases.gaps_filled_in import (
-    gaps_filled_in
 )
 
 
@@ -165,7 +161,6 @@ def get_nsw_postcode_data(postcode_to_lga):
 
 
 if __name__ == '__main__':
-    from pprint import pprint
     from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import get_nsw_tests_data
     data = get_nsw_postcode_data(get_nsw_tests_data()[0])
     #pprint(data)

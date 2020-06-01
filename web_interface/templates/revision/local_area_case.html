@@ -26,7 +26,7 @@
         {% for datapoint in datapoints %}
             <tr>
                 <td>
-                    {{- datapoint['region_parent']|upper -}}
+                    {{- datapoint['region_parent'].split('-')[-1]|upper -}}
                 </td>
                 <td>
                     {{- datapoint['region_schema'] -}}

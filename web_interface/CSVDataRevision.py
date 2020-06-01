@@ -4,7 +4,7 @@ import datetime
 from pytz import timezone
 from os.path import getctime
 from covid_19_au_grab.get_package_dir import get_package_dir
-from covid_19_au_grab.state_news_releases.constants import \
+from covid_19_au_grab.datatypes.constants import \
     schema_to_name, constant_to_name
 
 
@@ -211,7 +211,9 @@ class CSVDataRevision:
             for datapoint in self.get_combined_value(region_schema, datatype, region_parent,
                                                      from_date=from_date):
 
-                i_combined = combined.setdefault(datapoint['region_parent'], {})
+                i_combined = combined.setdefault(
+                    (datapoint['region_parent'], datapoint['region_child']), {}
+                )
 
                 if (
                     not 'date_updated' in i_combined or
@@ -226,8 +228,8 @@ class CSVDataRevision:
                 k = datatype
                 if datapoint['agerange']:
                     k = f"{k} ({datapoint['agerange']})"
-                if datapoint['region_child']:
-                    k = f"{k} ({datapoint['region_child']})"
+                #if datapoint['region_child']:
+                #    k = f"{k} ({datapoint['region_child']})"
 
                 i_combined['region_parent'] = datapoint['region_parent']
                 i_combined['region_child'] = datapoint['region_child']

@@ -1,17 +1,13 @@
 import json
 import datetime
 from os import listdir
-from os.path import expanduser
 from re import compile
 from pyquery import PyQuery as pq
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat, singledaystat
 )
-from covid_19_au_grab.state_news_releases import (
-    constants
-)
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA,
     DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_NEW, DT_TESTS_TOTAL,
@@ -21,7 +17,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY,
     DT_SOURCE_CONFIRMED
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import (

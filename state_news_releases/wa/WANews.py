@@ -1,19 +1,17 @@
-import glob
 from pyquery import PyQuery as pq
-from os.path import dirname, exists
 from re import compile, IGNORECASE, MULTILINE, DOTALL
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_TESTS_TOTAL, DT_TOTAL, DT_NEW,
     DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
     DT_STATUS_ICU, DT_STATUS_HOSPITALIZED,
     DT_STATUS_ACTIVE
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import (

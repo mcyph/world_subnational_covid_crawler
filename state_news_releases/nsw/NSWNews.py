@@ -13,7 +13,7 @@ from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import (
 from covid_19_au_grab.state_news_releases.nsw.get_nsw_postcode_data import (
     get_nsw_postcode_data
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_NEW,
@@ -25,7 +25,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_STATUS_ICU_VENTILATORS,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import (

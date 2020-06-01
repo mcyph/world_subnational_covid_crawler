@@ -1,4 +1,3 @@
-import csv
 import json
 import time
 import random
@@ -8,7 +7,6 @@ import datetime
 import mimetypes
 from shlex import quote
 from os import listdir, system
-from os.path import getctime, expanduser
 from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
@@ -25,7 +23,7 @@ from covid_19_au_grab.web_interface.CSVDataRevision import \
 from covid_19_au_grab.web_interface.CSVDataRevisions import \
     CSVDataRevisions
 
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     constant_to_name, schema_to_name,
     SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
@@ -37,7 +35,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_STATUS_UNKNOWN,
     DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
-    DT_SOURCE_CRUISE_SHIP, DT_SOURCE_INTERSTATE
+    DT_SOURCE_INTERSTATE
 )
 from covid_19_au_grab.get_package_dir import get_package_dir
 
@@ -205,18 +203,18 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_ADMIN_1, DT_TOTAL, None),
-                        (SCHEMA_ADMIN_1, DT_NEW, None),
-                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS, None),
-                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', None),
-                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED, None),
-                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', None),
-                        (SCHEMA_ADMIN_1, DT_TESTS_TOTAL, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, None),
-                        (SCHEMA_ADMIN_1, DT_STATUS_HOSPITALIZED, None),
-                        (SCHEMA_ADMIN_1, DT_STATUS_ICU, None),
+                        (SCHEMA_ADMIN_1, DT_TOTAL, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_NEW, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS, 'AU'),
+                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED, 'AU'),
+                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', 'AU'),
+                        (SCHEMA_ADMIN_1, DT_TESTS_TOTAL, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_HOSPITALIZED, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_ICU, 'AU'),
                     ),
                     from_date=from_date
                 )
@@ -255,11 +253,11 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_ADMIN_1, DT_SOURCE_OVERSEAS, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, None),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_UNDER_INVESTIGATION, None),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_OVERSEAS, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_SOURCE_UNDER_INVESTIGATION, 'AU'),
                     ),
                     from_date=from_date
                 )
@@ -340,7 +338,9 @@ class App(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def regionsTimeSeries(self, rev_date=None, rev_subid=None):
+    def regionsTimeSeries(self, rev_date=None, rev_subid=None,
+                          compat_mode=True):
+
         if rev_date is None:
             # Output the last successful run if
             # rev_date/rev_subid not supplied
@@ -360,7 +360,7 @@ class App(object):
         max_dates = {}
 
         for region_schema, region_parent, datatypes in (
-            (SCHEMA_ADMIN_1, 'act', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-ACT', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_RECOVERED,
@@ -374,7 +374,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'nsw', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-NSW', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -391,14 +391,14 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'nt', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-NT', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
                                       DT_STATUS_ICU,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_HOSPITALIZED,
                                       )),
-            (SCHEMA_ADMIN_1, 'qld', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-QLD', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -413,7 +413,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'sa', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-SA', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_RECOVERED,
@@ -427,14 +427,14 @@ class App(object):
                                       DT_SOURCE_INTERSTATE,
                                       DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
-            (SCHEMA_ADMIN_1, 'tas', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-TAS', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
                                        DT_STATUS_RECOVERED,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
                                        DT_STATUS_HOSPITALIZED,
                                        )),
-            (SCHEMA_ADMIN_1, 'vic', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-VIC', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        #DT_STATUS_ACTIVE,
@@ -450,7 +450,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'wa', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU-WA', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_ACTIVE,
@@ -467,7 +467,7 @@ class App(object):
                                       DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
 
-            (SCHEMA_LGA, 'nsw', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-NSW', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_DEATHS,
                                  DT_STATUS_RECOVERED,
@@ -479,7 +479,7 @@ class App(object):
                                  DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use LGA for totals, as don't have a long history
-            (SCHEMA_LGA, 'qld', (#DT_TOTAL,
+            (SCHEMA_LGA, 'AU-QLD', (#DT_TOTAL,
                                  DT_SOURCE_OVERSEAS,
                                  DT_SOURCE_CONFIRMED,
                                  DT_SOURCE_COMMUNITY,
@@ -487,16 +487,16 @@ class App(object):
                                  DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use SA for now, at least till can increase the accuracy
-            (SCHEMA_LGA, 'sa', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-SA', (DT_TOTAL,
                                 DT_STATUS_ACTIVE,
                                 )),
-            #(SCHEMA_LGA, 'tas', (DT_TOTAL,
+            #(SCHEMA_LGA, 'AU-TAS', (DT_TOTAL,
             #                     )),
-            (SCHEMA_LGA, 'vic', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-VIC', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
                                  )),
-            (SCHEMA_LGA, 'wa', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-WA', (DT_TOTAL,
                                 )),
 
             # NSW by postcode is possible, debating whether
@@ -504,7 +504,7 @@ class App(object):
             # * would require zooming in further
             # * would take orders of magnitude more time to download
             # * data comes in later each day than website
-            #(SCHEMA_POSTCODE, 'nsw', (DT_TOTAL,
+            #(SCHEMA_POSTCODE, 'AU-NSW', (DT_TOTAL,
             #                          DT_STATUS_ACTIVE,
             #                          DT_STATUS_DEATHS,
             #                          DT_STATUS_RECOVERED,
@@ -516,27 +516,32 @@ class App(object):
             #                          DT_SOURCE_UNDER_INVESTIGATION
             #                          )),
 
-            (SCHEMA_SA3, 'act', (DT_TOTAL,)),
+            (SCHEMA_SA3, 'AU-ACT', (DT_TOTAL,)),
             # LHD is used for Active/Recovered values
             # It's also available by postcode on the NSW gov's site
-            (SCHEMA_LHD, 'nsw', (DT_STATUS_ACTIVE,
-                                 DT_STATUS_DEATHS,
-                                 DT_STATUS_RECOVERED)),
-            (SCHEMA_THS, 'tas', (DT_TOTAL,
+            #(SCHEMA_LHD, 'AU-NSW', (DT_STATUS_ACTIVE,
+            #                     DT_STATUS_DEATHS,
+            #                     DT_STATUS_RECOVERED)),
+            (SCHEMA_THS, 'AU-TAS', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED
                                  )),
-            (SCHEMA_HHS, 'qld', (DT_TOTAL,
+            (SCHEMA_HHS, 'AU-QLD', (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
                                  DT_STATUS_DEATHS
                                  )),
         ):
             schema_name = schema_to_name(region_schema)[7:].lower()
-            if schema_name == 'admin_1':
-                schema_name = 'statewide'  #  Back-compat HACK! ==========================================================
 
-            schema_key = f'{region_parent}:{schema_name}'
+            if compat_mode:
+                if schema_name == 'admin_1':
+                    schema_name = 'statewide'  # Back-compat HACK! ==========================================================
+                i_region_parent = region_parent.split('-')[-1].lower()
+            else:
+                i_region_parent = region_parent
+
+            schema_key = f'{i_region_parent}:{schema_name}'
             i_max_date, r[schema_key] = self.__get_time_series(
                 from_dates, inst,
                 region_schema, region_parent, datatypes,
@@ -642,7 +647,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
-            #'environment': 'production',
+            'environment': 'production',
         },
         '/': {
 

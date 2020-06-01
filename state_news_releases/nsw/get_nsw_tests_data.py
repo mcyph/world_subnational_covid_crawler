@@ -8,14 +8,11 @@ from os.path import dirname, exists
 from covid_19_au_grab.get_package_dir import (
     get_data_dir
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, DT_TESTS_TOTAL, DT_TESTS_POSITIVE, DT_TESTS_NEGATIVE
-)
-from covid_19_au_grab.state_news_releases.gaps_filled_in import (
-    gaps_filled_in
 )
 
 

@@ -20,12 +20,12 @@
             <th>dateOfData</th>
         </tr>
         {% for datapoint in datapoints %}
-            {% if datapoint['region_parent'] == 'act' and datapoint['agerange'] in ('0-29', '70+') %}
+            {% if datapoint['region_child'] == 'AU-ACT' and datapoint['agerange'] in ('0-29', '70+') %}
                 <!-- ACT HACK!! -->
             {% else %}
             <tr>
                 <td>
-                    <span>{{- datapoint['region_parent']|upper -}}</span>
+                    <span>{{- datapoint['region_child'].split('-')[-1]|upper -}}</span>
                 </td>
                 <td>
                     {{- datapoint['agerange'] -}}

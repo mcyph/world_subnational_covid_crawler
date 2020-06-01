@@ -3,7 +3,7 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     DT_STATUS_RECOVERED, DT_TOTAL, DT_TESTS_TOTAL
 )
 

@@ -1,7 +1,7 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_SA3,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP,
@@ -11,7 +11,7 @@ from covid_19_au_grab.state_news_releases.constants import (
 from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
     ACTPowerBI, get_globals
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import (

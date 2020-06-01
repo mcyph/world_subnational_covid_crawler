@@ -7,17 +7,14 @@ from os.path import dirname, exists
 from covid_19_au_grab.get_package_dir import (
     get_data_dir
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_POSTCODE, DT_TOTAL,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_INTERSTATE,
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
     DT_SOURCE_OVERSEAS
-)
-from covid_19_au_grab.state_news_releases.gaps_filled_in import (
-    gaps_filled_in
 )
 
 

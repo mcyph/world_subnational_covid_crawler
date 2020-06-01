@@ -14,7 +14,7 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.state_news_releases.constants import constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
 from covid_19_au_grab.get_package_dir import get_package_dir
 
 
@@ -239,9 +239,32 @@ if __name__ == '__main__':
             yyyy, mm, dd = datapoint.date_updated.split('_')
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
+            state_map = {
+                'nsw': 'AU-NSW',
+                'vic': 'AU-VIC',
+                'qld': 'AU-QLD',
+                'wa': 'AU-WA',
+                'tas': 'AU-TAS',
+                'act': 'AU-ACT',
+                'sa': 'AU-SA',
+                'nt': 'AU-NT',
+            }
+
+            if datapoint.region_schema == SCHEMA_ADMIN_1 and not datapoint.region_child:
+                i_region_parent = 'AU'
+                i_region_child = state_map.get(
+                    region_parent, region_parent
+                )
+            else:
+                i_region_parent = state_map.get(
+                    datapoint.region_parent or region_parent,
+                    datapoint.region_parent or region_parent
+                )
+                i_region_child = datapoint.region_child
+
             print(f'{schema_to_name(datapoint.region_schema)[7:].lower()}\t'
-                  f'{datapoint.region_parent or region_parent}\t'
-                  f'{datapoint.region_child}\t'
+                  f'{i_region_parent}\t'
+                  f'{i_region_child}\t'
                   f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
                   f'{datapoint.agerange}\t'
                   f'{datapoint.value}\t'

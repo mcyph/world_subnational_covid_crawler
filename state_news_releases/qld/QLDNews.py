@@ -5,7 +5,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat,
     ALWAYS_DOWNLOAD_LISTING
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     # Only newer data by LGA (not much history)
     SCHEMA_LGA, SCHEMA_HHS,
 
@@ -22,7 +22,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED,
     DT_SOURCE_OVERSEAS
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import (

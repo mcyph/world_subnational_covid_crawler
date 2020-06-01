@@ -7,7 +7,7 @@ from os.path import dirname, exists
 from covid_19_au_grab.URLArchiver import (
     URLArchiver
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA,
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_TESTS_TOTAL, DT_TOTAL, DT_NEW,
@@ -18,7 +18,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
     DT_SOURCE_CRUISE_SHIP, DT_SOURCE_UNDER_INVESTIGATION
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.get_package_dir import (

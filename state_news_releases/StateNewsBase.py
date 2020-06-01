@@ -3,11 +3,11 @@ from pyquery import PyQuery as pq
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
-from covid_19_au_grab.state_news_releases.DataPoint import \
+from covid_19_au_grab.datatypes.DataPoint import \
     DataPoint, _DataPoint
 from covid_19_au_grab.URLArchiver import \
     URLArchiver
-from covid_19_au_grab.state_news_releases.constants import \
+from covid_19_au_grab.datatypes.constants import \
     SCHEMA_ADMIN_1
 
 

@@ -7,14 +7,14 @@ from re import compile, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat, bothlistingandstat
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_THS,
     DT_TOTAL, DT_NEW, DT_TESTS_TOTAL,
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
     DT_STATUS_ICU, DT_STATUS_HOSPITALIZED
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.word_to_number import (
@@ -31,7 +31,7 @@ TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
     LISTING_URL = (
-        'https://www.dhhs.tas.gov.au/news/2020', 
+        'https://www.dhhs.tas.gov.au/news/2020',
         'https://www.coronavirus.tas.gov.au/',
         'https://coronavirus.tas.gov.au/media-releases',
         'https://coronavirus.tas.gov.au/media-releases?result_85500_result_page=2',

@@ -15,8 +15,8 @@ def _get_mappings_to_iso_3166():
     with open(get_package_dir() / 'datatypes' / 'schema_mappings.csv',
               'r', encoding='utf-8') as f:
         for item in csv.DictReader(f, delimiter='\t'):
-            r[name_to_schema(item['original_schema']), item['original_parent'], item['original_child']] = (
-                name_to_schema(item['schema']), item['parent'], item['child']
+            r[name_to_schema(item['original_schema'].strip()), item['original_parent'].strip(), item['original_child'].strip()] = (
+                name_to_schema(item['schema'].strip()), item['parent'].strip(), item['child'].strip()
             )
 
     return r

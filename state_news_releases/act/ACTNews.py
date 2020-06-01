@@ -4,7 +4,7 @@ from re import compile, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
-from covid_19_au_grab.state_news_releases.constants import (
+from covid_19_au_grab.datatypes.constants import (
     DT_TOTAL, DT_NEW,
     DT_NEW_MALE, DT_NEW_FEMALE,
     DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -15,7 +15,7 @@ from covid_19_au_grab.state_news_releases.constants import (
     DT_STATUS_RECOVERED, DT_STATUS_HOSPITALIZED,
     DT_STATUS_DEATHS
 )
-from covid_19_au_grab.state_news_releases.DataPoint import (
+from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.state_news_releases.act.act_powerbi import (

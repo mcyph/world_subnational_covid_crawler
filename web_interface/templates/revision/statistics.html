@@ -28,7 +28,7 @@
         </tr>
         {% for datapoint in datapoints %}
             <tr>
-                <td>{{ datapoint['region_parent']|upper }}</td>
+                <td>{{ datapoint['region_child'].split('-')[-1]|upper }}</td>
                 <td {{new_star(datapoint, 'total', date_today)}} title="{{ datapoint['total date_updated'] }} {{ datapoint['total text_match']|e }}"><a href="{{ datapoint['total source_url'] }}">
                     {{- datapoint['total'] -}}
                 </a></td>
