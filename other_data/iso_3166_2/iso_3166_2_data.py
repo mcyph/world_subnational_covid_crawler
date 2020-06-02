@@ -1,3 +1,4 @@
+import re
 import csv
 import pycountry
 from collections import namedtuple
@@ -81,7 +82,17 @@ def get_data_item_by_name(name, country=None):
     if country:
         # Best to use a country, in case of collisions!
         # TODO: Convret English country names to a code, first!
-        if (country.lower(), name.lower()) not in _data_items_by_name_country:
+        country = country.lower()
+        name = name.lower()
+
+        if (country, name) not in _data_items_by_name_country:
+            country = country.replace("côte d'ivoire", "ivory coast")
+            country = country.replace("cabo verde", "cape verde")
+            country = re.sub(r'\bthe|of|respublika|oblast|avtonomnyy okrug|okrug|republic\b', '', country).strip().strip(',')
+
+            while '  ' in country:
+                country = country.replace('  ', ' ')
+
             item = _get_3166_1_by_name(country)
             country = item.iso3166.a2
 
@@ -92,6 +103,7 @@ def get_data_item_by_name(name, country=None):
 if __name__ == '__main__':
     from pprint import pprint
     pprint(_get_data_items_by_name())
+    print(get_data_item_by_name('Brazzaville', country='Republic of congo'))
     print(get_data_item_by_code('au-vic'))
     print(get_data_item_by_code('au-tas'))
     print(get_data_item_by_name('victoria'))

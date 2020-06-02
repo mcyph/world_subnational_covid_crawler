@@ -1,3 +1,4 @@
+import re
 import csv
 from collections import namedtuple
 from covid_19_au_grab.get_package_dir import get_package_dir
@@ -198,6 +199,11 @@ def _get_data_items_by_name():
                 continue
 
             assert r.get(en_name, i) == i, (en_name, i)
+            r[en_name] = i
+
+            en_name = re.sub(r'\bthe|of|respublika|oblast|avtonomnyy okrug|okrug|republic\b', '', en_name).strip().strip(',')
+            while '  ' in en_name:
+                en_name = en_name.replace('  ', ' ')
             r[en_name] = i
     return r
 

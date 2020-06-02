@@ -73,6 +73,15 @@
             "underlay_file": null
         },
 
+        "bd_district": {
+            "iso_3166": "BD",
+            "min_zoom": 8,
+            "priority": -1,
+            "line_width": 0.5,
+            "data_file": "bd_district.json",
+            "geojson_file": "bd_district.geojson",
+            "underlay_file": null
+        },
         "br_city": {
             "iso_3166": "BR",
             "min_zoom": 8,

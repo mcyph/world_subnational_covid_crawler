@@ -1,25 +1,50 @@
 original_schema	original_parent	original_child	schema	parent	child
+admin_1	Albania	NOT SPECIFIED	admin_1	UA	Unknown
+admin_1	Austria	NOT SPECIFIED	admin_1	UA	Unknown
 admin_1	Belgium	Brussels	admin_1	BE	BE-BRU
 admin_1	Belgium	Flanders	admin_1	BE	BE-VLG
+admin_1	Belgium	NOT SPECIFIED	admin_1	UA	Unknown
 admin_1	Belgium	Wallonia	admin_1	BE	BE-WAL
+admin_1	Bulgaria	NOT SPECIFIED	admin_1	UA	Unknown
 admin_1	Canada		admin_0		CA
 admin_1	China	Hong Kong	admin_0		HK
 admin_1	China	Inner Mongolia	admin_1	CN	CN-NM
 admin_1	China	Tibet	admin_1	CN	CN-XZ
+admin_1	Croatia	Bjelovarsko-bilogorska	admin_1	HR	HR-07
+admin_1	Croatia	Brodsko-Posavska	admin_1	HR	HR-12
+admin_1	Croatia	Dubrovačko-neretvanska	admin_1	HR	HR-19
 admin_1	Croatia	Istarska	admin_1	HR	HR-18
+admin_1	Croatia	Karlovačka	admin_1	HR	HR-04
+admin_1	Croatia	Koprivničko-križevačka	admin_1	HR	HR-06
+admin_1	Croatia	Ličko-senjska	admin_1	HR	HR-09
+admin_1	Croatia	Međimurska	admin_1	HR	HR-20
+admin_1	Croatia	Osječko-baranjska	admin_1	HR	HR-14
+admin_1	Croatia	Požeško-slavonska	admin_1	HR	HR-11
 admin_1	Croatia	Primorsko-Goranska	admin_1	HR	HR-08
+admin_1	Croatia	Šibensko-kninska	admin_1	HR	HR-15
+admin_1	Croatia	Sisačko-moslavačka	admin_1	HR	HR-03
+admin_1	Croatia	Splitsko-Dalmatinska	admin_1	HR	HR-17
 admin_1	Croatia	Varaždinska	admin_1	HR	HR-05
+admin_1	Croatia	Virovitičko-podravska	admin_1	HR	HR-10
+admin_1	Croatia	Vukovarsko-srijemska	admin_1	HR	HR-16
+admin_1	Croatia	Zadarska	admin_1	HR	HR-13
+admin_1	Croatia	Zagrebačka	admin_1	HR	HR-01
 admin_1	Denmark	Denmark	admin_0		DK
 admin_1	Denmark	Faroe	admin_0		FO
 admin_1	Denmark	Faroe Islands	admin_0		FO
 admin_1	Denmark	Greenland	admin_0		GL
+admin_1	Denmark	NOT SPECIFIED	admin_1	DK	Unknown
+admin_1	Finland	Vaasa	admin_1	FI	FI-12
 admin_1	France	Fench Guiana	admin_1	FR	FR-GF
 admin_1	France	France	admin_0		FR
 admin_1	France	French Guiana	admin_0		GF
 admin_1	France	French Polynesia	admin_0		PF
 admin_1	France	Grand Est	admin_1	FR	FR-GES
 admin_1	France	Guyane	admin_0		GF
+admin_1	France	La Réunion	admin_0	FR	RE
+admin_1	France	La Réunion	admin_0		RE
 admin_1	France	New Caledonia	admin_0		NC
+admin_1	France	NOT SPECIFIED	admin_1	FR	Unknown
 admin_1	France	Pays de la Loire	admin_1	FR	FR-PDL
 admin_1	France	Provence-Alpes-Côte d'Azur	admin_1	FR	FR-PAC
 admin_1	France	Reunion	admin_0		RE
@@ -28,66 +53,20 @@ admin_1	France	Saint Pierre and Miquelon	admin_0		PM
 admin_1	France	St Martin	admin_0		SX
 admin_1	Germany	NOT SPECIFIED	admin_1	DE	Unknown
 admin_1	Germany	Schleswig Holstein	admin_1	DE	DE-SH
-admin_1	Hungary	NOT SPECIFIED	admin_1	HU	Unknown
-admin_1	Italy	Friuli Venezia Giulia	admin_1	IT	IT-36
-admin_1	Netherlands	Curacao	admin_0		CW
-admin_1	Netherlands	Netherlands	admin_0		NL
-admin_1	Netherlands	North Brabant	admin_1	NL	NL-NB
-admin_1	Netherlands	North Holland	admin_1	NL	NL-NH
-admin_1	Netherlands	NOT SPECIFIED	admin_1	NL	Unknown
-admin_1	Netherlands	South Holland	admin_1	NL	NL-ZH
-admin_1	Portugal	Lisbon	admin_1	PT	PT-11
-admin_1	Slovakia	Bratislava	admin_1	SK	SK-BL
-admin_1	Spain	Cataluña	admin_1	ES	ES-CT
-admin_1	Spain	Comunidad de Madrid	admin_1	ES	ES-MD
-admin_1	Spain	Comunidad Foral de Navarra	admin_1	ES	ES-NA
-admin_1	Spain	Comunidad Valenciana	admin_1	ES	ES-VC
-admin_1	Spain	Principado de Asturias	admin_1	ES	ES-AS
-admin_1	Spain	Región de Murcia	admin_1	ES	ES-MC
-admin_1	Sweden	Blekinge	admin_1	SE	SE-K
-admin_1	Sweden	Gävleborg	admin_1	SE	SE-X
-admin_1	Sweden	Halland	admin_1	SE	SE-N
-admin_1	Sweden	Jämtland	admin_1	SE	SE-Z
-admin_1	Sweden	Jönköping	admin_1	SE	SE-F
-admin_1	Sweden	Kalmar	admin_1	SE	SE-H
-admin_1	Sweden	Kronoberg	admin_1	SE	SE-G
-admin_1	Sweden	Norrbotten	admin_1	SE	SE-BD
-admin_1	Sweden	NOT SPECIFIED	admin_1	SE	Unknown
-admin_1	Sweden	Örebro	admin_1	SE	SE-T
-admin_1	Sweden	Skåne	admin_1	SE	SE-M
-admin_1	Sweden	Södermanland	admin_1	SE	SE-D
-admin_1	Sweden	Stockholm	admin_1	SE	SE-AB
-admin_1	Sweden	Uppsala	admin_1	SE	SE-C
-admin_1	Sweden	Värmland	admin_1	SE	SE-S
-admin_1	Sweden	Västerbotten	admin_1	SE	SE-AC
-admin_1	Sweden	Västernorrland	admin_1	SE	SE-Y
-admin_1	Sweden	Västra Götaland	admin_1	SE	SE-O
-admin_1	Switzerland	Basel City	admin_1	CH	CH-BS
-admin_1	Switzerland	Basel Country	admin_1	CH	CH-BL
-admin_1	Switzerland	Geneva	admin_1	CH	CH-GE
-admin_1	Switzerland	Liechtenstein	admin_0		LI
-admin_1	Switzerland	St. Gallen	admin_1	CH	CH-SG
-admin_1	Taiwan	Taiwan	admin_0		TW
-admin_1	United Kingdom	Anguilla	admin_0		AI
-admin_1	United Kingdom	Bermuda	admin_0		BM
-admin_1	United Kingdom	British Virgin Islands	admin_0		VG
-admin_1	United Kingdom	Cayman Islands	admin_0		KY
-admin_1	United Kingdom	Channel Islands	admin_1	GB	GB-CHA
-admin_1	United Kingdom	Falkland Islands (Malvinas)	admin_0		FK
-admin_1	United Kingdom	Gibraltar	admin_0		GI
-admin_1	United Kingdom	Isle of Man	admin_0		IM
-admin_1	United Kingdom	London	admin_1	GB	GB-LND
-admin_1	United Kingdom	Montserrat	admin_0		MS
-admin_1	United Kingdom	Turks and Caicos Islands	admin_0		TC
-admin_1	US	United States Virgin Islands	admin_0		VI
-admin_0		Cabo Verde	admin_0		CV
-admin_0		Congo (Kinshasa)	admin_0		CD
-admin_0		Czechia	admin_0		CZ
-admin_0		Eswatini	admin_0		SZ
-admin_0		Holy See	admin_0		VA
-admin_0		North Macedonia	admin_0		MK
-admin_0		Palestine	admin_0		PS
-admin_0		Taiwan*	admin_0		TW
+admin_1	Greece	Achaea	admin_1	GR	GR-13
+admin_1	Greece	Aitolia and Akarnania	admin_1	GR	GR-01
+admin_1	Greece	Argolis	admin_1	GR	GR-11
+admin_1	Greece	Arkadias	admin_1	GR	GR-12
+admin_1	Greece	Athens	admin_1	GR	GR-A1
+admin_1	Greece	Athos	admin_0		AH
+admin_1	Greece	Beozia	admin_1	GR	GR-03
+admin_1	Greece	Corfu	admin_1	GR	GR-22
+admin_1	Greece	Corinth	admin_1	GR	GR-15
+admin_1	Greece	Cyclades	admin_1	GR	GR-82
+admin_1	Greece	Dodecaneso	admin_1	GR	GR-81
+admin_1	Greece	East Attica	admin_1	GR	GR-A2
+admin_1	Greece	Elis	admin_1	GR	GR-14
+admin_1	Greece	Euboea	admin_1	GR	GR-04
 admin_1	Greece	Fthiotis	admin_1	GR	GR-06
 admin_1	Greece	Heraklion	admin_1	GR	GR-91
 admin_1	Greece	Ikaria	admin_1	GR	GR-84
@@ -109,6 +88,9 @@ admin_1	Greece	Tessaloniki	admin_1	GR	GR-54
 admin_1	Greece	Trikalon	admin_1	GR	GR-44
 admin_1	Greece	West Attica	admin_1	GR	GR-A3
 admin_1	Greece	Xanthis	admin_1	GR	GR-72
+admin_1	Haiti	Grand Anse	admin_1	HT	HT-GA
+admin_1	Haiti	Nippes	admin_1	HT	HT-NI
+admin_1	Hungary	NOT SPECIFIED	admin_1	HU	Unknown
 admin_1	Iceland	Abroad	admin_1	IS	Other
 admin_1	Iceland	East Iceland	admin_1	IS	IS-7
 admin_1	Iceland	Greater Reykjavík	admin_1	IS	IS-1
@@ -117,6 +99,294 @@ admin_1	Iceland	Northwest Iceland	admin_1	IS	IS-5
 admin_1	Iceland	NOT SPECIFIED	admin_1	IS	Unknown
 admin_1	Iceland	South Iceland	admin_1	IS	IS-8
 admin_1	Iceland	Suðurnes Peninsula	admin_1	IS	IS-2
-admin_1	Iceland	West Fjords	admin_1	v	IS-4
+admin_1	Iceland	West Fjords	admin_1	IS	IS-4
 admin_1	Iceland	West Iceland	admin_1	IS	IS-3
+admin_1	Italy	Friuli Venezia Giulia	admin_1	IT	IT-36
+admin_1	Italy	P.A. Bolzano	admin_1	IT	IT-BZ
+admin_1	Italy	P.A. Trento	admin_1	IT	IT-TN
+admin_1	Libya	Misurata	admin_1	LY	LY-MI
+admin_1	Libya	Zawia	admin_1	LY	LY-ZA
+admin_1	Netherlands	Curacao	admin_0		CW
+admin_1	Netherlands	Netherlands	admin_0		NL
+admin_1	Netherlands	North Brabant	admin_1	NL	NL-NB
+admin_1	Netherlands	North Holland	admin_1	NL	NL-NH
+admin_1	Netherlands	NOT SPECIFIED	admin_1	NL	Unknown
+admin_1	Netherlands	South Holland	admin_1	NL	NL-ZH
+admin_1	Norway	Agder	admin_1	NO	NO-42
+admin_1	Norway	Innlandet	admin_1	NO	NO-34
+admin_1	Norway	NOT SPECIFIED	admin_1	NO	Unknown
+admin_1	Norway	Troms og Finnmark	admin_1	NO	NO-54
+admin_1	Norway	Trøndelag	admin_1	NO	NO-50
+admin_1	Norway	Vestfold og Telemark	admin_1	NO	NO-38
+admin_1	Norway	Vestland	admin_1	NO	NO-46
+admin_1	Norway	Viken	admin_1	NO	NO-30
+admin_1	Portugal	Lisbon	admin_1	PT	PT-11
 admin_1	Portugal	NOT SPECIFIED	admin_1	PT	Unknown
+admin_1	Romania	Costanza	admin_1	RO	RO-CT
+admin_1	Romania	NOT SPECIFIED	admin_1	RO	Unknown
+admin_1	Russian Federation	Adygea	admin_1	RU	RU-AD
+admin_1	Russian Federation	Altai	admin_1	RU	RU-ALT
+admin_1	Russian Federation	Altai Republic	admin_1	RU	RU-AL
+admin_1	Russian Federation	Amur	admin_1	RU	RU-AMU
+admin_1	Russian Federation	Arkhangelsk	admin_1	RU	RU-ARK
+admin_1	Russian Federation	Astrakhan	admin_1	RU	RU-AST
+admin_1	Russian Federation	Bashkortostan	admin_1	RU	RU-BA
+admin_1	Russian Federation	Belgorod	admin_1	RU	RU-BEL
+admin_1	Russian Federation	Bryansk	admin_1	RU	RU-BRY
+admin_1	Russian Federation	Buryatia	admin_1	RU	RU-BU
+admin_1	Russian Federation	Chechnya	admin_1	RU	RU-CE
+admin_1	Russian Federation	Chelyabinsk	admin_1	RU	RU-CHE
+admin_1	Russian Federation	Chukotka	admin_1	RU	RU-CHU
+admin_1	Russian Federation	Chuvashia	admin_1	RU	RU-CU
+admin_1	Russian Federation	Dagestan	admin_1	RU	RU-DA
+admin_1	Russian Federation	Ingushetia	admin_1	RU	RU-IN
+admin_1	Russian Federation	Irkutsk	admin_1	RU	RU-IRK
+admin_1	Russian Federation	Ivanovo	admin_1	RU	RU-IVA
+admin_1	Russian Federation	Jewish AO	admin_1	RU	RU-YEV
+admin_1	Russian Federation	Kabardino-Balkaria	admin_1	RU	RU-KB
+admin_1	Russian Federation	Kaliningrad	admin_1	RU	RU-KGD
+admin_1	Russian Federation	Kalmykia	admin_1	RU	RU-KL
+admin_1	Russian Federation	Kaluga	admin_1	RU	RU-KLU
+admin_1	Russian Federation	Kamchatka	admin_1	RU	RU-KAM
+admin_1	Russian Federation	Karachay-Cherkessia	admin_1	RU	RU-KC
+admin_1	Russian Federation	Kemerovo	admin_1	RU	RU-KEM
+admin_1	Russian Federation	Khabarovsk	admin_1	RU	RU-KHA
+admin_1	Russian Federation	Khakassia	admin_1	RU	RU-KK
+admin_1	Russian Federation	Khanty-Mansi AO	admin_1	RU	RU-KHM
+admin_1	Russian Federation	Kirov	admin_1	RU	RU-KIR
+admin_1	Russian Federation	Komi Republic	admin_1	RU	RU-KO
+admin_1	Russian Federation	Kostroma	admin_1	RU	RU-KOS
+admin_1	Russian Federation	Krasnodar	admin_1	RU	RU-KDA
+admin_1	Russian Federation	Krasnoyarsk	admin_1	RU	RU-KYA
+admin_1	Russian Federation	Kurgan	admin_1	RU	RU-KGN
+admin_1	Russian Federation	Kursk	admin_1	RU	RU-KRS
+admin_1	Russian Federation	Leningrad	admin_1	RU	RU-LEN
+admin_1	Russian Federation	Lipetsk	admin_1	RU	RU-LIP
+admin_1	Russian Federation	Magadan	admin_1	RU	RU-MAG
+admin_1	Russian Federation	Mari El	admin_1	RU	RU-ME
+admin_1	Russian Federation	Mordovia	admin_1	RU	RU-MO
+admin_1	Russian Federation	Moscow	admin_1	RU	RU-MOW
+admin_1	Russian Federation	Murmansk	admin_1	RU	RU-MUR
+admin_1	Russian Federation	Nenets	admin_1	RU	RU-NEN
+admin_1	Russian Federation	Nizhny Novgorod	admin_1	RU	RU-NIZ
+admin_1	Russian Federation	North Ossetia-Alania	admin_1	RU	RU-SE
+admin_1	Russian Federation	Novgorod	admin_1	RU	RU-NGR
+admin_1	Russian Federation	Novosibirsk	admin_1	RU	RU-NVS
+admin_1	Russian Federation	Omsk	admin_1	RU	RU-OMS
+admin_1	Russian Federation	Orenburg	admin_1	RU	RU-ORE
+admin_1	Russian Federation	Oryol	admin_1	RU	RU-ORL
+admin_1	Russian Federation	Penza	admin_1	RU	RU-PNZ
+admin_1	Russian Federation	Perm	admin_1	RU	RU-PER
+admin_1	Russian Federation	Primorsky	admin_1	RU	RU-PRI
+admin_1	Russian Federation	Pskov	admin_1	RU	RU-PSK
+admin_1	Russian Federation	Republic of Crimea	admin_1	UA	UA-43
+admin_1	Russian Federation	Republic of Karelia	admin_1	RU	RU-KR
+admin_1	Russian Federation	Rostov	admin_1	RU	RU-ROS
+admin_1	Russian Federation	Ryazan	admin_1	RU	RU-RYA
+admin_1	Russian Federation	Saint Petersburg	admin_1	RU	RU-SPE
+admin_1	Russian Federation	Sakhalin	admin_1	RU	RU-SAK
+admin_1	Russian Federation	Samara	admin_1	RU	RU-SAM
+admin_1	Russian Federation	Saratov	admin_1	RU	RU-SAR
+admin_1	Russian Federation	Smolensk	admin_1	RU	RU-SMO
+admin_1	Russian Federation	Stavropol	admin_1	RU	RU-STA
+admin_1	Russian Federation	Sverdlovsk	admin_1	RU	RU-SVE
+admin_1	Russian Federation	Tambov	admin_1	RU	RU-TAM
+admin_1	Russian Federation	Tatarstan	admin_1	RU	RU-TA
+admin_1	Russian Federation	Tomsk	admin_1	RU	RU-TOM
+admin_1	Russian Federation	Tula	admin_1	RU	RU-TUL
+admin_1	Russian Federation	Tuva	admin_1	RU	RU-TY
+admin_1	Russian Federation	Tver	admin_1	RU	RU-TVE
+admin_1	Russian Federation	Tyumen	admin_1	RU	RU-TYU
+admin_1	Russian Federation	Udmurtia	admin_1	RU	RU-UD
+admin_1	Russian Federation	Ulyanovsk	admin_1	RU	RU-ULY
+admin_1	Russian Federation	Vladimir	admin_1	RU	RU-VLA
+admin_1	Russian Federation	Volgograd	admin_1	RU	RU-VGG
+admin_1	Russian Federation	Vologda	admin_1	RU	RU-VLG
+admin_1	Russian Federation	Voronezh	admin_1	RU	RU-VOR
+admin_1	Russian Federation	Yakutia	admin_1	RU	RU-SA
+admin_1	Russian Federation	Yamalo-Nenets AO	admin_1	RU	RU-YAN
+admin_1	Russian Federation	Yaroslavl	admin_1	RU	RU-YAR
+admin_1	Russian Federation	Zabaykalsky	admin_1	RU	RU-ZAB
+admin_1	Slovakia	Banská	admin_1	SK	SK-BC
+admin_1	Slovakia	Bratislava	admin_1	SK	SK-BL
+admin_1	Slovakia	Košice	admin_1	SK	SK-KI
+admin_1	Slovakia	Nitra	admin_1	SK	SK-NI
+admin_1	Slovakia	NOT SPECIFIED	admin_1	SK	Unknown
+admin_1	Slovakia	Prešov	admin_1	SK	SK-PV
+admin_1	Slovakia	Trencín	admin_1	SK	SK-TC
+admin_1	Slovakia	Trnava	admin_1	SK	SK-TR
+admin_1	Slovakia	Zilina	admin_1	SK	SK-ZI
+admin_1	South Korea	Busan	admin_1	KR	KR-26
+admin_1	South Korea	Daegu	admin_1	KR	KR-27
+admin_1	South Korea	Daejeon	admin_1	KR	KR-30
+admin_1	South Korea	Gwangju	admin_1	KR	KR-29
+admin_1	South Korea	Incheon	admin_1	KR	KR-28
+admin_1	South Korea	Jeju-do	admin_1	KR	KR-49
+admin_1	South Korea	Sejong	admin_1	KR	KR-50
+admin_1	South Korea	Seoul	admin_1	KR	KR-11
+admin_1	South Korea	Ulsan	admin_1	KR	KR-31
+admin_1	Spain	Cataluña	admin_1	ES	ES-CT
+admin_1	Spain	Ciudad Autónoma de Ceuta	admin_1	ES	ES-CE
+admin_1	Spain	Ciudad Autónoma de Melilla	admin_1	ES	ES-ML
+admin_1	Spain	Comunidad de Madrid	admin_1	ES	ES-MD
+admin_1	Spain	Comunidad Foral de Navarra	admin_1	ES	ES-NA
+admin_1	Spain	Comunidad Valenciana	admin_1	ES	ES-VC
+admin_1	Spain	Principado de Asturias	admin_1	ES	ES-AS
+admin_1	Spain	Región de Murcia	admin_1	ES	ES-MC
+admin_1	Sweden	Blekinge	admin_1	SE	SE-K
+admin_1	Sweden	Dalarna	admin_1	SE	SE-W
+admin_1	Sweden	Gävleborg	admin_1	SE	SE-X
+admin_1	Sweden	Gotland	admin_1	SE	SE-I
+admin_1	Sweden	Halland	admin_1	SE	SE-N
+admin_1	Sweden	Jämtland	admin_1	SE	SE-Z
+admin_1	Sweden	Jönköping	admin_1	SE	SE-F
+admin_1	Sweden	Kalmar	admin_1	SE	SE-H
+admin_1	Sweden	Kronoberg	admin_1	SE	SE-G
+admin_1	Sweden	Norrbotten	admin_1	SE	SE-BD
+admin_1	Sweden	NOT SPECIFIED	admin_1	SE	Unknown
+admin_1	Sweden	Örebro	admin_1	SE	SE-T
+admin_1	Sweden	Östergötland	admin_1	SE	SE-E
+admin_1	Sweden	Skåne	admin_1	SE	SE-M
+admin_1	Sweden	Södermanland	admin_1	SE	SE-D
+admin_1	Sweden	Stockholm	admin_1	SE	SE-AB
+admin_1	Sweden	Uppsala	admin_1	SE	SE-C
+admin_1	Sweden	Värmland	admin_1	SE	SE-S
+admin_1	Sweden	Västerbotten	admin_1	SE	SE-AC
+admin_1	Sweden	Västernorrland	admin_1	SE	SE-Y
+admin_1	Sweden	Västmanland	admin_1	SE	SE-U
+admin_1	Sweden	Västra Götaland	admin_1	SE	SE-O
+admin_1	Switzerland	Basel City	admin_1	CH	CH-BS
+admin_1	Switzerland	Basel Country	admin_1	CH	CH-BL
+admin_1	Switzerland	Geneva	admin_1	CH	CH-GE
+admin_1	Switzerland	Graubünden	admin_1	CH	CH-GR
+admin_1	Switzerland	Liechtenstein	admin_0		LI
+admin_1	Switzerland	Lucerne	admin_1	CH	CH-LU
+admin_1	Switzerland	Principality of Liechtenstein	admin_0		LI
+admin_1	Switzerland	St. Gallen	admin_1	CH	CH-SG
+admin_1	Ukraine	Cherkasy	admin_1	UA	UA-71
+admin_1	Ukraine	Chernihiv	admin_1	UA	UA-74
+admin_1	Ukraine	Chernivtsi	admin_1	UA	UA-77
+admin_1	Ukraine	Dnipropetrovsk	admin_1	UA	UA-12
+admin_1	Ukraine	Donetsk	admin_1	UA	UA-14
+admin_1	Ukraine	Ivano-Frankivsk	admin_1	UA	UA-26
+admin_1	Ukraine	Kharkiv	admin_1	UA	UA-63
+admin_1	Ukraine	Kherson	admin_1	UA	UA-65
+admin_1	Ukraine	Khmelnytsky	admin_1	UA	UA-68
+admin_1	Ukraine	Kiev	admin_1	UA	UA-32
+admin_1	Ukraine	Kirovograd	admin_1	UA	UA-35
+admin_1	Ukraine	Lugansk	admin_1	UA	UA-09
+admin_1	Ukraine	Lviv	admin_1	UA	UA-46
+admin_1	Ukraine	Mykolaiv	admin_1	UA	UA-48
+admin_1	Ukraine	NOT SPECIFIED	admin_1	UA	Unknown
+admin_1	Ukraine	Odessa	admin_1	UA	UA-51
+admin_1	Ukraine	Poltava	admin_1	UA	UA-53
+admin_1	Ukraine	Rivne	admin_1	UA	UA-56
+admin_1	Ukraine	Sumy	admin_1	UA	UA-59
+admin_1	Ukraine	Ternopil	admin_1	UA	UA-61
+admin_1	Ukraine	Transcarpathian	admin_1	UA	UA-21
+admin_1	Ukraine	Vinnytsia	admin_1	UA	UA-05
+admin_1	Ukraine	Volyn	admin_1	UA	UA-07
+admin_1	Ukraine	Zaporizhzhia	admin_1	UA	UA-23
+admin_1	Ukraine	Zhytomyr	admin_1	UA	UA-18
+admin_1	United Kingdom	Anguilla	admin_0		AI
+admin_1	United Kingdom	Bermuda	admin_0		BM
+admin_1	United Kingdom	British Virgin Islands	admin_0		VG
+admin_1	United Kingdom	Cayman Islands	admin_0		KY
+admin_1	United Kingdom	Channel Islands	admin_1	GB	GB-CHA
+admin_1	United Kingdom	Falkland Islands (Malvinas)	admin_0		FK
+admin_1	United Kingdom	Gibraltar	admin_0		GI
+admin_1	United Kingdom	Isle of Man	admin_0		IM
+admin_1	United Kingdom	London	admin_1	GB	GB-LND
+admin_1	United Kingdom	Montserrat	admin_0		MS
+admin_1	United Kingdom	Turks and Caicos Islands	admin_0		TC
+admin_1	US	United States Virgin Islands	admin_0		VI
+admin_0		Cabo Verde	admin_0		CV
+admin_0		Congo (Kinshasa)	admin_0		CD
+admin_0		Czechia	admin_0		CZ
+admin_0		Eswatini	admin_0		SZ
+admin_0		Holy See	admin_0		VA
+admin_0		North Macedonia	admin_0		MK
+admin_0		Palestine	admin_0		PS
+admin_1	Ethiopia	Addis Ababa	admin_1	ET	ET-AA
+admin_1	Ethiopia	Dire Dawa	admin_1	ET	ET-DD
+admin_1	Spain	Baleares	admin_1	ES	ES-PM
+admin_1	Spain	Castilla La Mancha	admin_1	ES	ES-CM
+admin_1	Spain	C. Valenciana	admin_1	ES	ES-VC
+admin_1	Spain	Navarra	admin_1	ES	ES-NA
+admin_1		Jihoceský	admin_1	CZ	CZ-31
+admin_1		Jihomoravský	admin_1	CZ	CZ-64
+admin_1		Karlovarský	admin_1	CZ	CZ-41
+admin_1		Královéhradecký	admin_1	CZ	CZ-52
+admin_1		Liberecký	admin_1	CZ	CZ-51
+admin_1		Moravskoslezský	admin_1	CZ	CZ-80
+admin_1		Olomoucký	admin_1	CZ	CZ-71
+admin_1		Pardubický	admin_1	CZ	CZ-53
+admin_1		Plzenský	admin_1	CZ	CZ-32
+admin_1		Prague	admin_1	CZ	CZ-10
+admin_1		Stredoceský	admin_1	CZ	CZ-20
+admin_1		Ústecký	admin_1	CZ	CZ-42
+admin_1		Vysocina	admin_1	CZ	CZ-63
+admin_1		Zlínský	admin_1	CZ	CZ-72
+admin_1	Slovakia	Banská Bystrica	admin_1	SK	SK-BC
+admin_1	Slovenia	NOT SPECIFIED	admin_1	SI	Unknown
+admin_1	Indonesia	Babel	admin_1	ID	ID-BB
+admin_1	Indonesia	DIY	admin_1	ID	ID-YO
+admin_1	Indonesia	Jakarta	admin_1	ID	ID-JK
+admin_1	Indonesia	Jabar	admin_1	ID	ID-JB
+admin_1	Indonesia	Jateng	admin_1	ID	ID-JT
+admin_1	Indonesia	Jatim	admin_1	ID	ID-JI
+admin_1	Indonesia	Kalbar	admin_1	ID	ID-KB
+admin_1	Indonesia	Kaltim	admin_1	ID	ID-KI
+admin_1	Indonesia	Kalteng	admin_1	ID	ID-KT
+admin_1	Indonesia	Kalsel	admin_1	ID	ID-KS
+admin_1	Indonesia	Kaltara	admin_1	ID	ID-KU
+admin_1	Indonesia	Kep Riau	admin_1	ID	ID-KR
+admin_1	Indonesia	NTB	admin_1	ID	ID-NB
+admin_1	Indonesia	Sumsel	admin_1	ID	ID-SS
+admin_1	Indonesia	Sumbar	admin_1	ID	ID-SB
+admin_1	Indonesia	Sulut	admin_1	ID	ID-SA
+admin_1	Indonesia	Sumut	admin_1	ID	ID-SU
+admin_1	Indonesia	Sultra	admin_1	ID	ID-SG
+admin_1	Indonesia	Sulsel	admin_1	ID	ID-SN
+admin_1	Indonesia	Sulteng	admin_1	ID	ID-ST
+admin_1	Indonesia	Malut	admin_1	ID	ID-MU
+admin_1	Indonesia	Papbar	admin_1	ID	ID-PB
+admin_1	Indonesia	Sulbar	admin_1	ID	ID-SR
+admin_1	Indonesia	NTT	admin_1	ID	ID-NT
+admin_1	Malaysia	wp-labuan	admin_1	MY	MY-15
+admin_1	Malaysia	wp-putrajaya	admin_1	MY	MY-16
+admin_1	Malaysia	wp-kuala-lumpur	admin_1	MY	MY-14
+admin_1	Malaysia	negeri-sembilan	admin_1	MY	MY-05
+admin_1	Malaysia	pulau-pinang	admin_1	MY	MY-07
+admin_1	Algeria	Ain-Defla	admin_1	DZ	DZ-44
+admin_1	Algeria	Ain-Temouchent	admin_1	DZ	DZ-46
+admin_1	Algeria	El-Tarf	admin_1	DZ	DZ-36
+admin_1	Algeria	Souk-Ahras	admin_1	DZ	DZ-41
+admin_1	Cabo Verde	Sao Domingos	admin_1	CV	CV-SD
+admin_1	Chad	Batha	admin_1	TD	TD-BA
+admin_1	Chad	Kanem	admin_1	TD	TD-KA
+admin_1	Chad	Lac	admin_1	TD	TD-LC
+admin_1	Chad	Logone Occidental	admin_1	TD	TD-LO
+admin_1	Chad	Mayo Kebbi Est	admin_1	TD	TD-ME
+admin_1	Chad	Moyen-Chari	admin_1	TD	TD-MC
+admin_1	Chad	N'Djamena	admin_1	TD	TD-ND
+admin_1	Chad	Wadi Fira	admin_1	TD	TD-WF
+admin_1	Côte d'Ivoire	Abidjan	admin_1	CI	CI-AB
+admin_1	Côte d'Ivoire	Yamoussoukro	admin_1	CI	CI-YM
+admin_1	Democratic Republic of Congo	Kongo-Central	admin_1	CD	CD-BC
+admin_1	Equatorial Guinea	Littoral	admin_1	CM	CM-LT
+admin_1	Ghana	Brong Ahafo	admin_1	GH	GH-AF
+admin_1	Ghana	North East Region	admin_1	GH	GH-NE
+admin_1	Ghana	Otti	admin_1	GH	GH-OT
+admin_1	Ghana	Western North Region	admin_1	GH	GH-WN
+admin_1	Guinea Bissau	Biombo	admin_1	GW	GW-BM
+admin_1	Nigeria	Federal Capital Territory	admin_1	NG	NG-FC
+admin_1	Republic of Congo	Point-Noire	admin_1	CG	CG-16
+admin_1	Senegal	Saint Louis	admin_1	SN	SN-SL
+admin_1	Senegal	Sedhiou	admin_1	SN	SN-SE
+admin_1	Togo	Savanes	admin_1	TG	TG-S
+admin_1	Switzerland	Graubünden; Grisons	admin_1	CH	CH-GR
+admin_1	Afghanistan	Zabul	admin_1	AF	AF-ZAB
+admin_1	Afghanistan	Ghor	admin_1	AF	AF-GHO
+admin_1	Afghanistan	Daykundi	admin_1	AF	AF-DAY
+admin_1	Afghanistan	Badghis	admin_1	AF	AF-BDG
