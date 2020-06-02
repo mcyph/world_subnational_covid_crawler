@@ -120,7 +120,8 @@ class CSVDataRevision:
     #=============================================================#
 
     def get_combined_values_by_datatype(self, region_schema, datatypes, 
-                                        from_date=None, region_parent=None):
+                                        from_date=None,
+                                        region_parent=None, region_child=None):
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
@@ -135,7 +136,7 @@ class CSVDataRevision:
         }, ...]
         """
         if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)[7:].lower()
+            region_schema = schema_to_name(region_schema)
 
         def to_datetime(dt):
             return datetime.datetime.strptime(dt, '%d/%m/%Y')
@@ -143,11 +144,12 @@ class CSVDataRevision:
         combined = {}
         for datatype in datatypes:
             if isinstance(datatype, int):
-                datatype = constant_to_name(datatype)[3:].lower()
+                datatype = constant_to_name(datatype)
 
             for datapoint in self.get_combined_value(region_schema, datatype,
                                                      from_date=from_date,
-                                                     region_parent=region_parent):
+                                                     region_parent=region_parent,
+                                                     region_child=region_child):
 
                 if datapoint['agerange'] and datapoint['region_child']:
                     k = f"{datapoint['agerange']} {datapoint['region_child']}"
@@ -204,9 +206,9 @@ class CSVDataRevision:
         combined = {}
         for region_schema, datatype, region_parent in filters:
             if isinstance(region_schema, int):
-                region_schema = schema_to_name(region_schema)[7:].lower()
+                region_schema = schema_to_name(region_schema)
             if isinstance(datatype, int):
-                datatype = constant_to_name(datatype)[3:].lower()
+                datatype = constant_to_name(datatype)
 
             for datapoint in self.get_combined_value(region_schema, datatype, region_parent,
                                                      from_date=from_date):
@@ -252,7 +254,9 @@ class CSVDataRevision:
         return out
     
     @needsdatapoints
-    def get_combined_value(self, region_schema, datatype, region_parent=None, from_date=None):
+    def get_combined_value(self, region_schema, datatype,
+                           region_parent=None, region_child=None,
+                           from_date=None):
         """
         Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
@@ -263,9 +267,9 @@ class CSVDataRevision:
             self.__create_datapoints_dict()
 
         if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)[7:].lower()
+            region_schema = schema_to_name(region_schema)
         if isinstance(datatype, int):
-            datatype = constant_to_name(datatype)[3:].lower()
+            datatype = constant_to_name(datatype)
 
         def date_greater_than_or_equal(x, y):
             #print(x, y)
@@ -278,7 +282,9 @@ class CSVDataRevision:
 
             return x >= y
 
-        if region_parent is not None:
+        if region_child is not None:
+            datapoints = self._datapoints_dict3.get((region_parent, region_child, region_schema, datatype), [])
+        elif region_parent is not None:
             datapoints = self._datapoints_dict2.get((region_parent, region_schema, datatype), [])
         else:
             datapoints = self._datapoints_dict.get((region_schema, datatype), [])
@@ -315,11 +321,14 @@ class CSVDataRevision:
     def __create_datapoints_dict(self):
         d = {}
         d2 = {}
+        d3 = {}
         for datapoint in self._datapoints[:]:
             d.setdefault((datapoint['region_schema'], datapoint['datatype']), []).append(datapoint)
             d2.setdefault((datapoint['region_parent'], datapoint['region_schema'], datapoint['datatype']), []).append(datapoint)
+            d3.setdefault((datapoint['region_parent'], datapoint['region_child'], datapoint['region_schema'], datapoint['datatype']), []).append(datapoint)
         self._datapoints_dict = d
         self._datapoints_dict2 = d2
+        self._datapoints_dict3 = d3
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@ SCHEMA_THS = 6  # Tasmania Health Services
 SCHEMA_SA3 = 7  # SA3 for ACT
 
 # https://covid-19-coronavirus.tools/
+SCHEMA_BD_DISTRICT = 22
 SCHEMA_BR_CITY = 8
 SCHEMA_CO_MUNICIPALITY = 9
 SCHEMA_DE_AGS = 10
@@ -70,13 +71,13 @@ DT_TESTS_POSITIVE = 15  # (Is this necessary?)
 def schema_to_name(x):
     for k, v in globals().items():
         if k.startswith('SCHEMA_') and v == x:
-            return k
+            return k[7:].lower()
 
 
 def constant_to_name(x):
     for k, v in globals().items():
         if k.startswith('DT_') and v == x:
-            return k
+            return k[3:].lower()
 
 
 def name_to_schema(x):

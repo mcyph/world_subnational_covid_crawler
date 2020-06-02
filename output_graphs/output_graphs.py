@@ -53,7 +53,7 @@ def read_csv(region_schema,
                 continue
             if row['datatype'] != datatype:
                 continue
-            if state_filter and row['parent_regions'] not in state_filter:
+            if state_filter and row['region_parent'] not in state_filter:
                 continue
             if value_filter and not value_filter(row['value']):
                 continue
@@ -69,7 +69,7 @@ def read_csv(region_schema,
                 print("IGNORE:", row)
                 continue
 
-            key = row['parent_regions']
+            key = row['region_parent']
             if row['region_child']:
                 key = f'{key} {row["region_child"]}'
             if row['agerange']:

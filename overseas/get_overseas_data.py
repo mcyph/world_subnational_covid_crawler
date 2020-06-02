@@ -27,6 +27,7 @@ from covid_19_au_grab.overseas.in_data.INData import INData
 from covid_19_au_grab.overseas.it_data.ITData import ITData
 from covid_19_au_grab.overseas.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.jp_city_data.JPCityData import JPCityData
+from covid_19_au_grab.overseas.kg_data.KGData import KGData
 from covid_19_au_grab.overseas.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.kz_data.KZData import KZData
 #from covid_19_au_grab.overseas.mm_data.MMData import MMData
@@ -67,6 +68,7 @@ def get_overseas_data():
         ITData,
         JPData,
         JPCityData,
+        KGData,
         KRData,
         KZData,
         LYData,
@@ -143,10 +145,10 @@ if __name__ == '__main__':
                 yyyy, mm, dd = datapoint.date_updated.split('_')
                 backwards_date = f'{dd}/{mm}/{yyyy}'
 
-                f.write(f'{schema_to_name(datapoint.region_schema)[7:].lower()}\t'
+                f.write(f'{schema_to_name(datapoint.region_schema)}\t'
                         f'{datapoint.region_parent}\t'
                         f'{datapoint.region_child}\t'
-                        f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
+                        f'{constant_to_name(datapoint.datatype)}\t'
                         f'{datapoint.agerange}\t'
                         f'{datapoint.value}\t'
                         f'{backwards_date}\t'

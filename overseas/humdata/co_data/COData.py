@@ -115,13 +115,13 @@ class COData(URLBase):
             gender = {
                 'M': DT_TOTAL_MALE,
                 'F': DT_TOTAL_FEMALE
-            }[item['Sexo']]
+            }[item['Sexo'].upper()]
             source_of_infection = {
-                'Importado': DT_SOURCE_OVERSEAS,
-                'Relacionado': DT_SOURCE_CONFIRMED,
-                'En estudio': DT_SOURCE_UNDER_INVESTIGATION,
-                'Desconocido': DT_SOURCE_COMMUNITY
-            }[item['Tipo']]
+                'importado': DT_SOURCE_OVERSEAS,
+                'relacionado': DT_SOURCE_CONFIRMED,
+                'en estudio': DT_SOURCE_UNDER_INVESTIGATION,
+                'desconocido': DT_SOURCE_COMMUNITY
+            }[item['Tipo'].lower()]
             state = item['Estado']
             country_of_origin = item['País de procedencia']  # TODO: Add support for this!! ============================
 

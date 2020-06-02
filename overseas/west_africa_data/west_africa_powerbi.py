@@ -9,7 +9,7 @@ from covid_19_au_grab.datatypes.constants import (
     DT_STATUS_DEATHS,
     DT_STATUS_RECOVERED
 )
-from covid_19_au_grab.overseas.humdata.west_africa_data.WestAfricaPowerBI import (
+from covid_19_au_grab.overseas.west_africa_data.WestAfricaPowerBI import (
     WestAfricaPowerBI, get_globals
 )
 from covid_19_au_grab.datatypes.DataPoint import (

@@ -262,10 +262,10 @@ if __name__ == '__main__':
                 )
                 i_region_child = datapoint.region_child
 
-            print(f'{schema_to_name(datapoint.region_schema)[7:].lower()}\t'
+            print(f'{schema_to_name(datapoint.region_schema)}\t'
                   f'{i_region_parent}\t'
                   f'{i_region_child}\t'
-                  f'{constant_to_name(datapoint.datatype)[3:].lower()}\t'
+                  f'{constant_to_name(datapoint.datatype)}\t'
                   f'{datapoint.agerange}\t'
                   f'{datapoint.value}\t'
                   f'{backwards_date}\t'

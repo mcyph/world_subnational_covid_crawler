@@ -142,7 +142,7 @@ class WARegionsProcess:
                 region_schema=SCHEMA_LGA,
                 datatype=DT_TOTAL,
                 region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
-                value=value,
+                value=int(value),
                 date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
                 source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
             )
@@ -223,43 +223,43 @@ class WARegionsProcess:
 
             r.append(DataPoint(
                 datatype=DT_NEW,
-                value=attribute['new_cases'],
+                value=int(attribute['new_cases']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_TOTAL,
-                value=attribute['total_cases'],
+                value=int(attribute['total_cases']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_STATUS_RECOVERED,
-                value=attribute['total_recovered'],
+                value=int(attribute['total_recovered']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_STATUS_DEATHS,
-                value=attribute['total_death'],
+                value=int(attribute['total_death']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_STATUS_ACTIVE,
-                value=attribute['existing_cases'],
+                value=int(attribute['existing_cases']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             #r.append(DataPoint(
             #    datatype=DT_TESTS_TOTAL,
-            #    value=attribute['total_ruledout'],
+            #    value=int(attribute['total_ruledout']),
             #    date_updated=dt,
             #    source_url=SOURCE_URL
             #))
             r.append(DataPoint(
                 datatype=DT_STATUS_HOSPITALIZED,
-                value=attribute['total_hospitalised'] or 0,
+                value=int(attribute['total_hospitalised'] or 0),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
@@ -271,13 +271,13 @@ class WARegionsProcess:
             attribute = feature['attributes']
             r.append(DataPoint(
                 datatype=DT_TOTAL_MALE,
-                value=attribute['Male'],
+                value=int(attribute['Male']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_TOTAL_FEMALE,
-                value=attribute['Female'],
+                value=int(attribute['Female']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
@@ -290,21 +290,21 @@ class WARegionsProcess:
             r.append(DataPoint(
                 datatype=DT_TOTAL,
                 agerange=attribute['Age_Group'],
-                value=attribute['Total'],
+                value=int(attribute['Total']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_TOTAL_MALE,
                 agerange=attribute['Age_Group'],
-                value=attribute['Male'],
+                value=int(attribute['Male']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
                 datatype=DT_TOTAL_FEMALE,
                 agerange=attribute['Age_Group'],
-                value=attribute['Female'],
+                value=int(attribute['Female']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))

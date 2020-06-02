@@ -359,8 +359,8 @@ class App(object):
         date_ids_dict = {}
         max_dates = {}
 
-        for region_schema, region_parent, datatypes in (
-            (SCHEMA_ADMIN_1, 'AU-ACT', (DT_TOTAL,
+        for region_schema, region_parent, region_child, datatypes in (
+            (SCHEMA_ADMIN_1, 'AU', 'AU-ACT', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_RECOVERED,
@@ -374,7 +374,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'AU-NSW', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-NSW', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -391,14 +391,14 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'AU-NT', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-NT', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
                                       DT_STATUS_ICU,
                                       DT_STATUS_DEATHS,
                                       DT_STATUS_RECOVERED,
                                       DT_STATUS_HOSPITALIZED,
                                       )),
-            (SCHEMA_ADMIN_1, 'AU-QLD', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-QLD', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        DT_STATUS_ACTIVE,
@@ -413,7 +413,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'AU-SA', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-SA', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_RECOVERED,
@@ -427,14 +427,14 @@ class App(object):
                                       DT_SOURCE_INTERSTATE,
                                       DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
-            (SCHEMA_ADMIN_1, 'AU-TAS', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-TAS', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
                                        DT_STATUS_RECOVERED,
                                        DT_STATUS_DEATHS,
                                        DT_STATUS_ICU,
                                        DT_STATUS_HOSPITALIZED,
                                        )),
-            (SCHEMA_ADMIN_1, 'AU-VIC', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-VIC', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
                                        #DT_STATUS_ACTIVE,
@@ -450,7 +450,7 @@ class App(object):
                                        DT_SOURCE_INTERSTATE,
                                        DT_SOURCE_UNDER_INVESTIGATION,
                                        )),
-            (SCHEMA_ADMIN_1, 'AU-WA', (DT_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-WA', (DT_TOTAL,
                                       DT_TESTS_TOTAL,
 
                                       DT_STATUS_ACTIVE,
@@ -467,7 +467,7 @@ class App(object):
                                       DT_SOURCE_UNDER_INVESTIGATION,
                                       )),
 
-            (SCHEMA_LGA, 'AU-NSW', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-NSW', None, (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_DEATHS,
                                  DT_STATUS_RECOVERED,
@@ -479,7 +479,7 @@ class App(object):
                                  DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use LGA for totals, as don't have a long history
-            (SCHEMA_LGA, 'AU-QLD', (#DT_TOTAL,
+            (SCHEMA_LGA, 'AU-QLD', None, (#DT_TOTAL,
                                  DT_SOURCE_OVERSEAS,
                                  DT_SOURCE_CONFIRMED,
                                  DT_SOURCE_COMMUNITY,
@@ -487,16 +487,16 @@ class App(object):
                                  DT_SOURCE_UNDER_INVESTIGATION,
                                  )),
             # Won't use SA for now, at least till can increase the accuracy
-            (SCHEMA_LGA, 'AU-SA', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-SA', None, (DT_TOTAL,
                                 DT_STATUS_ACTIVE,
                                 )),
-            #(SCHEMA_LGA, 'AU-TAS', (DT_TOTAL,
+            #(SCHEMA_LGA, 'AU-TAS', None, (DT_TOTAL,
             #                     )),
-            (SCHEMA_LGA, 'AU-VIC', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-VIC', None, (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
                                  )),
-            (SCHEMA_LGA, 'AU-WA', (DT_TOTAL,
+            (SCHEMA_LGA, 'AU-WA', None, (DT_TOTAL,
                                 )),
 
             # NSW by postcode is possible, debating whether
@@ -504,7 +504,7 @@ class App(object):
             # * would require zooming in further
             # * would take orders of magnitude more time to download
             # * data comes in later each day than website
-            #(SCHEMA_POSTCODE, 'AU-NSW', (DT_TOTAL,
+            #(SCHEMA_POSTCODE, 'AU-NSW', None, (DT_TOTAL,
             #                          DT_STATUS_ACTIVE,
             #                          DT_STATUS_DEATHS,
             #                          DT_STATUS_RECOVERED,
@@ -516,35 +516,38 @@ class App(object):
             #                          DT_SOURCE_UNDER_INVESTIGATION
             #                          )),
 
-            (SCHEMA_SA3, 'AU-ACT', (DT_TOTAL,)),
+            (SCHEMA_SA3, 'AU-ACT', None, (DT_TOTAL,)),
             # LHD is used for Active/Recovered values
             # It's also available by postcode on the NSW gov's site
             #(SCHEMA_LHD, 'AU-NSW', (DT_STATUS_ACTIVE,
             #                     DT_STATUS_DEATHS,
             #                     DT_STATUS_RECOVERED)),
-            (SCHEMA_THS, 'AU-TAS', (DT_TOTAL,
+            (SCHEMA_THS, 'AU-TAS', None, (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED
                                  )),
-            (SCHEMA_HHS, 'AU-QLD', (DT_TOTAL,
+            (SCHEMA_HHS, 'AU-QLD', None, (DT_TOTAL,
                                  DT_STATUS_ACTIVE,
                                  DT_STATUS_RECOVERED,
                                  DT_STATUS_DEATHS
                                  )),
         ):
-            schema_name = schema_to_name(region_schema)[7:].lower()
+            schema_name = schema_to_name(region_schema)
 
             if compat_mode:
                 if schema_name == 'admin_1':
                     schema_name = 'statewide'  # Back-compat HACK! ==========================================================
-                i_region_parent = region_parent.split('-')[-1].lower()
+                    i_region_parent = region_child.split('-')[-1].lower()
+                else:
+                    i_region_parent = region_parent.split('-')[-1].lower()
             else:
                 i_region_parent = region_parent
 
             schema_key = f'{i_region_parent}:{schema_name}'
             i_max_date, r[schema_key] = self.__get_time_series(
                 from_dates, inst,
-                region_schema, region_parent, datatypes,
+                region_schema, region_parent, region_child,
+                datatypes,
                 date_ids_dict
             )
             if max_dates.get(schema_key) is None or i_max_date > max_dates[schema_key]:
@@ -564,14 +567,15 @@ class App(object):
         }
 
     def __get_time_series(self, from_dates, inst,
-                          region_schema, region_parent, datatypes,
+                          region_schema, region_parent, region_child,
+                          datatypes,
                           date_ids_dict):
         out = []
         added = set()
         max_date = None
 
         datatypes = [
-            constant_to_name(i)[3:].lower() for i in datatypes
+            constant_to_name(i) for i in datatypes
         ]
 
         for from_date in from_dates:
@@ -584,6 +588,7 @@ class App(object):
                 region_schema,
                 datatypes,
                 region_parent=region_parent,
+                region_child=region_child,
                 from_date=from_date
             )
 
@@ -647,7 +652,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
-            'environment': 'production',
+            #'environment': 'production',
         },
         '/': {
 

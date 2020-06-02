@@ -321,11 +321,11 @@ class DataPointsDB:
 
             r.append(DataPoint(
                 date_updated=date_updated,
-                region_schema=region_schema,
+                region_schema=name_to_schema(region_schema),
                 region_parent=region_parent,
                 region_child=region_child,
                 agerange=agerange,
-                datatype=datatype,
+                datatype=name_to_constant(datatype),
                 value=value,
                 source_url=str(source_url)
             ))
@@ -362,7 +362,9 @@ if __name__ == '__main__':
 
     rev_date, rev_subid, dt = CSVDataRevisions().get_revisions()[0]
     dr = CSVDataRevision(rev_date, rev_subid)
-    dpdb = DataPointsDB('test2.sqlite', migrate_from_path='test.sqlite')
+    dpdb = DataPointsDB('test2.sqlite',
+                        migrate_from_path='test.sqlite'
+                        )
     cursor = dpdb.conn.cursor()
 
     for i in dr:
