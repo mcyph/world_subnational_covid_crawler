@@ -19,12 +19,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class USNYTData(GithubRepo):
-    SOURCE_URL = ''
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_URL = 'https://github.com/nytimes/covid-19-data'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'us_nytimes'
 
     def __init__(self):
         GithubRepo.__init__(self,

@@ -39,11 +39,8 @@ DE-TH Thüringen
 
 class DEData(GithubRepo):
     SOURCE_URL = 'https://github.com/jgehrcke/covid-19-germany-gae'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'de_unofficial'
 
     def __init__(self):
         GithubRepo.__init__(self,

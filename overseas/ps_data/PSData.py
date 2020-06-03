@@ -37,15 +37,10 @@ place_map = {
 
 class PSData(URLBase):
     SOURCE_URL = 'https://www.corona.ps/details'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'ps_gov'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
             output_dir=get_overseas_dir() / 'ps' / 'data',
             urls_dict={

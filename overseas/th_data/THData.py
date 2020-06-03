@@ -10,7 +10,9 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_TH_PROVINCE, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
+    SCHEMA_TH_DISTRICT,
+    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
@@ -37,11 +39,8 @@ def get_districts_map():
 
 class THData(URLBase):
     SOURCE_URL = 'https://covid19.th-stat.com/th/api'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'th_open_data'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

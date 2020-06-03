@@ -20,7 +20,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class BRData(KaggleDataset):
     SOURCE_URL = 'https://www.kaggle.com/unanimad/corona-virus-brazil'
-    SOURCE_LICENSE = 'CC0: Public Domain'
+    SOURCE_DESCRIPTION = 'CC0: Public Domain'
+    SOURCE_ID = 'br_kaggle'
 
     GEO_DIR = 'br'
     GEO_URL = ''

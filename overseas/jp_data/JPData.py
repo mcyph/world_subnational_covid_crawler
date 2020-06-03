@@ -79,11 +79,8 @@ def get_prefecture(s):
 
 class JPData(GithubRepo):
     SOURCE_URL = ''
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'jp_ministry_unofficial'
 
     def __init__(self):
         GithubRepo.__init__(self,

@@ -112,7 +112,8 @@ BD-64	Thakurgaon
 
 class BDData(URLBase):
     SOURCE_URL = 'https://iedcr.gov.bd/'
-    SOURCE_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'bd_gov'
 
     GEO_DIR = ''
     GEO_URL = ''

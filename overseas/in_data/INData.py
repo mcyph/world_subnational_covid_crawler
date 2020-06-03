@@ -60,11 +60,8 @@ with open(get_package_dir() /
 
 class INData(URLBase):
     SOURCE_URL = 'https://api.covid19india.org'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'covid_19_india'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

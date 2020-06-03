@@ -50,16 +50,13 @@ CH	Switzerland
 
 class CHData(GithubRepo):
     SOURCE_URL = 'https://github.com/openZH/covid_19'
-    SOURCE_LICENSE = 'Creative Commons Attribution 4.0 International'
-
-    GEO_DIR = 'ch'
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = 'Creative Commons Attribution 4.0 International'
+    SOURCE_ID = 'ch_open_swiss_data'
 
     def __init__(self):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'ch' / 'covid_19',
-                            github_url='https://github.com/pcm-dpc/COVID-19')
+                            github_url='https://github.com/openZH/covid_19')
         self.update()
 
     def get_datapoints(self):

@@ -41,11 +41,8 @@ place_map = {
 
 class KZData(URLBase):
     SOURCE_URL = 'https://www.coronavirus2020.kz/kz'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'kz_gov'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

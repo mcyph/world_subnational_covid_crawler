@@ -30,11 +30,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class ESData(GithubRepo):
     SOURCE_URL = 'https://github.com/datadista/datasets/'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'es_datadista'
 
     def __init__(self):
         GithubRepo.__init__(self,

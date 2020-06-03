@@ -20,15 +20,10 @@ from covid_19_au_grab.get_package_dir import (
 
 class SAData(URLBase):
     SOURCE_URL = 'https://covid19.moh.gov.sa/'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'sa_gov'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
              output_dir=get_overseas_dir() / 'sa' / 'data',
              urls_dict={

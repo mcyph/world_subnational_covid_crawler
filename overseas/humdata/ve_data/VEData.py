@@ -19,11 +19,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class VEData(URLBase):
     SOURCE_URL = 'https://data.humdata.org/dataset/corona-virus-covid-19-cases-and-deaths-in-venezuela'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 've_ocha_venezuela_humdata'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

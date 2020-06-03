@@ -1,9 +1,13 @@
+import ssl
 import urllib
+import certifi
 from os import makedirs
 from os.path import exists, dirname
 from collections import namedtuple
 from urllib.request import urlretrieve
 
+ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
+#ssl._create_default_https_context = ssl._create_unverified_context
 
 proxy = urllib.request.ProxyHandler({})
 opener = urllib.request.build_opener(proxy)

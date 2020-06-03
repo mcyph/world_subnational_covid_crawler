@@ -23,11 +23,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class KRData(KaggleDataset):
     SOURCE_URL = 'https://www.kaggle.com/kimjihoo/coronavirusdataset'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'kr_kaggle_ds4c'
 
     def __init__(self):
         KaggleDataset.__init__(self,

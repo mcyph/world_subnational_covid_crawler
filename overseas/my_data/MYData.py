@@ -23,11 +23,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class MYData(GithubRepo):
     SOURCE_URL = 'https://github.com/ynshung/covid-19-malaysia'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'my_unofficial_github'
 
     def __init__(self):
         GithubRepo.__init__(self,

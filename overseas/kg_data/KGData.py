@@ -33,11 +33,8 @@ place_map = {
 
 class KGData(URLBase):
     SOURCE_URL = 'https://covid.kg/'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'kg_gov'
 
     def __init__(self):
         URLBase.__init__(self,

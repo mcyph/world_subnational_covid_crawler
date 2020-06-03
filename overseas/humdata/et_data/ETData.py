@@ -20,11 +20,8 @@ from covid_19_au_grab.get_package_dir import (
 class ETData(URLBase):
     SOURCE_URL = 'https://data.humdata.org/dataset/' \
                  'ethiopia-coronavirus-covid-19-subnational-cases'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'et_ocha_humdata'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

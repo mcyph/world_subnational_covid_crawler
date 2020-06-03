@@ -19,12 +19,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class WorldBingData(GithubRepo):
+    SOURCE_ID = 'world_bing'
     SOURCE_URL = 'https://github.com/microsoft/Bing-COVID-19-Data'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
 
     def __init__(self):
         GithubRepo.__init__(self,
@@ -56,7 +53,8 @@ class WorldBingData(GithubRepo):
                     continue  # WARNING!!
                 date = self.convert_date(item['Updated'], formats=('%m/%d/%Y',))
 
-                if item['AdminRegion2']:
+                if item['AdminRegion2'] and item['ISO2'] != 'US':
+                    print("WARNING, IGNORING:", item)
                     continue  # HACK!!! =====================================================================================
                 elif item['AdminRegion1']:
                     region_schema = SCHEMA_ADMIN_1
@@ -115,7 +113,7 @@ class WorldBingData(GithubRepo):
                         region_child=region_child,
                         datatype=DT_STATUS_ACTIVE,
                         value=int(item['Confirmed']) -
-                              int(item['Deaths']) -
+                              int(item['Deaths'] or '0') -
                               int(item['Recovered']),
                         date_updated=date,
                         source_url=self.SOURCE_URL

@@ -37,8 +37,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class FRData(GithubRepo):
-    SOURCE_URL = ''
-    SOURCE_LICENSE = ''
+    SOURCE_URL = 'https://github.com/opencovid19-fr/data'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'fr_opencovid_fr'
 
     GEO_DIR = ''
     GEO_URL = ''

@@ -35,11 +35,8 @@ from covid_19_au_grab.get_package_dir import (
 class AFData(URLBase):
     SOURCE_URL = 'https://docs.google.com/spreadsheets/d/' \
                  '1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = 'af'
-    GEO_URL = 'https://data.humdata.org/dataset/afg-admin-boundaries'
-    GEO_LICENSE = 'Humanitarian use only'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'af_humdata'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

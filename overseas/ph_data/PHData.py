@@ -1,6 +1,6 @@
 class PHData:
     SOURCE_URL = ''
-    SOURCE_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
 
     GEO_DIR = ''
     GEO_URL = ''

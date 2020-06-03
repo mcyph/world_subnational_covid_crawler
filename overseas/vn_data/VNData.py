@@ -1,4 +1,6 @@
+import ssl
 import json
+import gzip
 from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
@@ -88,23 +90,25 @@ VN-SG	Hồ Chí Minh
 
 class VNData(URLBase):
     SOURCE_URL = 'https://ncov.moh.gov.vn/'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'vn_moh'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
-        URLBase.__init__(self,
-            output_dir=get_overseas_dir() / 'vn' / 'data',
-            urls_dict={
-                'corona.html': URL('http://ncov.moh.gov.vn/',
-                                   static_file=False)
-            }
-        )
-        self.update()
+        # Disable ssl, only for this crawler!
+        old_create = ssl._create_default_https_context
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+        try:
+            URLBase.__init__(self,
+                output_dir=get_overseas_dir() / 'vn' / 'data',
+                urls_dict={
+                    'corona.html': URL('https://ncov.moh.gov.vn/',
+                                       static_file=False)
+                }
+            )
+            self.update()
+        finally:
+            ssl._create_default_https_context = old_create
 
     def get_datapoints(self):
         r = []
@@ -117,8 +121,18 @@ class VNData(URLBase):
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/corona.html'
-            with open(path, 'r', encoding='utf-8') as f:
-                html = pq(f.read(), parser='html')
+            with open(path, 'rb') as f:
+                data = f.read()
+
+                try:
+                    data = gzip.decompress(data)
+                except:
+                    pass
+                    #import traceback
+                    #traceback.print_exc()
+
+                data = data.decode('utf-8')
+                html = pq(data, parser='html')
 
             # There are quite a few more stats e.g. lower than governorate level etc =====================================
 

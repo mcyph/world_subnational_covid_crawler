@@ -13,12 +13,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class GHData(URLBase):
-    SOURCE_URL = ''
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
+    SOURCE_URL = 'https://covid-19-data.unstatshub.org/datasets/62fb86d7606343e1a93baa70224a8a46_0/data?geometry=-21.685%2C4.147%2C19.623%2C11.757'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'gh_selaseh_stats'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,

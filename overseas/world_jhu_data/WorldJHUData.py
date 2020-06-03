@@ -19,8 +19,9 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class WorldJHUData(GithubRepo):
+    SOURCE_ID = 'world_jhu'
     SOURCE_URL = 'https://github.com/CSSEGISandData/COVID-19'
-    SOURCE_LICENSE = ''
+    SOURCE_DESCRIPTION = ''
 
     GEO_DIR = ''
     GEO_URL = ''

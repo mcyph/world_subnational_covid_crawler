@@ -38,11 +38,8 @@ from covid_19_au_grab.get_package_dir import (
 
 class EUSubNationalData(URLBase):
     SOURCE_URL = 'https://data.humdata.org/dataset/europe-covid-19-subnational-cases'
-    SOURCE_LICENSE = ''
-
-    GEO_DIR = 'nats_level_1'
-    GEO_URL = 'https://datahub.io/core/geo-nuts-administrative-boundaries'
-    GEO_LICENSE = 'Public Domain Dedication and License (PDDL)'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'eu_subnational'
 
     def __init__(self):
         URLBase.__init__(self,
