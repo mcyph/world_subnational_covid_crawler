@@ -42,14 +42,21 @@ def DataPoint(region_schema=SCHEMA_ADMIN_1,
     arguments for this `namedtuple`.
     """
 
+    region_schema = int(region_schema)
     region_parent = region_parent or ''
     region_child = region_child or ''
     agerange = agerange or ''
-    text_match = text_match or ''
+    value = int(value)
 
-    assert date_updated
+    if text_match:
+        text_match = str(text_match)
+    else:
+        text_match = ''
+
+    assert date_updated.count('_') == 2, date_updated
+    assert len(date_updated) == 10, date_updated
     assert datatype is not None
-    assert source_url
+    assert source_url, source_url
     assert value is not None
 
     # Convert regions to ISO-3166-1/2 if possible

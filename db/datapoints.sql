@@ -24,15 +24,10 @@ CREATE TABLE datapoints (
     source_url_id BIGINT NOT NULL,
     text_match VARCHAR(512),
 
-    -- values scraped from Australian state news releases
-    -- sometimes contain errors. This makes sure the values
-    -- can be checked before they go live.
-    -- Both these will be NULL unless explicitly set.
-    datetime_confirmed TIMESTAMP,
-    confirmed_uid VARCHAR(32),
-
     is_derived SMALLINT NOT NULL,
-    date_inserted TIMESTAMP NOT NULL
+    date_inserted TIMESTAMP NOT NULL,
+
+    source_id CHAR(32) NOT NULL
 );
 
 CREATE INDEX datapoints_idx1 ON datapoints (
@@ -47,6 +42,10 @@ CREATE INDEX datapoints_idx2 ON datapoints (
     date_updated,
     agerange, datatype,
     `value`
+);
+
+CREATE INDEX datapoints_idx3 ON datapoints (
+    source_id, date_updated
 );
 
 -- -------------- --

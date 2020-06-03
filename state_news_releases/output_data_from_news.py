@@ -16,6 +16,7 @@ from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
 from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
 from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 
 
 UPDATE_VIC_POWERBI = False
@@ -105,7 +106,7 @@ class Logger:
 if __name__ == '__main__':
     status = {}
     stdout_logger = sys.stdout = Logger(sys.stdout, ext='stdout')
-    stderr_logger = sys.stderr = Logger(sys.stdout, ext='stderr')
+    stderr_logger = sys.stderr = Logger(sys.stderr, ext='stderr')
 
     # Run the Vic/ACT PowerBi grabbers as needed
 

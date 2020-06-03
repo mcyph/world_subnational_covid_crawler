@@ -10,6 +10,7 @@ from covid_19_au_grab.datatypes.constants import \
 
 class DataPointsDB:
     def __init__(self, path, migrate_from_path=None):
+        path = str(path)
         already_exists = exists(path)
         self.path = path
 
@@ -107,7 +108,7 @@ class DataPointsDB:
     #                         Insert DataPoints                      #
     #================================================================#
 
-    def append(self, datapoint, is_derived=False, cur=None, commit=False):
+    def append(self, source_id, datapoint, is_derived=False, cur=None, commit=False):
 
         cur = cur or self.conn.cursor()
 
@@ -141,13 +142,13 @@ class DataPointsDB:
                 date_updated, region_schema, region_parent, region_child,
                 agerange, datatype, `value`, source_url_id, text_match,
 
-                datetime_confirmed, confirmed_uid,
-                is_derived, date_inserted
+                is_derived, date_inserted,
+                source_id
             )
             VALUES (
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                NULL, NULL,
-                ?, CURRENT_TIMESTAMP
+                ?, CURRENT_TIMESTAMP,
+                ?
             );
         """
         cur.execute(query, [
@@ -156,14 +157,15 @@ class DataPointsDB:
             datapoint.agerange, constant_to_name(datapoint.datatype), datapoint.value,
             source_url_map[datapoint.source_url], datapoint.text_match,
 
-            int(is_derived)
+            int(is_derived),
+            source_id
         ])
 
         if commit:
             self.conn.commit()
             cur.close()
 
-    def extend(self, datapoints, is_derived=False):
+    def extend(self, source_id, datapoints, is_derived=False):
         cur = self.conn.cursor()
 
         for x in range(2):
@@ -177,7 +179,7 @@ class DataPointsDB:
                 WHERE
                     source_url IN ({','.join('?' for _ in source_urls)})
                 ;
-            """, source_urls)
+            """, list(source_urls))
             source_url_map = dict(cur.fetchall())
 
             for source_url in [i for i in source_urls
@@ -201,13 +203,13 @@ class DataPointsDB:
                 date_updated, region_schema, region_parent, region_child,
                 agerange, datatype, `value`, source_url_id, text_match,
 
-                datetime_confirmed, confirmed_uid,
-                is_derived, date_inserted
+                is_derived, date_inserted,
+                source_id
             )
             VALUES (
                 ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                NULL, NULL,
-                ?, CURRENT_TIMESTAMP
+                ?, CURRENT_TIMESTAMP,
+                ?
             );
         """
 
@@ -217,9 +219,10 @@ class DataPointsDB:
                 datapoint.date_updated,
                 schema_to_name(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
                 datapoint.agerange, constant_to_name(datapoint.datatype), datapoint.value,
-                source_url_map[datapoint.source_url_id], datapoint.text_match,
+                source_url_map[datapoint.source_url], datapoint.text_match,
 
                 int(is_derived),
+                source_id
             ])
         cur.executemany(query, insert)
         self.conn.commit()
@@ -362,8 +365,8 @@ if __name__ == '__main__':
 
     rev_date, rev_subid, dt = CSVDataRevisions().get_revisions()[0]
     dr = CSVDataRevision(rev_date, rev_subid)
-    dpdb = DataPointsDB('test2.sqlite',
-                        migrate_from_path='test.sqlite'
+    dpdb = DataPointsDB('test.sqlite',
+                        #migrate_from_path='test.sqlite'
                         )
     cursor = dpdb.conn.cursor()
 
@@ -380,7 +383,7 @@ if __name__ == '__main__':
             source_url=i['source_url'],
             text_match=i['text_match']
         )
-        dpdb.append(i, cur=cursor, commit=False)
+        dpdb.append('TEST', i, cur=cursor, commit=False)
 
     dpdb.commit()
     cursor.close()

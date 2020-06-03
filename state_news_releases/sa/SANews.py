@@ -37,9 +37,12 @@ SA_MAP_DIR = get_data_dir() / 'sa' / 'custom_map'
 
 # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
 class SANews(StateNewsBase):
-    # TODO: ADD DASHBOARD: https://www.covid-19.sa.gov.au/home/dashboard ==================================================================================================
-
     STATE_NAME = 'sa'
+    SOURCE_ISO_3166_2 = 'AU-SA'
+    SOURCE_ID = 'au_sa'
+    SOURCE_URL = 'https://www.covid-19.sa.gov.au'
+    SOURCE_DESCRIPTION = ''
+
     #LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
     #              'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
     LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/SA+Health+Internet/About+us/News+and+media/all+media+releases/?mr-sort=date-desc&mr-pg=1'
@@ -80,8 +83,11 @@ class SANews(StateNewsBase):
                 # http://emergencydepartments.sa.gov.au/wps/wcm/connect/public+content/
                 # sa+health+internet/about+us/news+and+media/all+media+releases/
                 # covid-19+update+17+april+2020
+                date = pq(html)('div.wysiwyg h1, h1.page-heading').text().split('Update')[-1].strip()
+                if date.count(' ') != 2:
+                    date += ' 2020'
                 return self._extract_date_using_format(
-                    pq(html)('div.wysiwyg h1, h1.page-heading').text().split('Update')[-1].strip()
+                    date
                 )
             except (ValueError, IndexError):
                 date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \

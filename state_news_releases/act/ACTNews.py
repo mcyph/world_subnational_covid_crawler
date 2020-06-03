@@ -28,6 +28,11 @@ from covid_19_au_grab.word_to_number import (
 
 class ACTNews(StateNewsBase):
     STATE_NAME = 'act'
+    SOURCE_ISO_3166_2 = 'AU-ACT'
+    SOURCE_ID = 'au_act'
+    SOURCE_URL = 'https://www.covid19.act.gov.au'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = (
         # There's only 2 pages for now, so will hardcode
         # MUST BE UPDATED!!! ===========================================================================================

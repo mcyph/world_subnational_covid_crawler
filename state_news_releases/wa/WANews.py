@@ -24,6 +24,11 @@ from covid_19_au_grab.state_news_releases.wa.WADashProcess import (
 
 class WANews(StateNewsBase):
     STATE_NAME = 'wa'
+    SOURCE_ISO_3166_2 = 'AU-WA'
+    SOURCE_ID = 'au_wa'
+    SOURCE_URL = 'https://ww2.health.wa.gov.au/en/Articles/A_E/Coronavirus'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = 'https://ww2.health.wa.gov.au/News/' \
                   'Media-releases-listing-page'
     LISTING_HREF_SELECTOR = 'div.threeCol-accordian a'

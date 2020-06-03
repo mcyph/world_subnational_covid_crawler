@@ -23,6 +23,11 @@ from covid_19_au_grab.web_interface.CSVDataRevision import \
 from covid_19_au_grab.web_interface.CSVDataRevisions import \
     CSVDataRevisions
 
+#from covid_19_au_grab.db.SQLiteDataRevision import \
+#    SQLiteDataRevision
+#from covid_19_au_grab.db.SQLiteDataRevisions import \
+#    SQLiteDataRevisions
+
 from covid_19_au_grab.datatypes.constants import (
     constant_to_name, schema_to_name,
     SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
@@ -286,8 +291,10 @@ class App(object):
                 DT_TOTAL_FEMALE,
                 DT_TOTAL_MALE,
                 DT_TOTAL,
-            )
+            ),
+            region_parent='AU'
         ) if i['agerange']]
+
         return env.get_template('revision/gender_age.html').render(
             rev_date=rev_date,
             rev_subid=rev_subid,

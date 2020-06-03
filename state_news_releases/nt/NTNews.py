@@ -10,6 +10,11 @@ from covid_19_au_grab.datatypes.constants import (
 
 class NTNews(StateNewsBase):
     STATE_NAME = 'nt'
+    SOURCE_ISO_3166_2 = 'AU-NT'
+    SOURCE_ID = 'au_nt'
+    SOURCE_URL = 'https://coronavirus.nt.gov.au'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = None
     LISTING_HREF_SELECTOR = None
     STATS_BY_REGION_URL = 'https://coronavirus.nt.gov.au/current-status'

@@ -35,6 +35,11 @@ from covid_19_au_grab.URLArchiver import (
 
 class QLDNews(StateNewsBase):
     STATE_NAME = 'qld'
+    SOURCE_ISO_3166_2 = 'AU-QLD'
+    SOURCE_ID = 'au_qld'
+    SOURCE_URL = 'https://www.qld.gov.au/health/conditions/health-alerts/coronavirus-covid-19'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = (
         'https://www.health.qld.gov.au/'
         'news-events/doh-media-releases',

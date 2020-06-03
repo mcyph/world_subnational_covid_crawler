@@ -38,6 +38,11 @@ from covid_19_au_grab.URLArchiver import (
 
 class NSWNews(StateNewsBase):
     STATE_NAME = 'nsw'
+    SOURCE_ISO_3166_2 = 'AU-NSW'
+    SOURCE_ID = 'au_nsw'
+    SOURCE_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/default.aspx'
+    SOURCE_DESCRIPTION = ''
+
     #LISTING_URL = 'https://www.health.nsw.gov.au/news/Pages/default.aspx'
     LISTING_URL = 'https://www.health.nsw.gov.au/news/pages/2020-nsw-health.aspx'
     LISTING_HREF_SELECTOR = '.dfwp-item a'

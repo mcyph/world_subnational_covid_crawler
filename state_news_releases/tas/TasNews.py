@@ -30,6 +30,11 @@ TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv
 
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
+    SOURCE_ISO_3166_2 = 'AU-TAS'
+    SOURCE_ID = 'au_tas'
+    SOURCE_URL = 'https://coronavirus.tas.gov.au'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = (
         'https://www.dhhs.tas.gov.au/news/2020',
         'https://www.coronavirus.tas.gov.au/',

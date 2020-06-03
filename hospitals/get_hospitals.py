@@ -29,9 +29,9 @@ class _GetHospitals:
 
     def get_hospitals_dict(self):
         r = {}
-        for state_name, fn in self._states.items():
-            print(f"{state_name}: Getting hospitals data")
-            r[state_name] = fn()
+        for parent_regions, fn in self._states.items():
+            print(f"{parent_regions}: Getting hospitals data")
+            r[parent_regions] = fn()
         return r
 
     #==============================================================#

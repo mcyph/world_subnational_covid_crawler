@@ -25,6 +25,11 @@ from covid_19_au_grab.word_to_number import (
 
 class VicNews(StateNewsBase):
     STATE_NAME = 'vic'
+    SOURCE_ISO_3166_2 = 'AU-VIC'
+    SOURCE_ID = 'au_vic'
+    SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
+    SOURCE_DESCRIPTION = ''
+
     LISTING_URL = (
         'https://www.dhhs.vic.gov.au/' 
             'media-hub-coronavirus-disease-covid-19',
