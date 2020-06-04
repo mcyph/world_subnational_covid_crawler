@@ -53,6 +53,31 @@ class SQLiteDataRevision:
             region_child=region_child
         )]
 
+    @needsdatapoints
+    def get_time_series(self, datatypes,
+                        region_schema,
+                        region_parent,
+                        region_child):
+
+        datatypes = [
+            constant_to_name(i) for i in datatypes
+        ]
+        datapoints = self._datapoints_db.select_many(
+            region_schema=['= ?', [region_schema]],
+            region_parent=['= ?', [region_parent]] if region_parent else None,
+            region_child=['= ?', [region_child]] if region_child else None,
+            datatype=[f"IN ({','.join('?' for _ in datatypes)})", datatypes],
+        )
+
+        r = {}
+        for datapoint in datapoints:
+            r.setdefault(
+                (datapoint.region_child, datapoint.agerange), {}
+            ).setdefault(
+                datapoint.date_updated, []
+            ).append(datapoint)
+        return r
+
     #=============================================================#
     #                       Utility Functions                     #
     #=============================================================#
@@ -86,8 +111,16 @@ class SQLiteDataRevision:
         Sort so that the most recent dates come first,
         then sort by state, datatype and name
         """
+        def sortable_date(i):
+            yyyy, mm, dd = i.split('_')
+            return (
+                str(9999 - int(yyyy)) + '_' +
+                str(99 - int(mm)) + '_' +
+                str(99 - int(dd))
+            )
+
         return (
-            x.date_updated,
+            sortable_date(x.date_updated),
             x.region_parent,
             x.datatype,
             x.agerange,

@@ -81,7 +81,13 @@ class DataPointsDB:
         def _append(col, i):
             if isinstance(i, (list, tuple)):
                 where.append('%s %s' % (col, i[0]))
-                values.extend(i[1])
+
+                if col == 'region_schema':
+                    values.extend([self.__convert_region_schema(x) for x in i[1]])
+                elif col == 'datatype':
+                    values.extend([self.__convert_datatype(x) for x in i[1]])
+                else:
+                    values.extend(i[1])
             else:
                 where.append('%s %s' % (col, i))
 
@@ -245,7 +251,13 @@ class DataPointsDB:
         def _append(col, i):
             if isinstance(i, (list, tuple)):
                 where.append('%s %s' % (col, i[0]))
-                values.extend(i[1])
+
+                if col == 'region_schema':
+                    values.extend([self.__convert_region_schema(x) for x in i[1]])
+                elif col == 'datatype':
+                    values.extend([self.__convert_datatype(x) for x in i[1]])
+                else:
+                    values.extend(i[1])
             else:
                 where.append('%s %s' % (col, i))
 
@@ -291,6 +303,7 @@ class DataPointsDB:
         """
 
         cur = self.conn.cursor()
+        print(query, values)
         cur.execute(query, values)
         results = cur.fetchall()
         source_url_ids = set([i[-1] for i in results])
@@ -337,6 +350,18 @@ class DataPointsDB:
             return r[0]
         else:
             return r
+
+    def __convert_region_schema(self, s):
+        if isinstance(s, str):
+            return s
+        else:
+            return schema_to_name(s)
+
+    def __convert_datatype(self, s):
+        if isinstance(s, str):
+            return s
+        else:
+            return constant_to_name(s)
 
     def select_many(self, date_updated=None,
                    region_schema=None, region_parent=None, region_child=None,

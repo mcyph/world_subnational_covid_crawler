@@ -18,8 +18,8 @@ CREATE TABLE datapoints (
     region_schema VARCHAR(32),
     region_parent VARCHAR(64),
     region_child VARCHAR(64),
-    agerange VARCHAR(16),
     datatype VARCHAR(32),
+    agerange VARCHAR(16),
     `value` BIGINT,
     source_url_id BIGINT NOT NULL,
     text_match VARCHAR(512),
@@ -33,14 +33,14 @@ CREATE TABLE datapoints (
 CREATE INDEX datapoints_idx1 ON datapoints (
     date_updated,
     region_schema, region_parent, region_child,
-    agerange, datatype,
+    datatype, agerange,
     `value`
 );
 
 CREATE INDEX datapoints_idx2 ON datapoints (
     region_schema, region_parent, region_child,
     date_updated,
-    agerange, datatype,
+    datatype, agerange,
     `value`
 );
 

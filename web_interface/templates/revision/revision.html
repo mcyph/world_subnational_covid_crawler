@@ -11,7 +11,7 @@
 
     <h2>Status</h2>
 
-    <ul>
+    <ul style="column-count: 2">
         {% for key, value in status_list %}
             <li><b>{{ key|e }}</b>: {{ value[0]|e }} {% if value[1] %}{{ value[1]|e }}{% endif %}</li>
         {% endfor %}

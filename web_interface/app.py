@@ -536,17 +536,6 @@ class App(object):
                                  )),
         )
 
-        from_dates = set()
-        for region_schema, region_parent, region_child, datatypes in schema_list:
-            for updated_date in inst.get_updated_dates(
-                ['= ?', [schema_to_name(region_schema)]],
-                ['= ?', [region_parent]] if region_parent else None,
-                ['= ?', [region_child]] if region_child else None
-            ):
-                from_dates.add(updated_date)
-        from_dates = list(from_dates)
-        print("FROM_DATES:", from_dates)
-
         for region_schema, region_parent, region_child, datatypes in schema_list:
             schema_name = schema_to_name(region_schema)
 
@@ -561,7 +550,7 @@ class App(object):
 
             schema_key = f'{i_region_parent}:{schema_name}'
             i_max_date, r[schema_key] = self.__get_time_series(
-                from_dates, inst,
+                inst,
                 region_schema, region_parent, region_child,
                 datatypes,
                 date_ids_dict
@@ -579,88 +568,67 @@ class App(object):
             },
             'time_series_data': r,
             'updated_dates': {
-                k: v.strftime('%Y_%m_%d') for k, v in max_dates.items() if v
+                k: v for k, v in max_dates.items() if v
             }
         }
 
-    def __get_time_series(self, from_dates, inst,
+    def __get_time_series(self, inst,
                           region_schema, region_parent, region_child,
                           datatypes,
                           date_ids_dict):
+        """
+        Returns {
+            'sub_headers': (sub_headers corresponding to each value idx),
+            'data': [[region_child, agerange, [[date_updated_id, value 1, value 2...]], ...]
+        }
+        """
+
         out = []
-        added = set()
         max_date = None
 
-        datatypes = [
-            constant_to_name(i) for i in datatypes
-        ]
+        for (region_child, agerange), date_updated_dict in sorted(inst.get_time_series(
+            datatypes, region_schema, region_parent, region_child
+        ).items()):
 
-        for from_date in from_dates:
-            if from_date in added:
-                continue
-            added.add(from_date)
+            values = []
+            for date_updated, datapoints in sorted(date_updated_dict.items(), reverse=True):
 
-            print(from_date)
-            local_area_case_datapoints = inst.get_combined_values_by_datatype(
-                region_schema,
-                datatypes,
-                region_parent=region_parent,
-                region_child=region_child,
-                from_date=from_date
-            )
+                if max_date is None or date_updated > max_date:
+                    max_date = date_updated
 
-            for datapoint in local_area_case_datapoints:
-                #if datapoint['date_updated'] != from_date:
-                #    print("IGNORING:", datapoint['date_updated'], from_date)
-                #    continue
-                i_out = []
-                i_out.append(from_date)
-                i_out.append(normalize_locality_name(datapoint['region_child']))
-                i_out.append(datapoint['agerange'])
+                if not date_updated in date_ids_dict:
+                    # Store the date as an ID to allow saving space
+                    date_ids_dict[date_updated] = len(date_ids_dict)
+                date_updated_id = date_ids_dict[date_updated]
 
-                new_for_this_day = False
+                i_value = [date_updated_id]
                 for datatype in datatypes:
-                    if (
-                        datatype in datapoint and
-                        datapoint[f'{datatype} date_updated'] == from_date
-                    ):
-                        new_for_this_day = True
-                        i_out.append(int(datapoint[datatype]))
+                    found = None
+                    for datapoint in datapoints:
+                        if datapoint.datatype == datatype:
+                            found = datapoint
+
+                    if found:
+                        i_value.append(found.value)
                     else:
-                        i_out.append('')
+                        i_value.append('')
 
-                if new_for_this_day:
-                    while i_out[-1] == '':
-                        del i_out[-1]
+                # Don't store values past the end,
+                # if they aren't available!
+                while i_value[-1] == '':
+                    del i_value[-1]
+                values.append(i_value)
 
-                    out.append(tuple(i_out))
-
-        out_new = {}
-        for i in out:
-            date_updated = i[0]
-            region_child = i[1] or ''
-            agerange = i[2] or ''
-
-            i_date_updated = datetime.datetime.strptime(date_updated, '%Y_%m_%d')
-            if max_date is None or i_date_updated > max_date:
-                max_date = i_date_updated
-
-            if not date_updated in date_ids_dict:
-                # Store the date as an ID to allow saving space
-                date_ids_dict[date_updated] = len(date_ids_dict)
-            date_updated = date_ids_dict[date_updated]
-
-            out_new.setdefault(
-                (region_child, agerange), []
-            ).append((date_updated,)+tuple(i[3:]))
-
-        out_new_list = []
-        for (region_child, agerange), values in out_new.items():
-            out_new_list.append([region_child, agerange, values])
+            normalized_region_child = normalize_locality_name(region_child)
+            out.append([
+                normalized_region_child,
+                agerange,
+                values
+            ])
 
         return max_date, {
-            'sub_headers': datatypes,
-            'data': out_new_list
+            'sub_headers': [constant_to_name(i) for i in datatypes],
+            'data': out
         }
 
 
