@@ -11,14 +11,20 @@
 
     <table class="fancy-table">
         <tr>
-            {% for key in datapoints[0] %}
+            {% for key in datapoints[0]._fields %}
                 <th>{{ key|e }}</th>
             {% endfor %}
         </tr>
         {% for datapoint in datapoints %}
             <tr>
-                {% for key in datapoint %}
-                    <td>{{ datapoint[key]|e }}</td>
+                {% for key, value in zip(datapoint._fields, datapoint) %}
+                    {% if key == 'region_schema' %}
+                        <td>{{ schema_to_name(value)|e }}</td>
+                    {% elif key == 'datatype' %}
+                        <td>{{ constant_to_name(value)|e }}</td>
+                    {% else %}
+                        <td>{{ value|e }}</td>
+                    {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}

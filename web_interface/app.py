@@ -1,3 +1,4 @@
+import csv
 import json
 import time
 import random
@@ -6,6 +7,7 @@ import cherrypy
 import datetime
 import mimetypes
 from shlex import quote
+from io import StringIO
 from os import listdir, system
 from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
@@ -47,7 +49,7 @@ from covid_19_au_grab.get_package_dir import get_package_dir
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
 OUTPUT_GRAPHS_DIR = get_package_dir() / 'covid_19_au_grab' / 'output_graphs' / 'output'
-UPDATE_SCRIPT_PATH = get_package_dir() / 'state_news_releases' / 'output_data_from_news.py'
+UPDATE_SCRIPT_PATH = get_package_dir() / 'output_data.py'
 mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 
 
@@ -72,12 +74,12 @@ class App(object):
 
                 if dt.hour >= 12 and dt.hour < 14 and not powerbi_run_1st:
                     # Run powerbi once only between 12pm and 2pm
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --update-powerbi')
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
                     powerbi_run_1st = True
                     powerbi_run_2nd = False
                 elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_2nd:
                     # Run powerbi once only between 5pm and 7pm
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --update-powerbi')
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
                     powerbi_run_1st = False
                     powerbi_run_2nd = True
                 else:
@@ -154,6 +156,7 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            source_ids=inst.get_source_ids(),
         )
 
     @cherrypy.expose
@@ -163,31 +166,65 @@ class App(object):
         )
 
     @cherrypy.expose
-    def get_data_as_table(self, rev_date, rev_subid):
+    def get_data_as_table(self, rev_date, rev_subid, source_id):
         inst = SQLiteDataRevision(rev_date, rev_subid)
+
+        datapoints = inst.get_datapoints_by_source_id(source_id)
+        datapoints.sort(key=lambda i: (
+            i.date_updated,
+            i.region_schema,
+            i.region_parent,
+            i.region_child,
+            i.agerange
+        ))
 
         return env.get_template('revision/get_data_as_table.html').render(
             rev_date=rev_date,  # ESCAPE!
             rev_subid=rev_subid,  # ESCAPE!
-            datapoints=inst.get_datapoints(),
+            datapoints=datapoints,
             revision_time_string=inst.get_revision_time_string(),
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            schema_to_name=schema_to_name,
+            constant_to_name=constant_to_name,
+            zip=zip,
         )
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def get_json_data(self, rev_date, rev_subid):
+    def get_json_data(self, rev_date, rev_subid, source_id):
         return SQLiteDataRevision(rev_date, rev_subid).get_datapoints()
 
     @cherrypy.expose
-    def get_tsv_data(self, rev_date, rev_subid):
+    def get_tsv_data(self, rev_date, rev_subid, source_id):
         rev_subid = int(rev_subid)
-        return serve_file(
-            f'{OUTPUT_DIR}/{rev_date}-{rev_subid}.tsv',
-            "application/x-download", "attachment"
-        )
+        inst = SQLiteDataRevision(rev_date, rev_subid)
+        datapoints = inst.get_datapoints_by_source_id(source_id)
+        assert datapoints
+        datapoints.sort(key=lambda i: (
+            i.date_updated,
+            i.region_schema,
+            i.region_parent,
+            i.region_child,
+            i.agerange
+        ))
+
+        csvfile = StringIO()
+        writer = csv.writer(csvfile, delimiter='\t')
+        writer.writerow([i for i in datapoints[0]._fields])
+
+        for datapoint in datapoints:
+            row = []
+            for key, value in zip(datapoint._fields, datapoint):
+                row.append(value)
+            writer.writerow(row)
+
+        cherrypy.response.headers['Content-Disposition'] = 'attachment; filename="covid_%s.tsv"' % source_id
+        cherrypy.response.headers['Content-Type'] = 'text/csv'
+        csvfile.seek(0)
+        return csvfile.read()
+
 
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
@@ -339,6 +376,7 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            schema_to_name=schema_to_name,
         )
 
     @cherrypy.expose

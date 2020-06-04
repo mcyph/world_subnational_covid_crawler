@@ -66,6 +66,29 @@ class DataPointsDB:
     def cursor(self):
         return self.conn.cursor()
 
+    def get_source_ids(self):
+        r = []
+        cur = self.conn.cursor()
+        cur.execute('SELECT MIN(source_id) FROM datapoints;')
+        value = cur.fetchone()[0]
+        if value:
+            r.append(value)
+
+        while value:
+            cur.execute("""
+                SELECT MIN(source_id) 
+                FROM datapoints 
+                WHERE source_id > ? 
+                ORDER BY source_id 
+                LIMIT 1;
+            """, [value])
+            value = cur.fetchone()[0]
+            if value:
+                r.append(value)
+
+        cur.close()
+        return r
+
     #================================================================#
     #                         Delete DataPoints                      #
     #================================================================#
@@ -303,7 +326,6 @@ class DataPointsDB:
         """
 
         cur = self.conn.cursor()
-        print(query, values)
         cur.execute(query, values)
         results = cur.fetchall()
         source_url_ids = set([i[-1] for i in results])
@@ -382,6 +404,62 @@ class DataPointsDB:
 
             _fetch_one=False
         )
+
+    def get_datapoints_by_source_id(self, source_id):
+        query = f"""
+            SELECT 
+                date_updated, 
+                region_schema, region_parent, region_child,
+                agerange, datatype, `value`,
+                source_url_id
+            FROM
+                datapoints
+            WHERE
+                source_id = ?
+            ORDER BY 
+                date_updated ASC
+            ;
+        """
+        cur = self.conn.cursor()
+        cur.execute(query, [source_id])
+        results = cur.fetchall()
+        source_url_ids = set([i[-1] for i in results])
+
+        source_ids = set(str(source_url_id)
+                         for source_url_id in source_url_ids)
+
+        cur.execute(f"""
+            SELECT
+                source_url_id, source_url
+            FROM
+                sourceurls
+            WHERE
+                source_url_id IN ({','.join(source_ids)})
+            ;
+        """)
+        source_url_map = dict(cur.fetchall())
+
+        r = []
+        for (
+            date_updated,
+            region_schema, region_parent, region_child,
+            agerange, datatype, value,
+            source_url_id
+        ) in results:
+            source_url = source_url_map[source_url_id]
+
+            r.append(DataPoint(
+                date_updated=date_updated,
+                region_schema=name_to_schema(region_schema),
+                region_parent=region_parent,
+                region_child=region_child,
+                agerange=agerange,
+                datatype=name_to_constant(datatype),
+                value=value,
+                source_url=str(source_url)
+            ))
+
+        return r
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@
 
     <ul style="column-count: 2">
         {% for key, value in status_list %}
-            <li><b>{{ key|e }}</b>: {{ value[0]|e }} {% if value[1] %}{{ value[1]|e }}{% endif %}</li>
+            <li><b>{{ key|e }}</b>: {{ value['status']|e }} {% if value['message'] %}{{ value['message']|e }}{% endif %}</li>
         {% endfor %}
     </ul>
 
@@ -41,12 +41,22 @@
         <li><a href="regionsTimeSeries?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
             Get regionsTimeSeries.json file for COVID-19-AU website
         </a></li>
-        <li><a href="get_data_as_table?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
-            Get all data as HTML table
-        </a></li>
-        <li><a href="get_tsv_data?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}">
-            Get all data as TSV
-        </a></li>
+        <li>
+            Get all data as HTML table:
+            <ul style="column-count: 4">
+            {% for source_id in source_ids %}
+                <li><a href="get_data_as_table?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}&source_id={{ source_id }}">{{ source_id|e }}</a></li>
+            {% endfor %}
+            </ul>
+        </li>
+        <li>
+            Get all data as TSV:
+            <ul style="column-count: 4">
+            {% for source_id in source_ids %}
+                <li><a href="get_tsv_data?rev_date={{ rev_date }}&rev_subid={{ rev_subid }}&source_id={{ source_id }}">{{ source_id|e }}</a></li>
+            {% endfor %}
+            </ul>
+        </li>
     </ul>
 
 {{ end_page() }}

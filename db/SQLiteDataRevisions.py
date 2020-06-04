@@ -27,7 +27,7 @@ class SQLiteDataRevisions:
         r = []
 
         for fnam in listdir(OUTPUT_DIR):
-            if not fnam.endswith('.sqlite'):
+            if not fnam.endswith('.json'):
                 continue
             rev_date, rev_subid = fnam.rpartition('.')[0].split('-')
             rev_time = getctime(f'{OUTPUT_DIR}/{fnam}')

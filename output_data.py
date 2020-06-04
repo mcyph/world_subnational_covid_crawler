@@ -16,7 +16,7 @@ TIME_FORMAT = datetime.datetime \
                       .strftime('%Y_%m_%d')
 LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(
     TIME_FORMAT
-)
+) + 1
 
 RUN_INFREQUENT_JOBS = '--run-infrequent-jobs' in [i.strip() for i in sys.argv]
 
@@ -82,11 +82,8 @@ if __name__ == '__main__':
     )
 
     # Open the new output SQLite database
-    revision_id = RevisionIDs.get_latest_revision_id(
-        TIME_FORMAT
-    )
     sqlite_path = RevisionIDs.get_path_from_id(
-        TIME_FORMAT, revision_id, 'sqlite'
+        TIME_FORMAT, LATEST_REVISION_ID, 'sqlite'
     )
     dpdb = DataPointsDB(sqlite_path)
 

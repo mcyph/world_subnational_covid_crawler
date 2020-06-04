@@ -78,6 +78,14 @@ class SQLiteDataRevision:
             ).append(datapoint)
         return r
 
+    @needsdatapoints
+    def get_source_ids(self):
+        return self._datapoints_db.get_source_ids()
+
+    @needsdatapoints
+    def get_datapoints_by_source_id(self, source_id):
+        return self._datapoints_db.get_datapoints_by_source_id(source_id)
+
     #=============================================================#
     #                       Utility Functions                     #
     #=============================================================#
@@ -122,6 +130,7 @@ class SQLiteDataRevision:
         return (
             sortable_date(x.date_updated),
             x.region_parent,
+            x.region_child,
             x.datatype,
             x.agerange,
             x.region_child
@@ -133,6 +142,7 @@ class SQLiteDataRevision:
         """
         return (
             x.region_parent,
+            x.region_child,
             x.datatype,
             x.agerange,
             x.region_child
@@ -287,9 +297,9 @@ class SQLiteDataRevision:
             region_schema=['= ?', [region_schema]] if region_schema is not None else None,
             region_parent=['= ?', [region_parent]] if region_parent is not None else None,
             region_child=['= ?', [region_child]] if region_child is not None else None,
-            date_updated=['>= ?', [from_date]] if from_date is not None else None,
+            date_updated=['<= ?', [from_date]] if from_date is not None else None,
             datatype=['= ?', [datatype]] if datatype is not None else None,
-            order_by='date_updated ASC',
+            order_by='date_updated DESC',
             add_source_url=True
         )
 
