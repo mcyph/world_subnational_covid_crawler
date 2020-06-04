@@ -29,7 +29,7 @@ class SQLiteDataRevisions:
         for fnam in listdir(OUTPUT_DIR):
             if not fnam.endswith('.sqlite'):
                 continue
-            rev_date, rev_subid = fnam[:-4].split('-')
+            rev_date, rev_subid = fnam.rpartition('.')[0].split('-')
             rev_time = getctime(f'{OUTPUT_DIR}/{fnam}')
             dt = str(datetime.datetime.fromtimestamp(rev_time) \
                      .astimezone(timezone('Australia/Melbourne'))).split('.')[0]

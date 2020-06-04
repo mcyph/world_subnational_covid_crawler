@@ -18,15 +18,15 @@ env = Environment(loader=FileSystemLoader('./templates'))
 
 from covid_19_au_grab.normalize_locality_name import \
     normalize_locality_name
-#from covid_19_au_grab.web_interface.CSVDataRevision import \
-#    CSVDataRevision
-#from covid_19_au_grab.web_interface.CSVDataRevisions import \
-#    CSVDataRevisions
+from covid_19_au_grab.web_interface.CSVDataRevision import \
+    CSVDataRevision
+from covid_19_au_grab.web_interface.CSVDataRevisions import \
+    CSVDataRevisions
 
-from covid_19_au_grab.db.SQLiteDataRevision import \
-    SQLiteDataRevision
-from covid_19_au_grab.db.SQLiteDataRevisions import \
-    SQLiteDataRevisions
+#from covid_19_au_grab.db.SQLiteDataRevision import \
+#    SQLiteDataRevision
+#from covid_19_au_grab.db.SQLiteDataRevisions import \
+#    SQLiteDataRevisions
 
 from covid_19_au_grab.datatypes.constants import (
     constant_to_name, schema_to_name,
@@ -53,7 +53,7 @@ mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 
 class App(object):
     def __init__(self):
-        self.revisions = SQLiteDataRevisions()
+        self.revisions = CSVDataRevisions()
         _thread.start_new_thread(self.loop, ())
 
     def loop(self):
@@ -102,7 +102,7 @@ class App(object):
         """
         revisions = self.revisions.get_revisions()[:15]
         insts = [
-            SQLiteDataRevision(period, subperiod_id)
+            CSVDataRevision(period, subperiod_id)
             for period, subperiod_id, _ in revisions
         ]
 
@@ -137,7 +137,7 @@ class App(object):
 
     @cherrypy.expose
     def revision(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
 
         try:
             status_list = sorted(
@@ -164,7 +164,7 @@ class App(object):
 
     @cherrypy.expose
     def get_data_as_table(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
 
         return env.get_template('revision/get_data_as_table.html').render(
             rev_date=rev_date,  # ESCAPE!
@@ -179,7 +179,7 @@ class App(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def get_json_data(self, rev_date, rev_subid):
-        return SQLiteDataRevision(rev_date, rev_subid).get_datapoints()
+        return CSVDataRevision(rev_date, rev_subid).get_datapoints()
 
     @cherrypy.expose
     def get_tsv_data(self, rev_date, rev_subid):
@@ -191,16 +191,16 @@ class App(object):
 
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%Y_%m_%d')
+            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%d/%m/%Y')
         ):
             print("**FROM DATE:", from_date)
 
@@ -229,7 +229,7 @@ class App(object):
             rev_date=rev_date,
             rev_date_slash_format=datetime.datetime.strptime(
                 rev_date, '%Y_%m_%d'
-            ).strftime('%Y_%m_%d'),
+            ).strftime('%d/%m/%Y'),
             rev_subid=rev_subid,
             int=int,
             revision_time_string=inst.get_revision_time_string(),
@@ -241,16 +241,16 @@ class App(object):
 
     @cherrypy.expose
     def source_of_infection(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
         rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%Y_%m_%d')
+            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%d/%m/%Y'),
+            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%d/%m/%Y')
         ):
             print("**FROM DATE:", from_date)
 
@@ -270,7 +270,9 @@ class App(object):
 
         return env.get_template('revision/source_of_infection.html').render(
             rev_date=rev_date,
-            rev_date_slash_format=rev_date,
+            rev_date_slash_format=datetime.datetime.strptime(
+                rev_date, '%Y_%m_%d'
+            ).strftime('%d/%m/%Y'),
             rev_subid=rev_subid,
             int=int,
             revision_time_string=inst.get_revision_time_string(),
@@ -282,7 +284,7 @@ class App(object):
 
     @cherrypy.expose
     def gender_age(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
         gender_age_datapoints = [i for i in inst.get_combined_values_by_datatype(
             SCHEMA_ADMIN_1,
             (
@@ -306,7 +308,7 @@ class App(object):
 
     @cherrypy.expose
     def local_area_case(self, rev_date, rev_subid):
-        inst = SQLiteDataRevision(rev_date, rev_subid)
+        inst = CSVDataRevision(rev_date, rev_subid)
 
         out = []
         for region_schema in (
@@ -350,19 +352,21 @@ class App(object):
             # Output the last successful run if
             # rev_date/rev_subid not supplied
             for rev_date, rev_subid, dt in self.revisions.get_revisions():
-                inst = SQLiteDataRevision(rev_date, rev_subid)
+                inst = CSVDataRevision(rev_date, rev_subid)
                 status_dict = inst.get_status_dict()
 
                 if all(status_dict[k][0] == 'OK' for k in status_dict):
                     break
         else:
-            inst = SQLiteDataRevision(rev_date, rev_subid)
+            inst = CSVDataRevision(rev_date, rev_subid)
+
+        from_dates = [i['date_updated'] for i in inst]  # CHECK ME!!! ================================================
 
         r = {}
         date_ids_dict = {}
         max_dates = {}
 
-        schema_list = (
+        for region_schema, region_parent, region_child, datatypes in (
             (SCHEMA_ADMIN_1, 'AU', 'AU-ACT', (DT_TOTAL,
                                        DT_TESTS_TOTAL,
 
@@ -534,20 +538,7 @@ class App(object):
                                  DT_STATUS_RECOVERED,
                                  DT_STATUS_DEATHS
                                  )),
-        )
-
-        from_dates = set()
-        for region_schema, region_parent, region_child, datatypes in schema_list:
-            for updated_date in inst.get_updated_dates(
-                ['= ?', [schema_to_name(region_schema)]],
-                ['= ?', [region_parent]] if region_parent else None,
-                ['= ?', [region_child]] if region_child else None
-            ):
-                from_dates.add(updated_date)
-        from_dates = list(from_dates)
-        print("FROM_DATES:", from_dates)
-
-        for region_schema, region_parent, region_child, datatypes in schema_list:
+        ):
             schema_name = schema_to_name(region_schema)
 
             if compat_mode:
@@ -572,14 +563,13 @@ class App(object):
         print("** MAX_DATE:", max_dates)
         return {
             'date_ids': {
-                # Back-compat: convert to DD/MM/YYYY format!
-                date_id: datetime.datetime.strptime(date_string, '%Y_%m_%d').strftime('%d/%m/%Y')
+                date_id: date_string
                 for (date_string, date_id)
                 in date_ids_dict.items()
             },
             'time_series_data': r,
             'updated_dates': {
-                k: v.strftime('%Y_%m_%d') for k, v in max_dates.items() if v
+                k: v.strftime('%d/%m/%Y') for k, v in max_dates.items() if v
             }
         }
 
@@ -641,7 +631,7 @@ class App(object):
             region_child = i[1] or ''
             agerange = i[2] or ''
 
-            i_date_updated = datetime.datetime.strptime(date_updated, '%Y_%m_%d')
+            i_date_updated = datetime.datetime.strptime(date_updated, '%d/%m/%Y')
             if max_date is None or i_date_updated > max_date:
                 max_date = i_date_updated
 

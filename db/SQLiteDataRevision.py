@@ -15,7 +15,7 @@ OUTPUT_DIR = get_package_dir() / 'output'
 def needsdatapoints(fn):
     def newfn(self, *args, **kw):
         if self._datapoints_db is None:
-            self.__read_sqlite()
+            self._read_sqlite()
         return fn(self, *args, **kw)
     return newfn
 
@@ -45,6 +45,14 @@ class SQLiteDataRevision:
     def get_datapoints(self):
         return self._datapoints_db[:]
 
+    @needsdatapoints
+    def get_updated_dates(self, region_schema, region_parent, region_child):
+        return [i.date_updated for i in self._datapoints_db.select_many(
+            region_schema=region_schema,
+            region_parent=region_parent,
+            region_child=region_child
+        )]
+
     #=============================================================#
     #                       Utility Functions                     #
     #=============================================================#
@@ -58,7 +66,7 @@ class SQLiteDataRevision:
         int(yyyy), int(mm), int(dd)
 
     def _read_sqlite(self):
-        return DataPointsDB(
+        self._datapoints_db = DataPointsDB(
             OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.sqlite'
         )
 
@@ -78,33 +86,23 @@ class SQLiteDataRevision:
         Sort so that the most recent dates come first,
         then sort by state, datatype and name
         """
-
-        def sortable_date(i):
-            dd, mm, yyyy = i.split('/')
-            return (
-                str(9999 - int(yyyy)) + '_' +
-                str(99 - int(mm)) + '_' +
-                str(99 - int(dd))
-            )
-
         return (
-            sortable_date(x['date_updated']),
-            x['region_parent'],
-            x['datatype'],
-            x['agerange'],
-            x['region_child']
+            x.date_updated,
+            x.region_parent,
+            x.datatype,
+            x.agerange,
+            x.region_child
         )
 
     def __generic_sort_key(self, x):
         """
         Sort only by state, datatype and name, ignoring date
         """
-        # print(x)
         return (
-            x['region_parent'],
-            x['datatype'],
-            x['agerange'],
-            x['region_child']
+            x.region_parent,
+            x.datatype,
+            x.agerange,
+            x.region_child
         )
 
     #=============================================================#
@@ -130,9 +128,6 @@ class SQLiteDataRevision:
         if isinstance(region_schema, int):
             region_schema = schema_to_name(region_schema)
 
-        def to_datetime(dt):
-            return datetime.datetime.strptime(dt, '%d/%m/%Y')
-
         combined = {}
         for datatype in datatypes:
             if isinstance(datatype, int):
@@ -143,35 +138,34 @@ class SQLiteDataRevision:
                                                      region_parent=region_parent,
                                                      region_child=region_child):
 
-                if datapoint['agerange'] and datapoint['region_child']:
-                    k = f"{datapoint['agerange']} {datapoint['region_child']}"
-                elif datapoint['agerange']:
-                    k = datapoint['agerange'] or ''
+                if datapoint.agerange and datapoint.region_child:
+                    k = f"{datapoint.agerange} {datapoint.region_child}"
+                elif datapoint.agerange:
+                    k = datapoint.agerange or ''
                 else:
-                    k = datapoint['region_child'] or ''
+                    k = datapoint.region_child or ''
 
-                i_combined = combined.setdefault(datapoint['region_parent'], {}) \
+                i_combined = combined.setdefault(datapoint.region_parent, {}) \
                                      .setdefault(k, {})
 
                 if (
                     not 'date_updated' in i_combined or
-                    to_datetime(datapoint['date_updated']) <
-                        to_datetime(i_combined['date_updated'])
+                    datapoint.date_updated < i_combined['date_updated']
                 ):
                     # Use the least recent date
-                    i_combined['date_updated'] = datapoint['date_updated']
+                    i_combined['date_updated'] = datapoint.date_updated
                     i_combined['date_today'] = datetime.datetime.now() \
-                        .strftime('%d/%m/%Y')
+                        .strftime('%Y_%m_%d')
 
-                i_combined['agerange'] = datapoint['agerange']
-                i_combined['region_child'] = datapoint['region_child']
-                i_combined['region_parent'] = datapoint['region_parent']
-                i_combined['region_schema'] = datapoint['region_schema']
+                i_combined['agerange'] = datapoint.agerange
+                i_combined['region_child'] = datapoint.region_child
+                i_combined['region_parent'] = datapoint.region_parent
+                i_combined['region_schema'] = datapoint.region_schema
 
                 if not datatype in i_combined:
-                    i_combined[datatype] = datapoint['value']
-                    i_combined[f'{datatype} date_updated'] = datapoint['date_updated']
-                    i_combined[f'{datatype} source_url'] = datapoint['source_url']
+                    i_combined[datatype] = datapoint.value
+                    i_combined[f'{datatype} date_updated'] = datapoint.date_updated
+                    i_combined[f'{datatype} source_url'] = datapoint.source_url
 
         out = []
         for i_combined in combined.values():
@@ -260,8 +254,10 @@ class SQLiteDataRevision:
             region_schema=['= ?', [region_schema]] if region_schema is not None else None,
             region_parent=['= ?', [region_parent]] if region_parent is not None else None,
             region_child=['= ?', [region_child]] if region_child is not None else None,
-            from_date=['>= ?', [from_date]] if from_date is not None else None,
+            date_updated=['>= ?', [from_date]] if from_date is not None else None,
             datatype=['= ?', [datatype]] if datatype is not None else None,
+            order_by='date_updated ASC',
+            add_source_url=True
         )
 
         if not datapoints:
@@ -272,9 +268,9 @@ class SQLiteDataRevision:
             # Note we're restricting to only `datatype` already,
             # so no need to include it in the key
             unique_k = (
-                datapoint['region_parent'],
-                datapoint['agerange'],
-                datapoint['region_child']
+                datapoint.region_parent,
+                datapoint.agerange,
+                datapoint.region_child
             )
             if unique_k in r:
                 continue
