@@ -5,9 +5,7 @@
             "iso_3166": null,
             "min_zoom": null,
             "priority": 0,
-            "data_file": "admin_0.json",
-            "geojson_file": "admin_0.geojson",
-            "underlay_file": "admin_0_underlay.json"
+            "split_by_parent_region": false
         },
         "admin_1": {
             "#1": "States/territories: is the child to admin_0, provided for",
@@ -17,9 +15,7 @@
             "iso_3166": null,
             "min_zoom": 5,
             "priority": 1,
-            "data_file": "admin_1_${iso_3166_2}.json",
-            "geojson_file": "admin_1.geojson",
-            "underlay_file": "admin_1_underlay.json"
+            "split_by_parent_region": true
         },
         "lga": {
             "#1": "Replaces states/territories for the entire country,",
@@ -27,50 +23,38 @@
             "iso_3166": "AU",
             "min_zoom": 6,
             "priority": 3,
-            "data_file": "lga.json",
-            "geojson_file": "lga.geojson",
-            "underlay_file": "lga_underlay.json"
+            "split_by_parent_region": true
         },
         "hhs": {
             "iso_3166": "AU-QLD",
             "min_zoom": 6,
             "priority": 4,
-            "data_file": "hhs.json",
-            "geojson_file": "hhs.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "lhd": {
             "iso_3166": "AU-NSW",
             "min_zoom": 6,
             "priority": 2,
-            "data_file": "lhd.json",
-            "geojson_file": "lhd.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "sa3": {
             "iso_3166": "AU-ACT",
             "min_zoom": 6,
             "priority": 2,
-            "data_file": "sa3.json",
-            "geojson_file": "sa3.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "ths": {
             "iso_3166": "AU-TAS",
             "min_zoom": 6,
             "priority": 4,
-            "data_file": "ths.json",
-            "geojson_file": "ths.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "postcode": {
             "iso_3166": "AU-NSW",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "postcode_${iso_3166_2}.json",
-            "geojson_file": "postcode_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
 
         "bd_district": {
@@ -78,64 +62,42 @@
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "bd_district.json",
-            "geojson_file": "bd_district.geojson",
-            "underlay_file": null
+            "split_by_parent_region": false
         },
         "br_city": {
             "iso_3166": "BR",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "br_city_${iso_3166_2}.json",
-            "geojson_file": "br_city_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "co_municipality": {
             "iso_3166": "CO",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "co_municipality_${iso_3166_2}.json",
-            "geojson_file": "co_municipality_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "de_ags": {
             "iso_3166": "DE",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "de_ags.json",
-            "geojson_file": "de_ags.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "es_madrid_municipality": {
             "iso_3166": "ES-MD",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "es_madrid_municipality.json",
-            "geojson_file": "es_madrid_municipality.geojson",
-            "underlay_file": null
-        },
-        "fr_pays": {
-            "#1": "TODO: Add separately for for Brittany/Franche-Comté!",
-            "iso_3166": "FR",
-            "min_zoom": 8,
-            "priority": -1,
-            "line_width": 0.5,
-            "data_file": "fr_pays.json",
-            "geojson_file": "fr_pays.geojson",
-            "underlay_file": null
+            "split_by_parent_region": false
         },
         "fr_department": {
             "iso_3166": "FR",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "fr_department.json",
-            "geojson_file": "fr_department.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
 
         "in_district": {
@@ -143,70 +105,54 @@
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "in_district_${iso_3166_2}.json",
-            "geojson_file": "in_district_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "it_province": {
             "iso_3166": "IT",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "it_province.json",
-            "geojson_file": "it_province.geojson",
-            "underlay_file": null
+            "split_by_parent_region": false
         },
         "jp_city": {
             "iso_3166": "JP",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "jp_city.json",
-            "geojson_file": "jp_city.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "my_district": {
             "iso_3166": "MY",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "my_district.json",
-            "geojson_file": "my_district.geojson",
-            "underlay_file": null
+            "split_by_parent_region": false
         },
         "nz_dhb": {
             "iso_3166": "NZ",
             "min_zoom": 6,
             "priority": 3,
-            "data_file": "nz_dhb.json",
-            "geojson_file": "nz_dhb.geojson",
-            "underlay_file": "nz_dhb_underlay.json"
+            "split_by_parent_region": false
         },
         "uk_area": {
             "iso_3166": "GB",
             "min_zoom": 8,
             "priority": -1,
-            "data_file": "uk_area.json",
-            "geojson_file": "uk_area.geojson",
-            "underlay_file": null
+            "split_by_parent_region": false
         },
         "us_county": {
             "iso_3166": "US",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "us_county_${iso_3166_2}.json",
-            "geojson_file": "us_county_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         },
         "th_district": {
             "iso_3166": "TH",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "data_file": "th_district_${iso_3166_2}.json",
-            "geojson_file": "th_district_${iso_3166_2}.geojson",
-            "underlay_file": null
+            "split_by_parent_region": true
         }
     }
 }
