@@ -40,7 +40,7 @@
                     </a>
                 </td>
                 <td>
-                    {{- datapoint['date_updated'] -}}
+                    {{- date_fns.to_slash_format(datapoint['date_updated']) -}}
                 </td>
                 <td>
                     <!-- assigned to -->

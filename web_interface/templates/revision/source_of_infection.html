@@ -40,10 +40,10 @@
                     {{- datapoint['source_under_investigation'] -}}
                 </a></td>
                 <td>
-                    {{- datapoint['date_updated'] -}}
+                    {{- date_fns.to_slash_format(datapoint['date_updated']) -}}
                 </td>
                 <td>
-                    {{- date_today or datapoint['date_today'] -}}
+                    {{- date_fns.to_slash_format(date_today or datapoint['date_today']) -}}
                 </td>
             </tr>
         {% endfor %}

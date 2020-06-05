@@ -45,6 +45,7 @@ from covid_19_au_grab.datatypes.constants import (
     DT_SOURCE_INTERSTATE
 )
 from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.datatypes import date_fns
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
@@ -157,6 +158,7 @@ class App(object):
                 rev_date, rev_subid
             ),
             source_ids=inst.get_source_ids(),
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
@@ -189,6 +191,7 @@ class App(object):
             schema_to_name=schema_to_name,
             constant_to_name=constant_to_name,
             zip=zip,
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
@@ -220,7 +223,8 @@ class App(object):
                 row.append(value)
             writer.writerow(row)
 
-        cherrypy.response.headers['Content-Disposition'] = 'attachment; filename="covid_%s.tsv"' % source_id
+        cherrypy.response.headers['Content-Disposition'] = \
+            'attachment; filename="covid_%s.tsv"' % source_id
         cherrypy.response.headers['Content-Type'] = 'text/csv'
         csvfile.seek(0)
         return csvfile.read()
@@ -230,14 +234,13 @@ class App(object):
     def statistics(self, rev_date, rev_subid):
         inst = SQLiteDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
-        rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%Y_%m_%d')
+            date_fns.apply_timedelta(rev_date, days=-0),
+            date_fns.apply_timedelta(rev_date, days=-1),
+            date_fns.apply_timedelta(rev_date, days=-2),
+            date_fns.apply_timedelta(rev_date, days=-3),
+            date_fns.apply_timedelta(rev_date, days=-4)
         ):
             print("**FROM DATE:", from_date)
 
@@ -264,9 +267,7 @@ class App(object):
 
         return env.get_template('revision/statistics.html').render(
             rev_date=rev_date,
-            rev_date_slash_format=datetime.datetime.strptime(
-                rev_date, '%Y_%m_%d'
-            ).strftime('%Y_%m_%d'),
+            rev_date_slash_format=rev_date,  # HACK!
             rev_subid=rev_subid,
             int=int,
             revision_time_string=inst.get_revision_time_string(),
@@ -274,20 +275,20 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
     def source_of_infection(self, rev_date, rev_subid):
         inst = SQLiteDataRevision(rev_date, rev_subid)
         statistics_datapoints = []
-        rev_date_parsed = datetime.datetime.strptime(rev_date, '%Y_%m_%d')
 
         for from_date in (
-            (rev_date_parsed - datetime.timedelta(days=0)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=1)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=2)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=3)).strftime('%Y_%m_%d'),
-            (rev_date_parsed - datetime.timedelta(days=4)).strftime('%Y_%m_%d')
+            date_fns.apply_timedelta(rev_date, days=-0),
+            date_fns.apply_timedelta(rev_date, days=-1),
+            date_fns.apply_timedelta(rev_date, days=-2),
+            date_fns.apply_timedelta(rev_date, days=-3),
+            date_fns.apply_timedelta(rev_date, days=-4)
         ):
             print("**FROM DATE:", from_date)
 
@@ -315,6 +316,7 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
@@ -339,6 +341,7 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
@@ -377,6 +380,7 @@ class App(object):
                 rev_date, rev_subid
             ),
             schema_to_name=schema_to_name,
+            date_fns=date_fns,
         )
 
     @cherrypy.expose
@@ -401,144 +405,157 @@ class App(object):
         max_dates = {}
 
         schema_list = (
-            (SCHEMA_ADMIN_1, 'AU', 'AU-ACT', (DT_TOTAL,
-                                       DT_TESTS_TOTAL,
+            (SCHEMA_ADMIN_1, 'AU', 'AU-ACT', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                       DT_STATUS_RECOVERED,
-                                       DT_STATUS_DEATHS,
-                                       DT_STATUS_ICU,
-                                       DT_STATUS_HOSPITALIZED,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
 
-                                       DT_SOURCE_OVERSEAS,
-                                       DT_SOURCE_COMMUNITY,
-                                       DT_SOURCE_CONFIRMED,
-                                       DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION,
-                                       )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-NSW', (DT_TOTAL,
-                                       DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-NSW', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                       DT_STATUS_ACTIVE,
-                                       DT_STATUS_RECOVERED,
-                                       #DT_STATUS_UNKNOWN,
-                                       DT_STATUS_DEATHS,
-                                       DT_STATUS_ICU,
-                                       DT_STATUS_ICU_VENTILATORS,
-                                       DT_STATUS_HOSPITALIZED,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+                #DT_STATUS_UNKNOWN,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_ICU_VENTILATORS,
+                DT_STATUS_HOSPITALIZED,
 
-                                       DT_SOURCE_OVERSEAS,
-                                       DT_SOURCE_COMMUNITY,
-                                       DT_SOURCE_CONFIRMED,
-                                       DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION,
-                                       )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-NT', (DT_TOTAL,
-                                      DT_TESTS_TOTAL,
-                                      DT_STATUS_ICU,
-                                      DT_STATUS_DEATHS,
-                                      DT_STATUS_RECOVERED,
-                                      DT_STATUS_HOSPITALIZED,
-                                      )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-QLD', (DT_TOTAL,
-                                       DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-NT', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
+                DT_STATUS_ICU,
+                DT_STATUS_DEATHS,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_HOSPITALIZED,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-QLD', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                       DT_STATUS_ACTIVE,
-                                       DT_STATUS_RECOVERED,
-                                       DT_STATUS_DEATHS,
-                                       DT_STATUS_ICU,
-                                       DT_STATUS_HOSPITALIZED,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
 
-                                       DT_SOURCE_OVERSEAS,
-                                       DT_SOURCE_COMMUNITY,
-                                       DT_SOURCE_CONFIRMED,
-                                       DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION,
-                                       )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-SA', (DT_TOTAL,
-                                      DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-SA', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                      DT_STATUS_RECOVERED,
-                                      DT_STATUS_DEATHS,
-                                      DT_STATUS_ICU,
-                                      DT_STATUS_HOSPITALIZED,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
 
-                                      DT_SOURCE_OVERSEAS,
-                                      DT_SOURCE_COMMUNITY,
-                                      DT_SOURCE_CONFIRMED,
-                                      DT_SOURCE_INTERSTATE,
-                                      DT_SOURCE_UNDER_INVESTIGATION,
-                                      )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-TAS', (DT_TOTAL,
-                                       DT_TESTS_TOTAL,
-                                       DT_STATUS_RECOVERED,
-                                       DT_STATUS_DEATHS,
-                                       DT_STATUS_ICU,
-                                       DT_STATUS_HOSPITALIZED,
-                                       )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-VIC', (DT_TOTAL,
-                                       DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-TAS', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-VIC', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                       #DT_STATUS_ACTIVE,
-                                       DT_STATUS_RECOVERED,
-                                       #DT_STATUS_UNKNOWN,
-                                       DT_STATUS_DEATHS,
-                                       DT_STATUS_ICU,
-                                       DT_STATUS_HOSPITALIZED,
+                #DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+                #DT_STATUS_UNKNOWN,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
 
-                                       DT_SOURCE_OVERSEAS,
-                                       DT_SOURCE_COMMUNITY,
-                                       DT_SOURCE_CONFIRMED,
-                                       DT_SOURCE_INTERSTATE,
-                                       DT_SOURCE_UNDER_INVESTIGATION,
-                                       )),
-            (SCHEMA_ADMIN_1, 'AU', 'AU-WA', (DT_TOTAL,
-                                      DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
+            (SCHEMA_ADMIN_1, 'AU', 'AU-WA', (
+                DT_TOTAL,
+                DT_TESTS_TOTAL,
 
-                                      DT_STATUS_ACTIVE,
-                                      DT_STATUS_RECOVERED,
-                                      DT_STATUS_UNKNOWN,
-                                      DT_STATUS_DEATHS,
-                                      DT_STATUS_ICU,
-                                      DT_STATUS_HOSPITALIZED,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_UNKNOWN,
+                DT_STATUS_DEATHS,
+                DT_STATUS_ICU,
+                DT_STATUS_HOSPITALIZED,
 
-                                      DT_SOURCE_OVERSEAS,
-                                      DT_SOURCE_COMMUNITY,
-                                      DT_SOURCE_CONFIRMED,
-                                      DT_SOURCE_INTERSTATE,
-                                      DT_SOURCE_UNDER_INVESTIGATION,
-                                      )),
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
 
-            (SCHEMA_LGA, 'AU-NSW', None, (DT_TOTAL,
-                                 DT_STATUS_ACTIVE,
-                                 DT_STATUS_DEATHS,
-                                 DT_STATUS_RECOVERED,
-                                 DT_TESTS_TOTAL,
-                                 DT_SOURCE_OVERSEAS,
-                                 DT_SOURCE_CONFIRMED,
-                                 DT_SOURCE_INTERSTATE,
-                                 DT_SOURCE_COMMUNITY,
-                                 DT_SOURCE_UNDER_INVESTIGATION,
-                                 )),
+            (SCHEMA_LGA, 'AU-NSW', None, (
+                DT_TOTAL,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_DEATHS,
+                DT_STATUS_RECOVERED,
+                DT_TESTS_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
             # Won't use LGA for totals, as don't have a long history
-            (SCHEMA_LGA, 'AU-QLD', None, (#DT_TOTAL,
-                                 DT_SOURCE_OVERSEAS,
-                                 DT_SOURCE_CONFIRMED,
-                                 DT_SOURCE_COMMUNITY,
-                                 DT_SOURCE_INTERSTATE,
-                                 DT_SOURCE_UNDER_INVESTIGATION,
-                                 )),
+            (SCHEMA_LGA, 'AU-QLD', None, (
+                #DT_TOTAL,
+                DT_SOURCE_OVERSEAS,
+                DT_SOURCE_CONFIRMED,
+                DT_SOURCE_COMMUNITY,
+                DT_SOURCE_INTERSTATE,
+                DT_SOURCE_UNDER_INVESTIGATION,
+            )),
             # Won't use SA for now, at least till can increase the accuracy
-            (SCHEMA_LGA, 'AU-SA', None, (DT_TOTAL,
-                                DT_STATUS_ACTIVE,
-                                )),
+            (SCHEMA_LGA, 'AU-SA', None, (
+                DT_TOTAL,
+                DT_STATUS_ACTIVE,
+            )),
             #(SCHEMA_LGA, 'AU-TAS', None, (DT_TOTAL,
             #                     )),
-            (SCHEMA_LGA, 'AU-VIC', None, (DT_TOTAL,
-                                 DT_STATUS_ACTIVE,
-                                 DT_STATUS_RECOVERED,
-                                 )),
-            (SCHEMA_LGA, 'AU-WA', None, (DT_TOTAL,
-                                )),
+            (SCHEMA_LGA, 'AU-VIC', None, (
+                DT_TOTAL,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+            )),
+            (SCHEMA_LGA, 'AU-WA', None, (
+                DT_TOTAL,
+            )),
 
             # NSW by postcode is possible, debating whether
             # to leave it as a non-goal for now:
@@ -557,21 +574,25 @@ class App(object):
             #                          DT_SOURCE_UNDER_INVESTIGATION
             #                          )),
 
-            (SCHEMA_SA3, 'AU-ACT', None, (DT_TOTAL,)),
+            (SCHEMA_SA3, 'AU-ACT', None, (
+                DT_TOTAL,
+            )),
             # LHD is used for Active/Recovered values
             # It's also available by postcode on the NSW gov's site
             #(SCHEMA_LHD, 'AU-NSW', (DT_STATUS_ACTIVE,
             #                     DT_STATUS_DEATHS,
             #                     DT_STATUS_RECOVERED)),
-            (SCHEMA_THS, 'AU-TAS', None, (DT_TOTAL,
-                                 DT_STATUS_ACTIVE,
-                                 DT_STATUS_RECOVERED
-                                 )),
-            (SCHEMA_HHS, 'AU-QLD', None, (DT_TOTAL,
-                                 DT_STATUS_ACTIVE,
-                                 DT_STATUS_RECOVERED,
-                                 DT_STATUS_DEATHS
-                                 )),
+            (SCHEMA_THS, 'AU-TAS', None, (
+                DT_TOTAL,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED
+            )),
+            (SCHEMA_HHS, 'AU-QLD', None, (
+                DT_TOTAL,
+                DT_STATUS_ACTIVE,
+                DT_STATUS_RECOVERED,
+                DT_STATUS_DEATHS
+            )),
         )
 
         for region_schema, region_parent, region_child, datatypes in schema_list:
@@ -600,7 +621,7 @@ class App(object):
         return {
             'date_ids': {
                 # Back-compat: convert to DD/MM/YYYY format!
-                date_id: datetime.datetime.strptime(date_string, '%Y_%m_%d').strftime('%d/%m/%Y')
+                date_id: date_fns.to_slash_format(date_string)
                 for (date_string, date_id)
                 in date_ids_dict.items()
             },
