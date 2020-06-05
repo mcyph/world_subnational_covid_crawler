@@ -355,6 +355,7 @@ class NZData(GithubRepo):
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_NZ_DHB,
+                    region_parent='NZ',
                     region_child=item['DHB'],
                     datatype=DT_TOTAL,
                     value=int(item['Count']),

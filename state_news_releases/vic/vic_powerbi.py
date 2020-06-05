@@ -174,7 +174,7 @@ class _VicPowerBI(PowerBIDataReader):
                     region_schema=SCHEMA_LGA,
                     datatype=DT_STATUS_RECOVERED,
                     region_child=region_child,
-                    value=self.totals_dict[region_string],
+                    value=self.totals_dict[region_child],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
                 ))

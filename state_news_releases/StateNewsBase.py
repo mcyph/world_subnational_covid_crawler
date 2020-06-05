@@ -354,7 +354,7 @@ class StateNewsBase(ABC):
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated=None, agerange=None, region_child=None,
+                                    date_updated, agerange=None, region_child=None,
                                     region_schema=SCHEMA_ADMIN_1):
         """
         Convenience function for removing numeral grouping X,XXX

@@ -189,6 +189,7 @@ class NSWNews(StateNewsBase):
         total = self._extract_number_using_regex(
             compile('bringing the total to ([0-9,]+)'),
             html,
+            date_updated=self._get_date(href, html),
             datatype=DT_TOTAL,
             source_url=href
         )
@@ -224,6 +225,7 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             html,
+            date_updated=self._get_date(href, html),
             datatype=DT_TESTS_TOTAL,
             source_url=href
         )
@@ -344,8 +346,6 @@ class NSWNews(StateNewsBase):
 
     @singledaystat
     def _get_total_cases_by_region(self, href, html):
-        date = self._get_date(href, html)
-
         # Why on earth are there zero width spaces!?
         html = html.replace(chr(8203), '')
 

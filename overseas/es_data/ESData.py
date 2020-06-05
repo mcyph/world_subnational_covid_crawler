@@ -10,6 +10,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
+    SCHEMA_ES_MADRID_MUNICIPALITY,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -142,8 +143,8 @@ class ESData(GithubRepo):
 
                 if item['casos_confirmados_totales']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
+                        region_schema=SCHEMA_ES_MADRID_MUNICIPALITY,
+                        region_parent='ES-MD',
                         region_child=item['municipio_distrito'],
                         datatype=DT_TOTAL,
                         value=int(item['casos_confirmados_totales']),

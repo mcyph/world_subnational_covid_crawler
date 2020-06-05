@@ -1,6 +1,6 @@
 import re
 import unicodedata
-from covid_19_au_grab.datatypes.constants import constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
 
 from covid_19_au_grab.overseas.humdata.af_data.AFData import AFData
 from covid_19_au_grab.overseas.humdata.co_data.COData import COData
@@ -109,7 +109,17 @@ class OverseasDataSources:
 
             try:
                 inst = i()
-                yield inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, inst.get_datapoints()
+                new_datapoints = []
+
+                for datapoint in inst.get_datapoints():
+                    # We won't use Australian data from international sources,
+                    # as it comes from the dept of Health, which doesn't always
+                    # match with state data
+                    if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'AU':
+                        continue
+                    new_datapoints.append(datapoint)
+
+                yield inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, new_datapoints
 
                 self._status[i.SOURCE_ID] = {
                     'status': 'OK',

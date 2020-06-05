@@ -16,8 +16,8 @@ TIME_FORMAT = datetime.datetime \
                       .strftime('%Y_%m_%d')
 LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(
     TIME_FORMAT
-) + 1
-
+)
+print("LATEST:", LATEST_REVISION_ID)
 RUN_INFREQUENT_JOBS = '--run-infrequent-jobs' in [i.strip() for i in sys.argv]
 
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     dpdb = DataPointsDB(sqlite_path)
 
     if RUN_INFREQUENT_JOBS:
-        status.update(run_infrequent_jobs)
+        status.update(run_infrequent_jobs())
 
     status.update(output_state_data(dpdb))
     status.update(output_overseas_data(dpdb))

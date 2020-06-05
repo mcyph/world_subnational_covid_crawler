@@ -111,8 +111,8 @@ class JPData(GithubRepo):
                   'r', encoding='utf-8') as f:
 
             for item in csv.DictReader(f):
-                #print(item)
-                date = f'{item["year"]}_{item["month"]}_{item["date"]}'
+                pad = lambda d: '%02d' % int(d)
+                date = f'{item["year"]}_{pad(item["month"])}_{pad(item["date"])}'
                 prefecture = get_prefecture(item['prefectureNameJ'])
 
                 r.append(DataPoint(
@@ -176,7 +176,8 @@ class JPData(GithubRepo):
                   'r', encoding='utf-8') as f:
 
             for item in csv.DictReader(f):
-                date = f'{item["年"]}_{item["月"]}_{item["日"]}'
+                pad = lambda d: '%02d' % int(d)
+                date = f'{item["年"]}_{pad(item["月"])}_{pad(item["日"])}'
                 prefecture = get_prefecture(item['都道府県'])
 
                 # Not sure why PCR検査陽性者数 slightly differs

@@ -68,8 +68,9 @@ def get_nsw_cases_data():
         for row in reader:
             # Date already in the format I use, aside from hyphens
             if '/' in row['notification_date']:
+                pad = lambda i: '%02d' % int(i)
                 dd, mm, yyyy = row['notification_date'].split('/')
-                date = f'{yyyy}_{mm}_{dd}'
+                date = f'{yyyy}_{pad(mm)}_{pad(dd)}'
             else:
                 # Date already in the format I use, aside from hyphens
                 date = row['notification_date'].replace('-', '_')

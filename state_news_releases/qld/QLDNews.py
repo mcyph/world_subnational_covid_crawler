@@ -384,7 +384,7 @@ class QLDNews(StateNewsBase):
             # Total cases | Active cases | Total recovered | Total deaths
             table = pq(html)('#QLD_Cases_By_HHS')[0]
             headers = [
-                hhs_norm_map[pq(i).text().strip()]
+                hhs_norm_map[pq(i).text().strip().strip('[12345]').strip()]
                 for i in table[0][0][1:]
             ]
             for tr in table[3]:
@@ -546,7 +546,7 @@ class QLDNews(StateNewsBase):
             r = []
             for header, value in table[0]:
                 header = pq(header).text().strip()
-                if header == 'Confirmed cases':
+                if header in ('Confirmed cases', 'Total cases'):
                     continue
 
                 value = pq(value).text().strip()
@@ -587,7 +587,7 @@ class QLDNews(StateNewsBase):
             table = pq(html)('#QLD_Cases')
             if table:
                 for tr in table[1:]:
-                    datatype = sbr2_map[pq(tr[0]).text().strip()]
+                    datatype = sbr2_map[pq(tr[0]).text().strip().strip('[12345]').strip()]
                     if datatype is None:
                         continue
 

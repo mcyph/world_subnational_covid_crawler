@@ -20,6 +20,12 @@ from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
 
+place_map = {
+    'sembilan': 'Negeri Sembilan',
+    'pinang': 'Pulau Pinang',
+    'lumpur': 'Wilayah Persekutuan Kuala Lumpur'
+}
+
 
 class MYData(GithubRepo):
     SOURCE_URL = 'https://github.com/ynshung/covid-19-malaysia'
@@ -67,9 +73,10 @@ class MYData(GithubRepo):
 
                     for district, value in item.items():
                         if value.strip('-'):
+                            parent = fnam.split('-')[-1].split('.')[0]
                             r.append(DataPoint(
                                 region_schema=SCHEMA_MY_DISTRICT,
-                                region_parent=fnam.split('-')[-1].split('.')[0],
+                                region_parent=place_map.get(parent, parent),
                                 region_child=district.replace('under-investigation', 'Unknown'),
                                 datatype=DT_TOTAL,
                                 value=int(value),
@@ -99,10 +106,11 @@ class MYData(GithubRepo):
 
                 for state, value in item.items():
                     if value.strip('-'):
+                        child = state.replace('under-investigation', 'Unknown')
                         r.append(DataPoint(
                             region_schema=SCHEMA_ADMIN_1,
                             region_parent='Malaysia',
-                            region_child=state.replace('under-investigation', 'Unknown'),
+                            region_child=place_map.get(child, child),
                             datatype=DT_TOTAL,
                             value=int(value),
                             date_updated=date,

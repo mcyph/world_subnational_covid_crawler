@@ -80,60 +80,71 @@ class EUSubNationalData(URLBase):
                 else:
                     schema = SCHEMA_ADMIN_1
 
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_TOTAL,
-                    value=item['CumulativePositive'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
-                    value=item['CumulativeDeceased'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
-                    value=item['CumulativeRecovered'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_STATUS_ACTIVE,
-                    value=item['CurrentlyPositive'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_STATUS_HOSPITALIZED,
-                    value=item['Hospitalized'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
-                    region_schema=schema,
-                    region_parent=country,
-                    region_child=region_child,
-                    datatype=DT_STATUS_ICU,
-                    value=item['IntensiveCare'],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                ))
+                if item['CumulativePositive']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_TOTAL,
+                        value=int(item['CumulativePositive']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
+
+                if item['CumulativeDeceased']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_STATUS_DEATHS,
+                        value=int(item['CumulativeDeceased']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
+
+                if item['CumulativeRecovered']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_STATUS_RECOVERED,
+                        value=int(item['CumulativeRecovered']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
+
+                if item['CurrentlyPositive']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_STATUS_ACTIVE,
+                        value=int(item['CurrentlyPositive']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
+
+                if item['Hospitalized']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_STATUS_HOSPITALIZED,
+                        value=int(item['Hospitalized']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
+
+                if item['IntensiveCare']:
+                    r.append(DataPoint(
+                        region_schema=schema,
+                        region_parent=country,
+                        region_child=region_child,
+                        datatype=DT_STATUS_ICU,
+                        value=int(item['IntensiveCare']),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
 
         return r
 

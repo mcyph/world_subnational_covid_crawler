@@ -57,8 +57,9 @@ def get_nsw_tests_data():
         reader = csv.DictReader(f)
         for row in reader:
             if '/' in row['test_date']:
+                pad = lambda i: '%02d' % int(i)
                 dd, mm, yyyy = row['test_date'].split('/')
-                date = f'{yyyy}_{mm}_{dd}'
+                date = f'{yyyy}_{pad(mm)}_{pad(dd)}'
             else:
                 # Date already in the format I use, aside from hyphens
                 date = row['test_date'].replace('-', '_')
