@@ -7,7 +7,7 @@ PRAGMA ENCODING = "UTF-8";
 -- SQLite file in the case of power failure, etc.
 
 PRAGMA SYNCHRONOUS = 0;
-PRAGMA JOURNAL_MODE = OFF;
+PRAGMA JOURNAL_MODE = WAL;
 
 -- --------------------------- --
 --         DataPoints          --
@@ -46,6 +46,11 @@ CREATE INDEX datapoints_idx2 ON datapoints (
 
 CREATE INDEX datapoints_idx3 ON datapoints (
     source_id, date_updated
+);
+
+CREATE INDEX datapoints_idx4 ON datapoints (
+    -- For querying+outputting
+    region_schema, datatype, region_parent, region_child
 );
 
 -- -------------- --

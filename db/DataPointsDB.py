@@ -24,6 +24,7 @@ class DataPointsDB:
         self.conn = sqlite3.connect(
             self.path, detect_types=sqlite3.PARSE_DECLTYPES
         )
+        self.conn.execute('PRAGMA journal_mode=WAL;')
 
     def __create_tables(self):
         sql = open(get_package_dir() / 'db' / 'datapoints.sql',

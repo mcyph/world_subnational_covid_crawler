@@ -28,7 +28,7 @@ class RevisionIDs:
             x += 1
 
     @staticmethod
-    def get_path_from_id(time_format, revision_id, ext='tsv'):
+    def get_path_from_id(time_format, revision_id, ext='sqlite'):
         return (
             get_package_dir() / 'output' /
                 f'{time_format}-{revision_id}.{ext}'
