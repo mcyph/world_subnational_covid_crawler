@@ -16,7 +16,7 @@
 
 * https://stats.oecd.org/viewhtml.aspx?datasetcode=KEI&lang=en
 
-* https://www.worldpop.org/
+* https://www.worldpop.org/ for movement maps, population movement, flights data...
 
 * https://sedac.ciesin.columbia.edu/data/collection/gpw-v4/sets/browse
 
