@@ -24,6 +24,10 @@
 
 * https://towardsdatascience.com/a-short-review-of-covid-19-data-sources-ba7f7aa1c342?fbclid=IwAR1KChh5mZqC_eccw0EQ3rjeqrvVNw0hWvCuF2DB8eWegEi-R23Db_r_Nl8
 
+* https://data.humdata.org/organization/facebook for population data by lat/long coords
+
+* https://gis.stackexchange.com/questions/23028/getting-polygons-of-all-countries-and-iso-3166-2-subdivisons
+
 # Geographic resources
 
 * https://gis.stackexchange.com/questions/495/seeking-administrative-boundaries-for-various-countries
@@ -92,3 +96,6 @@
 
 * https://en.m.wikipedia.org/wiki/Template:COVID-19_pandemic_data
 
+* https://isaric.tghn.org/covid-19-clinical-research-resources/
+
+* https://covid19forecast.science.unimelb.edu.au/
