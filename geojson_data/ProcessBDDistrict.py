@@ -6,7 +6,7 @@ from covid_19_au_grab.overseas.bd_data.BDData import (
 )
 
 
-class ProcessBGDistrict(ProcessGeoJSONBase):
+class ProcessBDDistrict(ProcessGeoJSONBase):
     def __init__(self):
         ProcessGeoJSONBase.__init__(self, 'bd_district')
 
@@ -21,6 +21,6 @@ class ProcessBGDistrict(ProcessGeoJSONBase):
 
 
 if __name__ == '__main__':
-    ProcessBGDistrict().output_json([
+    ProcessBDDistrict().output_json([
         DATA_DIR / 'bd_district' / 'bd_admin2.json'
     ], OUTPUT_DIR, pretty_print=False)
