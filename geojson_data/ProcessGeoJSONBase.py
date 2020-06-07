@@ -1,36 +1,26 @@
 import json
 from polylabel import polylabel
 from os import listdir
+from os.path import basename
 from abc import ABC, abstractmethod
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
+from covid_19_au_grab.datatypes.schema_types import schema_types
+from covid_19_au_grab.get_package_dir import get_package_dir
+
+
+OUTPUT_DIR = get_package_dir() / 'geojson_data' / 'output'
+DATA_DIR = get_package_dir() / 'geojson_data' / 'data'
 
 
 class ProcessGeoJSONBase(ABC):
-    def __init__(self, path, schema_name, parent_key, child_key,
-                 name_key=None, center_point_key=None):
-        self.path = path
-
-        # Ideally, this should be set by the client,
-        # but for convenience I'll add it for now
+    def __init__(self, schema_name):
         self.schema_name = schema_name
 
-        self.parent_key = parent_key
-
-        if child_key is None:
-            child_key = lambda i: \
-                normalize_locality_name(child_key(i))
-        self.child_key = child_key
-
-        self.name_key = name_key
-
-        if center_point_key is None:
-            pass
-
-    def process_geojson(self, in_paths, out_path):
-        name_map = {}
-        new_features = []
+    def output_json(self, in_paths, out_dir, pretty_print=False):
+        r = {}
 
         for in_path in in_paths:
+            fnam = basename(in_path)
             with open(in_path, 'r', encoding='utf-8') as f:
                 geojson = json.loads(
                     f.read(),
@@ -42,9 +32,11 @@ class ProcessGeoJSONBase(ABC):
             # Convert MultiPolygon's to single Polygon's
             features = []
             for feature in geojson['features']:
-                if feature['type'] == 'MultiPolygon':
+                if feature['geometry'] is None:
+                    continue
+                elif feature['geometry']['type'] == 'MultiPolygon':
                     features.extend(self._multi_polygon_to_polygons(feature))
-                elif feature['type'] == 'Polygon':
+                elif feature['geometry']['type'] == 'Polygon':
                     features.append(feature)
                 else:
                     raise Exception(f"Unsupported feature type: {feature}")
@@ -58,44 +50,98 @@ class ProcessGeoJSONBase(ABC):
                 ):
                     continue
 
-                parent = self.parent_key(feature['properties'])
-                child = self.child_key(feature['properties'])
+                parent = self.get_region_parent(fnam, feature['properties'])
+                child = self.get_region_child(fnam, feature['properties'])
+                printable_name = self.get_region_printable(fnam, feature['properties'])
 
-                # Get the printable name
-                printable_name = self.name_key(
-                    self.schema_name, parent, child
-                )
+                if not isinstance(printable_name, dict):
+                    printable_name = {'en': printable_name}
 
-                new_features.append({
-                    'type': feature['type'],
-                    'geometry': feature['geometry'],
-                    'properties': {
-                        'schema': self.schema_name,
-                        'parent': parent,
-                        'child': child,
-                        'name': printable_name,
-                        'area': self._get_area(feature['geometry']),
-                        'coords': self._get_coordinates(feature['geometry'])
-                    }
-                })
+                # TODO: Also add underlay data(+maybe add listings for point data)!!! ======================================================================
+                i_dict = r.setdefault(self.schema_name, {}) \
+                          .setdefault(parent, {}) \
+                          .setdefault(child, {
+                              # [[area,
+                              #   x1,y1,x2,y2 bounding coords,
+                              #   center coords,
+                              #   points], ...]
+                              'geodata': [],
+                              'label': printable_name
+                          })
 
-        # Get just the center points as individual features
-        center_point_features = \
-            self._get_center_point_features(new_features)
+                print(feature)
 
-        encoded = json.dumps({
-            'polygons': {'features': new_features},
-            'points': {'features': center_point_features}
-        }, separators=(',', ':'))
+                i_dict['geodata'].append([
+                    self._get_area(feature['geometry']['coordinates']),
+                    self._get_bounding_coords(feature['geometry']['coordinates']),
+                    self._get_center(feature['geometry']['coordinates']),
+                    feature['geometry']['coordinates']
+                ])
 
-        with open(out_path, 'w', encoding='utf-8') as f:
-            f.write(encoded)
+        def output(out_path, r):
+            if pretty_print:
+                encoded = json.dumps(r, indent=4, ensure_ascii=False)
+            else:
+                encoded = json.dumps(r, separators=(',', ':'), ensure_ascii=False)
 
-    def _largest_only(self, features):
-        r = {}
+            with open(out_path, 'w', encoding='utf-8') as f:
+                f.write(encoded)
 
-        for feature in features:
-            pass
+        if schema_types['schemas'][self.schema_name]['split_by_parent_region']:
+            # TODO: Split into '{schema_name}_{parent_region}'
+            for schema_name, schema_dict in r.items():
+                for parent_name, parent_dict in schema_dict.items():
+                    output(f'{out_dir}/{self.schema_name}_{parent_name}.geojson', {
+                        self.schema_name: {parent_name: parent_dict}
+                    })
+        else:
+            output(f'{out_dir}/{self.schema_name}.geojson', r)
+
+    #===========================================================#
+    #                  Methods to be overridden                 #
+    #===========================================================#
+
+    @abstractmethod
+    def get_region_parent(self, fnam, feature):
+        pass
+
+    @abstractmethod
+    def get_region_child(self, fnam, feature):
+        # Should call normalize_locality_name(child_key(i))
+        # if a unique ID (such as ISO 3166-2 etc) isn't
+        # available, but unique IDs should be preferred
+        pass
+
+    @abstractmethod
+    def get_region_printable(self, fnam, feature):
+        pass
+
+    def get_population(self, fnam, feature):
+        # Optional: will not be able to obtain this from all sources
+        # TODO: get a rough value using Facebook population density data!!! ========================================================
+        pass
+
+    #===========================================================#
+    #                  Multi-Polygon to Polygons                #
+    #===========================================================#
+
+    def _multi_polygon_to_polygons(self, feature):
+        out = []
+        print(feature['geometry'])
+        for polygon in feature['geometry']['coordinates']:
+            out.append({
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': polygon
+                },
+                'properties': feature['properties']
+            })
+        return out
+
+    #===========================================================#
+    #                  Find Center Point-Related                #
+    #===========================================================#
 
     def _get_center_point_features(self, features):
         center_points = []
@@ -115,7 +161,7 @@ class ProcessGeoJSONBase(ABC):
         max_y = -999999999999
 
         for i in range(len(coordinates)):
-            for j in range(len(coordinates)):
+            for j in range(len(coordinates[i])):
                 x = coordinates[i][j][0]
                 y = coordinates[i][j][1]
 
@@ -129,14 +175,14 @@ class ProcessGeoJSONBase(ABC):
             (max_y - min_y)
         )
 
-    def _get_coordinates(self, coordinates):
+    def _get_bounding_coords(self, coordinates):
         min_x = 999999999999
         min_y = 999999999999
         max_x = -999999999999
         max_y = -999999999999
 
         for i in range(len(coordinates)):
-            for j in range(len(coordinates)):
+            for j in range(len(coordinates[i])):
                 x = coordinates[i][j][0]
                 y = coordinates[i][j][1]
 
@@ -147,14 +193,14 @@ class ProcessGeoJSONBase(ABC):
 
         return min_x, min_y, max_x, max_y
 
-    def _find_center(self, coordinates):
+    def _get_center(self, coordinates):
         min_x = 999999999999
         min_y = 999999999999
         max_x = -999999999999
         max_y = -999999999999
 
         for i in range(len(coordinates)):
-            for j in range(len(coordinates)):
+            for j in range(len(coordinates[i])):
                 x = coordinates[i][j][0]
                 y = coordinates[i][j][1]
 
@@ -167,19 +213,3 @@ class ProcessGeoJSONBase(ABC):
         centerY = min_y + (max_y - min_y) / 2.0
         return [centerX, centerY]
 
-    def _multi_polygon_to_polygons(self, feature):
-        out = []
-        for polygon in feature['geometry']:
-            out.append({
-                'type': 'Polygon',
-                'geometry': polygon,
-                'properties': feature['properties']
-            })
-        return out
-
-
-for fnam in listdir('.'):
-    if not fnam.endswith('.geojson'):
-        continue
-    print(fnam)
-    get_minified(fnam)
