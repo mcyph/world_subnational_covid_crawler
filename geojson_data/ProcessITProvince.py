@@ -179,5 +179,3 @@ if __name__ == '__main__':
     ProcessITProvince().output_json([
         DATA_DIR / 'it_province' / 'it_province.geojson'
     ], OUTPUT_DIR, pretty_print=False)
-
-

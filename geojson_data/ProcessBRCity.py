@@ -37,7 +37,7 @@ BR-TO	Tocantins
 """.strip().split('\n')])
 
 
-class ProcessBGDistrict(ProcessGeoJSONBase):
+class ProcessBRCity(ProcessGeoJSONBase):
     def __init__(self):
         ProcessGeoJSONBase.__init__(self, 'br_city')
 
@@ -54,7 +54,7 @@ class ProcessBGDistrict(ProcessGeoJSONBase):
 
 
 if __name__ == '__main__':
-    ProcessBGDistrict().output_json([
+    ProcessBRCity().output_json([
         DATA_DIR / 'br_city' / fnam
         for fnam in listdir(DATA_DIR / 'br_city')
         if fnam.endswith('.min.json')

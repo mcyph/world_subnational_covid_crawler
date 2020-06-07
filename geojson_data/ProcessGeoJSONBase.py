@@ -42,7 +42,7 @@ class ProcessGeoJSONBase(ABC):
                     raise Exception(f"Unsupported feature type: {feature}")
 
             for feature in features:
-                if not feature['geometry']:
+                if not feature['geometry'] or not feature['properties']:
                     continue
                 elif (
                     'unincorporated' in str(feature).lower() and
