@@ -19,7 +19,6 @@ class ProcessUKArea(ProcessGeoJSONBase):
             return feature['lhb19nm'].replace(' University Health Board', '')
 
     def get_region_printable(self, fnam, feature):
-        'name_*'
         if 'HBName' in feature:
             # Scotland health board
             return feature['HBName']
