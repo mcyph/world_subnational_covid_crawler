@@ -1,4 +1,173 @@
 {
+    "constant_select": [
+        ["Basic Numbers", [
+            ["Total Cases", "total"],
+            ["Probable Cases", "probable"],
+            ["Confirmed Cases", "confirmed"],
+            ["Active Cases", "status_active"],
+            ["Days Since Last Case", "days_since"],
+            ["New Cases", "new"],
+            ["Recovered Cases", "status_recovered"],
+            ["Deaths", "status_deaths"]
+        ],
+        ["Hospitalizations",
+            ["Currently in ICU", "status_icu"],
+            ["Currently in ICU w/Ventilator", "status_icu_ventilators"],
+            ["Currently Hospitalized", "status_hospitalized"],
+            ["Total Admitted to ICU", "status_icu_runningtotal"],
+            ["Total Admitted to ICU w/Ventilator", "status_icu_ventilators_runningtotal"],
+            ["Total Admitted to Hospital", "status_hospitalized_runningtotal"]
+        ]],
+        ["Test Numbers", [
+            ["Total People Tested", "tests_total"],
+            ["New Tests", "tests_new"]
+        ]],
+        ["Source of Infection", [
+            ["Contracted Overseas", "source_overseas"],
+            ["Unknown Community Transmission", "source_community"],
+            ["Contracted from Confirmed Case", "source_confirmed"],
+            ["Contracted Interstate", "source_interstate"],
+            ["Under Investigation", "source_under_investigation"]
+        ]]
+    ],
+    "constants": {
+        "total": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "probable": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "confirmed": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "status_active": {
+            "timeperiods": false,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "new": {
+            "timeperiods": false,
+            "dayssince": false,
+            "roc": true,
+            "percapita": false
+        },
+        "status_recovered": {
+            "timeperiods": false,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "status_deaths": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+
+        "status_icu": {
+            "timeperiods": false,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_icu_ventilators": {
+            "timeperiods": false,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_hospitalized": {
+            "timeperiods": false,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_icu_runningtotal": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_icu_ventilators_runningtotal": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_hospitalized_runningtotal": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+
+        "total_male": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "total_female": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+
+        "tests_total": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "tests_new": {
+            "timeperiods": false,
+            "dayssince": false,
+            "roc": true,
+            "percapita": false
+        },
+
+        "source_overseas": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "source_community": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "source_confirmed": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "source_interstate": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "source_under_investigation": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        }
+    },
     "schemas": {
         "admin_0": {
             "#1": "Countries: is the absolute parent to all different schemas",
@@ -23,38 +192,38 @@
             "iso_3166": "AU",
             "min_zoom": 6,
             "priority": 3,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "hhs": {
             "iso_3166": "AU-QLD",
             "min_zoom": 6,
             "priority": 4,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "lhd": {
             "iso_3166": "AU-NSW",
             "min_zoom": 6,
             "priority": 2,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "sa3": {
             "iso_3166": "AU-ACT",
             "min_zoom": 6,
             "priority": 2,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "ths": {
             "iso_3166": "AU-TAS",
             "min_zoom": 6,
             "priority": 4,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "postcode": {
             "iso_3166": "AU-NSW",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
 
         "bd_district": {
@@ -76,7 +245,7 @@
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "de_ags": {
             "iso_3166": "DE",
@@ -97,9 +266,8 @@
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
-
         "in_district": {
             "iso_3166": "IN",
             "min_zoom": 8,
@@ -145,14 +313,14 @@
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "th_district": {
             "iso_3166": "TH",
             "min_zoom": 8,
             "priority": -1,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         }
     }
 }
