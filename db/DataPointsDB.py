@@ -25,6 +25,8 @@ class DataPointsDB:
             self.path, detect_types=sqlite3.PARSE_DECLTYPES
         )
         self.conn.execute('PRAGMA journal_mode=WAL;')
+        self.conn.execute('PRAGMA cache_size = -512000;')  # 512MB
+        self.conn.execute('PRAGMA SYNCHRONOUS = 0;')
 
     def __create_tables(self):
         sql = open(get_package_dir() / 'db' / 'datapoints.sql',
@@ -87,6 +89,57 @@ class DataPointsDB:
             if value:
                 r.append(value)
 
+        cur.close()
+        return r
+
+    def get_region_schemas(self):
+        r = []
+        cur = self.conn.cursor()
+        cur.execute('SELECT MIN(region_schema) FROM datapoints;')
+        value = cur.fetchone()[0]
+        if value:
+            r.append(name_to_schema(value))
+
+        while value:
+            cur.execute("""
+                SELECT MIN(region_schema) 
+                FROM datapoints 
+                WHERE region_schema > ? 
+                ORDER BY region_schema 
+                LIMIT 1;
+            """, [value])
+            value = cur.fetchone()[0]
+            if value:
+                r.append(name_to_schema(value))
+
+        cur.close()
+        return r
+
+    def get_datatypes_by_region_schema(self, region_schema):
+        if isinstance(region_schema, int):
+            region_schema = schema_to_name(region_schema)
+
+        cur = self.conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT datatype 
+            FROM datapoints 
+            WHERE region_schema = ?;
+        """, [region_schema])
+        r = [name_to_constant(i[0]) for i in cur.fetchall()]
+        cur.close()
+        return r
+
+    def get_region_parents(self, region_schema):
+        if isinstance(region_schema, int):
+            region_schema = schema_to_name(region_schema)
+
+        cur = self.conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT region_parent 
+            FROM datapoints 
+            WHERE region_schema = ?;
+        """, [region_schema])
+        r = [i[0] for i in cur.fetchall()]
         cur.close()
         return r
 
@@ -261,7 +314,7 @@ class DataPointsDB:
     #                         Select DataPoints                      #
     #================================================================#
 
-    def select_one(self, date_updated=None,
+    def select_one(self, source_id=None, date_updated=None,
                    region_schema=None, region_parent=None, region_child=None,
                    agerange=None, datatype=None, value=None,
                    is_derived=None,
@@ -285,6 +338,7 @@ class DataPointsDB:
             else:
                 where.append('%s %s' % (col, i))
 
+        if source_id is not None: _append('source_id', source_id)
         if date_updated is not None: _append('date_updated', date_updated)
         if region_schema is not None: _append('region_schema', region_schema)
         if region_parent is not None: _append('region_parent', region_parent)
@@ -386,7 +440,7 @@ class DataPointsDB:
         else:
             return constant_to_name(s)
 
-    def select_many(self, date_updated=None,
+    def select_many(self, source_id=None, date_updated=None,
                    region_schema=None, region_parent=None, region_child=None,
                    agerange=None, datatype=None, value=None,
                    is_derived=None,
@@ -395,6 +449,7 @@ class DataPointsDB:
                    limit=None, offset=None):
 
         return self.select_one(
+            source_id=source_id,
             date_updated=date_updated,
             region_schema=region_schema, region_parent=region_parent, region_child=region_child,
             agerange=agerange, datatype=datatype, value=value,

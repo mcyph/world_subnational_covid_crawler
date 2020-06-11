@@ -3,13 +3,13 @@ import json
 import datetime
 from pytz import timezone
 from os.path import getctime
-from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
 from covid_19_au_grab.datatypes.constants import \
     schema_to_name, constant_to_name
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 
 
-OUTPUT_DIR = get_package_dir() / 'output'
+OUTPUT_DIR = get_output_dir() / 'output'
 
 
 def needsdatapoints(fn):
@@ -85,6 +85,18 @@ class SQLiteDataRevision:
     @needsdatapoints
     def get_datapoints_by_source_id(self, source_id):
         return self._datapoints_db.get_datapoints_by_source_id(source_id)
+
+    @needsdatapoints
+    def get_region_schemas(self):
+        return self._datapoints_db.get_region_schemas()
+
+    @needsdatapoints
+    def get_datatypes_by_region_schema(self, region_schema):
+        return self._datapoints_db.get_datatypes_by_region_schema(region_schema)
+
+    @needsdatapoints
+    def get_region_parents(self, region_schema):
+        return self._datapoints_db.get_region_parents(region_schema)
 
     #=============================================================#
     #                       Utility Functions                     #
@@ -326,7 +338,7 @@ class SQLiteDataRevision:
 
 if __name__ == '__main__':
     from pprint import pprint
-    inst = CSVDataRevision('2020_05_01', 4)
+    inst = SQLiteDataRevision('2020_05_01', 4)
 
     for day in range(1, 30):
         print(day)

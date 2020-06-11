@@ -45,7 +45,7 @@ CREATE INDEX datapoints_idx2 ON datapoints (
 );
 
 CREATE INDEX datapoints_idx3 ON datapoints (
-    source_id, date_updated
+    source_id, datatype, date_updated
 );
 
 CREATE INDEX datapoints_idx4 ON datapoints (

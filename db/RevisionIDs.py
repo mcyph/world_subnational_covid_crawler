@@ -2,7 +2,7 @@ import os
 from os import makedirs
 from os.path import dirname
 
-from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.get_package_dir import get_output_dir
 
 
 class RevisionIDs:
@@ -30,6 +30,6 @@ class RevisionIDs:
     @staticmethod
     def get_path_from_id(time_format, revision_id, ext='sqlite'):
         return (
-            get_package_dir() / 'output' /
+            get_output_dir() / 'output' /
                 f'{time_format}-{revision_id}.{ext}'
         )

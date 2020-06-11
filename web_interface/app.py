@@ -14,7 +14,8 @@ from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
 
 # MONKEY PATCH: Reduce cherrpy json file output
-_json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
+_json._encode = json.JSONEncoder(separators=(',', ':'),
+                                 ensure_ascii=False).iterencode
 
 env = Environment(loader=FileSystemLoader('./templates'))
 
@@ -35,6 +36,7 @@ from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
+    DT_STATUS_DEATHS_NEW, DT_STATUS_RECOVERED_NEW,
     DT_NEW, DT_TESTS_TOTAL,
     DT_STATUS_ACTIVE, DT_STATUS_RECOVERED,
     DT_STATUS_ICU, DT_STATUS_HOSPITALIZED,
@@ -251,15 +253,17 @@ class App(object):
                         (SCHEMA_ADMIN_1, DT_TOTAL, 'AU'),
                         (SCHEMA_ADMIN_1, DT_NEW, 'AU'),
                         (SCHEMA_ADMIN_1, DT_STATUS_DEATHS, 'AU'),
-                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS_NEW, 'AU'),
                         (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED, 'AU'),
-                        #(SCHEMA_ADMIN_1, 'DT_PATIENT_STATUS', 'AU'),
+                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED_NEW, 'AU'),
                         (SCHEMA_ADMIN_1, DT_TESTS_TOTAL, 'AU'),
                         (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, 'AU'),
                         (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, 'AU'),
                         (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, 'AU'),
                         (SCHEMA_ADMIN_1, DT_STATUS_HOSPITALIZED, 'AU'),
                         (SCHEMA_ADMIN_1, DT_STATUS_ICU, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_TOTAL_FEMALE, 'AU'),
+                        (SCHEMA_ADMIN_1, DT_TOTAL_MALE, 'AU'),
                     ),
                     from_date=from_date
                 )
@@ -629,6 +633,41 @@ class App(object):
             'updated_dates': {
                 k: v for k, v in max_dates.items() if v
             }
+        }
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def regionsTimeSeries2(self, rev_date=None, rev_subid=None):
+        r = {}
+        date_ids_dict = {}
+        max_dates = {}
+
+        inst = SQLiteDataRevision(rev_date, rev_subid)
+
+        for region_schema in inst.get_region_schemas():
+            datatypes = inst.get_datatypes_by_region_schema(region_schema)
+            datatypes.sort()  # HACK: Really should sort based on largest number to allow for compression!
+            print("DATATYPES:", datatypes, region_schema)
+
+            for region_parent in inst.get_region_parents(region_schema):
+                i_max_date, datapoints = self.__get_time_series(
+                    inst, region_schema, region_parent, None,
+                    datatypes, date_ids_dict
+                )
+                print(region_schema, region_parent, datatypes, len(datapoints))
+
+                region_schema_str = schema_to_name(region_schema)
+                r.setdefault(region_schema_str, {})[region_parent] = datapoints
+                if (
+                    max_dates.setdefault(region_schema_str, {}).get(region_parent, None) is None or
+                    i_max_date > max_dates[region_schema_str][region_parent]
+                ):
+                    max_dates[region_schema_str][region_parent] = i_max_date
+
+        return {
+            'date_ids': date_ids_dict,
+            'time_series_data': r,
+            'updated_dates': max_dates
         }
 
     def __get_time_series(self, inst,

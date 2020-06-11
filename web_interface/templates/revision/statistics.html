@@ -23,6 +23,8 @@
             <th>localAcquired</th>
             <th>hospitalized</th>
             <th>ICU</th>
+            <th>totalMale</th>
+            <th>totalFemale</th>
             <th>reportDate</th>
             <th>entryDate</th>
         </tr>
@@ -42,14 +44,18 @@
                 <td {{new_star(datapoint, 'status_deaths', date_today)}} title="{{ datapoint['status_deaths date_updated'] }} {{ datapoint['status_deaths text_match']|e }}"><a href="{{ datapoint['status_deaths source_url'] }}">
                     {{- datapoint['status_deaths'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'status_new_deaths', date_today)}} title="{{ datapoint['status_new_deaths date_updated'] }} {{ datapoint['status_new_deaths text_match']|e }}"><a href="{{ datapoint['status_new_deaths source_url'] }}">
-                    {{- datapoint['status_new_deaths'] -}}
+                <td {{new_star(datapoint, 'status_deaths_new', date_today)}} title="{{ datapoint['status_deaths_new date_updated'] }} {{ datapoint['status_deaths_new text_match']|e }}"><a href="{{ datapoint['status_deaths_new source_url'] }}">
+                    {%- if datapoint['status_deaths_new date_updated'] == (date_today or datapoint['date_today']) -%}
+                        {{- datapoint['status_deaths_new'] -}}
+                    {%- endif -%}
                 </a></td> <!-- FIXME -->
                 <td {{new_star(datapoint, 'status_recovered', date_today)}} title="{{ datapoint['status_recovered date_updated'] }} {{ datapoint['status_recovered text_match']|e }}"><a href="{{ datapoint['status_recovered source_url'] }}">
                     {{- datapoint['status_recovered'] -}}
                 </a></td>
-                <td {{new_star(datapoint, 'status_new_recovered', date_today)}} title="{{ datapoint['status_new_recovered date_updated'] }} {{ datapoint['status_new_recovered text_match']|e }}"><a href="{{ datapoint['status_new_recovered source_url'] }}">
-                    {{- datapoint['status_new_recovered'] -}}
+                <td {{new_star(datapoint, 'status_recovered_new', date_today)}} title="{{ datapoint['status_recovered_new date_updated'] }} {{ datapoint['status_recovered_new text_match']|e }}"><a href="{{ datapoint['status_recovered_new source_url'] }}">
+                    {%- if datapoint['status_recovered_new date_updated'] == (date_today or datapoint['date_today']) -%}
+                        {{- datapoint['status_recovered_new'] -}}
+                    {%- endif -%}
                 </a></td> <!-- FIXME -->
                 <td {{new_star(datapoint, 'tests_total', date_today)}} title="{{ datapoint['tests_total date_updated'] }} {{ datapoint['tests_total text_match']|e }}"><a href="{{ datapoint['tests_total source_url'] }}">
                     {{- datapoint['tests_total'] -}}
@@ -68,6 +74,14 @@
                 <td {{new_star(datapoint, 'status_icu', date_today)}} title="{{ datapoint['status_icu date_updated'] }} {{ datapoint['status_icu text_match']|e }}"><a href="{{ datapoint['status_icu source_url'] }}">
                     {{- datapoint['status_icu'] -}}
                 </a></td>
+
+                <td {{new_star(datapoint, 'total_male', date_today)}} title="{{ datapoint['total_male date_updated'] }} {{ datapoint['total_male text_match']|e }}"><a href="{{ datapoint['total_male source_url'] }}">
+                    {{- datapoint['total_male'] -}}
+                </a></td>
+                <td {{new_star(datapoint, 'total_female', date_today)}} title="{{ datapoint['total_female date_updated'] }} {{ datapoint['total_female text_match']|e }}"><a href="{{ datapoint['total_female source_url'] }}">
+                    {{- datapoint['total_female'] -}}
+                </a></td>
+
                 <td>
                     {{- date_fns.to_slash_format(datapoint['date_updated']) -}}
                 </td>

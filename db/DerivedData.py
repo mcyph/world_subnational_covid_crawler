@@ -1,8 +1,6 @@
 from collections import Counter
 
 from covid_19_au_grab.datatypes.constants import (
-    get_schemas,
-
     DT_TOTAL, DT_NEW,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TESTS_TOTAL, DT_TESTS_NEW,
@@ -17,20 +15,8 @@ from covid_19_au_grab.datatypes.constants import (
     DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW,
     DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW,
 
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_UNDER_INVESTIGATION_NEW,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_OVERSEAS_NEW,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_CONFIRMED_NEW,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_COMMUNITY_NEW,
-    DT_SOURCE_DOMESTIC, DT_SOURCE_DOMESTIC_NEW,
-    DT_SOURCE_CRUISE_SHIP, DT_SOURCE_CRUISE_SHIP_NEW,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_INTERSTATE_NEW,
-
     DT_CONFIRMED, DT_CONFIRMED_NEW,
-    DT_PROBABLE, DT_PROBABLE_NEW,
-
-    DT_TOTAL_PERCAPITA, DT_TOTAL_PERREGIONPC,
-    DT_STATUS_ACTIVE_PERCAPITA, DT_STATUS_ACTIVE_PERREGIONPC,
-    DT_STATUS_RECOVERED_PERCAPITA, DT_STATUS_RECOVERED_PERREGIONPC,
+    DT_PROBABLE, DT_PROBABLE_NEW
 )
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
@@ -41,54 +27,52 @@ from covid_19_au_grab.datatypes import (
 
 
 class DerivedData:
-    def __init__(self, datapoints_db, source_id):
+    def __init__(self, datapoints_db):
         self.datapoints_db = datapoints_db
-        self.source_id = source_id
 
     def add_derived(self):
-        for region_schema in get_schemas():
-            for total_datatype, new_datatype in (
-                (DT_TOTAL, DT_NEW),
-                (DT_TESTS_TOTAL, DT_TESTS_NEW),
+        for source_id in self.datapoints_db.get_source_ids():
+            self.add_derived_for_source(source_id)
 
-                (DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW),
-                (DT_STATUS_RECOVERED, DT_STATUS_RECOVERED_NEW),
-                (DT_STATUS_ACTIVE, DT_STATUS_ACTIVE_NEW),
-                (DT_STATUS_HOSPITALIZED, DT_STATUS_HOSPITALIZED_NEW),
-                (DT_STATUS_ICU, DT_STATUS_ICU_NEW),
-                (DT_STATUS_ICU_VENTILATORS, DT_STATUS_ICU_VENTILATORS_NEW),
-                (DT_STATUS_ICU_RUNNINGTOTAL, DT_STATUS_ICU_RUNNINGTOTAL_NEW),
-                (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW),
-                (DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW),
+    def add_derived_for_source(self, source_id):
+        for total_datatype, new_datatype in (
+            (DT_TOTAL, DT_NEW),
+            (DT_TESTS_TOTAL, DT_TESTS_NEW),
 
-                (DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_UNDER_INVESTIGATION_NEW),
-                (DT_SOURCE_OVERSEAS, DT_SOURCE_OVERSEAS_NEW),
-                (DT_SOURCE_CONFIRMED, DT_SOURCE_CONFIRMED_NEW),
-                (DT_SOURCE_COMMUNITY, DT_SOURCE_COMMUNITY_NEW),
-                (DT_SOURCE_DOMESTIC, DT_SOURCE_DOMESTIC_NEW),
-                (DT_SOURCE_CRUISE_SHIP, DT_SOURCE_CRUISE_SHIP_NEW),
-                (DT_SOURCE_INTERSTATE, DT_SOURCE_INTERSTATE_NEW),
+            (DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW),
+            (DT_STATUS_RECOVERED, DT_STATUS_RECOVERED_NEW),
+            (DT_STATUS_ACTIVE, DT_STATUS_ACTIVE_NEW),
+            (DT_STATUS_HOSPITALIZED, DT_STATUS_HOSPITALIZED_NEW),
+            (DT_STATUS_ICU, DT_STATUS_ICU_NEW),
+            (DT_STATUS_ICU_VENTILATORS, DT_STATUS_ICU_VENTILATORS_NEW),
+            (DT_STATUS_ICU_RUNNINGTOTAL, DT_STATUS_ICU_RUNNINGTOTAL_NEW),
+            (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW),
+            (DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW),
 
-                (DT_CONFIRMED, DT_CONFIRMED_NEW),
-                (DT_PROBABLE, DT_PROBABLE_NEW),
-            ):
-                new_datapoints = self.datapoints_db.select_many(
-                    region_schema=region_schema,
-                    datatype=new_datatype
-                )
-                total_datapoints = self.datapoints_db.select_many(
-                    region_schema=region_schema,
-                    datatype=total_datatype
-                )
-                self.add_new_datapoints_from_total(
-                    new_datatype, total_datatype,
-                    new_datapoints, total_datapoints
-                )
+            (DT_CONFIRMED, DT_CONFIRMED_NEW),
+            (DT_PROBABLE, DT_PROBABLE_NEW),
+        ):
+            self.add_new_datapoints_from_total(
+                source_id, new_datatype, total_datatype
+            )
+
+        self.add_gender_balance_from_breakdown(source_id)
+        #self.add_rate_of_change(region_schema)
 
     def add_new_datapoints_from_total(
-            self, new_datatype, total_datatype,
-            new_datapoints, total_datapoints
+            self, source_id, new_datatype, total_datatype
         ):
+        print("Adding new datapoints from totals:", source_id)
+
+        new_datapoints = self.datapoints_db.select_many(
+            source_id=['=?', [source_id]],
+            datatype=['=?', [new_datatype]]
+        )
+        total_datapoints = self.datapoints_db.select_many(
+            source_id=['=?', [source_id]],
+            datatype=['=?', [total_datatype]]
+        )
+
         n = {}
         t = {}
 
@@ -129,7 +113,7 @@ class DerivedData:
                 region_parent=total_datapoint.region_parent,
                 region_child=total_datapoint.region_child,
                 date_updated=total_datapoint.date_updated,
-                datatype=total_datapoint.datatype,
+                datatype=new_datatype,
                 agerange=total_datapoint.agerange,
                 value=total_datapoint.value -
                       total_datapoint_pd.value,
@@ -137,10 +121,11 @@ class DerivedData:
             ))
 
         self.datapoints_db.extend(
-            append_datapoints, is_derived=True
+            source_id, append_datapoints, is_derived=True
         )
 
-    def add_gender_balance_from_breakdown(self, region_schema):
+    def add_gender_balance_from_breakdown(self, source_id):
+        print("Adding gender balance from breakdown:", source_id)
         append_datapoints = []
 
         for datatype in (DT_TOTAL_MALE, DT_TOTAL_FEMALE):
@@ -148,8 +133,8 @@ class DerivedData:
             age_breakdowns = Counter()
 
             datapoints = self.datapoints_db.select_many(
-                region_schema=region_schema,
-                datatype=datatype
+                source_id=['=?', [source_id]],
+                datatype=['=?', [datatype]]
             )
 
             for datapoint in datapoints:
@@ -168,31 +153,40 @@ class DerivedData:
                         datapoint.region_child
                     ] = True
 
-        for (date_updated,
-             region_schema,
-             region_parent,
-             region_child), value in age_breakdowns.items():
+            for (date_updated,
+                 region_schema,
+                 region_parent,
+                 region_child), value in age_breakdowns.items():
 
-            append_datapoints.append(DataPoint(
-                region_schema=region_schema,
-                region_parent=region_parent,
-                region_child=region_child,
-                datatype=datatype,
-                date_updated=date_updated,
-                agerange=None,
-                value=value,
-                source_url='DERIVED'
-            ))
+                append_datapoints.append(DataPoint(
+                    region_schema=region_schema,
+                    region_parent=region_parent,
+                    region_child=region_child,
+                    datatype=datatype,
+                    date_updated=date_updated,
+                    agerange=None,
+                    value=value,
+                    source_url='DERIVED'
+                ))
 
         self.datapoints_db.extend(
-            append_datapoints, is_derived=True
+            source_id, append_datapoints, is_derived=True
         )
 
-    def add_other_datatypes_from_regions(
-            self, other_datatype
-        ):
-        pass
 
-    def add_rate_of_change(self):
-        # https://scipython.com/book/chapter-8-scipy/additional-examples/the-sir-epidemic-model/
-        pass
+if __name__ == '__main__':
+    from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
+    from covid_19_au_grab.db.DataPointsDB import DataPointsDB
+    from covid_19_au_grab.get_package_dir import get_output_dir
+
+    OUTPUT_DIR = get_output_dir() / 'output'
+
+    sdr = SQLiteDataRevisions()
+    most_recent_revision = sdr.get_revisions()[0]
+    period = most_recent_revision[0]
+    subperiod_id = most_recent_revision[1]
+    path = OUTPUT_DIR / f'{period}-{subperiod_id}.sqlite'
+
+    dpdb = DataPointsDB(path)
+    DerivedData(dpdb).add_derived()
+    dpdb.close()
