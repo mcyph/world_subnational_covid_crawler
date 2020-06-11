@@ -11,15 +11,15 @@ def get_lga_to_state_and_name_dict():
     r = {}
 
     state_dict = {
-        'New South Wales': 'nsw',
-        'Australian Capital Territory': 'act',
-        'Northern Territory': 'nt',
-        'Other Territories': 'ot',
-        'Queensland': 'qld',
-        'South Australia': 'sa',
-        'Tasmania': 'tas',
-        'Victoria': 'vic',
-        'Western Australia': 'wa'
+        'New South Wales': 'AU-NSW',
+        'Australian Capital Territory': 'AU-NSW',
+        'Northern Territory': 'AU-NT',
+        'Other Territories': None,
+        'Queensland': 'AU-QLD',
+        'South Australia': 'AU-SA',
+        'Tasmania': 'AU-TAS',
+        'Victoria': 'AU-VIC',
+        'Western Australia': 'AU-WA'
     }
 
     for path in glob(str(BASE_PATH / '*.csv')):
