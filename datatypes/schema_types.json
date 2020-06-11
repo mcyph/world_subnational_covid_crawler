@@ -1,4 +1,15 @@
 {
+    "underlays": [
+        ["Australian Data", [
+            ["absData.json", "Australian Bureau of Statistics Data"]
+        ]]
+    ],
+    "listings": {
+        "#1": "(This is filled in later by the web app when zipping)",
+        "case_data": [],
+        "geojson_data": [],
+        "underlay_data": []
+    },
     "constant_select": [
         ["Basic Numbers", [
             ["Total Cases", "total"],

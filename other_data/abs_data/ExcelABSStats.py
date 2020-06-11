@@ -59,7 +59,7 @@ class ExcelABSStats(UnderlayDataBase):
                  'under the Creative Commons BY-SA license',
         )
 
-    def get_json(self):
+    def process_data(self):
         """
         {
            measure initial:
@@ -67,10 +67,8 @@ class ExcelABSStats(UnderlayDataBase):
            ...
         }
         """
-        r = {}
         for path in glob(f'{BASE_EXCEL_PATH}/*.csv'):
             self._process_csv_file(path)
-        return self.time_series_source.get_json()
 
     def get_time_series_source(self):
         for (state, lga_name), stat_dict in r.items():
@@ -191,4 +189,8 @@ class ExcelABSStats(UnderlayDataBase):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(ExcelABSStats().get_json())
+    inst = ExcelABSStats()
+    #pprint(inst.get_encoded_data())
+
+    with open('abs_out.json', 'w', encoding='utf-8') as f:
+        f.write(inst.get_encoded_data_as_json(newest_only=True))

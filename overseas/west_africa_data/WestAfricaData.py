@@ -34,8 +34,8 @@ class WestAfricaData(URLBase):
                 )
             }
         )
-        wapb = WestAfricaPowerBI()
-        wapb.run_powerbi_grabber()
+        #wapb = WestAfricaPowerBI()
+        #wapb.run_powerbi_grabber()
 
     def get_datapoints(self):
         return get_powerbi_data()

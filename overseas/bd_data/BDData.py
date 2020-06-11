@@ -21,7 +21,9 @@ from covid_19_au_grab.get_package_dir import (
 
 division_map = dict([i.split('\t')[::-1] for i in """
 BD-A	Barishal
+BD-A	Barisal
 BD-B	Chattogram
+BD-B	Chittagong
 BD-C	Dhaka
 BD-D	Khulna
 BD-H	Mymensingh
@@ -36,15 +38,20 @@ BD-02	Barguna
 BD-03	Bogura
 BD-03	Bogra
 BD-04	Brahmanbaria
+BD-04	Brahamanbaria
 BD-04	B. Baria
 BD-05	Bagerhat
 BD-06	Barishal
+BD-06	Barisal
 BD-07	Bhola
 BD-08	Cumilla
+BD-08	Comilla
 BD-09	Chandpur
 BD-10	Chattogram
+BD-10	Chittagong
 BD-11	Cox’s bazar
 BD-11	Cox’s Bazar
+BD-11	Cox's Bazar
 BD-12	Chuadanga
 BD-13	Dhaka
 BD-14	Dinajpur
@@ -61,6 +68,7 @@ BD-23	Jhenaidah
 BD-24	Joypurhat
 BD-25	Jhalakathi
 BD-25	Jhalokathi
+BD-25	Jhalokati
 BD-26	Kishoreganj
 BD-27	Khulna
 BD-28	Kurigram
@@ -68,6 +76,7 @@ BD-29	Khagrachhari
 BD-29	Khagrachari
 BD-30	Kushtia
 BD-31	Laksmipur
+BD-31	Lakshmipur
 BD-32	Lalmonirhat
 BD-33	Manikganj
 BD-34	Mymensingh
@@ -77,15 +86,18 @@ BD-36	Madaripur
 BD-37	Magura
 BD-38	Moulvibazar
 BD-38	Moulovi Bazar
+BD-38	Maulvibazar
 BD-39	Meherpur
 BD-40	Narayanganj
 BD-41	Netrokona
+BD-41	Netrakona
 BD-42	Narsingdi
 BD-42	Narshingdi
 BD-43	Narail
 BD-44	Natore
 BD-45	Chapai Nawabganj
 BD-45	Chapainawabganj
+BD-45	Nawabganj
 BD-46	Nilphamari
 BD-47	Noakhali
 BD-48	Naogaon
@@ -99,6 +111,7 @@ BD-53	Rajbari
 BD-54	Rajshahi
 BD-55	Rangpur
 BD-56	Rangmati
+BD-56	Rangamati
 BD-57	Sherpur
 BD-58	Satkhira
 BD-59	Sirajganj
@@ -114,10 +127,6 @@ class BDData(URLBase):
     SOURCE_URL = 'https://iedcr.gov.bd/'
     SOURCE_DESCRIPTION = ''
     SOURCE_ID = 'bd_gov'
-
-    GEO_DIR = ''
-    GEO_URL = ''
-    GEO_LICENSE = ''
 
     def __init__(self):
         URLBase.__init__(self,

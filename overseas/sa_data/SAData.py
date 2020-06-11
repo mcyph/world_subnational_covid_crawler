@@ -53,6 +53,10 @@ class SAData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
+            confirmed = Counter()
+            deaths = Counter()
+            recovered = Counter()
+
             for feature in data['features']:
                 # "features":[{"attributes":{"PlaceName_AR":"الرياض","PlaceName_EN":"AR RIYAD",
                 # "GovernorateName_AR":"الرياض (مقر الامارة)","GovernorateName_EN":"Ar Riyad",
@@ -63,30 +67,39 @@ class SAData(URLBase):
                 # "Deaths_SUM":30,"Recovered_SUM":13468,"ObjectId":46}}
 
                 attributes = feature['attributes']
+                confirmed[attributes['RegionName_EN']] += int(attributes['Confirmed_SUM'])
+                deaths[attributes['RegionName_EN']] += int(attributes['Deaths_SUM'])
+                recovered[attributes['RegionName_EN']] += int(attributes['Recovered_SUM'])
+
+            for region_child, value in confirmed.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_TOTAL,
-                    value=int(attributes['Confirmed_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
+
+            for region_child, value in deaths.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
-                    value=int(attributes['Deaths_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
+
+            for region_child, value in recovered.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
-                    value=int(attributes['Recovered_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
@@ -102,6 +115,8 @@ class SAData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
+            tested = Counter()
+
             for feature in data['features']:
                 # {"attributes":{"PlaceName_AR":"الرياض","PlaceName_EN":"AR RIYAD",
                 # "GovernorateName_AR":"الرياض (مقر الامارة)","GovernorateName_EN":"Ar Riyad",
@@ -113,12 +128,15 @@ class SAData(URLBase):
                 print(feature)
 
                 attributes = feature['attributes']
+                tested[attributes['RegionName_EN']] += int(attributes['Tested_SUM'])
+
+            for region_child, value in tested.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_TESTS_TOTAL,
-                    value=int(attributes['Tested_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
@@ -134,6 +152,10 @@ class SAData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
+            confirmed = Counter()
+            deaths = Counter()
+            recovered = Counter()
+
             for feature in data['features']:
                 # "features":[{"attributes":{"PlaceName_AR":"الرياض","PlaceName_EN":"AR RIYAD",
                 # "GovernorateName_AR":"الرياض (مقر الامارة)","GovernorateName_EN":"Ar Riyad",
@@ -144,30 +166,39 @@ class SAData(URLBase):
                 # "Deaths_SUM":30,"Recovered_SUM":13468,"ObjectId":46}}
 
                 attributes = feature['attributes']
+                confirmed[attributes['RegionName_EN']] += int(attributes['Confirmed_SUM'])
+                deaths[attributes['RegionName_EN']] += int(attributes['Deaths_SUM'])
+                recovered[attributes['RegionName_EN']] += int(attributes['Recovered_SUM'])
+
+            for region_child, value in confirmed.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_TOTAL,
-                    value=int(attributes['Confirmed_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
+
+            for region_child, value in deaths.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
-                    value=int(attributes['Deaths_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
+
+            for region_child, value in recovered.items():
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Saudi Arabia',
-                    region_child=attributes['RegionName_EN'],
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
-                    value=int(attributes['Recovered_SUM']),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))

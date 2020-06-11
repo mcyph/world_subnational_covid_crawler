@@ -32,6 +32,7 @@ place_map = {
     'أريحا': 'PS-JRH', #'Jericho',
     'سلفيت': 'PS-SLT', #'Salfit',
     'طوباس': 'PS-TBS', #'Tubas',
+    'اريحا': 'PS-JRH', # 'Jericho'
 }
 
 

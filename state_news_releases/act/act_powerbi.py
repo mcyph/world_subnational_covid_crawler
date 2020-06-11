@@ -6,7 +6,7 @@ from covid_19_au_grab.datatypes.constants import (
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
     DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP,
     DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_STATUS_RECOVERED
+    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
 )
 from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
     ACTPowerBI, get_globals
@@ -46,6 +46,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
             r.extend(self._get_age_groups_data(updated_date, response_dict))
             r.extend(self._get_confirmed_cases_data(updated_date, response_dict))
+            r.extend(self._get_deaths_data(updated_date, response_dict))
             r.extend(self._get_gender_balance_data(updated_date, response_dict))
             r.extend(self._get_infection_source_data(updated_date, response_dict))
             r.extend(self._get_new_cases_data(updated_date, response_dict))
@@ -150,8 +151,42 @@ class _ACTPowerBI(PowerBIDataReader):
 
         return r
 
+    def _get_deaths_data(self, updated_date, response_dict):
+        r = []
+        try:
+            try:
+                data = response_dict['deaths'][1]
+            except KeyError:
+                data = response_dict['deaths_2'][1]
+        except KeyError:
+            data = response_dict['deaths_3'][1]
+
+        value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
+        r.append(DataPoint(
+            datatype=DT_STATUS_DEATHS,
+            value=int(value),
+            date_updated=updated_date,
+            source_url=self.source_url
+        ))
+        return r
+
     def _get_confirmed_cases_data(self, updated_date, response_dict):
         r = []
+        try:
+            try:
+                data = response_dict['confirmed_cases'][1]
+            except KeyError:
+                data = response_dict['confirmed_cases_2'][1]
+        except KeyError:
+            data = response_dict['confirmed_cases_3'][1]
+
+        value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
+        r.append(DataPoint(
+            datatype=DT_TOTAL,
+            value=int(value),
+            date_updated=updated_date,
+            source_url=self.source_url
+        ))
         return r
 
     def _get_gender_balance_data(self, updated_date, response_dict):

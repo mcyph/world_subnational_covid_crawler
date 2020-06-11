@@ -51,9 +51,9 @@ class DEData(GithubRepo):
     def get_datapoints(self):
         r = []
         r.extend(self._get_national_data())
-        r.extend(self._get_cases_by_ags())
+        #r.extend(self._get_cases_by_ags())   # TODO: Find geojson data+re-enable me!!!! ==================================
         r.extend(self._get_cases_by_state())
-        r.extend(self._get_deaths_by_ags())
+        #r.extend(self._get_deaths_by_ags())
         r.extend(self._get_deaths_by_state())
         return r
 

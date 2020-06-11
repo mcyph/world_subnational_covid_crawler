@@ -241,6 +241,8 @@ class TasNews(StateNewsBase):
     # in their 20s.
 
     def _get_new_male_female_breakdown(self, url, html):
+        return [] # HACK!!
+
         # 'Four of the cases are women; two are men'
         c_html = word_to_number(html)
         du = self._get_date(url, html)

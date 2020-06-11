@@ -23,10 +23,6 @@ class BRData(KaggleDataset):
     SOURCE_DESCRIPTION = 'CC0: Public Domain'
     SOURCE_ID = 'br_kaggle'
 
-    GEO_DIR = 'br'
-    GEO_URL = ''
-    GEO_LICENSE = ''
-
     def __init__(self):
         KaggleDataset.__init__(self,
              output_dir=get_overseas_dir() / 'br' / 'data',

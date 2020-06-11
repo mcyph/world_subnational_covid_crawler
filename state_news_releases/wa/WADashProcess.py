@@ -233,36 +233,45 @@ class WARegionsProcess:
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
-            r.append(DataPoint(
-                datatype=DT_STATUS_RECOVERED,
-                value=int(attribute['total_recovered']),
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_STATUS_DEATHS,
-                value=int(attribute['total_death']),
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_STATUS_ACTIVE,
-                value=int(attribute['existing_cases']),
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
+
+            if attribute['total_recovered'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_STATUS_RECOVERED,
+                    value=int(attribute['total_recovered']),
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['total_death'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_STATUS_DEATHS,
+                    value=int(attribute['total_death']),
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['existing_cases'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_STATUS_ACTIVE,
+                    value=int(attribute['existing_cases']),
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
             #r.append(DataPoint(
             #    datatype=DT_TESTS_TOTAL,
             #    value=int(attribute['total_ruledout']),
             #    date_updated=dt,
             #    source_url=SOURCE_URL
             #))
-            r.append(DataPoint(
-                datatype=DT_STATUS_HOSPITALIZED,
-                value=int(attribute['total_hospitalised'] or 0),
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
+
+            if attribute['total_hospitalised'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_STATUS_HOSPITALIZED,
+                    value=int(attribute['total_hospitalised'] or 0),
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
         return r
 
     def get_mf_balance(self, period, data):

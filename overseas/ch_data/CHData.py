@@ -110,7 +110,7 @@ class CHData(GithubRepo):
                         region_child=canton,
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['current_hosp']),
-                        source_url=canton,
+                        source_url=source,
                         date_updated=date
                     ))
 
@@ -121,7 +121,7 @@ class CHData(GithubRepo):
                         region_child=canton,
                         datatype=DT_STATUS_ICU,
                         value=int(item['current_icu']),
-                        source_url=canton,
+                        source_url=source,
                         date_updated=date
                     ))
 
@@ -132,7 +132,7 @@ class CHData(GithubRepo):
                         region_child=canton,
                         datatype=DT_STATUS_ICU_VENTILATORS,
                         value=int(item['current_vent']),
-                        source_url=canton,
+                        source_url=source,
                         date_updated=date
                     ))
 
@@ -143,7 +143,7 @@ class CHData(GithubRepo):
                         region_child=canton,
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['ncumul_deceased']),
-                        source_url=canton,
+                        source_url=source,
                         date_updated=date
                     ))
 

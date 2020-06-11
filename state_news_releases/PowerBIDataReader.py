@@ -56,8 +56,12 @@ class PowerBIDataReader:
                 data = json.loads(f.read())
 
                 if isinstance(data, (list, tuple)):
-                    for request, response in zip(data[0]['queries'], data[1]['results']):
-                        yield request, response
+                    for x, request in enumerate(data[0]['queries']):
+                        # It seems the returned job ids can be out of order??
+                        # I'm think the queries could be done asynchronously
+                        # and have to be reordered based on these jobIds ==============================================
+                        job_id = data[1]['jobIds'][x]
+                        yield request, [i for i in data[1]['results'] if i['jobId'] == job_id][0]
                 else:
                     # TODO: Support the old format, which didn't
                     #  match the request with the response!

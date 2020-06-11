@@ -47,21 +47,58 @@ from covid_19_au_grab.get_package_dir import (
 #     Recoveries and Deceased information is also available through raw_data3.json now. Use the “Current Status” field to extract that information.
 
 
-with open(get_package_dir() /
-          'overseas' / 'in_data' /
-          'india_states.csv', 'r', encoding='utf-8') as f:
+# TODO: Fix Dadra and Nagar Haveli and Daman and Diu!!
+states_map = dict([i.split('\t')[::-1] for i in """
+IN-AP	Andhra Pradesh
+IN-AR	Arunachal Pradesh
+IN-AS	Assam
+IN-BR	Bihar
+IN-CT	Chhattisgarh
+IN-GA	Goa
+IN-GJ	Gujarat
+IN-HR	Haryana
+IN-HP	Himachal Pradesh
+IN-JH	Jharkhand
+IN-KA	Karnataka
+IN-KL	Kerala
+IN-MP	Madhya Pradesh
+IN-MH	Maharashtra
+IN-MN	Manipur
+IN-ML	Meghalaya
+IN-MZ	Mizoram
+IN-NL	Nagaland
+IN-OR	Odisha
+IN-PB	Punjab
+IN-RJ	Rajasthan
+IN-SK	Sikkim
+IN-TN	Tamil Nadu
+IN-TG	Telangana
+IN-TR	Tripura
+IN-UT	Uttarakhand
+IN-UP	Uttar Pradesh
+IN-WB	West Bengal
+IN-AN	Andaman and Nicobar Islands
+IN-CH	Chandigarh
+IN-DN	Dadra and Nagar Haveli
+IN-DD	Daman and Diu
+IN-DN	Dadra and Nagar Haveli and Daman and Diu
+IN-DL	Delhi
+IN-JK	Jammu and Kashmir
+IN-LA	Ladakh
+IN-LD	Lakshadweep
+IN-PY	Puducherry
+IN-TT	Unknown
+""".strip().split('\n')])
 
-    _state_codes = {}
-    for _line in f:
-        _line = _line.strip()
-        _code, _name = _line.split('\t')
-        _state_codes[_code.strip()] = _name.strip()
+reverse_states_map = {
+    v: k for k, v in states_map.items()
+}
 
 
 class INData(URLBase):
     SOURCE_URL = 'https://api.covid19india.org'
     SOURCE_DESCRIPTION = ''
-    SOURCE_ID = 'covid_19_india'
+    SOURCE_ID = 'in_covid_19_india'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,
@@ -115,9 +152,10 @@ class INData(URLBase):
             for district, status_dicts in district_dict.items():
                 for status_dict in status_dicts:
                     date = self.convert_date(status_dict['date'])
+                    parent_region = states_map[parent_regions]
 
                     r.append(DataPoint(
-                        region_parent=parent_regions,
+                        region_parent=parent_region,
                         region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_TOTAL,
                         region_child=district,
@@ -126,7 +164,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        region_parent=parent_regions,
+                        region_parent=parent_region,
                         region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_ACTIVE,
                         region_child=district,
@@ -135,7 +173,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        region_parent=parent_regions,
+                        region_parent=parent_region,
                         region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_DEATHS,
                         region_child=district,
@@ -144,7 +182,7 @@ class INData(URLBase):
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        region_parent=parent_regions,
+                        region_parent=parent_region,
                         region_schema=SCHEMA_IN_DISTRICT,
                         datatype=DT_STATUS_RECOVERED,
                         region_child=district,
@@ -156,49 +194,49 @@ class INData(URLBase):
 
     def _get_by_state(self):
         # {
-        # 	"states_daily": [
-        # 		{
-        # 			"an": "0",
-        # 			"ap": "1",
-        # 			"ar": "0",
-        # 			"as": "0",
-        # 			"br": "0",
-        # 			"ch": "0",
-        # 			"ct": "0",
-        # 			"date": "14-Mar-20",
-        # 			"dd": "0",
-        # 			"dl": "7",
-        # 			"dn": "0",
-        # 			"ga": "0",
-        # 			"gj": "0",
-        # 			"hp": "0",
-        # 			"hr": "14",
-        # 			"jh": "0",
-        # 			"jk": "2",
-        # 			"ka": "6",
-        # 			"kl": "19",
-        # 			"la": "0",
-        # 			"ld": "0",
-        # 			"mh": "14",
-        # 			"ml": "0",
-        # 			"mn": "0",
-        # 			"mp": "0",
-        # 			"mz": "0",
-        # 			"nl": "0",
-        # 			"or": "0",
-        # 			"pb": "1",
-        # 			"py": "0",
-        # 			"rj": "3",
-        # 			"sk": "0",
-        # 			"status": "Confirmed",
-        # 			"tg": "1",
-        # 			"tn": "1",
-        # 			"tr": "0",
-        # 			"tt": "81",
-        # 			"up": "12",
-        # 			"ut": "0",
-        # 			"wb": "0"
-        # 		},
+        #	"states_daily": [
+        #		{
+        #			"an": "0",
+        #			"ap": "1",
+        #			"ar": "0",
+        #			"as": "0",
+        #			"br": "0",
+        #			"ch": "0",
+        #			"ct": "0",
+        #			"date": "14-Mar-20",
+        #			"dd": "0",
+        #			"dl": "7",
+        #			"dn": "0",
+        #			"ga": "0",
+        #			"gj": "0",
+        #			"hp": "0",
+        #			"hr": "14",
+        #			"jh": "0",
+        #			"jk": "2",
+        #			"ka": "6",
+        #			"kl": "19",
+        #			"la": "0",
+        #			"ld": "0",
+        #			"mh": "14",
+        #			"ml": "0",
+        #			"mn": "0",
+        #			"mp": "0",
+        #			"mz": "0",
+        #			"nl": "0",
+        #			"or": "0",
+        #			"pb": "1",
+        #			"py": "0",
+        #			"rj": "3",
+        #			"sk": "0",
+        #			"status": "Confirmed",
+        #			"tg": "1",
+        #			"tn": "1",
+        #			"tr": "0",
+        #			"tt": "81",
+        #			"up": "12",
+        #			"ut": "0",
+        #			"wb": "0"
+        #		},
         r = []
         text = self.get_text('states_daily.json',
                             include_revision=True)
@@ -221,11 +259,17 @@ class INData(URLBase):
                 for district_code, value in status_dict.items():
                     if value in (None, ''):
                         continue
+                    assert ('IN-'+district_code.upper()) in reverse_states_map, district_code
+
+                    if district_code.upper() == 'TT':
+                        region_child = 'Unknown'
+                    else:
+                        region_child = 'IN-' + district_code.upper()
 
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='India',
-                        region_child=_state_codes[district_code.upper()],
+                        region_parent='IN',
+                        region_child=region_child,
                         datatype=datatype,
                         value=int(value),
                         date_updated=date,

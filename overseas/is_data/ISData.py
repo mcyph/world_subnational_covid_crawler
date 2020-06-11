@@ -92,7 +92,8 @@ class ISData(URLBase):
                     region_parent='IS',
                     region_child=region,
                     datatype=DT_TOTAL,
-                    value=int(infections_dict['value']),
+                    # This changed to be an int from a dict on 9 Jun
+                    value=int(infections_dict['value']) if isinstance(infections_dict, dict) else int(infections_dict),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))

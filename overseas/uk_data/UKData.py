@@ -61,6 +61,7 @@ GB-CHW	Cheshire West and Chester
 GB-CLK	Clackmannanshire
 GB-CWY	Conwy
 GB-CON	Cornwall
+GB-CON	Cornwall and Isles of Scilly
 GB-COV	Coventry
 GB-CRY	Croydon
 GB-CMA	Cumbria
@@ -252,7 +253,6 @@ Other	Outside Wales
 Swansea Bay	Swansea Bay
 Unknown	Unknown
 Not Known	Not Known
-Cornwall and Isles of Scilly	Cornwall and Isles of Scilly
 Bournemouth, Christchurch and Poole	Bournemouth, Christchurch and Poole
 Lothian	Lothian
 Grampian	Grampian
@@ -302,7 +302,13 @@ class UKData(GithubRepo):
                 if item['TotalCases'] == 'NaN':
                     continue
 
-                area = place_map[item['Area']]
+                if item['Country'] == 'England':
+                    # England, Wales and Scotland all use different systems
+                    # England is close to standard Admin1, but Wales
+                    # and Scotland use their own hospital systems
+                    area = place_map[item['Area']]
+                else:
+                    area = item['Area']
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_UK_AREA,

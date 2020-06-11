@@ -7,6 +7,7 @@ from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 from covid_19_au_grab.overseas.OverseasDataSources import OverseasDataSources
 from covid_19_au_grab.state_news_releases.StateDataSources import StateDataSources
 from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import InfrequentStateDataJobs
+from covid_19_au_grab.db.DerivedData import DerivedData
 
 from covid_19_au_grab.Logger import Logger
 
@@ -92,6 +93,8 @@ if __name__ == '__main__':
 
     status.update(output_state_data(dpdb))
     status.update(output_overseas_data(dpdb))
+
+    DerivedData(dpdb).add_derived()
 
     dpdb.commit()
     dpdb.close()

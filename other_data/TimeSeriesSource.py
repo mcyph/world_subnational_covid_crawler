@@ -1,6 +1,3 @@
-import json
-
-
 class TimeSeriesSource:
     def __init__(self, name, desc):
 
@@ -36,7 +33,7 @@ class TimeSeriesSource:
     def append(self, inst):
         self._time_series_keys[inst.key] = inst
 
-    def get_json(self):
+    def get_encoded(self, newest_only=False):
         """
         returns -> {
             "region_ids": {}, // for schema/parent/child together
@@ -109,6 +106,9 @@ class TimeSeriesSource:
                             out.append(int(get_time_series_id(str(tsk.date))))
                             out.append(tsk.value)
 
+                            if newest_only:
+                                break
+
                         r['data'].setdefault(key_id, {}) \
                                  .setdefault(schema_key_id, {}) \
                                  .setdefault(parent_key_id, {}) \
@@ -121,4 +121,4 @@ class TimeSeriesSource:
             v: k for k, v in r['time_series_ids'].items()
         }
 
-        return json.dumps(r)
+        return r

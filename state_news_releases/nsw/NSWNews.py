@@ -13,6 +13,9 @@ from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import (
 from covid_19_au_grab.state_news_releases.nsw.get_nsw_postcode_data import (
     get_nsw_postcode_data
 )
+from covid_19_au_grab.state_news_releases.nsw.get_nsw_age_data import (
+    get_nsw_age_data
+)
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -75,6 +78,7 @@ class NSWNews(StateNewsBase):
 
     def get_data(self):
         r = []
+        r.extend(get_nsw_age_data())
 
         for typ, url in (
             ('lhd', self.NSW_LHD_STATS_URL),

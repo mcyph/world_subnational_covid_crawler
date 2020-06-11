@@ -129,13 +129,13 @@ class COData(URLBase):
             by_admin1[notification_date, admin1] += 1
             by_municipality[notification_date, admin1, municipality] += 1
 
-            if item['Fecha de muerte'].strip('-/').strip():
+            if item['Fecha de muerte'].strip('-/NA').strip():
                 date_death = self.convert_date(item['Fecha de muerte'].split('T')[0])
                 by_status[date_death, DT_STATUS_DEATHS] += 1
                 by_admin1_status[date_death, admin1, DT_STATUS_DEATHS] += 1
                 by_municipality_status[date_death, admin1, municipality, DT_STATUS_DEATHS] += 1
 
-            if item['Fecha recuperado'].strip('-/').strip():
+            if item['Fecha recuperado'].strip('-/NA').strip():
                 date_recovered = self.convert_date(item['Fecha recuperado'].split('T')[0])
                 by_status[date_recovered, DT_STATUS_RECOVERED] += 1
                 by_admin1_status[date_recovered, admin1, DT_STATUS_RECOVERED] += 1

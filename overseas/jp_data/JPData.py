@@ -245,6 +245,7 @@ class JPData(GithubRepo):
                   'r', encoding='utf-8') as f:
 
             for item in csv.DictReader(f):
+                print(item)
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_0,
@@ -256,7 +257,7 @@ class JPData(GithubRepo):
                     source_url=self.github_url
                 ))
 
-                if item["死亡"]:
+                if item.get("死亡"):
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_0,
                         region_child='Japan',
@@ -267,7 +268,7 @@ class JPData(GithubRepo):
                         source_url=self.github_url
                     ))
 
-                if item["重症"]:
+                if item.get("重症"):
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_0,
                         region_child='Japan',
