@@ -38,6 +38,9 @@ class SQLiteDataRevisions:
         r.sort(reverse=True, key=lambda x: (x[0], x[1], x[2]))
         return r
 
+    def get_revision_path(self, rev_date, rev_subid):
+        return OUTPUT_DIR / f'{rev_date}-{rev_subid}.sqlite'
+
     def get_changed(self, current, previous):
         # Get a diff between current and previous datapoints
         current_dict = {}

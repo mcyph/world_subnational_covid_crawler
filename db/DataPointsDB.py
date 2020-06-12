@@ -9,7 +9,7 @@ from covid_19_au_grab.datatypes.constants import \
 
 
 class DataPointsDB:
-    def __init__(self, path, migrate_from_path=None):
+    def __init__(self, path):
         path = str(path)
         already_exists = exists(path)
         self.path = path
@@ -17,14 +17,10 @@ class DataPointsDB:
         if not already_exists:
             self.__create_tables()
 
-        if migrate_from_path:
-            assert not already_exists
-            self.__migrate_from(migrate_from_path)
-
         self.conn = sqlite3.connect(
             self.path, detect_types=sqlite3.PARSE_DECLTYPES
         )
-        self.conn.execute('PRAGMA journal_mode=WAL;')
+        self.conn.execute('PRAGMA journal_mode = WAL;')
         self.conn.execute('PRAGMA cache_size = -512000;')  # 512MB
         self.conn.execute('PRAGMA SYNCHRONOUS = 0;')
 
@@ -36,25 +32,19 @@ class DataPointsDB:
             conn.executescript(sql)
         conn.close()
 
-    def __migrate_from(self, path):
-        conn = sqlite3.connect(self.path)
-
-        with conn:
-            conn.execute("ATTACH DATABASE ? AS other;", [path])
-            conn.execute("""
-                INSERT INTO sourceurls
-                SELECT * FROM other.sourceurls;
-            """)
-            conn.execute("""
-                INSERT INTO datapoints
-                SELECT * FROM other.datapoints;
-            """)
-
-        conn.commit()
-        conn.execute("""
-            DETACH other;
-        """)
-        conn.close()
+    def migrate_source_ids(self, path, source_ids):
+        """
+        Copy across non-derived datapoints from one DB to the other
+        """
+        other_inst = DataPointsDB(path)
+        for source_id in source_ids:
+            datapoints = other_inst.select_many(
+                source_id=['=?', [source_id]],
+                is_derived=['=?', [0]],
+                add_source_url=True
+            )
+            self.extend(source_id, datapoints)
+        other_inst.close()
 
     def __del__(self):
         self.conn.close()
@@ -519,11 +509,11 @@ class DataPointsDB:
 
 
 if __name__ == '__main__':
-    from covid_19_au_grab.web_interface.CSVDataRevisions import CSVDataRevisions
-    from covid_19_au_grab.web_interface.CSVDataRevision import CSVDataRevision
+    from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
+    from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
 
-    rev_date, rev_subid, dt = CSVDataRevisions().get_revisions()[0]
-    dr = CSVDataRevision(rev_date, rev_subid)
+    rev_date, rev_subid, dt = SQLiteDataRevisions().get_revisions()[0]
+    dr = SQLiteDataRevision(rev_date, rev_subid)
     dpdb = DataPointsDB('test.sqlite',
                         #migrate_from_path='test.sqlite'
                         )

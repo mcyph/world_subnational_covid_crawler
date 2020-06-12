@@ -27,6 +27,16 @@ class SQLiteDataRevision:
         self.period = period
         self.subperiod_id = subperiod_id
         self._datapoints_db = None # self.__read_sqlite()
+
+    def _read_sqlite(self):
+        self._datapoints_db = DataPointsDB(
+            OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.sqlite'
+        )
+
+    def get_status_dict(self, ):
+        with open(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.json',
+                  'r', encoding='utf-8', errors='replace') as f:
+            return json.loads(f.read())['status']
     
     @needsdatapoints
     def __getitem__(self, item):
@@ -109,16 +119,6 @@ class SQLiteDataRevision:
 
         dd, mm, yyyy = path.split('_')
         int(yyyy), int(mm), int(dd)
-
-    def _read_sqlite(self):
-        self._datapoints_db = DataPointsDB(
-            OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.sqlite'
-        )
-
-    def get_status_dict(self, ):
-        with open(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.json',
-                  'r', encoding='utf-8', errors='replace') as f:
-            return json.loads(f.read())['status']
 
     def get_revision_time_string(self):
         rev_time = getctime(OUTPUT_DIR / f'{self.period}-{self.subperiod_id}.sqlite')
