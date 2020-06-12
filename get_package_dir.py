@@ -19,3 +19,6 @@ def get_overseas_dir():
 def get_output_dir():
     return Path('/mnt/ssd_970pro_512gb/covid_19_au_grab')
 
+
+def get_global_subnational_covid_data_dir():
+    return Path(os.path.expanduser(f'~/dev/global_subnational_covid_data/'))

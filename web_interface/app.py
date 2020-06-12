@@ -16,8 +16,7 @@ from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
 
 # MONKEY PATCH: Reduce cherrpy json file output
-_json._encode = json.JSONEncoder(separators=(',', ':'),
-                                 ensure_ascii=False).iterencode
+_json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
 
 env = Environment(loader=FileSystemLoader('./templates'))
 
@@ -208,32 +207,12 @@ class App(object):
     def get_tsv_data(self, rev_date, rev_subid, source_id):
         rev_subid = int(rev_subid)
         inst = SQLiteDataRevision(rev_date, rev_subid)
-        datapoints = inst.get_datapoints_by_source_id(source_id)
-        assert datapoints
-        datapoints.sort(key=lambda i: (
-            i.date_updated,
-            i.region_schema,
-            i.region_parent,
-            i.region_child,
-            i.agerange
-        ))
-
-        csvfile = StringIO()
-        writer = csv.writer(csvfile, delimiter='\t')
-        writer.writerow([i for i in datapoints[0]._fields])
-
-        for datapoint in datapoints:
-            row = []
-            for key, value in zip(datapoint._fields, datapoint):
-                row.append(value)
-            writer.writerow(row)
+        data = inst.get_tsv_data(source_id)
 
         cherrypy.response.headers['Content-Disposition'] = \
             'attachment; filename="covid_%s.tsv"' % source_id
         cherrypy.response.headers['Content-Type'] = 'text/csv'
-        csvfile.seek(0)
-        return csvfile.read()
-
+        return data
 
     @cherrypy.expose
     def statistics(self, rev_date, rev_subid):
@@ -402,7 +381,7 @@ class App(object):
                 inst = SQLiteDataRevision(rev_date, rev_subid)
                 status_dict = inst.get_status_dict()
 
-                if all(status_dict[k][0] == 'OK' for k in status_dict):
+                if all(status_dict[k]['status'] == 'OK' for k in status_dict):
                     break
         else:
             inst = SQLiteDataRevision(rev_date, rev_subid)

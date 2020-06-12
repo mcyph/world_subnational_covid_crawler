@@ -1,6 +1,7 @@
 import csv
 import json
 import datetime
+from io import StringIO
 from pytz import timezone
 from os.path import getctime
 from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
@@ -21,12 +22,12 @@ def needsdatapoints(fn):
 
 
 class SQLiteDataRevision:
-    def __init__(self, period, subperiod_id):
+    def __init__(self, period, subperiod_id, datapoints_db=None):
         self.__check_period(period)
         subperiod_id = int(subperiod_id)
         self.period = period
         self.subperiod_id = subperiod_id
-        self._datapoints_db = None # self.__read_sqlite()
+        self._datapoints_db = datapoints_db
 
     def _read_sqlite(self):
         self._datapoints_db = DataPointsDB(
@@ -159,6 +160,35 @@ class SQLiteDataRevision:
             x.agerange,
             x.region_child
         )
+
+    def get_tsv_data(self, source_id):
+        datapoints = self.get_datapoints_by_source_id(source_id)
+        assert datapoints
+        datapoints.sort(key=lambda i: (
+            i.date_updated,
+            i.region_schema,
+            i.region_parent,
+            i.region_child,
+            i.agerange
+        ))
+
+        csvfile = StringIO()
+        writer = csv.writer(csvfile, delimiter='\t')
+        writer.writerow([i for i in datapoints[0]._fields])
+
+        for datapoint in datapoints:
+            row = []
+            for key, value in zip(datapoint._fields, datapoint):
+                if key == 'region_schema':
+                    row.append(schema_to_name(value))
+                elif key == 'datatype':
+                    row.append(constant_to_name(value))
+                else:
+                    row.append(value)
+            writer.writerow(row)
+
+        csvfile.seek(0)
+        return csvfile.read()
 
     #=============================================================#
     #                       Get DataPoints                        #

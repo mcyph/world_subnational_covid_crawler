@@ -11,6 +11,12 @@
 
     <h2>Status</h2>
 
+    <div style="color: gray">
+        NOTE: Sources which have errors are reverted to the previous successful revision.<br>
+        In these cases it's probably still OK to use the revision,
+        but the statistics won't be the most up to date.
+    </div>
+
     <ul style="column-count: 2">
         {% for key, value in status_list %}
             <li><b>{{ key|e }}</b>: {{ value['status']|e }} {% if value['message'] %}{{ value['message']|e }}{% endif %}</li>

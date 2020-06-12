@@ -1,9 +1,11 @@
 import sys
 import json
 import datetime
+from git import Repo
 
 from covid_19_au_grab.Logger import Logger
-from covid_19_au_grab.get_package_dir import get_output_dir
+from covid_19_au_grab.get_package_dir import \
+    get_output_dir, get_global_subnational_covid_data_dir
 from covid_19_au_grab.overseas.OverseasDataSources import OverseasDataSources
 from covid_19_au_grab.state_news_releases.StateDataSources import StateDataSources
 from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import InfrequentStateDataJobs
@@ -11,17 +13,13 @@ from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import Infrequ
 from covid_19_au_grab.db.RevisionIDs import RevisionIDs
 from covid_19_au_grab.db.DerivedData import DerivedData
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
+from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
 from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
-TIME_FORMAT = datetime.datetime \
-                      .now() \
-                      .strftime('%Y_%m_%d')
-LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(
-    TIME_FORMAT
-)
-print("LATEST:", LATEST_REVISION_ID)
+TIME_FORMAT = datetime.datetime.now().strftime('%Y_%m_%d')
+LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(TIME_FORMAT)
 RUN_INFREQUENT_JOBS = '--run-infrequent-jobs' in [i.strip() for i in sys.argv]
 
 
@@ -55,10 +53,8 @@ def output_overseas_data(dpdb):
     Output from overseas data
     """
     ods = OverseasDataSources()
-    for source_id, source_url, source_desc, datapoints in \
-            ods.iter_data_sources():
-        dpdb.extend(source_id, _rem_dupes(datapoints),
-                    is_derived=False)
+    for source_id, source_url, source_desc, datapoints in ods.iter_data_sources():
+        dpdb.extend(source_id, _rem_dupes(datapoints), is_derived=False)
     return ods.get_status_dict()
 
 
@@ -67,10 +63,8 @@ def output_state_data(dpdb):
     Output from state data
     """
     sds = StateDataSources()
-    for source_id, source_url, source_desc, datapoints in \
-            sds.iter_data_sources():
-        dpdb.extend(source_id, _rem_dupes(datapoints),
-                    is_derived=False)
+    for source_id, source_url, source_desc, datapoints in sds.iter_data_sources():
+        dpdb.extend(source_id, _rem_dupes(datapoints), is_derived=False)
     return sds.get_status_dict()
 
 
@@ -122,11 +116,22 @@ if __name__ == '__main__':
     # Output basic status info to a .json info
     # This also signifies to the web
     # interface that the import went OK
-    with open(
-        RevisionIDs.get_path_from_id(
-            TIME_FORMAT, LATEST_REVISION_ID, 'json'
-        ), 'w', encoding='utf-8'
-    ) as f:
-        f.write(json.dumps({
-            'status': status
-        }, indent=4))
+    status_json_path = RevisionIDs.get_path_from_id(
+        TIME_FORMAT, LATEST_REVISION_ID, 'json'
+    )
+    with open(status_json_path, 'w', encoding='utf-8') as f:
+        f.write(json.dumps({'status': status}, indent=4))
+
+    # Update the csv output
+    sqlite_data_revision = SQLiteDataRevision(TIME_FORMAT, LATEST_REVISION_ID)
+    for source_id in sqlite_data_revision.get_source_ids():
+        with open(get_global_subnational_covid_data_dir() / f'covid_{source_id}.tsv',
+                  'w', encoding='utf-8') as f:
+            f.write(sqlite_data_revision.get_tsv_data(source_id))
+
+    # Commit to GitHub
+    repo = Repo(str(get_global_subnational_covid_data_dir()))
+    repo.git.add(update=True)
+    repo.index.commit('update data')
+    origin = repo.remote(name='origin')
+    origin.push()
