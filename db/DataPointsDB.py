@@ -4,8 +4,8 @@ from os.path import exists
 from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.constants import \
-    schema_to_name, constant_to_name, \
-    name_to_schema, name_to_constant
+    schema_to_name, datatype_to_name, \
+    name_to_schema, name_to_datatype
 
 
 class DataPointsDB:
@@ -115,7 +115,7 @@ class DataPointsDB:
             FROM datapoints 
             WHERE region_schema = ?;
         """, [region_schema])
-        r = [name_to_constant(i[0]) for i in cur.fetchall()]
+        r = [name_to_datatype(i[0]) for i in cur.fetchall()]
         cur.close()
         return r
 
@@ -227,7 +227,7 @@ class DataPointsDB:
         cur.execute(query, [
             datapoint.date_updated,
             schema_to_name(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
-            datapoint.agerange, constant_to_name(datapoint.datatype), datapoint.value,
+            datapoint.agerange, datatype_to_name(datapoint.datatype), datapoint.value,
             source_url_map[datapoint.source_url], datapoint.text_match,
 
             int(is_derived),
@@ -291,7 +291,7 @@ class DataPointsDB:
             insert.append([
                 datapoint.date_updated,
                 schema_to_name(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
-                datapoint.agerange, constant_to_name(datapoint.datatype), datapoint.value,
+                datapoint.agerange, datatype_to_name(datapoint.datatype), datapoint.value,
                 source_url_map[datapoint.source_url], datapoint.text_match,
 
                 int(is_derived),
@@ -408,7 +408,7 @@ class DataPointsDB:
                 region_parent=region_parent,
                 region_child=region_child,
                 agerange=agerange,
-                datatype=name_to_constant(datatype),
+                datatype=name_to_datatype(datatype),
                 value=value,
                 source_url=str(source_url)
             ))
@@ -428,7 +428,7 @@ class DataPointsDB:
         if isinstance(s, str):
             return s
         else:
-            return constant_to_name(s)
+            return datatype_to_name(s)
 
     def select_many(self, source_id=None, date_updated=None,
                    region_schema=None, region_parent=None, region_child=None,
@@ -500,7 +500,7 @@ class DataPointsDB:
                 region_parent=region_parent,
                 region_child=region_child,
                 agerange=agerange,
-                datatype=name_to_constant(datatype),
+                datatype=name_to_datatype(datatype),
                 value=value,
                 source_url=str(source_url)
             ))
@@ -525,7 +525,7 @@ if __name__ == '__main__':
             region_schema=name_to_schema(i['region_schema']),
             region_parent=i['region_parent'],
             region_child=i['region_child'],
-            datatype=name_to_constant(i['datatype']),
+            datatype=name_to_datatype(i['datatype']),
             agerange=i['agerange'],
             value=int(i['value']),
             date_updated=f'{yyyy}_{mm}_{dd}',

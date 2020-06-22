@@ -82,9 +82,15 @@ class _VicPowerBI(PowerBIDataReader):
     def _get_regions(self, updated_date, response_dict):
         output = []
         try:
-            data = response_dict['regions'][1]
+            try:
+                try:
+                    data = response_dict['regions'][1]
+                except KeyError:
+                    data = response_dict['regions_2'][1]
+            except KeyError:
+                data = response_dict['regions_3'][1]
         except KeyError:
-            data = response_dict['regions_2'][1]
+            data = response_dict['regions_4'][1]
 
         for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             # print(region_child)
@@ -117,7 +123,14 @@ class _VicPowerBI(PowerBIDataReader):
             return []
 
         output = []
-        data = response_dict['regions_active'][1]
+        try:
+            try:
+                data = response_dict['regions_active'][1]
+            except KeyError:
+                data = response_dict['regions_active_2'][1]
+        except KeyError:
+            data = response_dict['regions_active_3'][1]
+
         currently_active_regions = set()
 
         for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
@@ -184,7 +197,10 @@ class _VicPowerBI(PowerBIDataReader):
     def _get_age_data(self, updated_date, response_dict):
         output = []
         DT_TOTAL_NOTSTATED = 999999999 # HACK!
-        data = response_dict['age_data'][1]
+        try:
+            data = response_dict['age_data'][1]
+        except KeyError:
+            data = response_dict['age_data_2'][1]
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         cols = [i['G1'].rstrip('s') for i in cols]
@@ -286,11 +302,14 @@ class _VicPowerBI(PowerBIDataReader):
         output = []
         try:
             try:
-                data = response_dict['source_of_infection'][1]
+                try:
+                    data = response_dict['source_of_infection'][1]
+                except KeyError:
+                    data = response_dict['source_of_infection_2'][1]
             except KeyError:
-                data = response_dict['source_of_infection_2'][1]
+                data = response_dict['source_of_infection_3'][1]
         except KeyError:
-            data = response_dict['source_of_infection_3'][1]
+            data = response_dict['source_of_infection_4'][1]
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(

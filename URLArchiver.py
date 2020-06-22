@@ -1,11 +1,25 @@
 import re
+import ssl
+import urllib
+import certifi
 import datetime
 import unicodedata
 from os import listdir, makedirs
+from urllib.request import urlretrieve
 from os.path import isfile, expanduser, exists, dirname
 from urllib.request import urlretrieve, urlopen
 
 from covid_19_au_grab.get_package_dir import get_data_dir
+
+
+#ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
+ssl._create_default_https_context = ssl._create_unverified_context
+
+proxy = urllib.request.ProxyHandler({})
+opener = urllib.request.build_opener(proxy)
+opener.addheaders = [('User-Agent',
+                      'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0')]
+urllib.request.install_opener(opener)
 
 
 BASE_PATH = get_data_dir()

@@ -3284,6 +3284,609 @@ deaths_3_req = {
     "QueryId": ""
 }
 
+updated_date_3_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date Last Refreshed\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date Last Refreshed\"}},\"Function\":3},\"Name\":\"Min(Date Last Refreshed.Date Last Refreshed)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Date Last Refreshed",
+                                "Name": "d",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "d"
+                                                }
+                                            },
+                                            "Property": "Date Last Refreshed"
+                                        }
+                                    },
+                                    "Function": 3
+                                },
+                                "Name": "Min(Date Last Refreshed.Date Last Refreshed)"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+
+age_groups_8_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"a1\",\"Entity\":\"Age Buckets\",\"Type\":0},{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0},{\"Name\":\"c\",\"Entity\":\"COVID%20Case%20Data%20(02042020)\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"a1\"}},\"Property\":\"Age group (years)\"},\"Name\":\"Age Buckets (2).Age Group\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Count of Confirmed Cases\"},\"Name\":\"Table.Count of Confirmed Cases\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Sex\"},\"Name\":\"COVID%20Case%20Data%20(02042020).Sex\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"a1\"}},\"Property\":\"Age group (years)\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 200
+                                }
+                            },
+                            "Secondary": {
+                                "Top": {
+                                    "Count": 60
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Secondary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        2
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Age Buckets",
+                                "Name": "a1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "COVID%20Case%20Data%20(02042020)",
+                                "Name": "c",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 1,
+                                "Expression": {
+                                    "Column": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "a1"
+                                            }
+                                        },
+                                        "Property": "Age group (years)"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "a1"
+                                        }
+                                    },
+                                    "Property": "Age group (years)"
+                                },
+                                "Name": "Age Buckets (2).Age Group"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Count of Confirmed Cases"
+                                },
+                                "Name": "Table.Count of Confirmed Cases"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "c"
+                                        }
+                                    },
+                                    "Property": "Sex"
+                                },
+                                "Name": "COVID%20Case%20Data%20(02042020).Sex"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+confirmed_cases_4_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases\"},\"Name\":\"Table.Total Notifications\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Confirmed Cases"
+                                },
+                                "Name": "Table.Total Notifications"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+deaths_4_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Deaths\"},\"Name\":\"Table.Deaths\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Deaths"
+                                },
+                                "Name": "Table.Deaths"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+
+infection_source_time_series_5_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0},{\"Name\":\"d\",\"Entity\":\"Date\",\"Type\":0},{\"Name\":\"s\",\"Entity\":\"Source Table\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Notifications\"},\"Name\":\"Table.Epi Curve\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Date\"},\"Name\":\"Date.Date\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"SourceGrouping\"},\"Name\":\"Source Table.SourceGrouping\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[1,0],\"ShowItemsWithNoData\":[1]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Sample\":{}},\"Secondary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Sample": {}
+                            },
+                            "Secondary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        1,
+                                        0
+                                    ],
+                                    "ShowItemsWithNoData": [
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Secondary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        2
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Date",
+                                "Name": "d",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Source Table",
+                                "Name": "s",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Notifications"
+                                },
+                                "Name": "Table.Epi Curve"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d"
+                                        }
+                                    },
+                                    "Property": "Date"
+                                },
+                                "Name": "Date.Date"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "s"
+                                        }
+                                    },
+                                    "Property": "SourceGrouping"
+                                },
+                                "Name": "Source Table.SourceGrouping"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+recovered_5_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Recovered Cases\"},\"Name\":\"Table.Cases Cleared\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Recovered Cases"
+                                },
+                                "Name": "Table.Cases Cleared"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+regions_exact_4_req ={
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0},{\"Name\":\"s\",\"Entity\":\"Shape Map(SA3)\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases\"},\"Name\":\"Table.Confirmed Cases\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"SA3\"},\"Name\":\"Shape Map(SA3).SA3\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Confirmed Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":0,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "Aggregates": [
+                            {
+                                "Aggregations": [
+                                    {
+                                        "Min": {}
+                                    },
+                                    {
+                                        "Max": {}
+                                    }
+                                ],
+                                "Select": 0
+                            }
+                        ],
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Shape Map(SA3)",
+                                "Name": "s",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "t"
+                                            }
+                                        },
+                                        "Property": "Confirmed Cases"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Confirmed Cases"
+                                },
+                                "Name": "Table.Confirmed Cases"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "s"
+                                        }
+                                    },
+                                    "Property": "SA3"
+                                },
+                                "Name": "Shape Map(SA3).SA3"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
 
 if __name__ == '__main__':
     apb = ACTPowerBI()

@@ -33,7 +33,7 @@ from covid_19_au_grab.db.SQLiteDataRevisions import \
     SQLiteDataRevisions
 
 from covid_19_au_grab.datatypes.constants import (
-    constant_to_name, schema_to_name,
+    datatype_to_name, schema_to_name,
     SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
     SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
     DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
@@ -193,7 +193,7 @@ class App(object):
                 rev_date, rev_subid
             ),
             schema_to_name=schema_to_name,
-            constant_to_name=constant_to_name,
+            datatype_to_name=datatype_to_name,
             zip=zip,
             date_fns=date_fns,
         )
@@ -747,7 +747,7 @@ class App(object):
             ])
 
         return max_date, {
-            'sub_headers': [constant_to_name(i) for i in datatypes],
+            'sub_headers': [datatype_to_name(i) for i in datatypes],
             'data': out
         }
 

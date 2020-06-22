@@ -127,34 +127,42 @@ class BRData(KaggleDataset):
                     region_schema=SCHEMA_ADMIN_0,
                     region_child='Brazil',
                     datatype=DT_TOTAL,
-                    value=int(item['cases']),
+                    value=int(float(item['cases'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
-                    region_child='Brazil',
-                    datatype=DT_STATUS_DEATHS,
-                    value=int(item['deaths']),
-                    source_url=self.SOURCE_URL,
-                    date_updated=date
-                ))
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
-                    region_child='Brazil',
-                    datatype=DT_STATUS_RECOVERED,
-                    value=int(item['recovered']),
-                    source_url=self.SOURCE_URL,
-                    date_updated=date
-                ))
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
-                    region_child='Brazil',
-                    datatype=DT_STATUS_ACTIVE,
-                    value=int(item['cases'])-int(item['recovered']),
-                    source_url=self.SOURCE_URL,
-                    date_updated=date
-                ))
+
+                if item['deaths']:
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='Brazil',
+                        datatype=DT_STATUS_DEATHS,
+                        value=int(float(item['deaths'])),
+                        source_url=self.SOURCE_URL,
+                        date_updated=date
+                    ))
+
+                if item['recovered']:
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='Brazil',
+                        datatype=DT_STATUS_RECOVERED,
+                        value=int(float(item['recovered'])),
+                        source_url=self.SOURCE_URL,
+                        date_updated=date
+                    ))
+
+                if item['recovered'] and item['deaths']:
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_0,
+                        region_child='Brazil',
+                        datatype=DT_STATUS_ACTIVE,
+                        value=int(float(item['cases'])) -
+                              int(float(item['recovered'])) -
+                              int(float(item['deaths'])),
+                        source_url=self.SOURCE_URL,
+                        date_updated=date
+                    ))
 
         return r
 

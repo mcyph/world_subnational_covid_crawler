@@ -72,7 +72,7 @@ class WorldBingData(GithubRepo):
                     datatype=DT_TOTAL,
                     value=int(item['Confirmed']),
                     date_updated=date,
-                    source_url=self.SOURCE_URL
+                    source_url='Bing'
                 ))
 
                 if item['ConfirmedChange']:
@@ -83,7 +83,7 @@ class WorldBingData(GithubRepo):
                         datatype=DT_NEW,
                         value=int(item['ConfirmedChange']),
                         date_updated=date,
-                        source_url=self.SOURCE_URL
+                        source_url='Bing'
                     ))
 
                 if item['Deaths']:
@@ -94,7 +94,7 @@ class WorldBingData(GithubRepo):
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['Deaths']),
                         date_updated=date,
-                        source_url=self.SOURCE_URL
+                        source_url='Bing'
                     ))
 
                 if item['Recovered']:
@@ -105,7 +105,7 @@ class WorldBingData(GithubRepo):
                         datatype=DT_STATUS_RECOVERED,
                         value=int(item['Recovered']),
                         date_updated=date,
-                        source_url=self.SOURCE_URL
+                        source_url='Bing'
                     ))
                     r.append(DataPoint(
                         region_schema=region_schema,
@@ -116,7 +116,7 @@ class WorldBingData(GithubRepo):
                               int(item['Deaths'] or '0') -
                               int(item['Recovered']),
                         date_updated=date,
-                        source_url=self.SOURCE_URL
+                        source_url='Bing'
                     ))
 
         return r

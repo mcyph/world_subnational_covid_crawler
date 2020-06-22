@@ -61,9 +61,12 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_updated_date(self, updated_date, response_dict):
         try:
-            ts = response_dict['updated_date'][1]
+            try:
+                ts = response_dict['updated_date'][1]
+            except KeyError:
+                ts = response_dict['updated_date_2'][1]
         except KeyError:
-            ts = response_dict['updated_date_2'][1]
+            ts = response_dict['updated_date_3'][1]
 
         ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
@@ -84,6 +87,7 @@ class _ACTPowerBI(PowerBIDataReader):
             'age_groups_5',
             'age_groups_6',
             'age_groups_7',
+            'age_groups_8',
         ):
             try:
                 data = response_dict[key][1]
@@ -155,11 +159,14 @@ class _ACTPowerBI(PowerBIDataReader):
         r = []
         try:
             try:
-                data = response_dict['deaths'][1]
+                try:
+                    data = response_dict['deaths'][1]
+                except KeyError:
+                    data = response_dict['deaths_2'][1]
             except KeyError:
-                data = response_dict['deaths_2'][1]
+                data = response_dict['deaths_3'][1]
         except KeyError:
-            data = response_dict['deaths_3'][1]
+            data = response_dict['deaths_4'][1]
 
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -174,11 +181,14 @@ class _ACTPowerBI(PowerBIDataReader):
         r = []
         try:
             try:
-                data = response_dict['confirmed_cases'][1]
+                try:
+                    data = response_dict['confirmed_cases'][1]
+                except KeyError:
+                    data = response_dict['confirmed_cases_2'][1]
             except KeyError:
-                data = response_dict['confirmed_cases_2'][1]
+                data = response_dict['confirmed_cases_3'][1]
         except KeyError:
-            data = response_dict['confirmed_cases_3'][1]
+            data = response_dict['confirmed_cases_4'][1]
 
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -243,13 +253,16 @@ class _ACTPowerBI(PowerBIDataReader):
         try:
             try:
                 try:
-                    data = response_dict['infection_source_time_series']
+                    try:
+                        data = response_dict['infection_source_time_series']
+                    except KeyError:
+                        data = response_dict['infection_source_time_series_2']
                 except KeyError:
-                    data = response_dict['infection_source_time_series_2']
+                    data = response_dict['infection_source_time_series_3']
             except KeyError:
-                data = response_dict['infection_source_time_series_3']
+                data = response_dict['infection_source_time_series_4']
         except KeyError:
-            data = response_dict['infection_source_time_series_4']
+            data = response_dict['infection_source_time_series_5']
 
         act_norm_map = {
             'Overseas acquired': DT_SOURCE_OVERSEAS,
@@ -265,6 +278,8 @@ class _ACTPowerBI(PowerBIDataReader):
         # "Locally acquired - interstate"
         # "Overseas acquired"
         # "Under investigation"
+
+        print(data)
 
         tally = {}
         keys = [
@@ -317,13 +332,16 @@ class _ACTPowerBI(PowerBIDataReader):
         try:
             try:
                 try:
-                    data = response_dict['recovered'][1]
+                    try:
+                        data = response_dict['recovered'][1]
+                    except KeyError:
+                        data = response_dict['recovered_2'][1]
                 except KeyError:
-                    data = response_dict['recovered_2'][1]
+                    data = response_dict['recovered_3'][1]
             except KeyError:
-                data = response_dict['recovered_3'][1]
+                data = response_dict['recovered_4'][1]
         except KeyError:
-            data = response_dict['recovered_4'][1]
+            data = response_dict['recovered_5'][1]
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -338,11 +356,14 @@ class _ACTPowerBI(PowerBIDataReader):
         r = []
         try:
             try:
-                data = response_dict['regions_exact'][1]
+                try:
+                    data = response_dict['regions_exact'][1]
+                except KeyError:
+                    data = response_dict['regions_exact_2'][1]
             except KeyError:
-                data = response_dict['regions_exact_2'][1]
+                data = response_dict['regions_exact_3'][1]
         except KeyError:
-            data = response_dict['regions_exact_3'][1]
+            data = response_dict['regions_exact_4'][1]
 
         rd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 

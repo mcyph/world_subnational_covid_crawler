@@ -1,6 +1,6 @@
 import re
 import unicodedata
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, datatype_to_name, schema_to_name
 
 from covid_19_au_grab.overseas.humdata.af_data.AFData import AFData
 from covid_19_au_grab.overseas.humdata.co_data.COData import COData
@@ -49,7 +49,8 @@ from covid_19_au_grab.overseas.tw_data.TWData import TWData
 from covid_19_au_grab.overseas.vn_data.VNData import VNData
 from covid_19_au_grab.overseas.west_africa_data.WestAfricaData import WestAfricaData
 from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
-from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import WorldJHUData
+from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import \
+    WorldJHUDataAdmin0, WorldJHUDataAdmin1, WorldJHUDataAdmin2
 #from covid_19_au_grab.overseas.ye_data.YEData import YEData
 #from covid_19_au_grab.overseas.za_data.ZAData import ZAData
 
@@ -61,7 +62,9 @@ class OverseasDataSources:
     def iter_data_sources(self):
         for i in [
             WestAfricaData,
-            WorldJHUData,
+            WorldJHUDataAdmin0,
+            WorldJHUDataAdmin1,
+            WorldJHUDataAdmin2,
             AFData,
             BDData,
             BRData,

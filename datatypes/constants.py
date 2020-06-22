@@ -94,7 +94,7 @@ def schema_to_name(x):
             return k[7:].lower()
 
 
-def constant_to_name(x):
+def datatype_to_name(x):
     for k, v in globals().items():
         if k.startswith('DT_') and v == x:
             return k[3:].lower()
@@ -104,7 +104,7 @@ def name_to_schema(x):
     return globals()['SCHEMA_'+x.upper()]
 
 
-def name_to_constant(x):
+def name_to_datatype(x):
     return globals()['DT_' + x.upper()]
 
 

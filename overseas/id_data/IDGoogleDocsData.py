@@ -78,10 +78,10 @@ class IDGoogleDocsData(URLBase):
             date = self.convert_date(item['Total Kasus']+'-20')
 
             for province in list(item.keys())[1:]:
-                value = item[province]
+                value = item[province].replace(',', '')
                 province = province.strip()
 
-                if not province:
+                if not province or not value:
                     continue
                 elif province == '?':
                     province = 'Unknown'
@@ -91,7 +91,7 @@ class IDGoogleDocsData(URLBase):
                     region_parent='Indonesia',
                     region_child=province,
                     datatype=DT_TOTAL,
-                    value=int(value.replace(',', '')),
+                    value=int(value),
                     date_updated=date,
                     source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
                 ))

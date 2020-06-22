@@ -14,7 +14,7 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, datatype_to_name, schema_to_name
 from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 
@@ -266,7 +266,7 @@ if __name__ == '__main__':
             print(f'{schema_to_name(datapoint.region_schema)}\t'
                   f'{i_region_parent}\t'
                   f'{i_region_child}\t'
-                  f'{constant_to_name(datapoint.datatype)}\t'
+                  f'{datatype_to_name(datapoint.datatype)}\t'
                   f'{datapoint.agerange}\t'
                   f'{datapoint.value}\t'
                   f'{backwards_date}\t'

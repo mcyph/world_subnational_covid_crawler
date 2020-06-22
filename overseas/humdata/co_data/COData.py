@@ -99,10 +99,10 @@ class COData(URLBase):
                 first_item = False
                 continue
 
-            print(item)
+            #print(item)
             case_id = item['ID de caso']
             notification_date = self.convert_date(item['Fecha de notificación'].split('T')[0])
-            divipola = item['Codigo DIVIPOLA']
+            #divipola = item['Codigo DIVIPOLA']
             municipality = item['Ciudad de ubicación']
             admin1 = {
                 'Bogotá D.C.': 'Distrito Capital de Bogota',

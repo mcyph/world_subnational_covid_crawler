@@ -27,11 +27,12 @@ class WorldJHUData(GithubRepo):
     GEO_URL = ''
     GEO_LICENSE = ''
 
-    def __init__(self):
+    def __init__(self, do_update=True):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'world_jhu' / 'COVID-19',
                             github_url='https://github.com/CSSEGISandData/COVID-19')
-        self.update()
+        if do_update:
+            self.update()
 
     def get_datapoints(self):
         r = []
@@ -227,7 +228,7 @@ class WorldJHUData(GithubRepo):
                             datatype=DT_TOTAL,
                             value=int(item['Confirmed']),
                             date_updated=date,
-                            source_url=self.SOURCE_URL
+                            source_url='JHU'  # HACK: JHU is larger than any of the other sources, so makes sense to reduce the source just for this file!
                         ))
 
                     if item['Deaths']:
@@ -238,7 +239,7 @@ class WorldJHUData(GithubRepo):
                             datatype=DT_STATUS_DEATHS,
                             value=int(item['Deaths']),
                             date_updated=date,
-                            source_url=self.SOURCE_URL
+                            source_url='JHU'
                         ))
 
                     if item['Recovered']:
@@ -249,7 +250,7 @@ class WorldJHUData(GithubRepo):
                             datatype=DT_STATUS_RECOVERED,
                             value=int(item['Recovered']),
                             date_updated=date,
-                            source_url=self.SOURCE_URL
+                            source_url='JHU'
                         ))
 
                     if 'Active' in item:
@@ -260,9 +261,51 @@ class WorldJHUData(GithubRepo):
                             datatype=DT_STATUS_ACTIVE,
                             value=int(item['Active']),
                             date_updated=date,
-                            source_url=self.SOURCE_URL
+                            source_url='JHU'
                         ))
 
+        return r
+
+
+class WorldJHUDataAdmin0(WorldJHUData):
+    SOURCE_ID = 'world_jhu_admin0'
+
+    def __init__(self):
+        WorldJHUData.__init__(self, do_update=True)
+
+    def get_datapoints(self):
+        r = []
+        for i in WorldJHUData.get_datapoints(self):
+            if i.region_schema == SCHEMA_ADMIN_0:
+                r.append(i)
+        return r
+
+
+class WorldJHUDataAdmin1(WorldJHUData):
+    SOURCE_ID = 'world_jhu_admin1'
+
+    def __init__(self):
+        WorldJHUData.__init__(self, do_update=False)
+
+    def get_datapoints(self):
+        r = []
+        for i in WorldJHUData.get_datapoints(self):
+            if i.region_schema == SCHEMA_ADMIN_1:
+                r.append(i)
+        return r
+
+
+class WorldJHUDataAdmin2(WorldJHUData):
+    SOURCE_ID = 'world_jhu_admin2'
+
+    def __init__(self):
+        WorldJHUData.__init__(self, do_update=False)
+
+    def get_datapoints(self):
+        r = []
+        for i in WorldJHUData.get_datapoints(self):
+            if i.region_schema in (SCHEMA_US_COUNTY,):
+                r.append(i)
         return r
 
 

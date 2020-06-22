@@ -6,7 +6,7 @@ from pytz import timezone
 from os.path import getctime
 from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
 from covid_19_au_grab.datatypes.constants import \
-    schema_to_name, constant_to_name
+    schema_to_name, datatype_to_name
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 
 
@@ -71,7 +71,7 @@ class SQLiteDataRevision:
                         region_child):
 
         datatypes = [
-            constant_to_name(i) for i in datatypes
+            datatype_to_name(i) for i in datatypes
         ]
         datapoints = self._datapoints_db.select_many(
             region_schema=['= ?', [region_schema]],
@@ -182,7 +182,7 @@ class SQLiteDataRevision:
                 if key == 'region_schema':
                     row.append(schema_to_name(value))
                 elif key == 'datatype':
-                    row.append(constant_to_name(value))
+                    row.append(datatype_to_name(value))
                 else:
                     row.append(value)
             writer.writerow(row)
@@ -216,7 +216,7 @@ class SQLiteDataRevision:
         combined = {}
         for datatype in datatypes:
             if isinstance(datatype, int):
-                datatype = constant_to_name(datatype)
+                datatype = datatype_to_name(datatype)
 
             for datapoint in self.get_combined_value(region_schema, datatype,
                                                      from_date=from_date,
@@ -277,7 +277,7 @@ class SQLiteDataRevision:
             if isinstance(region_schema, int):
                 region_schema = schema_to_name(region_schema)
             if isinstance(datatype, int):
-                datatype = constant_to_name(datatype)
+                datatype = datatype_to_name(datatype)
 
             for datapoint in self.get_combined_value(region_schema,
                                                      datatype,
@@ -333,7 +333,7 @@ class SQLiteDataRevision:
         if isinstance(region_schema, int):
             region_schema = schema_to_name(region_schema)
         if isinstance(datatype, int):
-            datatype = constant_to_name(datatype)
+            datatype = datatype_to_name(datatype)
 
         datapoints = self._datapoints_db.select_many(
             region_schema=['= ?', [region_schema]] if region_schema is not None else None,

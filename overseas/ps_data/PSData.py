@@ -11,7 +11,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
+    DT_TOTAL, DT_NEW, DT_STATUS_RECOVERED,
     DT_STATUS_DEATHS, DT_STATUS_ACTIVE
 )
 from covid_19_au_grab.get_package_dir import (
@@ -24,6 +24,7 @@ place_map = {
     'الخليل': 'PS-HBN', #'Hebron',
     'قلقيلية': 'PS-QQA', #'Qalqilya',
     'ضواحي القدس': 'PS-JEM', #'The outskirts of Jerusalem',
+    'مدينة القدس': None, #'PS-JEM', # 'City of Jerusalem' TODO: FIGURE OUT WHAT TO DO ABOUT THIS. This value wasn't supplied prior to 21st June
     'رام الله والبيرة': 'PS-RBH', #'Ramallah and Al-Bireh',
     'بيت لحم': 'PS-BTH', #'Bethlehem',
     'نابلس': 'PS-NBS', #'Nablus',
@@ -67,12 +68,33 @@ class PSData(URLBase):
 
             # There are quite a few more stats e.g. lower than governorate level etc =====================================
 
-            for governorate, total, active, recovery, death in html('#Table2 tbody tr'):
+            for elements in html('#Table2 tbody tr'):
+                try:
+                    governorate, total, active, recovery, death = elements
+                    new = None
+                except ValueError:
+                    governorate, total, new, active, recovery, death = elements
+                    new = int(pq(new).text().strip())
+
                 governorate = place_map[pq(governorate).text().strip()]
                 death = int(pq(death).text().strip())
                 recovery = int(pq(recovery).text().strip())
                 active = int(pq(active).text().strip())
                 total = int(pq(total).text().strip())
+
+                if governorate is None:
+                    continue
+
+                if new is not None:
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent='PS',
+                        region_child=governorate,
+                        datatype=DT_NEW,
+                        value=int(new),
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    ))
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,

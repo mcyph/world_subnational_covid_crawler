@@ -435,7 +435,7 @@ class SANews(StateNewsBase):
                             }
             """
 
-            # print(feature_dict)
+            #print(feature_dict)
             attributes = feature_dict['attributes']
             if attributes.get('exceedslimit'):
                 continue
@@ -447,6 +447,8 @@ class SANews(StateNewsBase):
                     ).strftime('%Y_%m_%d')
                     if du == '2020_04_12':
                         # HACK: Ignore this unreliable datapoint!
+                        continue
+                    elif v is None:
                         continue
 
                     num = DataPoint(
@@ -467,6 +469,8 @@ class SANews(StateNewsBase):
                         continue
                     elif du <= '2020_04_15' and not int(v):
                         # HACK: early datapoints were of very low quality!
+                        continue
+                    elif v is None:
                         continue
 
                     num = DataPoint(

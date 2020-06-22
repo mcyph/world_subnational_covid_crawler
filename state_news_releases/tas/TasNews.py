@@ -297,14 +297,16 @@ class TasNews(StateNewsBase):
                     lga = pq(lga).text().strip()
 
                     if lga.lower() == 'total':
-                        r.append(DataPoint(
-                            region_schema=SCHEMA_THS,
-                            region_child=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
-                            datatype=DT_TOTAL,
-                            value=int(pq(num_cases).text().replace(',', '').strip()),
-                            date_updated=du,
-                            source_url=url
-                        ))
+                        # This value is very often out of date!!! ====================================================
+                        if False:
+                            r.append(DataPoint(
+                                region_schema=SCHEMA_THS,
+                                region_child=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
+                                datatype=DT_TOTAL,
+                                value=int(pq(num_cases).text().replace(',', '').strip()),
+                                date_updated=du,
+                                source_url=url
+                            ))
                     else:
                         r.append(DataPoint(
                             region_schema=SCHEMA_LGA,

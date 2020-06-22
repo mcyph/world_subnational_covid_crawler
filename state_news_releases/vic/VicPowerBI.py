@@ -2301,6 +2301,806 @@ regions_active_req = {
       }
 
 
+regions_active_2_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"dimLGA\"},{\"Name\":\"l\",\"Entity\":\"Linelist\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}]]}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":1,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "Aggregates": [
+                            {
+                                "Aggregations": [
+                                    {
+                                        "Min": {}
+                                    },
+                                    {
+                                        "Max": {}
+                                    }
+                                ],
+                                "Select": 1
+                            }
+                        ],
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d"
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l"
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "l"
+                                            }
+                                        },
+                                        "Property": "Cases"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "l"
+                                                        }
+                                                    },
+                                                    "Property": "clin_status_n"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted to ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted, not known to be in ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Home isolation'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hospital in the home'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hotel detention'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+regions_3_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d1"
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l"
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d1"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d1"
+                                                            }
+                                                        },
+                                                        "Property": "LGAName"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+regions_4_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d1"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d1"
+                                                            }
+                                                        },
+                                                        "Property": "LGAName"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+age_data_2_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"dimAgeGroup\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"},\"Name\":\"dimAgeGroup.AgeGroup\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Sex\"},\"Name\":\"Linelist.Sex\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Measure\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"M_Age_MedianANDRange\"},\"Name\":\"Linelist.M_Age_MedianANDRange\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"AgeGroup\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,2],\"ShowItemsWithNoData\":[0]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[1]}]},\"Projections\":[3],\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 200
+                                }
+                            },
+                            "Secondary": {
+                                "Top": {
+                                    "Count": 60
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        2
+                                    ],
+                                    "ShowItemsWithNoData": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Projections": [
+                            3
+                        ],
+                        "Secondary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimAgeGroup",
+                                "Name": "d",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 1,
+                                "Expression": {
+                                    "Column": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "d"
+                                            }
+                                        },
+                                        "Property": "AgeGroup"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d"
+                                        }
+                                    },
+                                    "Property": "AgeGroup"
+                                },
+                                "Name": "dimAgeGroup.AgeGroup"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Sex"
+                                },
+                                "Name": "Linelist.Sex"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Measure"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "M_Age_MedianANDRange"
+                                },
+                                "Name": "Linelist.M_Age_MedianANDRange"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d"
+                                                            }
+                                                        },
+                                                        "Property": "AgeGroup"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+source_of_infection_4_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"acquired_n\"},\"Name\":\"Linelist.acquired_n\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "l"
+                                            }
+                                        },
+                                        "Property": "Cases"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "acquired_n"
+                                },
+                                "Name": "Linelist.acquired_n"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+regions_active_3_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}},{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d1"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d1"
+                                                            }
+                                                        },
+                                                        "Property": "LGAName"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "l"
+                                                        }
+                                                    },
+                                                    "Property": "clin_status_n"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted to ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted, not known to be in ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Home isolation'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hospital in the home'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hotel detention'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
 
 if __name__ == '__main__':
     vpb = VicPowerBI()

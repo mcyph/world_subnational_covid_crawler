@@ -54,7 +54,8 @@ def get_nsw_postcode_data(postcode_to_lga):
             recovered = int(item['Recovered'])
             deaths = int(item['Deaths'])
             cases = int(item['Cases'])
-            active = cases-recovered-deaths
+            censored = int(item.get('censored', 0))  # NOTE ME:  From 12 June, this heatmap reporting of active cases has changed. Cases that are not recorded as recovered or deceased after six weeks are not included.
+            active = cases-recovered-deaths-censored
             postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
             r.append(DataPoint(

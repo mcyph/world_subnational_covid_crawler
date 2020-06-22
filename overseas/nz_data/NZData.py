@@ -68,7 +68,9 @@ class NZData(GithubRepo):
                     continue
                 assert item['Status'] == 'Confirmed', item['Status']
 
-                date = self.convert_date(item['Reported'])
+                print(item)
+
+                date = self.convert_date(item['Reported'].split('T')[0])
                 agerange = item['Age'].replace(' to ', '-')
 
                 # Gender balances

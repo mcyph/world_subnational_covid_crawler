@@ -78,6 +78,13 @@ class ProcessGeoJSONBase(ABC):
                     feature['geometry']['coordinates']
                 ])
 
+        # Make it so largest polygons come first
+        # (if there's multiple polygons for a given region)
+        for schema_name, schema_dict in r.items():
+            for parent_name, parent_dict in schema_dict.items():
+                for child_name, child_dict in parent_dict.items():
+                    child_dict['geodata'].sort(key=lambda x: -x[0])
+
         def output(out_path, r):
             if pretty_print:
                 encoded = json.dumps(r, indent=4, ensure_ascii=False)

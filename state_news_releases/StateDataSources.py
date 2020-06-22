@@ -6,7 +6,7 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, constant_to_name, schema_to_name
+from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, datatype_to_name, schema_to_name
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
 
 

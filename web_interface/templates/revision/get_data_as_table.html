@@ -21,7 +21,7 @@
                     {% if key == 'region_schema' %}
                         <td>{{ schema_to_name(value)|e }}</td>
                     {% elif key == 'datatype' %}
-                        <td>{{ constant_to_name(value)|e }}</td>
+                        <td>{{ datatype_to_name(value)|e }}</td>
                     {% else %}
                         <td>{{ value|e }}</td>
                     {% endif %}
