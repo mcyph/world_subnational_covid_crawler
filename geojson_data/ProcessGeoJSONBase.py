@@ -42,7 +42,7 @@ class ProcessGeoJSONBase(ABC):
                     raise Exception(f"Unsupported feature type: {feature}")
 
             for feature in features:
-                if not feature['geometry'] or not feature['properties']:
+                if not feature['geometry'] or not feature['properties'] or not feature['geometry']['coordinates']:
                     continue
                 elif (
                     'unincorporated' in str(feature).lower() and
@@ -58,9 +58,9 @@ class ProcessGeoJSONBase(ABC):
                     printable_name = {'en': printable_name}
 
                 # TODO: Also add underlay data(+maybe add listings for point data)!!! ======================================================================
-                i_dict = r.setdefault(self.schema_name, {}) \
-                          .setdefault(parent, {}) \
-                          .setdefault(child, {
+                i_dict = r.setdefault(self.schema_name.lower(), {}) \
+                          .setdefault(parent.lower(), {}) \
+                          .setdefault(child.lower(), {
                               # [[area,
                               #   x1,y1,x2,y2 bounding coords,
                               #   center coords,
@@ -70,6 +70,12 @@ class ProcessGeoJSONBase(ABC):
                           })
 
                 print(feature)
+
+                for coords in feature['geometry']['coordinates']:
+                    for lng, lat in coords:
+                        # Make sure coords using correct ranges!
+                        assert -180 <= lng <= 180, lng
+                        assert -90 <= lat <= 90, lat
 
                 i_dict['geodata'].append([
                     self._get_area(feature['geometry']['coordinates']),
@@ -98,7 +104,7 @@ class ProcessGeoJSONBase(ABC):
             # TODO: Split into '{schema_name}_{parent_region}'
             for schema_name, schema_dict in r.items():
                 for parent_name, parent_dict in schema_dict.items():
-                    output(f'{out_dir}/{self.schema_name}_{parent_name}.geojson', {
+                    output(f'{out_dir}/{self.schema_name}_{parent_name.lower()}.geojson', {
                         self.schema_name: {parent_name: parent_dict}
                     })
         else:

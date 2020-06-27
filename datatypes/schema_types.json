@@ -1,5 +1,5 @@
 {
-    "underlays": [
+    "underlay_categories": [
         ["Australian Data", [
             ["absData.json", "Australian Bureau of Statistics Data"]
         ]]
@@ -193,7 +193,7 @@
             "#3": "May contain additional 'cutouts' for cities, when",
             "#4": "additional data is provided within an admin_1 area",
             "iso_3166": null,
-            "min_zoom": 5,
+            "min_zoom": 2,
             "priority": 1,
             "split_by_parent_region": true
         },
@@ -201,135 +201,128 @@
             "#1": "Replaces states/territories for the entire country,",
             "#2": "provided data is available",
             "iso_3166": "AU",
-            "min_zoom": 6,
+            "min_zoom": 4,
             "priority": 3,
             "split_by_parent_region": false
         },
         "hhs": {
             "iso_3166": "AU-QLD",
-            "min_zoom": 6,
+            "min_zoom": 3,
             "priority": 4,
             "split_by_parent_region": false
         },
         "lhd": {
             "iso_3166": "AU-NSW",
-            "min_zoom": 6,
+            "min_zoom": 3,
             "priority": 2,
             "split_by_parent_region": false
         },
         "sa3": {
             "iso_3166": "AU-ACT",
-            "min_zoom": 6,
+            "min_zoom": 4,
             "priority": 2,
             "split_by_parent_region": false
         },
         "ths": {
             "iso_3166": "AU-TAS",
-            "min_zoom": 6,
-            "priority": 4,
+            "min_zoom": 2,
+            "priority": 2,
             "split_by_parent_region": false
         },
         "postcode": {
             "iso_3166": "AU-NSW",
             "min_zoom": 8,
-            "priority": -1,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
 
         "bd_district": {
             "iso_3166": "BD",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "br_city": {
             "iso_3166": "BR",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
         },
         "co_municipality": {
             "iso_3166": "CO",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 6,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "de_ags": {
             "iso_3166": "DE",
-            "min_zoom": 8,
+            "min_zoom": 4,
             "priority": -1,
             "line_width": 0.5,
             "split_by_parent_region": true
         },
         "es_madrid_municipality": {
-            "iso_3166": "ES-MD",
-            "min_zoom": 8,
-            "priority": -1,
-            "line_width": 0.5,
-            "split_by_parent_region": false
-        },
-        "fr_department": {
-            "iso_3166": "FR",
-            "min_zoom": 8,
-            "priority": -1,
+            "iso_3166": "ES-M",
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "in_district": {
             "iso_3166": "IN",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
         },
         "it_province": {
             "iso_3166": "IT",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "jp_city": {
             "iso_3166": "JP",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
         },
         "my_district": {
             "iso_3166": "MY",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "nz_dhb": {
             "iso_3166": "NZ",
-            "min_zoom": 6,
+            "min_zoom": 4,
             "priority": 3,
             "split_by_parent_region": false
         },
         "uk_area": {
             "iso_3166": "GB",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "split_by_parent_region": false
         },
         "us_county": {
             "iso_3166": "US",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
-            "split_by_parent_region": false
+            "split_by_parent_region": true
         },
         "th_district": {
             "iso_3166": "TH",
-            "min_zoom": 8,
-            "priority": -1,
+            "min_zoom": 4,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         }

@@ -11,7 +11,7 @@ class ProcessESMadridMunicipality(ProcessGeoJSONBase):
         ProcessGeoJSONBase.__init__(self, 'es_madrid_municipality')
 
     def get_region_parent(self, fnam, feature):
-        return 'ES-MD'
+        return 'ES-M'
 
     def get_region_child(self, fnam, feature):
         return normalize_locality_name(feature['NMUN'])

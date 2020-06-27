@@ -22,7 +22,7 @@ class ProcessNZDHB(ProcessGeoJSONBase):
         ProcessGeoJSONBase.__init__(self, 'us_county')
 
     def get_region_parent(self, fnam, feature):
-        return fips_map[feature['STATEFP']]
+        return 'us-'+fips_map[feature['STATEFP']]
 
     def get_region_child(self, fnam, feature):
         return feature['COUNTYFP']  # FIPS county code
