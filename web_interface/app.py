@@ -639,11 +639,15 @@ class App(object):
                         inst, region_schema, region_parent, None,
                         datatypes, date_ids_dict
                     )
-                    i_r.setdefault(region_schema_str, {})[region_parent] = datapoints
-                    max_dates = {region_schema_str: {region_parent: i_max_date}}
+                    i_r.setdefault(region_schema_str, {})[region_parent.lower()] = datapoints
+                    max_dates = {region_schema_str: {region_parent.lower(): i_max_date}}
 
-                    r[f'{region_schema_str}_{region_parent}'] = {
-                        'date_ids': date_ids_dict,
+                    r[f'{region_schema_str}_{region_parent.lower()}'] = {
+                        'date_ids': {
+                            date_id: date_string
+                            for (date_string, date_id)
+                            in date_ids_dict.items()
+                        },
                         'time_series_data': i_r,
                         'updated_dates': max_dates
                     }
@@ -661,15 +665,19 @@ class App(object):
                         inst, region_schema, region_parent, None,
                         datatypes, date_ids_dict
                     )
-                    i_r.setdefault(region_schema_str, {})[region_parent] = datapoints
+                    i_r.setdefault(region_schema_str, {})[region_parent.lower()] = datapoints
                     if (
-                        max_dates.setdefault(region_schema_str, {}).get(region_parent, None) is None or
-                        i_max_date > max_dates[region_schema_str][region_parent]
+                        max_dates.setdefault(region_schema_str, {}).get(region_parent.lower(), None) is None or
+                        i_max_date > max_dates[region_schema_str][region_parent.lower()]
                     ):
-                        max_dates[region_schema_str][region_parent] = i_max_date
+                        max_dates[region_schema_str][region_parent.lower()] = i_max_date
 
                 r[region_schema_str] = {
-                    'date_ids': date_ids_dict,
+                    'date_ids': {
+                        date_id: date_string
+                        for (date_string, date_id)
+                        in date_ids_dict.items()
+                    },
                     'time_series_data': i_r,
                     'updated_dates': max_dates
                 }

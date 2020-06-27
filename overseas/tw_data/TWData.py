@@ -74,7 +74,7 @@ class TWData(URLBase):
                 html = f.read()
 
             data = html.split('var jdata1 = ')[-1].split('\n')[0].strip().strip(';').replace("'", '"')
-            print(data)
+            #print(data)
 
             for item in json.loads(data):
                 # [{'code':'Taipei City', 'value':118}, ...]

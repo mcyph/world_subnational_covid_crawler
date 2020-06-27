@@ -312,7 +312,7 @@ class UKData(GithubRepo):
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_UK_AREA,
-                    region_parent=item['Country'],
+                    region_parent='GB', #item['Country'],
                     region_child=area,
                     datatype=DT_TOTAL,
                     value=int(item['TotalCases']),

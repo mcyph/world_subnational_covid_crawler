@@ -16,6 +16,11 @@ from covid_19_au_grab.overseas.GithubRepo import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
+from covid_19_au_grab.overseas.world_jhu_data.get_county_to_code_map import (
+    get_county_to_code_map
+)
+
+county_to_code_map = get_county_to_code_map()
 
 
 class WorldJHUData(GithubRepo):
@@ -141,6 +146,7 @@ class WorldJHUData(GithubRepo):
 
     def _get_daily_reports_global(self):
         r = []
+        printed = set()
 
         # FIPS,Admin2,Province_State,Country_Region,Last_Update,Lat,Long_,Confirmed,Deaths,Recovered,Active,Combined_Key
         # 45001,Abbeville,South Carolina,US,2020-05-21 02:32:48,34.22333378,-82.46170658,36,0,0,36,"Abbeville, South Carolina, US"
@@ -204,17 +210,38 @@ class WorldJHUData(GithubRepo):
                             # e.g. 'Sonoma County, CA' in earlier versions
                             county, state_code = region_child.split(', ')
                             region_schema = SCHEMA_US_COUNTY
-                            region_parent = state_code  # FIXME!! =====================================================
+                            region_parent = 'US-'+state_code  # FIXME!! =====================================================
                             region_child = county
                     else:
                         region_schema = SCHEMA_ADMIN_0
                         region_parent = None
                         region_child = country_region
 
-
                     if region_parent:
                         region_parent = region_parent.strip('*').strip().replace('Mainland China', 'China')
 
+                    if region_schema == SCHEMA_US_COUNTY:
+                        # Convert US counties to FIPS codes
+                        from covid_19_au_grab.datatypes.SchemaTypeInfo import get_schema_type_info
+                        region_parent, region_child = get_schema_type_info(
+                            region_schema
+                        ).convert_parent_child(region_parent, region_child)
+
+                        try:
+                            region_child = county_to_code_map[region_parent.split('-')[-1], region_child.lower()]
+                        except KeyError:
+                            if (region_parent, region_child) in printed:
+                                continue
+                            printed.add((region_parent, region_child))
+                            print(f'1111111,{region_child},{region_parent.split("-")[-1]}')
+                            continue
+
+                        if int(region_child) >= 1111111:
+                            # HACK!!! =================================================================================================
+                            continue
+
+                        region_child = region_child[-3:]
+                        assert len(region_child) == 3, region_child
 
                     if '(From' in region_child:
                         # HACK: Ignore e.g. 'Omaha, NE (From Diamond Princess)'

@@ -7,3 +7,4 @@
 
 
 'https://docs.google.com/spreadsheet/ccc?key=1-Csmn_rXTQvnkJR8tnFkQEyKBnhq8fz-YxyHidhONiI&output=csv'
+west africa is a very good example of a vis for instance, but it's not really similar to mine https://africacdc.org/covid-19/

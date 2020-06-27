@@ -130,8 +130,8 @@ if __name__ == '__main__':
             f.write(sqlite_data_revision.get_tsv_data(source_id))
 
     # Commit to GitHub
-    repo = Repo(str(get_global_subnational_covid_data_dir()))
-    repo.git.add(update=True)
-    repo.index.commit('update data')
-    origin = repo.remote(name='origin')
-    origin.push()
+    #repo = Repo(str(get_global_subnational_covid_data_dir()))
+    #repo.git.add(update=True)
+    #repo.index.commit('update data')
+    #origin = repo.remote(name='origin')
+    #origin.push()

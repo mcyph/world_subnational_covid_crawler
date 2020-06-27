@@ -159,57 +159,73 @@ class WARegionsProcess:
             attribute = feature['attributes']
             dt = self.__get_date(attribute['Date'])
 
-            r.append(DataPoint(
-                datatype=DT_TOTAL,
-                value=attribute['Total_Confirmed'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            # WARNING: Cruise ships isn't included in overseas here!
-            r.append(DataPoint(
-                datatype=DT_SOURCE_OVERSEAS,
-                value=attribute['Oversea_Travel']+
-                      attribute['Cruise_Ships'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_SOURCE_CRUISE_SHIP,
-                value=attribute['Cruise_Ships'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_SOURCE_CONFIRMED,
-                value=attribute['Close_Contact'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_SOURCE_COMMUNITY,
-                value=attribute['Unknown'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_SOURCE_INTERSTATE,
-                value=attribute['Interstate'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_SOURCE_UNDER_INVESTIGATION,
-                value=attribute['Pending'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
-            r.append(DataPoint(
-                datatype=DT_TESTS_TOTAL,
-                value=attribute['Total_Confirmed']+
-                      attribute['Negative_results'],
-                date_updated=dt,
-                source_url=SOURCE_URL
-            ))
+            if attribute['Total_Confirmed'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_TOTAL,
+                    value=attribute['Total_Confirmed'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Oversea_Travel'] is not None and attribute['Cruise_Ships'] is not None:
+                # WARNING: Cruise ships isn't included in overseas here!
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_OVERSEAS,
+                    value=attribute['Oversea_Travel']+
+                          attribute['Cruise_Ships'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Cruise_Ships'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_CRUISE_SHIP,
+                    value=attribute['Cruise_Ships'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Close_Contact'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_CONFIRMED,
+                    value=attribute['Close_Contact'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Unknown'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_COMMUNITY,
+                    value=attribute['Unknown'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Interstate'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_INTERSTATE,
+                    value=attribute['Interstate'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Pending'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_SOURCE_UNDER_INVESTIGATION,
+                    value=attribute['Pending'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
+            if attribute['Negative_results'] is not None and attribute['Total_Confirmed'] is not None:
+                r.append(DataPoint(
+                    datatype=DT_TESTS_TOTAL,
+                    value=attribute['Total_Confirmed']+
+                          attribute['Negative_results'],
+                    date_updated=dt,
+                    source_url=SOURCE_URL
+                ))
+
         return r
 
     def get_other_stats(self, period, data):

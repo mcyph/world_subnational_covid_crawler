@@ -5,7 +5,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
-    SCHEMA_FR_DEPARTMENT,
+    #SCHEMA_FR_DEPARTMENT,
     DT_TOTAL, DT_STATUS_ACTIVE,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
@@ -41,8 +41,111 @@ FR-PAC	Provence-Alpes-Côte-d’Azur
 FR-PAC	Provence-Alpes-Côte d'Azur
 FR-LRE	La Réunion
 FR-GF	French Guiana
+FR-GF	Guyane
 FR-MQ	Martinique
 FR-LRE	Réunion
+""".strip().split('\n')])
+
+fr_departments = dict([i.split('\t')[::-1] for i in """
+FR-01	Ain
+FR-02	Aisne
+FR-03	Allier
+FR-04	Alpes-de-Haute-Provence
+FR-06	Alpes-Maritimes
+FR-07	Ardèche
+FR-08	Ardennes
+FR-09	Ariège
+FR-10	Aube
+FR-11	Aude
+FR-12	Aveyron
+FR-67	Bas-Rhin
+FR-13	Bouches-du-Rhône
+FR-14	Calvados
+FR-15	Cantal
+FR-16	Charente
+FR-17	Charente-Maritime
+FR-18	Cher
+FR-19	Corrèze
+FR-2A	Corse-du-Sud
+FR-21	Côte-d'Or
+FR-22	Côtes-d'Armor
+FR-23	Creuse
+FR-79	Deux-Sèvres
+FR-24	Dordogne
+FR-25	Doubs
+FR-26	Drôme
+FR-91	Essonne
+FR-27	Eure
+FR-28	Eure-et-Loir
+FR-29	Finistère
+FR-30	Gard
+FR-32	Gers
+FR-33	Gironde
+FR-GP	Guadeloupe
+FR-2B	Haute-Corse
+FR-31	Haute-Garonne
+FR-43	Haute-Loire
+FR-52	Haute-Marne
+FR-05	Hautes-Alpes
+FR-70	Haute-Saône
+FR-74	Haute-Savoie
+FR-65	Hautes-Pyrénées
+FR-87	Haute-Vienne
+FR-68	Haut-Rhin
+FR-92	Hauts-de-Seine
+FR-34	Hérault
+FR-35	Ille-et-Vilaine
+FR-36	Indre
+FR-37	Indre-et-Loire
+FR-38	Isère
+FR-39	Jura
+FR-40	Landes
+FR-42	Loire
+FR-44	Loire-Atlantique
+FR-45	Loiret
+FR-41	Loir-et-Cher
+FR-46	Lot
+FR-47	Lot-et-Garonne
+FR-48	Lozère
+FR-49	Maine-et-Loire
+FR-50	Manche
+FR-51	Marne
+FR-53	Mayenne
+FR-YT	Mayotte
+FR-54	Meurthe-et-Moselle
+FR-55	Meuse
+FR-56	Morbihan
+FR-57	Moselle
+FR-58	Nièvre
+FR-59	Nord
+FR-60	Oise
+FR-61	Orne
+FR-75	Paris
+FR-62	Pas-de-Calais
+FR-63	Puy-de-Dôme
+FR-64	Pyrénées-Atlantiques
+FR-66	Pyrénées-Orientales
+FR-RE	La Réunion
+FR-69	Rhône
+FR-71	Saône-et-Loire
+FR-72	Sarthe
+FR-73	Savoie
+FR-77	Seine-et-Marne
+FR-76	Seine-Maritime
+FR-93	Seine-Saint-Denis
+FR-80	Somme
+FR-81	Tarn
+FR-82	Tarn-et-Garonne
+FR-90	Territoire de Belfort
+FR-94	Val-de-Marne
+FR-95	Val-d'Oise
+FR-83	Var
+FR-84	Vaucluse
+FR-85	Vendée
+FR-86	Vienne
+FR-88	Vosges
+FR-89	Yonne
+FR-78	Yvelines 
 """.strip().split('\n')])
 
 fr_divisions = """
@@ -223,14 +326,16 @@ class FRData(GithubRepo):
                     region_schema = SCHEMA_ADMIN_0
                     region_parent = None
                 elif item['granularite'] in 'departement':
-                    if region_child == 'French Guiana':
-                        continue  # HACK!
-
-                    region_schema = SCHEMA_FR_DEPARTMENT
-                    region_parent = place_map[department_to_region_map[region_child]]
+                    region_schema = SCHEMA_ADMIN_1 #SCHEMA_FR_DEPARTMENT
+                    region_parent = 'FR'  # CHECK ME for overseas territories!!!! ==================================================
+                    try:
+                        region_child = fr_departments[region_child]
+                    except KeyError:
+                        region_child = place_map[region_child]
                 elif item['granularite'] == 'region':
                     region_schema = SCHEMA_ADMIN_1
                     region_parent = 'France'
+                    continue  # HACK: It seems the natural earth geojson files use departments rather than regions!!!
                 elif item['granularite'] == 'collectivite-outremer':
                     region_schema = SCHEMA_FR_OVERSEAS_COLLECTIVITY
                     region_parent = None
@@ -241,7 +346,7 @@ class FRData(GithubRepo):
                 else:
                     raise Exception(item['granularite'])
 
-                if confirmed:
+                if confirmed.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
@@ -252,7 +357,7 @@ class FRData(GithubRepo):
                         source_url=source_url
                     ))
 
-                if deaths:
+                if deaths.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
@@ -263,7 +368,7 @@ class FRData(GithubRepo):
                         source_url=source_url
                     ))
 
-                if icu:
+                if icu.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
@@ -274,7 +379,7 @@ class FRData(GithubRepo):
                         source_url=source_url
                     ))
 
-                if hospitalized:
+                if hospitalized.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
@@ -285,7 +390,7 @@ class FRData(GithubRepo):
                         source_url=source_url
                     ))
 
-                if recovered:
+                if recovered.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
@@ -296,7 +401,7 @@ class FRData(GithubRepo):
                         source_url=source_url
                     ))
 
-                    if confirmed:
+                    if confirmed.strip('NaN'):
                         r.append(DataPoint(
                             region_schema=region_schema,
                             region_parent=region_parent,
@@ -307,7 +412,7 @@ class FRData(GithubRepo):
                             source_url=source_url
                         ))
 
-                if confirmed:
+                if confirmed.strip('NaN'):
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,

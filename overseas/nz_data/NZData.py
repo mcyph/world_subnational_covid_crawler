@@ -155,6 +155,7 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
+                region_parent='NZ',
                 region_child=region_child,
                 datatype=datatype,
                 value=cumulative[datatype, region_child],
@@ -168,6 +169,7 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
+                region_parent='NZ',
                 region_child=region_child,
                 datatype=datatype,
                 value=cumulative[datatype, region_child],
@@ -180,6 +182,7 @@ class NZData(GithubRepo):
             cumulative[agerange, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
+                region_parent='NZ',
                 region_child=region_child,
                 datatype=DT_TOTAL,
                 agerange=agerange,
@@ -193,6 +196,7 @@ class NZData(GithubRepo):
             cumulative[datatype, region_child] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_NZ_DHB,
+                region_parent='NZ',
                 region_child=region_child,
                 datatype=datatype,
                 value=cumulative[datatype, region_child],

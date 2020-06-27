@@ -18,6 +18,124 @@ from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
 
+province_map = dict([i.split('\t')[::-1] for i in """
+IT-AL	Alessandria
+IT-AN	Ancona
+IT-AR	Arezzo
+IT-AP	Ascoli Piceno
+IT-AT	Asti
+IT-AV	Avellino
+IT-BT	Barletta-Andria-Trani
+IT-BL	Belluno
+IT-BN	Benevento
+IT-BG	Bergamo
+IT-BI	Biella
+IT-BS	Brescia
+IT-BR	Brindisi
+IT-CB	Campobasso
+IT-CE	Caserta
+IT-CZ	Catanzaro
+IT-CH	Chieti
+IT-CO	Como
+IT-CS	Cosenza
+IT-CR	Cremona
+IT-KR	Crotone
+IT-CN	Cuneo
+IT-FM	Fermo
+IT-FE	Ferrara
+IT-FG	Foggia
+IT-FC	Forlì-Cesena
+IT-FR	Frosinone
+IT-GR	Grosseto
+IT-IM	Imperia
+IT-IS	Isernia
+IT-SP	La Spezia
+IT-AQ	L'Aquila
+IT-LT	Latina
+IT-LE	Lecce
+IT-LC	Lecco
+IT-LI	Livorno
+IT-LO	Lodi
+IT-LU	Lucca
+IT-MC	Macerata
+IT-MN	Mantova
+IT-MS	Massa-Carrara
+IT-MS	Massa Carrara
+IT-MT	Matera
+IT-MO	Modena
+IT-MB	Monza e Brianza
+IT-MB	Monza e della Brianza
+IT-NO	Novara
+IT-NU	Nuoro
+IT-OR	Oristano
+IT-PD	Padova
+IT-PR	Parma
+IT-PV	Pavia
+IT-PG	Perugia
+IT-PU	Pesaro e Urbino
+IT-PE	Pescara
+IT-PC	Piacenza
+IT-PI	Pisa
+IT-PT	Pistoia
+IT-PZ	Potenza
+IT-PO	Prato
+IT-RA	Ravenna
+IT-RE	Reggio Emilia
+IT-RE	Reggio nell'Emilia
+IT-RI	Rieti
+IT-RN	Rimini
+IT-RO	Rovigo
+IT-SA	Salerno
+IT-SS	Sassari
+IT-SV	Savona
+IT-SI	Siena
+IT-SO	Sondrio
+IT-SD	Sud Sardegna
+IT-TA	Taranto
+IT-TE	Teramo
+IT-TR	Terni
+IT-TV	Treviso
+IT-VA	Varese
+IT-VB	Verbano-Cusio-Ossola
+IT-VC	Vercelli
+IT-VR	Verona
+IT-VV	Vibo Valentia
+IT-VI	Vicenza
+IT-VT	Viterbo
+IT-BZ	Bolzano
+IT-TN	Trento
+IT-BA	Bari
+IT-BO	Bologna
+IT-CA	Cagliari
+IT-CT	Catania
+IT-FI	Firenze
+IT-GE	Genova
+IT-ME	Messina
+IT-MI	Milano
+IT-NA	Napoli
+IT-PA	Palermo
+IT-RC	Reggio di Calabria
+IT-RC	Reggio Calabria
+IT-RM	Roma
+IT-TO	Torino
+IT-VE	Venezia
+IT-CI	Carbonia-Iglesias
+IT-GO	Gorizia
+IT-VS	Medio Campidano
+IT-OG	Ogliastra
+IT-OT	Olbia-Tempio
+IT-PN	Pordenone
+IT-TS	Trieste
+IT-UD	Udine
+IT-AG	Agrigento
+IT-CL	Caltanissetta
+IT-EN	Enna
+IT-RG	Ragusa
+IT-SR	Siracusa
+IT-TP	Trapani
+IT-AO	Aosta
+""".strip().split('\n')])
+
 
 class ITData(GithubRepo):
     SOURCE_URL = 'https://github.com/pcm-dpc/COVID-19'
@@ -181,10 +299,17 @@ class ITData(GithubRepo):
             for item in json.loads(f.read()):
                 date = self.convert_date(item['data'].split('T')[0])
 
+                if item['denominazione_provincia'] == 'In fase di definizione/aggiornamento':
+                    continue
+                elif item['denominazione_provincia'] == 'In fase di definizione':
+                    continue
+                elif item['denominazione_provincia'] == 'fuori Regione/P.A.':
+                    continue
+
                 r.append(DataPoint(
                     region_schema=SCHEMA_IT_PROVINCE,
                     region_parent=item['denominazione_regione'],
-                    region_child=item['denominazione_provincia'],
+                    region_child=province_map[item['denominazione_provincia']],
                     datatype=DT_TOTAL,
                     value=int(item['totale_casi']),
                     date_updated=date,

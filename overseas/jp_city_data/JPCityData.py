@@ -129,71 +129,89 @@ class JPCityData(URLBase):
         f = self.get_file('jg-jpn.csv', include_revision=True, encoding='utf-8-sig')
 
         #for item in json.loads(text)['features']:
+        num_city = 0
 
         for item in csv.DictReader(f):
-            print(item)
-            #item = item['properties']
+            for xxx in range(int(item['人数'].strip() or 1)):
+                #print(item)
+                #item = item['properties']
+                if item.get('居住市区町村'):
+                    num_city += 1
 
-            if not item:
-                continue
-            elif not item['確定日']:
-                continue  # WARNING!
+                if not item:
+                    print("NOT ITEM:", item)
+                    continue
+                elif not item['確定日']:
+                    print("NOT 確定日", item)
+                    assert not ''.join(item.values()).strip(), item
+                    continue  # WARNING!
 
-            if item.get('年代') == '0-10':
-                agerange = '0-9'
-            elif item.get('年代') in ('不明', '', None):
-                agerange = 'Unknown'
-            else:
-                agerange = (
-                    str(int(item['年代'].strip('代'))) +
-                    '-' +
-                    str(int(item['年代'].strip('代')) + 9)
-                )
+                #if item['累計'].strip('#REF!') and int(item['累計']) > 1:
+                #    print('RUIKEI:', item['累計'])
+                #    print(item)
+                if item['人数'].strip('#REF!') and int(item['人数']) > 1:
+                    print('NUM PPL:', item['人数'])
+                    print(item)
 
-            gender = {'男性': DT_TOTAL_MALE,
-                      '男性\xa0': DT_TOTAL_MALE,
-                      '女性\xa0': DT_TOTAL_FEMALE,
-                      '女性': DT_TOTAL_FEMALE,
-                      '不明': None,
-                      '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
-                      '': None,
-                      None: None}[item['性別']]
+                if item.get('年代') == '0-10':
+                    agerange = '0-9'
+                elif item.get('年代') in ('不明', '', None):
+                    agerange = 'Unknown'
+                else:
+                    agerange = (
+                        str(int(item['年代'].strip('代'))) +
+                        '-' +
+                        str(int(item['年代'].strip('代')) + 9)
+                    )
 
-            #date_of_onset = self.convert_date(item['発症日'], formats=('%m/%d/%Y',))
-            date_diagnosed = self.convert_date(item['確定日'], formats=('%m/%d/%Y',))   # TODO: Should we be recording this number??? ================
-            #date_diagnosed = datetime.datetime.fromtimestamp(item['確定日']/1000).strftime('%Y_%m_%d')
-            #diagnosed_in = item['Hospital Pref']
-            #resident_of = item['Residential Pref']
-            resident_of = item.get('Residential Pref') or item['居住都道府県']
-            # e.g. 中富良野町 will be different to the English 'Release' field
-            #announced_in = item['Release']
-            city = item.get('居住市区町村') or 'Unknown'  # Japanese only
-            #source = item['ソース'] or item['ソース2'] or item['ソース3'] or 'https://covid19.wlaboratory.com'
+                gender = {'男性': DT_TOTAL_MALE,
+                          '男性\xa0': DT_TOTAL_MALE,
+                          '女性\xa0': DT_TOTAL_FEMALE,
+                          '女性': DT_TOTAL_FEMALE,
+                          '不明': None,
+                          '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
+                          '': None,
+                          None: None}[item['性別']]
 
-            # Maybe it's worth adding status info, but it can be vague e.g. "退院または死亡"
-            # Occupation info is also present in many cases.
+                #date_of_onset = self.convert_date(item['発症日'], formats=('%m/%d/%Y',))
+                date_diagnosed = self.convert_date(item['確定日'], formats=('%m/%d/%Y',))   # TODO: Should we be recording this number??? ================
+                #date_diagnosed = datetime.datetime.fromtimestamp(item['確定日']/1000).strftime('%Y_%m_%d')
+                #diagnosed_in = item['Hospital Pref']
+                #resident_of = item['Residential Pref']
+                resident_of = item['居住都道府県']
+                # e.g. 中富良野町 will be different to the English 'Release' field
+                #announced_in = item['Release']
+                city = item.get('居住市区町村') or 'Unknown'  # Japanese only
+                #if city != 'Unknown':
+                #    print(item)
+                #source = item['ソース'] or item['ソース2'] or item['ソース3'] or 'https://covid19.wlaboratory.com'
 
-            by_date[date_diagnosed] += 1
-            by_age[date_diagnosed, agerange] += 1
-            by_prefecture[date_diagnosed, resident_of] += 1
+                # Maybe it's worth adding status info, but it can be vague e.g. "退院または死亡"
+                # Occupation info is also present in many cases.
 
-            if gender is not None:
-                by_gender[date_diagnosed, gender] += 1
-                by_gender_age[date_diagnosed, gender, agerange] += 1
-                by_prefecture_gender[date_diagnosed, resident_of, gender] += 1
-                by_prefecture_age_gender[date_diagnosed, resident_of, agerange, gender] += 1
-
-            by_prefecture_age[date_diagnosed, resident_of, agerange] += 1
-
-            if resident_of == 'Tokyo' and city == 'Unknown':
-                # Will add city-level data
-                continue
-            else:
-                by_city[date_diagnosed, resident_of, city] += 1
+                by_date[date_diagnosed] += 1
+                by_age[date_diagnosed, agerange] += 1
+                by_prefecture[date_diagnosed, resident_of] += 1
 
                 if gender is not None:
-                    by_city_gender[date_diagnosed, resident_of, city, gender] += 1
-                    by_city_age_gender[date_diagnosed, resident_of, city, agerange, gender] += 1
+                    by_gender[date_diagnosed, gender] += 1
+                    by_gender_age[date_diagnosed, gender, agerange] += 1
+                    by_prefecture_gender[date_diagnosed, resident_of, gender] += 1
+                    by_prefecture_age_gender[date_diagnosed, resident_of, agerange, gender] += 1
+
+                by_prefecture_age[date_diagnosed, resident_of, agerange] += 1
+
+                if resident_of == 'Tokyo' and city == 'Unknown':
+                    # Will add city-level data
+                    continue
+                else:
+                    by_city[date_diagnosed, resident_of, city] += 1
+
+                    if gender is not None:
+                        by_city_gender[date_diagnosed, resident_of, city, gender] += 1
+                        by_city_age_gender[date_diagnosed, resident_of, city, agerange, gender] += 1
+
+        #print('num_city:', num_city)
 
         cumulative = Counter()
         for date, value in sorted(by_date.items()):
@@ -320,6 +338,7 @@ class JPCityData(URLBase):
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
+        #print("***TOTAL SUM:", sum(cumulative.values()))
 
         cumulative = Counter()
         for (date, prefecture, city, gender), value in sorted(by_city_gender.items()):

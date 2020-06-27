@@ -144,7 +144,7 @@ class ESData(GithubRepo):
                 if item['casos_confirmados_totales']:
                     r.append(DataPoint(
                         region_schema=SCHEMA_ES_MADRID_MUNICIPALITY,
-                        region_parent='ES-MD',
+                        region_parent='ES-M',
                         region_child=item['municipio_distrito'],
                         datatype=DT_TOTAL,
                         value=int(item['casos_confirmados_totales']),

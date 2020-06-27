@@ -399,7 +399,7 @@ class ExtractFromTokyoPDF:
             elif text_item.text == '都外':
                 region_child = 'Non-resident'
             else:
-                region_child = _tokyo_cities_to_en[text_item.text]
+                region_child = text_item.text #_tokyo_cities_to_en[text_item.text]
 
             return DataPoint(
                 region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?

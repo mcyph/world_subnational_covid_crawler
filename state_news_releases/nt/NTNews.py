@@ -28,7 +28,7 @@ class NTNews(StateNewsBase):
         date = ' '.join([
             # Remove 6:00pm/6:00PM times,
             # which can be at the start or end
-            i.strip(':.') for i in date.split('updated')[-1].split()
+            i.strip(':.') for i in date.split('updated')[-1].split('\n')[0].split()
             if not ':' in i
                and not '.' in i.strip('.')
                and not 'pm' in i.lower()

@@ -89,7 +89,7 @@ class BRData(KaggleDataset):
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_BR_CITY,
-                    region_parent=item['state'],
+                    region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
                     datatype=DT_TOTAL,
                     value=int(item['cases']),
@@ -99,7 +99,7 @@ class BRData(KaggleDataset):
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_BR_CITY,
-                    region_parent=item['state'],
+                    region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
                     datatype=DT_STATUS_DEATHS,
                     value=int(item['deaths']),

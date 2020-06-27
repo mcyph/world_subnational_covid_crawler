@@ -70,7 +70,11 @@ class _WestAfricaPowerBI(PowerBIDataReader):
 
     def _get_regions_data(self, updated_date, response_dict):
         r = []
-        data = response_dict['country_data'][1]
+        try:
+            data = response_dict['country_data'][1]
+        except KeyError:
+            data = response_dict['country_data_2'][1]
+
         SOURCE_URL = 'https://app.powerbi.com/view?r=eyJrIjoiZTRkZDhmMDctM2NmZi00NjRkLTgzYzMtYzI1MDMzNWI3NTRhIiwidCI6IjBmOWUzNWRiLTU0NGYtNGY2MC1iZGNjLTVlYTQxNmU2ZGM3MCIsImMiOjh9'
 
         for region_dict in data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']:
