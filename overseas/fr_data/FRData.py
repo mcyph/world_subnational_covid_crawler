@@ -285,6 +285,12 @@ department_to_region_map = get_department_to_region_map()
 # 2020-01-24,departement,DEP-24,Dordogne,0,,,,,,,,,,ARS Nouvelle-Aquitaine,https://www.nouvelle-aquitaine.ars.sante.fr/communique-de-presse-coronavirus-point-de-situation-en-nouvelle-aquitaine-du-08032020,,agences-regionales-sante
 # 2020-01-24,departement,DEP-33,Gironde,1,,,,,,,,,,ARS Nouvelle-Aquitaine,https://www.nouvelle-aquitaine.ars.sante.fr/communique-de-presse-coronavirus-point-de-situation-en-nouvelle-aquitaine-du-08032020,,agences-regionales-sante
 
+# date,granularite,maille_code,maille_nom,cas_confirmes,cas_ehpad,
+# cas_confirmes_ehpad,cas_possibles_ehpad,deces,deces_ehpad,
+# reanimation,hospitalises,nouvelles_hospitalisations,
+# nouvelles_reanimations,gueris,depistes,source_nom,
+# source_url,source_archive,source_type
+
 
 class FRData(GithubRepo):
     SOURCE_URL = 'https://github.com/opencovid19-fr/data'
@@ -325,7 +331,7 @@ class FRData(GithubRepo):
                 if item['granularite'] == 'pays':
                     region_schema = SCHEMA_ADMIN_0
                     region_parent = None
-                elif item['granularite'] in 'departement':
+                elif item['granularite'] == 'departement':
                     region_schema = SCHEMA_ADMIN_1 #SCHEMA_FR_DEPARTMENT
                     region_parent = 'FR'  # CHECK ME for overseas territories!!!! ==================================================
                     try:

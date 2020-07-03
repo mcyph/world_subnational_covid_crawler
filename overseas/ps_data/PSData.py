@@ -10,7 +10,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
+    SCHEMA_PS_PROVINCE, DT_TESTS_TOTAL,
     DT_TOTAL, DT_NEW, DT_STATUS_RECOVERED,
     DT_STATUS_DEATHS, DT_STATUS_ACTIVE
 )
@@ -24,7 +24,7 @@ place_map = {
     'الخليل': 'PS-HBN', #'Hebron',
     'قلقيلية': 'PS-QQA', #'Qalqilya',
     'ضواحي القدس': 'PS-JEM', #'The outskirts of Jerusalem',
-    'مدينة القدس': None, #'PS-JEM', # 'City of Jerusalem' TODO: FIGURE OUT WHAT TO DO ABOUT THIS. This value wasn't supplied prior to 21st June
+    'مدينة القدس': None, #'PS-JEM', # 'City of Jerusalem' TODO: FIGURE OUT WHAT TO DO ABOUT THIS. This value wasn't supplied prior to 21st June, and isn't displayed on their map either
     'رام الله والبيرة': 'PS-RBH', #'Ramallah and Al-Bireh',
     'بيت لحم': 'PS-BTH', #'Bethlehem',
     'نابلس': 'PS-NBS', #'Nablus',
@@ -87,7 +87,7 @@ class PSData(URLBase):
 
                 if new is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=SCHEMA_PS_PROVINCE,
                         region_parent='PS',
                         region_child=governorate,
                         datatype=DT_NEW,
@@ -97,7 +97,7 @@ class PSData(URLBase):
                     ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
                     datatype=DT_TOTAL,
@@ -106,7 +106,7 @@ class PSData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
                     datatype=DT_STATUS_ACTIVE,
@@ -115,7 +115,7 @@ class PSData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
                     datatype=DT_STATUS_RECOVERED,
@@ -124,7 +124,7 @@ class PSData(URLBase):
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
                     datatype=DT_STATUS_DEATHS,

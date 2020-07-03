@@ -120,6 +120,7 @@ Phrao	อำเภอพร้าว	District	50,945	47,736
 Samoeng	อำเภอสะเมิง	District	21,438	24,866
 San Kamphaeng	อำเภอสันกำแพง	District	72,253	81,355
 San Pa Tong	อำเภอสันป่าตอง	District	75,143	76,431
+San Pa Tong	ป่าตอง	District	75,143	76,431
 San Sai	อำเภอสันทราย	District	88,714	113,285
 Saraphi	อำเภอสารภี	District	73,232	71,021
 Wiang Haeng	อำเภอเวียงแหง	District	20,568	23,203
@@ -145,6 +146,7 @@ Wiang Pa Pao	อำเภอเวียงป่าเป้า	District	62,664
 Chonburi	จังหวัดชลบุรี	Province	1,040,865	1,555,358
 Ban Bueng	อำเภอบ้านบึง	District	85,868	100,381
 Bang Lamung	อำเภอบางละมุง	District	166,305	335,415
+Bang Lamung	บางละมุุง	District	166,305	335,415
 Bo Thong	อำเภอบ่อทอง	District	40,928	44,177
 Ko Chan	อำเภอเกาะจันทร์	District	34,671	34,105
 Ko Sichang	อำเภอเกาะสีชัง	District	4,417	3,113
@@ -282,10 +284,13 @@ Phra Nakhon	เขตพระนคร	City District	92,636	56,715
 Pom Prap Sattru Phai	เขตป้อมปราบศัตรูพ่าย	City District	85,857	42,262
 Prawet	เขตประเวศ	City District	134,189	220,197
 Rat Burana	เขตราษฎร์บูรณะ	City District	107,080	110,391
+Rat Burana	ราษฎ์บูรณะ	City District	107,080	110,391
 Ratchathewi	เขตราชเทวี	City District	119,574	108,851
+Ratchathewi	ราชเทวี	City District	119,574	108,851
 Sai Mai	เขตสายไหม	City District	158,839	212,560
 Samphanthawong	เขตสัมพันธวงศ์	City District	42,255	20,765
 Saphan Sung	เขตสะพานสูง	City District	80,082	120,165
+Saphan Sung	สะพานสููง	City District	80,082	120,165
 Sathon	เขตสาทร	City District	124,902	138,490
 Suan Luang	เขตสวนหลวง	City District	126,970	235,063
 Taling Chan	เขตตลิ่งชัน	City District	111,878	136,546
@@ -504,6 +509,7 @@ Su-ngai Padi	อำเภอสุไหงปาดี	District	54,445	48,153
 Tak Bai	อำเภอตากใบ	District	61,157	57,776
 Waeng	อำเภอแว้ง	District	43,050	48,063
 Yi-ngo	อำเภอยี่งอ	District	39,873	38,579
+Yi-ngo	ยี่่งอ	District	39,873	38,579
 Nong Bua Lamphu	จังหวัดหนองบัวลำภู	Province	482,207	485,974
 Mueang Nong Bua Lamphu	อำเภอเมืองหนองบัวลำภู	District	125,757	134,116
 Na Klang	อำเภอนากลาง	District	90,857	87,690
@@ -801,6 +807,7 @@ Khukhan	อำเภอขุขันธ์	District	141,815	108,214
 Khun Han	อำเภอขุนหาญ	District	98,843	77,936
 Mueang Chan	อำเภอเมืองจันทร์	District	17,462	12,320
 Mueang Si Sa Ket	อำเภอเมืองศรีสะเกษ	District	133,478	113,383
+Mueang Si Sa Ket	เมืองใต้	District	133,478	113,383
 Nam Kliang	อำเภอน้ำเกลี้ยง	District	40,680	31,221
 Non Khun	อำเภอโนนคูณ	District	36,266	29,598
 Phayu	อำเภอพยุห์	District	37,314	24,018
@@ -818,6 +825,7 @@ Songkhla	จังหวัดสงขลา	Province	1,255,662	1,481,021
 Bang Klam	อำเภอบางกล่ำ	District	26,180	34,559
 Chana	อำเภอจะนะ	District	92,163	103,594
 Hat Yai	อำเภอหาดใหญ่	District	324,596	438,576
+Hat Yai	หาดใหญ่่	District	324,596	438,576
 Khlong Hoi Khong	อำเภอคลองหอยโข่ง	District	22,933	27,359
 Khuan Niang	อำเภอควนเนียง	District	34,276	34,408
 Krasae Sin	อำเภอกระแสสินธุ์	District	18,412	14,971
@@ -944,6 +952,7 @@ Sirindhorn	อำเภอสิรินธร	District	42,151	48,825
 Tan Sum	อำเภอตาลสุม	District	30,099	31,097
 Thung Si Udom	อำเภอทุ่งศรีอุดม	District	25,502	24,379
 Trakan Phuet Phon	อำเภอตระการพืชผล	District	115,144	118,498
+Trakan Phuet Phon	ตระกาลพืชผล	District	115,144	118,498
 Warin Chamrap	อำเภอวารินชำราบ	District	147,397	166,340
 Udon Thani	จังหวัดอุดรธานี	Province	1,467,158	1,288,365
 Ban Dung	อำเภอบ้านดุง	District	114,689	99,759
@@ -987,10 +996,12 @@ Thong Saen Khan	อำเภอทองแสนขัน	District	32,721	28,79
 Tron	อำเภอตรอน	District	35,752	33,257
 Yala	จังหวัดยะลา	Province	415,537	433,167
 Bannang Sata	อำเภอบันนังสตา	District	44,448	44,660
+Bannang Sata	บันนังสะตา	District	44,448	44,660
 Betong	อำเภอเบตง	District	50,477	46,578
 Kabang	อำเภอกาบัง	District	12,851	20,009
 Krong Pinang	อำเภอกรงปินัง	District	18,308	24,487
 Mueang Yala	อำเภอเมืองยะลา	District	154,634	145,319
+Mueang Yala	สะเตง	District	154,634	145,319
 Raman	อำเภอรามัน	District	73,408	80,927
 Than To	อำเภอธารโต	District	17,716	18,552
 Yaha	อำเภอยะหา	District	43,695	52,636

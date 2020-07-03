@@ -27,12 +27,16 @@ def get_districts_map():
               'overseas' / 'th_data' / 'th_districts.csv',
               'r', encoding='utf-8') as f:
 
-        for item in csv.DictReader(f):
-            if item['Status'].strip() != 'District':
+        for item in csv.DictReader(f, delimiter='\t'):
+            print(item)
+            if item['Status'].strip() not in ('District', 'City District'):
                 continue
 
-            assert not item['Native'] in r
+            assert r.get(item['Native'], item['Name'].strip()) == item['Name'].strip(), \
+                (item, r[item['Native']])
             r[item['Native'].strip()] = item['Name'].strip()
+            r[item['Native'].strip().replace('เขต', '')] = item['Name'].strip()
+            r[item['Native'].strip().replace('อำเภอ', '')] = item['Name'].strip()
 
     return r
 
@@ -89,49 +93,108 @@ class THData(URLBase):
         by_age = Counter()
         by_gender = Counter()
 
-        by_age_gender = Counter()
-
-        by_district_age = Counter()
-        by_district_gender = Counter()
-
-        by_province_age = Counter()
-        by_province_gender = Counter()
-
         def age_to_range(age):
             for x in range(0, 100, 10):
                 if x <= age < x+10:
                     return f'{x}-{x+9}'
             raise Exception()
 
+        text = self.get_text('cases.json',
+                             include_revision=True)
+        data = json.loads(text)
+
         for case_dict in data['Data']:
+            #print(case_dict)
             date = self.convert_date(case_dict['ConfirmDate'].split()[0])
             agerange = age_to_range(case_dict['Age'])
-            district = self.districts_map[case_dict['District']]
-            gender = {'Male': DT_TOTAL_MALE,
-                      'Female': DT_TOTAL_FEMALE}[case_dict['GenderEn']]
+            gender = {
+                'Male': DT_TOTAL_MALE,
+                'Female': DT_TOTAL_FEMALE
+            }[case_dict['GenderEn']]
 
             by_total[date] += 1
             by_age[date, agerange] += 1
             by_gender[date, gender] += 1
-            by_district[date, district] += 1
             by_province[date, case_dict['ProvinceEn']] += 1
 
-            by_age_gender[date, agerange, gender] += 1
-            by_age_gender[date, agerange, gender] += 1
+            if case_dict['District'].strip() and case_dict['District'] not in (
+                'เมือง', 'กระทู้', 'คลองจั่น', 'พัฒนาการ', 'รามอินทรา',
+                'จตุุจักร', 'บางลำพู', 'ไม่ระบุ', 'สะเตง', 'รังสิต', 'ท่าอิฐ',
+                'ศาลาธรรมสพน์',
+            ):
+                try:
+                    district = self.districts_map[case_dict['District']]
+                    by_district[date, case_dict['ProvinceEn'], district] += 1
+                except KeyError:
+                    print("KEYERROR:", case_dict['District'])
 
+        cumulative = 0
+        for date, value in sorted(by_total.items()):
+            cumulative += value
             r.append(DataPoint(
-                region_schema=SCHEMA_TH_PROVINCE,
-                datatype=DT_TOTAL
-            ))
-            r.append(DataPoint(
-                region_schema=SCHEMA_TH_PROVINCE,
-                datatype=DT_TOTAL_MALE
-            ))
-            r.append(DataPoint(
-                region_schema=SCHEMA_TH_PROVINCE,
-                datatype=DT_TOTAL_FEMALE
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
+                datatype=DT_TOTAL,
+                value=cumulative,
+                date_updated=date,
+                source_url=self.SOURCE_URL
             ))
 
+        cumulative = Counter()
+        for (date, age), value in sorted(by_age.items()):
+            cumulative[age] += value
+            r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
+                agerange=age,
+                datatype=DT_TOTAL,
+                value=cumulative[age],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+
+        cumulative = Counter()
+        for (date, gender), value in sorted(by_gender.items()):
+            cumulative[gender] += value
+            r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
+                datatype=gender,
+                value=cumulative[gender],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+
+        cumulative = Counter()
+        for (date, province), value in sorted(by_province.items()):
+            cumulative[province] += value
+            r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_1,
+                region_parent='TH',
+                region_child=province,
+                datatype=DT_TOTAL,
+                value=cumulative[province],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+
+        cumulative = Counter()
+        for (date, province, district), value in sorted(by_district.items()):
+            cumulative[province, district] += value
+            r.append(DataPoint(
+                region_schema=SCHEMA_TH_DISTRICT,
+                region_parent=province,
+                region_child=district,
+                datatype=DT_TOTAL,
+                value=cumulative[province, district],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            ))
+
+        return r
 
     def _get_timeline(self):
         # {"UpdateDate":"14\/05\/2020 11:35",
@@ -156,27 +219,41 @@ class THData(URLBase):
         data = json.loads(text)
 
         for item in data['Data']:
-            date = self.convert_date(item['Date'])
+            if not item['Date']:
+                continue
+            date = self.convert_date(item['Date'], formats=('%m/%d/%Y',))
 
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
                 datatype=DT_TOTAL,
                 value=int(item['Confirmed']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
                 datatype=DT_STATUS_RECOVERED,
                 value=int(item['Recovered']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
                 datatype=DT_STATUS_HOSPITALIZED,
                 value=int(item['Hospitalized']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
+                region_schema=SCHEMA_ADMIN_0,
+                region_parent=None,
+                region_child='TH',
                 datatype=DT_STATUS_DEATHS,
                 value=int(item['Deaths']),
                 date_updated=date,
@@ -200,4 +277,5 @@ class THData(URLBase):
 
 
 if __name__ == '__main__':
-    THData()
+    from pprint import pprint
+    pprint(THData().get_datapoints())

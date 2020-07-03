@@ -6,6 +6,10 @@ def normalize_locality_name(s):
     s = s.replace('district council', '')
     s = s.replace('regional council', '')
     s = s.replace('unincorporated sa', 'pua')
+
+    s = s.replace(' province', '')
+    s = s.replace(' oblast', '')
+
     s = s.replace(' shire', '')
     s = s.replace(' council', '')
     s = s.replace(' regional', '')

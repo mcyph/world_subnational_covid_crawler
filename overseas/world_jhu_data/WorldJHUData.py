@@ -165,7 +165,6 @@ class WorldJHUData(GithubRepo):
                       'r', encoding='utf-8-sig') as f:
                 #print(fnam)
                 for item in csv.DictReader(f):
-
                     if item.get('Province_State') in (
                         'Diamond Princess',
                         'Grand Princess',
@@ -184,7 +183,7 @@ class WorldJHUData(GithubRepo):
                         date = item['Last_Update'].split()[0]
 
                     try:
-                        date = self.convert_date(date)
+                        date = self.convert_date(date, formats=('%Y-%m-%d',))
                     except:
                         date = self.convert_date(date, formats=('%m/%d/%y', '%m/%d/%Y'))
 
@@ -206,7 +205,7 @@ class WorldJHUData(GithubRepo):
                         region_parent = country_region
                         region_child = province_state
 
-                        if ', ' in region_child and len(region_child.split(', ')[-1]) == 2:
+                        if ', ' in region_child:
                             # e.g. 'Sonoma County, CA' in earlier versions
                             county, state_code = region_child.split(', ')
                             region_schema = SCHEMA_US_COUNTY
@@ -338,4 +337,6 @@ class WorldJHUDataAdmin2(WorldJHUData):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(WorldJHUData().get_datapoints())
+
+    WorldJHUData().get_datapoints()
+    #pprint()

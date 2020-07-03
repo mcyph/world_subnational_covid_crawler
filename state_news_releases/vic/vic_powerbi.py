@@ -62,17 +62,47 @@ class _VicPowerBI(PowerBIDataReader):
             except (KeyError, ValueError, AttributeError): # FIXME!!!! ==============================================================================
                 print(f"SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
 
+                if updated_date > '2020_05_15':
+                    raise
+
+            try:
+                active_updated_date = self._get_active_updated_date(response_dict)
+            except (KeyError, ValueError, AttributeError):
+                active_updated_date = updated_date
+                print(f"ACTIVE SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
+
+                if updated_date > '2020_06_15':
+                    raise
+
+            if active_updated_date != updated_date:
+                print("****ACTIVE != TOTAL DATE:", active_updated_date, updated_date)
+
             r.extend(self._get_regions(updated_date, response_dict))
             r.extend(self._get_age_data(updated_date, response_dict))
             r.extend(self._get_source_of_infection(updated_date, response_dict))
-            r.extend(self._get_active_regions(updated_date, response_dict, previously_active_regions))
+            r.extend(self._get_active_regions(active_updated_date, response_dict, previously_active_regions))
 
         return r
 
     def _get_updated_date(self, response_dict):
         # Try to get updated date from source, if possible
         # "M0": "08/04/2020 - 12:03:00 PM"
-        data = response_dict['unknown_please_categorize_5'][1]  #  ??? ====================================================================
+        try:
+            data = response_dict['unknown_please_categorize_5'][1]  #  ??? ====================================================================
+        except (KeyError, IndexError, AttributeError):
+            data = response_dict['total_updated_date'][1]
+
+        updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
+        updated_date = datetime.strptime(
+            updated_str.split('-')[0].strip(), '%d/%m/%Y'
+        ).strftime('%Y_%m_%d')
+        return updated_date
+
+    def _get_active_updated_date(self, response_dict):
+        """
+        The active updated date may not always be the same as the totals date
+        """
+        data = response_dict['active_updated_date'][1]
         updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         updated_date = datetime.strptime(
             updated_str.split('-')[0].strip(), '%d/%m/%Y'
@@ -331,4 +361,6 @@ def get_powerbi_data():
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_powerbi_data())
+
+    __r = get_powerbi_data()
+    pprint(__r)

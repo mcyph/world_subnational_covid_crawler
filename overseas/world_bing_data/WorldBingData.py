@@ -5,7 +5,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_US_COUNTY,
+    SCHEMA_US_COUNTY, SCHEMA_IN_DISTRICT, SCHEMA_CR_CANTON,
     SCHEMA_ADMIN_1, SCHEMA_ADMIN_0,
     DT_TOTAL, DT_TESTS_TOTAL, DT_STATUS_ACTIVE, DT_NEW,
     DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
@@ -45,6 +45,7 @@ class WorldBingData(GithubRepo):
         # 338999,01/25/2020,1320,479,0,0,,,,,,,Worldwide,,
         # 339000,01/26/2020,2014,694,0,0,,,,,,,Worldwide,,
         # 339001,01/27/2020,2798,784,0,0,,,,,,,Worldwide,,
+        warning_printed = set()
 
         with open(self.get_path_in_dir(f'data/Bing-COVID19-Data.csv'),
                   'r', encoding='utf-8') as f:
@@ -54,8 +55,21 @@ class WorldBingData(GithubRepo):
                 date = self.convert_date(item['Updated'], formats=('%m/%d/%Y',))
 
                 if item['AdminRegion2'] and item['ISO2'] != 'US':
-                    print("WARNING, IGNORING:", item)
-                    continue  # HACK!!! =====================================================================================
+                    if item['Country_Region'] == 'India':
+                        region_schema = SCHEMA_IN_DISTRICT
+                        region_parent = item['AdminRegion1']
+                        region_child = item['AdminRegion2']
+                    elif item['Country_Region'] == 'Costa Rica':
+                        region_schema = SCHEMA_CR_CANTON
+                        region_parent = item['AdminRegion1']
+                        region_child = item['AdminRegion2']
+                    else:
+                        if (item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']) in warning_printed:
+                            continue
+                        warning_printed.add((item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']))
+                        print("WARNING, IGNORING:", item)
+                        continue  # HACK!!! =====================================================================================
+
                 elif item['AdminRegion1']:
                     region_schema = SCHEMA_ADMIN_1
                     region_parent = item['ISO2']
@@ -125,4 +139,5 @@ class WorldBingData(GithubRepo):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(WorldBingData().get_datapoints())
+    WorldBingData().get_datapoints()
+    #pprint(WorldBingData().get_datapoints())

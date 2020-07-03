@@ -3102,6 +3102,195 @@ regions_active_3_req = {
 }
 
 
+active_updated_date_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"M_LastUpdated\"},\"Name\":\"Tested.M_LastUpdated\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "ExecutionMetricsKind": 3,
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Tested",
+                      "Name": "t",
+                      "Type": 0
+                    },
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l",
+                      "Type": 0
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "t"
+                          }
+                        },
+                        "Property": "M_LastUpdated"
+                      },
+                      "Name": "Tested.M_LastUpdated"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "In": {
+                          "Expressions": [
+                            {
+                              "Column": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "l"
+                                  }
+                                },
+                                "Property": "clin_status_n"
+                              }
+                            }
+                          ],
+                          "Values": [
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted to ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted, not known to be in ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Home isolation'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hospital in the home'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hotel detention'"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+total_updated_date_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Tested\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"M_LastUpdated\"},\"Name\":\"Tested.M_LastUpdated\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "ExecutionMetricsKind": 3,
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Tested",
+                      "Name": "t",
+                      "Type": 0
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "t"
+                          }
+                        },
+                        "Property": "M_LastUpdated"
+                      },
+                      "Name": "Tested.M_LastUpdated"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+
 if __name__ == '__main__':
     vpb = VicPowerBI()
     vpb.run_powerbi_grabber()

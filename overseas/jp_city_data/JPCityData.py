@@ -3,6 +3,7 @@ from collections import Counter
 from covid_19_au_grab.overseas.jp_city_data.extract_from_tokyo_pdf import (
     ExtractFromTokyoPDF
 )
+from covid_19_au_grab.overseas.jp_data.JPData import _prefectures
 
 # https://stopcovid19.metro.tokyo.lg.jp/
 # https://github.com/tokyo-metropolitan-gov/covid19/blob/development/FORKED_SITES.md
@@ -79,6 +80,9 @@ from covid_19_au_grab.datatypes.constants import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
+    LabelsToRegionChild
+)
 
 
 class JPCityData(URLBase):
@@ -98,6 +102,8 @@ class JPCityData(URLBase):
              }
         )
         self.update()
+
+        self._labels_to_region_child = LabelsToRegionChild()
 
     def update(self, force=False):
         ExtractFromTokyoPDF().download_pdfs(only_most_recent=True)
@@ -132,11 +138,12 @@ class JPCityData(URLBase):
         num_city = 0
 
         for item in csv.DictReader(f):
+            for k in item:
+                item[k] = item[k].strip()
+
             for xxx in range(int(item['人数'].strip() or 1)):
                 #print(item)
                 #item = item['properties']
-                if item.get('居住市区町村'):
-                    num_city += 1
 
                 if not item:
                     print("NOT ITEM:", item)
@@ -164,27 +171,41 @@ class JPCityData(URLBase):
                         str(int(item['年代'].strip('代')) + 9)
                     )
 
-                gender = {'男性': DT_TOTAL_MALE,
-                          '男性\xa0': DT_TOTAL_MALE,
-                          '女性\xa0': DT_TOTAL_FEMALE,
-                          '女性': DT_TOTAL_FEMALE,
-                          '不明': None,
-                          '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
-                          '': None,
-                          None: None}[item['性別']]
+                gender = {
+                    '男性': DT_TOTAL_MALE,
+                    '男性\xa0': DT_TOTAL_MALE,
+                    '女性\xa0': DT_TOTAL_FEMALE,
+                    '女性': DT_TOTAL_FEMALE,
+                    '不明': None,
+                    '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
+                    '': None,
+                    None: None
+                }[item['性別']]
 
                 #date_of_onset = self.convert_date(item['発症日'], formats=('%m/%d/%Y',))
                 date_diagnosed = self.convert_date(item['確定日'], formats=('%m/%d/%Y',))   # TODO: Should we be recording this number??? ================
                 #date_diagnosed = datetime.datetime.fromtimestamp(item['確定日']/1000).strftime('%Y_%m_%d')
                 #diagnosed_in = item['Hospital Pref']
                 #resident_of = item['Residential Pref']
+
+                # May as well use English prefecture names to and allow the system to
+                # auto-translate to ISO-3166-2 later
                 resident_of = item['居住都道府県']
+                assert resident_of, item
                 # e.g. 中富良野町 will be different to the English 'Release' field
                 #announced_in = item['Release']
                 city = item.get('居住市区町村') or 'Unknown'  # Japanese only
                 #if city != 'Unknown':
                 #    print(item)
                 #source = item['ソース'] or item['ソース2'] or item['ソース3'] or 'https://covid19.wlaboratory.com'
+
+                resident_of = self._labels_to_region_child.get_by_label(
+                    SCHEMA_ADMIN_1, 'JP', resident_of, default=resident_of
+                )
+                city = self._labels_to_region_child.get_by_label(
+                    SCHEMA_JP_CITY, resident_of, city, default=city
+                )
+                print(resident_of, city)
 
                 # Maybe it's worth adding status info, but it can be vague e.g. "退院または死亡"
                 # Occupation info is also present in many cases.
@@ -201,7 +222,7 @@ class JPCityData(URLBase):
 
                 by_prefecture_age[date_diagnosed, resident_of, agerange] += 1
 
-                if resident_of == 'Tokyo' and city == 'Unknown':
+                if resident_of == 'tokyo' and city == 'Unknown':
                     # Will add city-level data
                     continue
                 else:
@@ -211,93 +232,97 @@ class JPCityData(URLBase):
                         by_city_gender[date_diagnosed, resident_of, city, gender] += 1
                         by_city_age_gender[date_diagnosed, resident_of, city, agerange, gender] += 1
 
-        #print('num_city:', num_city)
+                if item.get('居住市区町村') and resident_of == 'jp-27':
+                    print(item)
+                    num_city += 1
 
-        cumulative = Counter()
+        print('num_city:', num_city)
+
+        cumulative = 0
         for date, value in sorted(by_date.items()):
-            cumulative[date] += value
+            cumulative += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Japan',
                 datatype=DT_TOTAL,
-                value=cumulative[date],
+                value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, agerange), value in sorted(by_age.items()):
-            cumulative[date, agerange] += value
+            cumulative[agerange] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Japan',
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                value=cumulative[date, agerange],
+                value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture), value in sorted(by_prefecture.items()):
-            cumulative[date, prefecture] += value
+            cumulative[prefecture] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
                 datatype=DT_TOTAL,
-                value=cumulative[date, prefecture],
+                value=cumulative[prefecture],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, gender), value in sorted(by_gender.items()):
-            cumulative[date, gender] += value
+            cumulative[gender] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Japan',
                 datatype=gender,
-                value=cumulative[date, gender],
+                value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, gender, agerange), value in sorted(by_gender_age.items()):
-            cumulative[date, gender, agerange] += value
+            cumulative[gender, agerange] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Japan',
                 datatype=gender,
                 agerange=agerange,
-                value=cumulative[date, gender],
+                value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture, gender), value in sorted(by_prefecture_gender.items()):
-            cumulative[date, prefecture, gender] += value
+            cumulative[prefecture, gender] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
                 datatype=gender,
-                value=cumulative[date, prefecture, gender],
+                value=cumulative[prefecture, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture, agerange), value in sorted(by_prefecture_age.items()):
-            cumulative[date, prefecture, agerange] += value
+            cumulative[prefecture, agerange] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
@@ -305,14 +330,14 @@ class JPCityData(URLBase):
                 region_child=prefecture,
                 datatype=DT_TOTAL,
                 agerange=agerange,
-                value=cumulative[date, prefecture, agerange],
+                value=cumulative[prefecture, agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture, agerange, gender), value in sorted(by_prefecture_age_gender.items()):
-            cumulative[date, prefecture, agerange, gender] += value
+            cumulative[prefecture, agerange, gender] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
@@ -320,21 +345,21 @@ class JPCityData(URLBase):
                 region_child=prefecture,
                 datatype=gender,
                 agerange=agerange,
-                value=cumulative[date, prefecture, agerange, gender],
+                value=cumulative[prefecture, agerange, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture, city), value in sorted(by_city.items()):
-            cumulative[date, prefecture, city] += value
+            cumulative[prefecture, city] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_JP_CITY,
                 region_parent=prefecture,
                 region_child=city,
                 datatype=DT_TOTAL,
-                value=cumulative[date, prefecture, city],
+                value=cumulative[prefecture, city],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
@@ -342,21 +367,21 @@ class JPCityData(URLBase):
 
         cumulative = Counter()
         for (date, prefecture, city, gender), value in sorted(by_city_gender.items()):
-            cumulative[date, prefecture, city, gender] += value
+            cumulative[prefecture, city, gender] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_JP_CITY,
                 region_parent=prefecture,
                 region_child=city,
                 datatype=gender,
-                value=cumulative[date, prefecture, city, gender],
+                value=cumulative[prefecture, city, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
 
         cumulative = Counter()
         for (date, prefecture, city, agerange, gender), value in sorted(by_city_age_gender.items()):
-            cumulative[date, prefecture, city, agerange, gender] += value
+            cumulative[prefecture, city, agerange, gender] += value
 
             r.append(DataPoint(
                 region_schema=SCHEMA_JP_CITY,
@@ -364,7 +389,7 @@ class JPCityData(URLBase):
                 region_child=city,
                 datatype=gender,
                 agerange=agerange,
-                value=cumulative[date, prefecture, city, agerange, gender],
+                value=cumulative[prefecture, city, agerange, gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             ))
@@ -374,4 +399,9 @@ class JPCityData(URLBase):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(JPCityData().get_datapoints())
+
+    for i in JPCityData().get_datapoints():
+        if i.region_child == 'jp-13':
+            print(i)
+
+    #pprint(JPCityData().get_datapoints())

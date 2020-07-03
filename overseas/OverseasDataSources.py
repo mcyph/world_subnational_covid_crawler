@@ -16,13 +16,16 @@ from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
 
 from covid_19_au_grab.overseas.bd_data.BDData import BDData
 from covid_19_au_grab.overseas.br_data.BRData import BRData
+from covid_19_au_grab.overseas.bw_data.BWData import BWData
 from covid_19_au_grab.overseas.ch_data.CHData import CHData
+from covid_19_au_grab.overseas.cu_data.CUData import CUData
 from covid_19_au_grab.overseas.de_data.DEData import DEData
 from covid_19_au_grab.overseas.es_data.ESData import ESData
 from covid_19_au_grab.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
 #from covid_19_au_grab.overseas.fi_data.FIData import FIData
 from covid_19_au_grab.overseas.fr_data.FRData import FRData
 #from covid_19_au_grab.overseas.gh_data.GHData import GHData
+from covid_19_au_grab.overseas.gh_data.GHDataDash import GHDataDash
 from covid_19_au_grab.overseas.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.overseas.in_data.INData import INData
 from covid_19_au_grab.overseas.is_data.ISData import ISData
@@ -30,6 +33,7 @@ from covid_19_au_grab.overseas.it_data.ITData import ITData
 from covid_19_au_grab.overseas.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.jp_city_data.JPCityData import JPCityData
 from covid_19_au_grab.overseas.kg_data.KGData import KGData
+from covid_19_au_grab.overseas.kh_data.KHData import KHData
 from covid_19_au_grab.overseas.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.kz_data.KZData import KZData
 #from covid_19_au_grab.overseas.lk_data.LKData import LKData
@@ -41,12 +45,17 @@ from covid_19_au_grab.overseas.om_data.OMData import OMData
 #from covid_19_au_grab.overseas.ph_data.PHData import PHData
 from covid_19_au_grab.overseas.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.sa_data.SAData import SAData
+from covid_19_au_grab.overseas.sd_data.SDData import SDData
 #from covid_19_au_grab.overseas.th_data.THData import THData
 from covid_19_au_grab.overseas.uk_data.UKData import UKData
 from covid_19_au_grab.overseas.us_nyt_data.USNYTData import USNYTData
 #from covid_19_au_grab.overseas.uz_data.UZData import UZData
+from covid_19_au_grab.overseas.th_data.THData import THData
+from covid_19_au_grab.overseas.tr_data.TRData import TRData
 from covid_19_au_grab.overseas.tw_data.TWData import TWData
+from covid_19_au_grab.overseas.ve_data.VEData import VEData as VEDataNonHumData
 from covid_19_au_grab.overseas.vn_data.VNData import VNData
+from covid_19_au_grab.overseas.ye_data.YEData import YEData
 from covid_19_au_grab.overseas.west_africa_data.WestAfricaData import WestAfricaData
 from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
 from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import \
@@ -68,23 +77,26 @@ class OverseasDataSources:
             AFData,
             BDData,
             BRData,
+            BWData,
             CHData,
             COData,
+            CUData,
             DEData,
             ESData,
             ETData,
             EUSubNationalData,
             FRData,
-            #GHData,
+            GHDataDash,
             HTData,
             IDGoogleDocsData,
-            INData,
+            #INData, # Will use Bing data for India
             IQData,
             ISData,
             ITData,
             JPData,
             JPCityData,
             KGData,
+            KHData,
             KRData,
             KZData,
             LYData,
@@ -96,15 +108,19 @@ class OverseasDataSources:
             #PHData,
             PSData,
             SAData,
+            SDData,
             SNData,
             SOData,
-            #THData,
+            THData,
+            TRData,
             TWData,
             UKData,
             WorldBingData,
-            USNYTData,
+            #USNYTData,
             VEData,
+            VEDataNonHumData,
             VNData,
+            YEData,
         ]:
             # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
             print("Getting using class:", i)
@@ -118,7 +134,7 @@ class OverseasDataSources:
                     # We won't use Australian data from international sources,
                     # as it comes from the dept of Health, which doesn't always
                     # match with state data
-                    if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'AU':
+                    if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'au':
                         continue
                     new_datapoints.append(datapoint)
 
