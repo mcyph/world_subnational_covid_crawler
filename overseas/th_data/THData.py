@@ -18,6 +18,11 @@ from covid_19_au_grab.datatypes.constants import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
+    LabelsToRegionChild
+)
+
+ltrc = LabelsToRegionChild()
 
 
 def get_districts_map():
@@ -102,6 +107,7 @@ class THData(URLBase):
         text = self.get_text('cases.json',
                              include_revision=True)
         data = json.loads(text)
+        not_found = Counter()
 
         for case_dict in data['Data']:
             #print(case_dict)
@@ -111,11 +117,14 @@ class THData(URLBase):
                 'Male': DT_TOTAL_MALE,
                 'Female': DT_TOTAL_FEMALE
             }[case_dict['GenderEn']]
+            province = ltrc.get_by_label(
+                SCHEMA_ADMIN_1, 'TH', case_dict['ProvinceEn']
+            )
 
             by_total[date] += 1
             by_age[date, agerange] += 1
             by_gender[date, gender] += 1
-            by_province[date, case_dict['ProvinceEn']] += 1
+            by_province[date, province] += 1
 
             if case_dict['District'].strip() and case_dict['District'] not in (
                 'เมือง', 'กระทู้', 'คลองจั่น', 'พัฒนาการ', 'รามอินทรา',
@@ -123,10 +132,22 @@ class THData(URLBase):
                 'ศาลาธรรมสพน์',
             ):
                 try:
-                    district = self.districts_map[case_dict['District']]
-                    by_district[date, case_dict['ProvinceEn'], district] += 1
+                    district = ltrc.get_by_label(
+                        SCHEMA_TH_DISTRICT, province, case_dict['District']
+                    )
+                    by_district[date, province, district] += 1
+                    #print('FOUND:', district)
                 except KeyError:
-                    print("KEYERROR:", case_dict['District'])
+                    #print(province)
+                    try:
+                        district = self.districts_map[case_dict['District']]
+                        by_district[date, province, district] += 1
+                    except KeyError:
+                        print("KEYERROR:", case_dict['District'])
+                        not_found[case_dict['District']] += 1
+
+        from pprint import pprint
+        pprint(not_found)
 
         cumulative = 0
         for date, value in sorted(by_total.items()):

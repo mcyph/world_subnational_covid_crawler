@@ -305,6 +305,8 @@ class ITData(GithubRepo):
                     continue
                 elif item['denominazione_provincia'] == 'fuori Regione/P.A.':
                     continue
+                elif item['denominazione_provincia'] == 'Fuori Regione / Provincia Autonoma':
+                    continue
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_IT_PROVINCE,

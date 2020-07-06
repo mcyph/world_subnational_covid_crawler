@@ -37,19 +37,19 @@ from covid_19_au_grab.get_package_dir import (
 
 
 place_map = {
-    'ភ្នំពេញ': '',
-    'ព្រះសីហនុ': '',
-    'កំពង់ចាម': '',
-    'បាត់ដំបង': '',
-    'សៀមរាប': '',
-    'បន្ទាយមានជ័យ': '',
-    'កែប': '',
-    'ត្បូងឃ្មុំ': '',
-    'កំពង់ឆ្នាំង': '',
-    'កណ្ដាល': '',
-    'កោះកុង': '',
-    'កំពត': '',
-    'ព្រះវិហារ': ''
+    'ភ្នំពេញ': 'KH-12',
+    'ព្រះសីហនុ': 'KH-18',
+    'កំពង់ចាម': 'KH-3',
+    'បាត់ដំបង': 'KH-2',
+    'សៀមរាប': 'KH-17',
+    'បន្ទាយមានជ័យ': 'KH-1',
+    'កែប': 'KH-23',
+    'ត្បូងឃ្មុំ': 'KH-25',
+    'កំពង់ឆ្នាំង': 'KH-4',
+    'កណ្ដាល': 'KH-8',
+    'កោះកុង': 'KH-9',
+    'កំពត': 'KH-7',
+    'ព្រះវិហារ': 'KH-13'
 }
 
 
@@ -87,14 +87,16 @@ class KHData(URLBase):
                        .replace('&quot;', '"')
 
             for data in json.loads(data):
+                print(data)
                 date = self.convert_date(
                     data['created_at'].split('T')[0]
                 )
+                region_child = place_map[data['location']['name_km']]
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='KH',
-                    region_child=f'KH-{data["location_code"]}',
+                    region_child=region_child,
                     datatype=DT_TOTAL,
                     value=int(data['total_case']),
                     date_updated=date,
@@ -103,7 +105,7 @@ class KHData(URLBase):
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='KH',
-                    region_child=f'KH-{data["location_code"]}',
+                    region_child=region_child,
                     datatype=DT_NEW,
                     value=int(data['new_case']),
                     date_updated=date,
@@ -112,7 +114,7 @@ class KHData(URLBase):
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='KH',
-                    region_child=f'KH-{data["location_code"]}',
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
                     value=int(data['recovered_case']),
                     date_updated=date,
@@ -121,7 +123,7 @@ class KHData(URLBase):
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='KH',
-                    region_child=f'KH-{data["location_code"]}',
+                    region_child=region_child,
                     datatype=DT_STATUS_DEATHS_NEW,
                     value=int(data['new_death_case']),
                     date_updated=date,
@@ -130,7 +132,7 @@ class KHData(URLBase):
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='KH',
-                    region_child=f'KH-{data["location_code"]}',
+                    region_child=region_child,
                     datatype=DT_STATUS_RECOVERED_NEW,
                     value=int(data['new_recovered_case']),
                     date_updated=date,
@@ -143,4 +145,3 @@ class KHData(URLBase):
 if __name__ == '__main__':
     from pprint import pprint
     pprint(KHData().get_datapoints())
-

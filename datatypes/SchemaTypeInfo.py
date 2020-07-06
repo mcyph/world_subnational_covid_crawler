@@ -6,6 +6,7 @@ from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.other_data.iso_3166_1 import iso_3166_data
 from covid_19_au_grab.other_data.iso_3166_2 import iso_3166_2_data
 from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, schema_to_name
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 
 with open(get_package_dir() / 'datatypes' / 'schema_types.json',
@@ -24,6 +25,7 @@ class SchemaTypeInfo:
     def __init__(self, schema, schema_dict):
         self.schema = schema
         self.schema_dict = schema_dict
+        self.ltrc = LabelsToRegionChild()
 
         #self._possible_regions = set(self.get_possible_parent_child_regions())
 

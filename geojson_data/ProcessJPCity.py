@@ -15,7 +15,7 @@ class ProcessJPCity(ProcessGeoJSONBase):
         return 'JP-'+feature['admin2_code'][:2]
 
     def get_region_child(self, fnam, feature):
-        return normalize_locality_name(feature['ja']) # feature['admin2_code']
+        return normalize_locality_name(feature['admin2_code'])
 
     def get_region_printable(self, fnam, feature):
         return {

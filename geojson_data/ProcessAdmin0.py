@@ -11,7 +11,12 @@ class ProcessAdmin0(ProcessGeoJSONBase):
         return ''
 
     def get_region_child(self, fnam, feature):
-        return feature['ISO_A2']
+        r = feature['ISO_A2'] if not '-' in feature['ISO_A2'] else feature['WB_A2'] # France -99 hack!
+        if r == '-99' and feature['SOV_A3'] == 'NOR':
+            return 'NO'
+        elif r == '-99':
+            print(feature)
+        return r
 
     def get_region_printable(self, fnam, feature):
         r = {}

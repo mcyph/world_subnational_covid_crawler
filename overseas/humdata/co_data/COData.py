@@ -266,7 +266,7 @@ class COData(URLBase):
 
     def _age_to_range(self, age):
         age = int(age)
-        for x in range(0, 110, 10):
+        for x in range(0, 120, 10):
             if x <= age <= x+9:
                 return f'{x}-{x+9}'
         raise Exception(age)

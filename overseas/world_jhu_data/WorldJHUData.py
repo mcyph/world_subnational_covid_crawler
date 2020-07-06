@@ -83,7 +83,7 @@ class WorldJHUData(GithubRepo):
                         region_parent=region_parent,
                         region_child=region_child,
                         datatype=DT_TOTAL,
-                        value=int(item['Confirmed']),
+                        value=int(float(item['Confirmed'])),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
@@ -93,7 +93,7 @@ class WorldJHUData(GithubRepo):
                         region_parent=region_parent,
                         region_child=region_child,
                         datatype=DT_STATUS_DEATHS,
-                        value=int(item['Deaths']),
+                        value=int(float(item['Deaths'])),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
@@ -104,7 +104,7 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_STATUS_RECOVERED,
-                            value=int(item['Recovered']),
+                            value=int(float(item['Recovered'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
                         ))
@@ -126,7 +126,7 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_TESTS_TOTAL,
-                            value=int(item['People_Tested']),
+                            value=int(float(item['People_Tested'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
                         ))
@@ -137,7 +137,7 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_STATUS_HOSPITALIZED,
-                            value=int(item['People_Hospitalized']),
+                            value=int(float(item['People_Hospitalized'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
                         ))
@@ -252,7 +252,7 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_TOTAL,
-                            value=int(item['Confirmed']),
+                            value=int(float(item['Confirmed'])),
                             date_updated=date,
                             source_url='JHU'  # HACK: JHU is larger than any of the other sources, so makes sense to reduce the source just for this file!
                         ))
@@ -263,7 +263,7 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_STATUS_DEATHS,
-                            value=int(item['Deaths']),
+                            value=int(float(item['Deaths'])),
                             date_updated=date,
                             source_url='JHU'
                         ))
@@ -274,18 +274,18 @@ class WorldJHUData(GithubRepo):
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_STATUS_RECOVERED,
-                            value=int(item['Recovered']),
+                            value=int(float(item['Recovered'])),
                             date_updated=date,
                             source_url='JHU'
                         ))
 
-                    if 'Active' in item:
+                    if item.get('Active'):
                         r.append(DataPoint(
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DT_STATUS_ACTIVE,
-                            value=int(item['Active']),
+                            value=int(float(item['Active'])),
                             date_updated=date,
                             source_url='JHU'
                         ))

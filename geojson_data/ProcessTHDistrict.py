@@ -103,7 +103,21 @@ class ProcessTHDistrict(ProcessGeoJSONBase):
         # Unfortunately, QGIS seems to corrupt the thai
         # chars when simplifying, and it's too big for mapshaper..
         # should eventually include native versions ==================================================================
-        return feature['ADM2_EN']
+        r = {
+            'th': feature['ADM2_TH'],
+            'en': feature['ADM2_EN']
+        }
+
+        if feature['ADM2ALT1EN']:
+            r['en1'] = feature['ADM2ALT1EN']
+        if feature['ADM2ALT2EN']:
+            r['en2'] = feature['ADM2ALT1EN']
+        if feature['ADM2ALT1TH']:
+            r['th1'] = feature['ADM2ALT1EN']
+        if feature['ADM2ALT2TH']:
+            r['th2'] = feature['ADM2ALT1EN']
+
+        return r
 
 
 if __name__ == '__main__':

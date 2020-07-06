@@ -10,7 +10,6 @@ from covid_19_au_grab.datatypes.DataPoint import (
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_ES_MADRID_MUNICIPALITY,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -22,6 +21,105 @@ from covid_19_au_grab.overseas.GithubRepo import (
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
+
+
+#         "es_madrid_municipality": {
+#             "iso_3166": "ES-M",
+#             "min_zoom": 5,
+#             "priority": 5,
+#             "line_width": 0.5,
+#             "split_by_parent_region": false
+#         },
+
+_provinces = '''
+ES-C	GA	Bizkaia
+ES-VI	PV	Álava
+ES-AB	CM	Albacete 
+ES-A	VC	Alicante Alacan
+ES-AL	AN	Almería 
+ES-O	AS	Asturias 
+ES-AV	CL	Ávila 
+ES-BA	EX	Badajoz 
+ES-PM	IB	Balears
+ES-B	CT	Barcelona
+ES-BI	PV	Bizkaia
+ES-BU	CL	Burgos 
+ES-CC	EX	Cáceres 
+ES-CA	AN	Cádiz 
+ES-S	CB	Cantabria 
+ES-CS	VC	Castellón Castell
+ES-CR	CM	Ciudad Real 
+ES-CO	AN	Córdoba 
+ES-CU	CM	Cuenca 
+ES-SS	PV	Gipuzkoa
+ES-GI	CT	Girona
+ES-GR	AN	Granada 
+ES-GU	CM	Guadalajara 
+ES-H	AN	Huelva 
+ES-HU	AR	Huesca 
+ES-J	AN	Jaén 
+ES-LO	RI	La Rioja 
+ES-GC	CN	Las Palmas 
+ES-LE	CL	León 
+ES-L	CT	Lleida
+ES-LU	GA	Lugo
+ES-M	MD	Madrid 
+ES-MA	AN	Málaga 
+ES-MU	MC	Murcia 
+ES-NA	NC	Navarra
+ES-OR	GA	Ourense
+ES-P	CL	Palencia 
+ES-PO	GA	Pontevedra
+ES-SA	CL	Salamanca 
+ES-TF	CN	Santa Cruz de Tenerife
+ES-SG	CL	Segovia
+ES-SE	AN	Sevilla
+ES-SO	CL	Soria
+ES-T	CT	Tarragona
+ES-TE	AR	Teruel
+ES-TO	CM	Toledo
+ES-V	VC	Valencia
+ES-VA	CL	Valladolid
+ES-ZA	CL	Zamora
+ES-Z	AR	Zaragoza
+'''.strip()
+
+
+region_map = {
+    'Melilla': 'ES-ML',
+    'Ceuta': 'ES-CE',
+    'La Rioja': 'ES-RI',
+    'País Vasco': 'ES-PV',
+    'Navarra': 'ES-NC',
+    'Murcia': 'ES-MC',
+    'Madrid': 'ES-MD',
+    'Galicia': 'ES-GA',
+    'Extremadura': 'ES-EX',
+    'C. Valenciana': 'ES-VC',
+    'Cataluña': 'ES-CT',
+    'Castilla La Mancha': 'ES-CM',
+    'Castilla y León': 'ES-CL',
+    'Cantabria': 'ES-CB',
+    'Baleares': 'ES-IB',
+    'Asturias': 'ES-AS',
+    'Aragón': 'ES-AR',
+    'Andalucía': 'ES-AN',
+    'Canarias': 'ES-CN',
+}
+
+
+def _get_provinces_map():
+    province_map = {}
+    for province_code, ac_code, province_name in [
+        i.split('\t') for i in _provinces.split('\n')
+    ]:
+        province_map[province_name.lower().strip()] = (
+            province_code, 'ES-'+ac_code
+        )
+    return province_map
+
+
+_provinces_map = _get_provinces_map()
 
 
 # This PDF has a lot of info that might not be in other places
@@ -43,7 +141,7 @@ class ESData(GithubRepo):
     def get_datapoints(self):
         r = []
         r.extend(self._get_by_datos_isciii())
-        r.extend(self._get_by_distritos_madrid())
+        #r.extend(self._get_by_distritos_madrid())   # This hasn't been updated in some time
         r.extend(self._get_by_age_national())
         r.extend(self._get_national_data())
         return r
@@ -64,13 +162,15 @@ class ESData(GithubRepo):
         with open(self.get_path_in_dir('COVID 19/ccaa_covid19_datos_isciii.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
+                print(item)
                 date = self.convert_date(item['Fecha'])
+                ac_code = region_map[item['CCAA']]
 
                 if item['Casos']:
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
-                        region_child=item['CCAA'],
+                        region_parent='ES',
+                        region_child=ac_code,
                         datatype=DT_TOTAL,
                         value=int(item['Casos']),
                         date_updated=date,
@@ -80,8 +180,8 @@ class ESData(GithubRepo):
                 if item['PCR+'] or item['TestAc+']:   # NOTE ME: I'm combining PCR and other tests!!
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
-                        region_child=item['CCAA'],
+                        region_parent='ES',
+                        region_child=ac_code,
                         datatype=DT_TESTS_TOTAL,
                         value=int(item['PCR+'] or 0) +
                               int(item['TestAc+'] or 0),
@@ -92,8 +192,8 @@ class ESData(GithubRepo):
                 if item['Hospitalizados']:
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
-                        region_child=item['CCAA'],
+                        region_parent='ES',
+                        region_child=ac_code,
                         datatype=DT_STATUS_HOSPITALIZED,
                         value=int(item['Hospitalizados']),
                         date_updated=date,
@@ -103,8 +203,8 @@ class ESData(GithubRepo):
                 if item['Fallecidos']:
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
-                        region_child=item['CCAA'],
+                        region_parent='ES',
+                        region_child=ac_code,
                         datatype=DT_STATUS_DEATHS,
                         value=int(item['Fallecidos']),
                         date_updated=date,
@@ -114,8 +214,8 @@ class ESData(GithubRepo):
                 if item.get('Recuperados'):
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_1,
-                        region_parent='Spain',
-                        region_child=item['CCAA'],
+                        region_parent='ES',
+                        region_child=ac_code,
                         datatype=DT_STATUS_RECOVERED,
                         value=int(item['Recuperados']),
                         date_updated=date,

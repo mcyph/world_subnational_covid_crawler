@@ -136,6 +136,7 @@ GB-LBC	Lisburn and Castlereagh
 GB-LIV	Liverpool
 GB-LND	London, City of
 GB-LND	City of London
+GB-LND	Hackney and City of London
 GB-LUT	Luton
 GB-MAN	Manchester
 GB-MDW	Medway

@@ -48,11 +48,13 @@ class ProcessGeoJSONBase(ABC):
                     'unincorporated' in str(feature).lower() and
                     not 'pastoral' in str(feature).lower()
                 ):
+                    print("**IGNORE:", feature)
                     continue
 
                 parent = self.get_region_parent(fnam, feature['properties'])
                 child = self.get_region_child(fnam, feature['properties'])
                 printable_name = self.get_region_printable(fnam, feature['properties'])
+                print(parent, child)#printable_name)
 
                 if not isinstance(printable_name, dict):
                     printable_name = {'en': printable_name}
@@ -69,7 +71,7 @@ class ProcessGeoJSONBase(ABC):
                               'label': printable_name
                           })
 
-                print(feature)
+                #print(feature)
 
                 for coords in feature['geometry']['coordinates']:
                     for lng, lat in coords:
@@ -140,7 +142,7 @@ class ProcessGeoJSONBase(ABC):
 
     def _multi_polygon_to_polygons(self, feature):
         out = []
-        print(feature['geometry'])
+        #print(feature['geometry'])
         for polygon in feature['geometry']['coordinates']:
             out.append({
                 'type': 'Feature',

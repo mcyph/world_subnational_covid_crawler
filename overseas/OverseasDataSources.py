@@ -17,6 +17,7 @@ from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
 from covid_19_au_grab.overseas.bd_data.BDData import BDData
 from covid_19_au_grab.overseas.br_data.BRData import BRData
 from covid_19_au_grab.overseas.bw_data.BWData import BWData
+from covid_19_au_grab.overseas.ca_data.CACovid19Canada import CACovid19Canada
 from covid_19_au_grab.overseas.ch_data.CHData import CHData
 from covid_19_au_grab.overseas.cu_data.CUData import CUData
 from covid_19_au_grab.overseas.de_data.DEData import DEData
@@ -26,7 +27,10 @@ from covid_19_au_grab.overseas.eu_subnational_data.EUSubNationalData import EUSu
 from covid_19_au_grab.overseas.fr_data.FRData import FRData
 #from covid_19_au_grab.overseas.gh_data.GHData import GHData
 from covid_19_au_grab.overseas.gh_data.GHDataDash import GHDataDash
+from covid_19_au_grab.overseas.gr_data.GRCovid19Greece import GRCovid19Greece
+from covid_19_au_grab.overseas.hr_data.HRData import HRData
 from covid_19_au_grab.overseas.id_data.IDGoogleDocsData import IDGoogleDocsData
+from covid_19_au_grab.overseas.ie_data.IEData import IEData
 from covid_19_au_grab.overseas.in_data.INData import INData
 from covid_19_au_grab.overseas.is_data.ISData import ISData
 from covid_19_au_grab.overseas.it_data.ITData import ITData
@@ -36,10 +40,12 @@ from covid_19_au_grab.overseas.kg_data.KGData import KGData
 from covid_19_au_grab.overseas.kh_data.KHData import KHData
 from covid_19_au_grab.overseas.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.kz_data.KZData import KZData
-#from covid_19_au_grab.overseas.lk_data.LKData import LKData
-#from covid_19_au_grab.overseas.mm_data.MMData import MMData
+from covid_19_au_grab.overseas.lk_data.LKData import LKData
+from covid_19_au_grab.overseas.mm_data.MMData import MMData
+from covid_19_au_grab.overseas.mw_data.MWData import MWData
 from covid_19_au_grab.overseas.my_data.MYData import MYData
-#from covid_19_au_grab.overseas.np_data.NPData import NPData
+from covid_19_au_grab.overseas.na_data.NAData import NAData
+from covid_19_au_grab.overseas.np_data.NPData import NPData
 from covid_19_au_grab.overseas.nz_data.NZData import NZData
 from covid_19_au_grab.overseas.om_data.OMData import OMData
 #from covid_19_au_grab.overseas.ph_data.PHData import PHData
@@ -78,6 +84,7 @@ class OverseasDataSources:
             BDData,
             BRData,
             BWData,
+            CACovid19Canada,
             CHData,
             COData,
             CUData,
@@ -87,8 +94,11 @@ class OverseasDataSources:
             EUSubNationalData,
             FRData,
             GHDataDash,
+            GRCovid19Greece,
+            HRData,
             HTData,
             IDGoogleDocsData,
+            IEData,
             #INData, # Will use Bing data for India
             IQData,
             ISData,
@@ -99,10 +109,14 @@ class OverseasDataSources:
             KHData,
             KRData,
             KZData,
+            LKData,
             LYData,
             #MLData,
-            #MMData,
+            MMData,
+            MWData,
             MYData,
+            NAData,
+            NPData,
             NZData,
             OMData,
             #PHData,
@@ -124,7 +138,6 @@ class OverseasDataSources:
         ]:
             # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
             print("Getting using class:", i)
-
 
             try:
                 inst = i()

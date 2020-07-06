@@ -251,11 +251,29 @@
             "line_width": 0.5,
             "split_by_parent_region": true
         },
+        "ca_health_region": {
+            "iso_3166": "CA",
+            "min_zoom": 3,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
         "co_municipality": {
             "iso_3166": "CO",
             "min_zoom": 6,
             "priority": 5,
             "line_width": 0.5,
+            "split_by_parent_region": false
+        },
+        "cr_canton": {
+            "iso_3166": "CR",
+            "min_zoom": 6,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
+        "cu_municipality": {
+            "iso_3166": "CU",
+            "min_zoom": 6,
+            "priority": 5,
             "split_by_parent_region": false
         },
         "de_ags": {
@@ -264,13 +282,6 @@
             "priority": -1,
             "line_width": 0.5,
             "split_by_parent_region": true
-        },
-        "es_madrid_municipality": {
-            "iso_3166": "ES-M",
-            "min_zoom": 5,
-            "priority": 5,
-            "line_width": 0.5,
-            "split_by_parent_region": false
         },
         "in_district": {
             "iso_3166": "IN",
@@ -281,14 +292,14 @@
         },
         "it_province": {
             "iso_3166": "IT",
-            "min_zoom": 4,
+            "min_zoom": 2,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
         "jp_city": {
             "iso_3166": "JP",
-            "min_zoom": 4,
+            "min_zoom": 7,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
@@ -300,28 +311,40 @@
             "line_width": 0.5,
             "split_by_parent_region": false
         },
+        "np_district": {
+            "iso_3166": "NP",
+            "min_zoom": 5,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
         "nz_dhb": {
             "iso_3166": "NZ",
             "min_zoom": 4,
             "priority": 3,
             "split_by_parent_region": false
         },
+        "ps_province": {
+            "iso_3166": "PS",
+            "min_zoom": 2,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
         "uk_area": {
             "iso_3166": "GB",
-            "min_zoom": 4,
+            "min_zoom": 2,
             "priority": 5,
             "split_by_parent_region": false
         },
         "us_county": {
             "iso_3166": "US",
-            "min_zoom": 5,
+            "min_zoom": 4,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
         },
         "th_district": {
             "iso_3166": "TH",
-            "min_zoom": 4,
+            "min_zoom": 7,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false

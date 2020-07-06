@@ -114,7 +114,7 @@ class CUData(GithubRepo):
                     region_child='CU',
                     datatype=DT_TOTAL,
                     date_updated=date,
-                    value=value,
+                    value=cumulative,
                     source_url=self.SOURCE_URL
                 ))
 
@@ -128,7 +128,7 @@ class CUData(GithubRepo):
                     region_child='CU',
                     datatype=gender,
                     date_updated=date,
-                    value=value,
+                    value=cumulative[gender],
                     source_url=self.SOURCE_URL
                 ))
 
@@ -143,7 +143,7 @@ class CUData(GithubRepo):
                     datatype=DT_TOTAL,
                     agerange=age,
                     date_updated=date,
-                    value=value,
+                    value=cumulative[age],
                     source_url=self.SOURCE_URL
                 ))
 
@@ -157,7 +157,7 @@ class CUData(GithubRepo):
                     region_child=municipality,
                     datatype=DT_TOTAL,
                     date_updated=date,
-                    value=value,
+                    value=cumulative[municipality, province],
                     source_url=self.SOURCE_URL
                 ))
 
@@ -171,7 +171,7 @@ class CUData(GithubRepo):
                     region_child=province,
                     datatype=DT_TOTAL,
                     date_updated=date,
-                    value=value,
+                    value=cumulative[province],
                     source_url=self.SOURCE_URL
                 ))
 
