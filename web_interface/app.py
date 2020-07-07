@@ -45,7 +45,9 @@ from covid_19_au_grab.datatypes.constants import (
     DT_STATUS_UNKNOWN,
     DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
-    DT_SOURCE_INTERSTATE
+    DT_SOURCE_INTERSTATE,
+
+    SCHEMA_JP_CITY
 )
 from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes import date_fns
@@ -66,6 +68,7 @@ class App(object):
     def loop(self):
         powerbi_run_1st = False
         powerbi_run_2nd = False
+        powerbi_run_3rd = False
 
         while True:
             # Run once every around every hour and a half
@@ -82,11 +85,19 @@ class App(object):
                     system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
                     powerbi_run_1st = True
                     powerbi_run_2nd = False
-                elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_2nd:
-                    # Run powerbi once only between 5pm and 7pm
+                    powerbi_run_3rd = False
+                elif dt.hour >= 15 and dt.hour < 17 and not powerbi_run_2nd:
+                    # Run powerbi once only between 3pm and 5pm
                     system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
                     powerbi_run_1st = False
                     powerbi_run_2nd = True
+                    powerbi_run_3rd = False
+                elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_3rd:
+                    # Run powerbi once only between 5pm and 7pm
+                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
+                    powerbi_run_1st = False
+                    powerbi_run_2nd = False
+                    powerbi_run_3rd = True
                 else:
                     system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))}')
 
@@ -583,6 +594,9 @@ class App(object):
 
         for region_schema, region_parent, region_child, datatypes in schema_list:
             schema_name = schema_to_name(region_schema)
+            region_parent = region_parent.lower()
+            if region_child:
+                region_child = region_child.lower()
 
             if compat_mode:
                 if schema_name == 'admin_1':
@@ -626,6 +640,11 @@ class App(object):
             region_schema_str = schema_to_name(region_schema)
             region_dict = schema_types['schemas'][region_schema_str]
 
+            #if region_schema != SCHEMA_JP_CITY:
+            #    continue
+            #if region_schema != SCHEMA_ADMIN_1:
+            #    continue
+
             if region_dict['split_by_parent_region']:
                 # Split into different json files for each region parent
                 datatypes = inst.get_datatypes_by_region_schema(region_schema)
@@ -635,6 +654,12 @@ class App(object):
                     i_r = {}
                     date_ids_dict = {}
 
+                    #if region_parent.lower() != 'jp-13':
+                    #    continue
+                    #print(region_parent)
+                    #if region_parent != 'cn':
+                    #    continue
+
                     i_max_date, datapoints = self.__get_time_series(
                         inst, region_schema, region_parent, None,
                         datatypes, date_ids_dict
@@ -642,7 +667,10 @@ class App(object):
                     i_r.setdefault(region_schema_str, {})[region_parent.lower()] = datapoints
                     max_dates = {region_schema_str: {region_parent.lower(): i_max_date}}
 
-                    r[f'{region_schema_str}_{region_parent.lower()}'] = {
+                    k = f'{region_schema_str}_{region_parent.lower()}'
+                    assert not k in r, k
+
+                    r[k] = {
                         'date_ids': {
                             date_id: date_string
                             for (date_string, date_id)
@@ -672,6 +700,7 @@ class App(object):
                     ):
                         max_dates[region_schema_str][region_parent.lower()] = i_max_date
 
+                assert not region_schema_str in r, region_schema_str
                 r[region_schema_str] = {
                     'date_ids': {
                         date_id: date_string
@@ -681,6 +710,9 @@ class App(object):
                     'time_series_data': i_r,
                     'updated_dates': max_dates
                 }
+
+        for k in r:
+            assert k.lower() == k, k
 
         zip_buffer = io.BytesIO()
 
@@ -765,7 +797,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
-            #'environment': 'production',
+            'environment': 'production',
         },
         '/': {
 

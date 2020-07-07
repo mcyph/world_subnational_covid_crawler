@@ -110,12 +110,14 @@ if __name__ == '__main__':
     DerivedData(dpdb).add_derived()
 
     # Commit and close the DB
+    print("Derived data outputted OK: committing and closing")
     dpdb.commit()
     dpdb.close()
 
     # Output basic status info to a .json info
     # This also signifies to the web
     # interface that the import went OK
+    print("Writing status JSON file")
     status_json_path = RevisionIDs.get_path_from_id(
         TIME_FORMAT, LATEST_REVISION_ID, 'json'
     )
@@ -123,11 +125,14 @@ if __name__ == '__main__':
         f.write(json.dumps({'status': status}, indent=4))
 
     # Update the csv output
+    print("Outputting TSV files:")
     sqlite_data_revision = SQLiteDataRevision(TIME_FORMAT, LATEST_REVISION_ID)
     for source_id in sqlite_data_revision.get_source_ids():
+        print(f"* {source_id}")
         with open(get_global_subnational_covid_data_dir() / f'covid_{source_id}.tsv',
                   'w', encoding='utf-8') as f:
             f.write(sqlite_data_revision.get_tsv_data(source_id))
+    print('TSV write done')
 
     # Commit to GitHub
     #repo = Repo(str(get_global_subnational_covid_data_dir()))

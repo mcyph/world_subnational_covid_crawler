@@ -80,7 +80,7 @@ class DataPointsDB:
                 r.append(value)
 
         cur.close()
-        return r
+        return sorted(set(r))
 
     def get_region_schemas(self):
         r = []
@@ -103,11 +103,12 @@ class DataPointsDB:
                 r.append(name_to_schema(value))
 
         cur.close()
-        return r
+        return sorted(set(r))
 
     def get_datatypes_by_region_schema(self, region_schema):
         if isinstance(region_schema, int):
             region_schema = schema_to_name(region_schema)
+        region_schema = region_schema.lower()
 
         cur = self.conn.cursor()
         cur.execute("""
@@ -117,11 +118,12 @@ class DataPointsDB:
         """, [region_schema])
         r = [name_to_datatype(i[0]) for i in cur.fetchall()]
         cur.close()
-        return r
+        return sorted(set(r))
 
     def get_region_parents(self, region_schema):
         if isinstance(region_schema, int):
             region_schema = schema_to_name(region_schema)
+        region_schema = region_schema.lower()
 
         cur = self.conn.cursor()
         cur.execute("""
@@ -131,7 +133,7 @@ class DataPointsDB:
         """, [region_schema])
         r = [i[0] for i in cur.fetchall()]
         cur.close()
-        return r
+        return sorted(set(r))
 
     #================================================================#
     #                         Delete DataPoints                      #
