@@ -395,8 +395,9 @@ class QLDNews(StateNewsBase):
 
                     regions.append(DataPoint(
                         region_schema=SCHEMA_HHS,
-                        datatype=headers[xx],
+                        region_parent='AU-QLD',
                         region_child=hhs.title(),
+                        datatype=headers[xx],
                         value=value,
                         date_updated=du,
                         source_url=href
@@ -420,8 +421,9 @@ class QLDNews(StateNewsBase):
 
                     regions.append(DataPoint(
                         region_schema=SCHEMA_LGA,
-                        datatype=headers[xx],
+                        region_parent='AU-QLD',
                         region_child=lga.title(),
+                        datatype=headers[xx],
                         value=value,
                         date_updated=du,
                         source_url=href
@@ -468,8 +470,9 @@ class QLDNews(StateNewsBase):
                             value = int(pq(td).text().strip())
                             regions.append(DataPoint(
                                 region_schema=SCHEMA_HHS,
-                                datatype=datatype,
+                                region_parent='AU-QLD',
                                 region_child=hhs_region.title(),
+                                datatype=datatype,
                                 value=value,
                                 date_updated=du,
                                 source_url=href
@@ -508,8 +511,9 @@ class QLDNews(StateNewsBase):
                         value = int(pq(td).text().strip())
                         regions.append(DataPoint(
                             region_schema=SCHEMA_HHS,
-                            datatype=DT_NEW,
+                            region_parent='AU-QLD',
                             region_child=hhs_region,
+                            datatype=DT_NEW,
                             value=value,
                             date_updated=du,
                             source_url=href

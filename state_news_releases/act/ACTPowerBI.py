@@ -3887,6 +3887,196 @@ regions_exact_4_req ={
     "QueryId": ""
 }
 
+age_groups_9_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"a1\",\"Entity\":\"Age Buckets\",\"Type\":0},{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0},{\"Name\":\"c\",\"Entity\":\"COVID%20Case%20Data%20(02042020)\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"a1\"}},\"Property\":\"Age group (years)\"},\"Name\":\"Age Buckets (2).Age Group\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Count of Confirmed Cases\"},\"Name\":\"Table.Count of Confirmed Cases\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Sex\"},\"Name\":\"COVID%20Case%20Data%20(02042020).Sex\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"a1\"}},\"Property\":\"Age group (years)\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 4,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 200
+                                }
+                            },
+                            "Secondary": {
+                                "Top": {
+                                    "Count": 60
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Secondary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        2
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Age Buckets",
+                                "Name": "a1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "COVID%20Case%20Data%20(02042020)",
+                                "Name": "c",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 1,
+                                "Expression": {
+                                    "Column": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "a1"
+                                            }
+                                        },
+                                        "Property": "Age group (years)"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "a1"
+                                        }
+                                    },
+                                    "Property": "Age group (years)"
+                                },
+                                "Name": "Age Buckets (2).Age Group"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Count of Confirmed Cases"
+                                },
+                                "Name": "Table.Count of Confirmed Cases"
+                            },
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "c"
+                                        }
+                                    },
+                                    "Property": "Sex"
+                                },
+                                "Name": "COVID%20Case%20Data%20(02042020).Sex"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+recovered_6_req = {
+    "ApplicationContext": {
+        "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+        "Sources": [
+            {
+                "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"t\",\"Entity\":\"Table\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Recovered Cases\"},\"Name\":\"Table.Cases Cleared\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1},\"ExecutionMetricsKind\":3}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Top": {}
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 3,
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "Table",
+                                "Name": "t",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "t"
+                                        }
+                                    },
+                                    "Property": "Recovered Cases"
+                                },
+                                "Name": "Table.Cases Cleared"
+                            }
+                        ],
+                        "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
 
 if __name__ == '__main__':
     apb = ACTPowerBI()

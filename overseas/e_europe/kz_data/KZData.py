@@ -66,48 +66,49 @@ class KZData(URLBase):
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            print(date)
             path = f'{base_dir}/{date}/kz_corona.html'
             with open(path, 'r', encoding='utf-8') as f:
                 html = pq(f.read(), parser='html')
 
-            for div in html('.last_info_covid_bl .city_cov div'):
-                region, num = pq(div).text().split('–')
+            def get_num_region(div):
+                region, num = pq(div).text().replace(' - ', '–').split('–')
                 region = place_map[region.strip()]
+                # TODO: Add "new" values!!
+                return int(num.split('(')[0].strip()), region
 
+            for div in html('.last_info_covid_bl .city_cov div'):
+                value, region = get_num_region(div)
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Kazakhstan',
                     region_child=region,
                     datatype=DT_TOTAL,
-                    value=int(num),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
 
             for div in html('.red_line_covid_bl .city_cov div'):
-                region, num = pq(div).text().split('–')
-                region = place_map[region.strip()]
-
+                value, region = get_num_region(div)
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Kazakhstan',
                     region_child=region,
                     datatype=DT_STATUS_RECOVERED,
-                    value=int(num),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
 
             for div in html('.deaths_bl .city_cov div'):
-                region, num = pq(div).text().split('–')
-                region = place_map[region.strip()]
-
+                value, region = get_num_region(div)
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Kazakhstan',
                     region_child=region,
                     datatype=DT_STATUS_DEATHS,
-                    value=int(num),
+                    value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))

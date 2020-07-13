@@ -13,6 +13,7 @@ from covid_19_au_grab.overseas.africa.so_data.SOData import SOData
 from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
 
 from covid_19_au_grab.overseas.s_asia.bd_data.BDData import BDData
+from covid_19_au_grab.overseas.w_europe.be_data.BEData import BEData
 from covid_19_au_grab.overseas.americas.br_data.BRData import BRData
 from covid_19_au_grab.overseas.africa.bw_data.BWData import BWData
 from covid_19_au_grab.overseas.americas.ca_data.CACovid19Canada import CACovid19Canada
@@ -38,6 +39,8 @@ from covid_19_au_grab.overseas.e_europe.kh_data.KHData import KHData
 from covid_19_au_grab.overseas.se_asia.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.e_europe.kz_data.KZData import KZData
 from covid_19_au_grab.overseas.s_asia.lk_data.LKData import LKData
+from covid_19_au_grab.overseas.africa.ma_data.MAData import MAData
+from covid_19_au_grab.overseas.e_europe.mk_data.MKData import MKData
 from covid_19_au_grab.overseas.se_asia.mm_data.MMData import MMData
 from covid_19_au_grab.overseas.africa.mw_data.MWData import MWData
 from covid_19_au_grab.overseas.se_asia.my_data.MYData import MYData
@@ -47,8 +50,10 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 from covid_19_au_grab.overseas.mid_east.om_data.OMData import OMData
 #from covid_19_au_grab.overseas.ph_data.PHData import PHData
 from covid_19_au_grab.overseas.mid_east.ps_data.PSData import PSData
+from covid_19_au_grab.overseas.e_europe.rs_data.RSData import RSData
 from covid_19_au_grab.overseas.mid_east.sa_data.SAData import SAData
 from covid_19_au_grab.overseas.africa.sd_data.SDData import SDData
+from covid_19_au_grab.overseas.w_europe.si_data.SIData import SIData
 #from covid_19_au_grab.overseas.th_data.THData import THData
 from covid_19_au_grab.overseas.w_europe.uk_data.UKData import UKData
 #from covid_19_au_grab.overseas.uz_data.UZData import UZData
@@ -78,6 +83,7 @@ class OverseasDataSources:
             WorldJHUDataAdmin2,
             AFData,
             BDData,
+            BEData,
             BRData,
             BWData,
             CACovid19Canada,
@@ -107,6 +113,8 @@ class OverseasDataSources:
             KZData,
             LKData,
             LYData,
+            MAData,
+            MKData,
             #MLData,
             MMData,
             MWData,
@@ -117,8 +125,10 @@ class OverseasDataSources:
             OMData,
             #PHData,
             PSData,
+            RSData,
             SAData,
             SDData,
+            SIData,
             SNData,
             SOData,
             THData,

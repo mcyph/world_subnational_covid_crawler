@@ -44,6 +44,7 @@ class _ACTPowerBI(PowerBIDataReader):
             if i_updated_date is not None:
                 updated_date = i_updated_date
 
+            #print(updated_date)
             r.extend(self._get_age_groups_data(updated_date, response_dict))
             r.extend(self._get_confirmed_cases_data(updated_date, response_dict))
             r.extend(self._get_deaths_data(updated_date, response_dict))
@@ -88,6 +89,10 @@ class _ACTPowerBI(PowerBIDataReader):
             'age_groups_6',
             'age_groups_7',
             'age_groups_8',
+            'age_groups_9',
+            'age_groups_10',
+            'age_groups_11',
+            'age_groups_12',
         ):
             try:
                 data = response_dict[key][1]
@@ -333,15 +338,18 @@ class _ACTPowerBI(PowerBIDataReader):
             try:
                 try:
                     try:
-                        data = response_dict['recovered'][1]
+                        try:
+                            data = response_dict['recovered'][1]
+                        except KeyError:
+                            data = response_dict['recovered_2'][1]
                     except KeyError:
-                        data = response_dict['recovered_2'][1]
+                        data = response_dict['recovered_3'][1]
                 except KeyError:
-                    data = response_dict['recovered_3'][1]
+                    data = response_dict['recovered_4'][1]
             except KeyError:
-                data = response_dict['recovered_4'][1]
+                data = response_dict['recovered_5'][1]
         except KeyError:
-            data = response_dict['recovered_5'][1]
+            data = response_dict['recovered_6'][1]
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(

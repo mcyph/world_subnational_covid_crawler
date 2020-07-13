@@ -4,17 +4,8 @@ from re import compile, MULTILINE, DOTALL, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
 )
-from covid_19_au_grab.state_news_releases.nsw.get_nsw_cases_data import (
-    get_nsw_cases_data
-)
-from covid_19_au_grab.state_news_releases.nsw.get_nsw_tests_data import (
-    get_nsw_tests_data
-)
-from covid_19_au_grab.state_news_releases.nsw.get_nsw_postcode_data import (
-    get_nsw_postcode_data
-)
-from covid_19_au_grab.state_news_releases.nsw.get_nsw_age_data import (
-    get_nsw_age_data
+from covid_19_au_grab.state_news_releases.nsw.NSWJSONData import (
+    NSWJSONData
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_LGA, SCHEMA_LHD,
@@ -78,7 +69,6 @@ class NSWNews(StateNewsBase):
 
     def get_data(self):
         r = []
-        r.extend(get_nsw_age_data())
 
         for typ, url in (
             ('lhd', self.NSW_LHD_STATS_URL),
@@ -118,19 +108,7 @@ class NSWNews(StateNewsBase):
             )
             unique_keys.add(k)
 
-        # Combine+make sure the postcode mappings to LGA are
-        # consistent between the two datasets (regression check)
-        postcode_to_lga_1, nsw_cases_data = get_nsw_cases_data()
-        postcode_to_lga_2, nsw_tests_data = get_nsw_tests_data()
-        r.extend(nsw_tests_data)
-
-        for k, v in postcode_to_lga_1.items():
-            assert postcode_to_lga_2.get(k, v) == v, v
-        for k, v in postcode_to_lga_2.items():
-            assert postcode_to_lga_1.get(k, v) == v, v
-        postcode_to_lga_1.update(postcode_to_lga_2)
-
-        for datapoint in get_nsw_postcode_data(postcode_to_lga_1)+nsw_cases_data:
+        for datapoint in NSWJSONData().get_datapoints():
             # Prefer website over csv data
             import datetime
             yyyy, mm, dd = datapoint.date_updated.split('_')

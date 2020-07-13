@@ -1,5 +1,7 @@
 import json
 import glob
+
+from math import log
 from os import listdir
 
 
@@ -67,3 +69,28 @@ class PowerBIDataReader:
                     #  match the request with the response!
                     #print(json.dumps(data, indent=4))
                     yield json_path.replace('.json', '').split('/')[-1], data['results'][0]
+
+    def process_powerbi_value(self, region_dict, previous_value, data):
+        """
+
+        """
+        def bits(n):
+            while n:
+                b = n & (~n + 1)
+                yield b
+                n ^= b
+
+        value = region_dict['C']
+
+        if region_dict.get('Ø'):
+            value.insert(region_dict['Ø'] - 1, None)
+
+        if region_dict.get('R'):
+            for bit in bits(region_dict['R']):
+                bit = int(log(bit, 2))
+                try:
+                    value.insert(bit, previous_value[bit])
+                except IndexError:
+                    value.insert(bit, None)
+
+        return value, previous_value

@@ -88,9 +88,12 @@ class _VicPowerBI(PowerBIDataReader):
         # Try to get updated date from source, if possible
         # "M0": "08/04/2020 - 12:03:00 PM"
         try:
-            data = response_dict['unknown_please_categorize_5'][1]  #  ??? ====================================================================
-        except (KeyError, IndexError, AttributeError):
-            data = response_dict['total_updated_date'][1]
+            try:
+                data = response_dict['unknown_please_categorize_5'][1]  #  ??? ====================================================================
+            except (KeyError, IndexError, AttributeError):
+                data = response_dict['total_updated_date'][1]
+        except KeyError:
+            data = response_dict['total_updated_date_2'][1]
 
         updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         updated_date = datetime.strptime(
@@ -102,7 +105,14 @@ class _VicPowerBI(PowerBIDataReader):
         """
         The active updated date may not always be the same as the totals date
         """
-        data = response_dict['active_updated_date'][1]
+        try:
+            try:
+                data = response_dict['active_updated_date'][1]
+            except KeyError:
+                data = response_dict['active_updated_date_2'][1]
+        except KeyError:
+            data = response_dict['active_updated_date_3'][1]
+
         updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         updated_date = datetime.strptime(
             updated_str.split('-')[0].strip(), '%d/%m/%Y'
@@ -114,35 +124,40 @@ class _VicPowerBI(PowerBIDataReader):
         try:
             try:
                 try:
-                    data = response_dict['regions'][1]
+                    try:
+                        try:
+                            data = response_dict['regions'][1]
+                        except KeyError:
+                            data = response_dict['regions_2'][1]
+                    except KeyError:
+                        data = response_dict['regions_3'][1]
                 except KeyError:
-                    data = response_dict['regions_2'][1]
+                    data = response_dict['regions_4'][1]
             except KeyError:
-                data = response_dict['regions_3'][1]
+                data = response_dict['regions_5'][1]
         except KeyError:
-            data = response_dict['regions_4'][1]
+            data = response_dict['regions_6'][1]
+
+        previous_value = None
 
         for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            # print(region_child)
+            value, previous_value = self.process_powerbi_value(region_child, previous_value, data)
+            if value[0] is None:
+                continue
 
-            if region_child.get('R'):
-                value = previous_value
-            else:
-                value = region_child['C'][1]
-
-            region_string = region_child['C'][0].split('(')[0].strip()
+            region_string = value[0].split('(')[0].strip()
             output.append(DataPoint(
                 region_schema=SCHEMA_LGA,
                 datatype=DT_TOTAL,
                 region_child=region_string,
-                value=value,
+                value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
             previous_value = value
             # print(output[-1])
 
-            self.totals_dict[region_string] = value
+            self.totals_dict[region_string] = value[1]
 
         return output
 
@@ -155,24 +170,31 @@ class _VicPowerBI(PowerBIDataReader):
         output = []
         try:
             try:
-                data = response_dict['regions_active'][1]
+                try:
+                    try:
+                        try:
+                            data = response_dict['regions_active'][1]
+                        except KeyError:
+                            data = response_dict['regions_active_2'][1]
+                    except KeyError:
+                        data = response_dict['regions_active_3'][1]
+                except KeyError:
+                    data = response_dict['regions_active_4'][1]
             except KeyError:
-                data = response_dict['regions_active_2'][1]
+                data = response_dict['regions_active_5'][1]
         except KeyError:
-            data = response_dict['regions_active_3'][1]
+            data = response_dict['regions_active_6'][1]
 
+        previous_value = None
         currently_active_regions = set()
 
         for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
-            # print(region_child)
-
-            if region_child.get('R'):
-                value = previous_value
-            else:
-                value = region_child['C'][1]
+            value, previous_value = self.process_powerbi_value(region_child, previous_value, data)
+            if value[0] is None:
+                continue
 
             # Add active info
-            region_string = region_child['C'][0].split('(')[0].strip()
+            region_string = value[0].split('(')[0].strip()
             previously_active_regions.add(region_string)
             currently_active_regions.add(region_string)
 
@@ -180,7 +202,7 @@ class _VicPowerBI(PowerBIDataReader):
                 region_schema=SCHEMA_LGA,
                 datatype=DT_STATUS_ACTIVE,
                 region_child=region_string,
-                value=value,
+                value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
@@ -191,7 +213,7 @@ class _VicPowerBI(PowerBIDataReader):
                     region_schema=SCHEMA_LGA,
                     datatype=DT_STATUS_RECOVERED,
                     region_child=region_string,
-                    value=self.totals_dict[region_string]-value,
+                    value=self.totals_dict[region_string]-value[1],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
                 ))
@@ -228,9 +250,12 @@ class _VicPowerBI(PowerBIDataReader):
         output = []
         DT_TOTAL_NOTSTATED = 999999999 # HACK!
         try:
-            data = response_dict['age_data'][1]
+            try:
+                data = response_dict['age_data'][1]
+            except KeyError:
+                data = response_dict['age_data_2'][1]
         except KeyError:
-            data = response_dict['age_data_2'][1]
+            data = response_dict['age_data_3'][1]
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         cols = [i['G1'].rstrip('s') for i in cols]
@@ -240,8 +265,32 @@ class _VicPowerBI(PowerBIDataReader):
             '': None,  # HACK!!!
             'Female': DT_TOTAL_FEMALE,
             'Male': DT_TOTAL_MALE,
-            'Not stated': DT_TOTAL_NOTSTATED
+            'Not stated': DT_TOTAL_NOTSTATED,
+            'Other': DT_TOTAL_NOTSTATED
         }
+        age_mapping = {
+            'Other': 'Unknown',
+            'Unknown': 'Unknown',
+            '00-04': '0-9',
+            '05-09': '0-9',
+            '10-14': '10-19',
+            '15-19': '10-19',
+            '20-24': '20-29',
+            '25-29': '20-29',
+            '30-34': '30-39',
+            '35-39': '30-39',
+            '40-44': '40-49',
+            '45-49': '40-49',
+            '50-54': '50-59',
+            '55-59': '50-59',
+            '60-64': '60-69',
+            '65-69': '60-69',
+            '70-74': '70-79',
+            '75-79': '70-79',
+            '80-84': '80-84',
+            '85+': '85+',
+        }
+
         col_mapping = []
         for col in cols:
             col_mapping.append(gender_mapping[col])
@@ -249,6 +298,10 @@ class _VicPowerBI(PowerBIDataReader):
 
         assert DT_TOTAL_MALE in col_mapping
         assert DT_TOTAL_FEMALE in col_mapping
+
+        totals = {}
+        female = {}
+        male = {}
 
         for age in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             X = age['X']
@@ -274,28 +327,21 @@ class _VicPowerBI(PowerBIDataReader):
                     previous_value = value_1
                 else:
                     value_1 = 0
-                
+
                 vals_dict[col_mapping[X_i]] = value_1
                 X_i += 1
                 i += 1
 
+            # Convert from e.g. "10-14" or "15-19" to "10-19"
+            agerange = age_mapping[age['G0'].replace('–', '-')]
+
             if DT_TOTAL_MALE in vals_dict:
-                output.append(DataPoint(
-                    datatype=DT_TOTAL_MALE,
-                    agerange=age['G0'].replace('–', '-'),
-                    value=vals_dict[DT_TOTAL_MALE],
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
+                male.setdefault(agerange, 0)
+                male[agerange] += vals_dict[DT_TOTAL_MALE]
 
             if DT_TOTAL_FEMALE in vals_dict:
-                output.append(DataPoint(
-                    datatype=DT_TOTAL_FEMALE,
-                    agerange=age['G0'].replace('–', '-'),
-                    value=vals_dict[DT_TOTAL_FEMALE],
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
+                female.setdefault(agerange, 0)
+                female[agerange] += vals_dict[DT_TOTAL_FEMALE]
 
             # TODO: support "not stated" separately!!! ====================================================
             general_age = (
@@ -303,13 +349,22 @@ class _VicPowerBI(PowerBIDataReader):
                 vals_dict.get(DT_TOTAL_FEMALE, 0) +
                 vals_dict.get(DT_TOTAL_NOTSTATED, 0)
             )
-            output.append(DataPoint(
-                datatype=DT_TOTAL,
-                agerange=age['G0'].replace('–', '-'),
-                value=general_age,
-                date_updated=updated_date,
-                source_url=SOURCE_URL
-            ))
+            totals.setdefault(agerange, 0)
+            totals[agerange] += general_age
+
+        for datatype, values in (
+            (DT_TOTAL_MALE, male),
+            (DT_TOTAL_FEMALE, female),
+            (DT_TOTAL, totals)
+        ):
+            for agerange, value in values.items():
+                output.append(DataPoint(
+                    datatype=datatype,
+                    agerange=agerange,
+                    value=value,
+                    date_updated=updated_date,
+                    source_url=SOURCE_URL
+                ))
 
         return output
 
@@ -333,13 +388,16 @@ class _VicPowerBI(PowerBIDataReader):
         try:
             try:
                 try:
-                    data = response_dict['source_of_infection'][1]
+                    try:
+                        data = response_dict['source_of_infection'][1]
+                    except KeyError:
+                        data = response_dict['source_of_infection_2'][1]
                 except KeyError:
-                    data = response_dict['source_of_infection_2'][1]
+                    data = response_dict['source_of_infection_3'][1]
             except KeyError:
-                data = response_dict['source_of_infection_3'][1]
+                data = response_dict['source_of_infection_4'][1]
         except KeyError:
-            data = response_dict['source_of_infection_4'][1]
+            data = response_dict['source_of_infection_5'][1]
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(
@@ -361,6 +419,5 @@ def get_powerbi_data():
 
 if __name__ == '__main__':
     from pprint import pprint
-
     __r = get_powerbi_data()
     pprint(__r)

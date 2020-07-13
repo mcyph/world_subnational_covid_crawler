@@ -1,4 +1,3 @@
-from math import log
 from os.path import exists
 from datetime import datetime
 
@@ -18,13 +17,6 @@ from covid_19_au_grab.datatypes.DataPoint import (
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
     PowerBIDataReader
 )
-
-
-def bits(n):
-    while n:
-        b = n & (~n+1)
-        yield b
-        n ^= b
 
 
 class _WestAfricaPowerBI(PowerBIDataReader):
@@ -75,21 +67,11 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         except KeyError:
             data = response_dict['country_data_2'][1]
 
+        previous_value = None
         SOURCE_URL = 'https://app.powerbi.com/view?r=eyJrIjoiZTRkZDhmMDctM2NmZi00NjRkLTgzYzMtYzI1MDMzNWI3NTRhIiwidCI6IjBmOWUzNWRiLTU0NGYtNGY2MC1iZGNjLTVlYTQxNmU2ZGM3MCIsImMiOjh9'
 
         for region_dict in data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']:
-            value = region_dict['C']
-
-            if region_dict.get('Ø'):
-                value.insert(region_dict['Ø']-1, None)
-
-            if region_dict.get('R'):
-                for bit in bits(region_dict['R']):
-                    bit = int(log(bit, 2))
-                    try:
-                        value.insert(bit, previous_value[bit])
-                    except IndexError:
-                        value.insert(bit, None)
+            value, previous_value = self.process_powerbi_value(region_dict, previous_value, data)
 
             if isinstance(value[0], int):
                 value[0] = data['result']['data']['dsr']['DS'][0]['ValueDicts']['D0'][value[0]]
@@ -97,7 +79,6 @@ class _WestAfricaPowerBI(PowerBIDataReader):
             if isinstance(value[1], int):
                 value[1] = data['result']['data']['dsr']['DS'][0]['ValueDicts']['D1'][value[1]]
 
-            previous_value = value
             while len(value) != 8:
                 value.append(None)
             
@@ -160,6 +141,8 @@ class _WestAfricaPowerBI(PowerBIDataReader):
                 ))
 
         return r
+
+
 
 
 def get_powerbi_data():

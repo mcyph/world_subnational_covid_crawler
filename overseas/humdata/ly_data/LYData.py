@@ -60,8 +60,9 @@ class LYData(URLBase):
             if first_item:
                 first_item = False
                 continue
+            #print(item)
             date = self.convert_date(item['Date'])
-            region_child = item['Governorate'].title()
+            region_child = item['Location'].title() # Location was Governorate
 
             if item['Confirmed Cases']:
                 r.append(DataPoint(

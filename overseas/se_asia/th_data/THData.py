@@ -29,7 +29,7 @@ def get_districts_map():
     r = {}
 
     with open(get_package_dir() /
-              'overseas' / 'th_data' / 'th_districts.csv',
+              'overseas' / 'se_asia' / 'th_data' / 'th_districts.csv',
               'r', encoding='utf-8') as f:
 
         for item in csv.DictReader(f, delimiter='\t'):

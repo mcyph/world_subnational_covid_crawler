@@ -280,6 +280,7 @@ class ExtractFromTokyoPDF:
     def download_pdfs(self, only_most_recent=True):
         base_dir = get_package_dir() / \
                    'overseas' / \
+                   'se_asia' / \
                    'jp_city_data' / \
                    'tokyocities_pdf'
 
@@ -340,6 +341,7 @@ class ExtractFromTokyoPDF:
     def get_from_pdfs(self):
         base_dir = get_package_dir() / \
                    'overseas' / \
+                   'se_asia' / \
                    'jp_city_data' / \
                    'tokyocities_pdf'
 

@@ -17,6 +17,3 @@ def get_tokyo_cities_to_en_map():
             for c in '区町村市島':
                 r[item['ja'].strip().rstrip(c)] = item['en'].strip()
     return r
-
-
-
