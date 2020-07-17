@@ -117,9 +117,13 @@ class THData(URLBase):
                 'Male': DT_TOTAL_MALE,
                 'Female': DT_TOTAL_FEMALE
             }[case_dict['GenderEn']]
-            province = ltrc.get_by_label(
-                SCHEMA_ADMIN_1, 'TH', case_dict['ProvinceEn']
-            )
+
+            if case_dict['ProvinceEn'].lower() == 'unknown':
+                province = 'unknown'
+            else:
+                province = ltrc.get_by_label(
+                    SCHEMA_ADMIN_1, 'TH', case_dict['ProvinceEn']
+                )
 
             by_total[date] += 1
             by_age[date, agerange] += 1

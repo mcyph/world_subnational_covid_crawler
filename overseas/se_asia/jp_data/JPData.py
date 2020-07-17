@@ -250,20 +250,20 @@ class JPData(GithubRepo):
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_0,
                     region_child='Japan',
-                    agerange=age_map[item['年代']],
+                    agerange=age_map[item['age_group']],
                     datatype=DT_TOTAL,
-                    value=int(item["陽性者"]),
+                    value=int(item["tested_positive"]),
                     date_updated=date,
                     source_url=self.github_url
                 ))
 
-                if item.get("死亡"):
+                if item.get("death"):
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_0,
                         region_child='Japan',
-                        agerange=age_map[item['年代']],
+                        agerange=age_map[item['age_group']],
                         datatype=DT_STATUS_DEATHS,
-                        value=int(item["死亡"]),
+                        value=int(item["death"]),
                         date_updated=date,
                         source_url=self.github_url
                     ))
@@ -272,7 +272,7 @@ class JPData(GithubRepo):
                     r.append(DataPoint(
                         region_schema=SCHEMA_ADMIN_0,
                         region_child='Japan',
-                        agerange=age_map[item['年代']],
+                        agerange=age_map[item['age_group']],
                         datatype=DT_STATUS_ICU,
                         value=int(item["重症"]),  # WARNING: NOT REALLY ICU - but likely mostly is!! =====================
                         date_updated=date,

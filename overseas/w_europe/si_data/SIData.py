@@ -281,6 +281,9 @@ class SIData(URLBase):
                     for sub_region, sub_region_dict in region_dict.items():
                         region_child = region_map[sub_region.replace('_', ' ').lower()]
                         #print(region, sub_region, sub_region_dict)
+                        date = '%04d_%02d_%02d' % (
+                            i_data['year'], i_data['month'], i_data['day']
+                        )
 
                         if sub_region_dict['activeCases'] is not None:
                             r.append(DataPoint(

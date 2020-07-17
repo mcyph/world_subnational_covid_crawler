@@ -3,6 +3,7 @@ from datetime import datetime
 
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1,
+    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_HOSPITALIZED,
     DT_STATUS_DEATHS,
@@ -29,6 +30,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         r = []
         for updated_date, rev_id, response_dict in self._iter_all_dates():
             subdir = f'{self.base_path}/{updated_date}-{rev_id}'
+            print("PROCESSING:", subdir)
 
             # Only use most revision if there isn't
             # a newer revision ID for a given day!
@@ -63,14 +65,55 @@ class _WestAfricaPowerBI(PowerBIDataReader):
     def _get_regions_data(self, updated_date, response_dict):
         r = []
         try:
-            data = response_dict['country_data'][1]
+            try:
+                try:
+                    try:
+                        try:
+                            data = response_dict['country_data'][1]
+                        except KeyError:
+                            data = response_dict['country_data_2'][1]
+                    except KeyError:
+                        data = response_dict['country_data_3'][1]
+                except KeyError:
+                    data = response_dict['country_data_4'][1]
+            except KeyError:
+                data = response_dict['country_data_5'][1]
         except KeyError:
-            data = response_dict['country_data_2'][1]
+            data = response_dict['country_data_6'][1]
 
         previous_value = None
         SOURCE_URL = 'https://app.powerbi.com/view?r=eyJrIjoiZTRkZDhmMDctM2NmZi00NjRkLTgzYzMtYzI1MDMzNWI3NTRhIiwidCI6IjBmOWUzNWRiLTU0NGYtNGY2MC1iZGNjLTVlYTQxNmU2ZGM3MCIsImMiOjh9'
 
+        def get_index(name):
+            for x, i_dict in enumerate(data['result']['data']['descriptor']['Select']):
+                i_name = i_dict['Name']
+                if name.lower() in i_name.lower():
+                    return x
+            return None
+
+        mappings = {
+            #'admin0Name',
+            #'admin1Name',
+            'cas_confirm': DT_TOTAL,
+            'd\u00e9c\u00e8s': DT_STATUS_DEATHS,
+            'en_traitement': DT_STATUS_HOSPITALIZED,
+            'Gueris': DT_STATUS_RECOVERED,
+            'Femmes': DT_TOTAL_FEMALE,
+            'Hommes': DT_TOTAL_MALE,
+
+            #'Contacts_suivis': ,
+            'Tests_effectues': DT_TESTS_TOTAL,
+            'cas_confirm\u00e9s': DT_TOTAL,
+        }
+
+        mappings = {
+            k: (v, get_index(k))
+            for k, v in mappings.items()
+            if get_index(k) is not None
+        }
+
         for region_dict in data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']:
+            print(region_dict, previous_value)
             value, previous_value = self.process_powerbi_value(region_dict, previous_value, data)
 
             if isinstance(value[0], int):
@@ -82,67 +125,22 @@ class _WestAfricaPowerBI(PowerBIDataReader):
             while len(value) != 8:
                 value.append(None)
             
-            admin_0, admin_1, contacts, tests, \
-            cases, recoveries, deaths, in_treatment = value
+            admin_0, admin_1 = value[:2]
 
-            if cases is not None:
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    region_parent=admin_0,
-                    region_child=admin_1,
-                    datatype=DT_TOTAL,
-                    value=int(cases),
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
+            for _, (datatype, index) in mappings.items():
+                cases = value[index]
 
-            if tests is not None:
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    region_parent=admin_0,
-                    region_child=admin_1,
-                    datatype=DT_TESTS_TOTAL,
-                    value=int(tests),
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
-
-            if recoveries is not None:
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    region_parent=admin_0,
-                    region_child=admin_1,
-                    datatype=DT_STATUS_RECOVERED,
-                    value=int(recoveries),
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
-
-            if deaths is not None:
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    region_parent=admin_0,
-                    region_child=admin_1,
-                    datatype=DT_STATUS_DEATHS,
-                    value=int(deaths),
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
-
-            if in_treatment is not None:
-                r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    region_parent=admin_0,
-                    region_child=admin_1,
-                    datatype=DT_STATUS_HOSPITALIZED,
-                    value=int(in_treatment),
-                    date_updated=updated_date,
-                    source_url=SOURCE_URL
-                ))
-
+                if cases is not None:
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_ADMIN_1,
+                        region_parent=admin_0,
+                        region_child=admin_1,
+                        datatype=datatype,
+                        value=int(cases),
+                        date_updated=updated_date,
+                        source_url=SOURCE_URL
+                    ))
         return r
-
-
 
 
 def get_powerbi_data():

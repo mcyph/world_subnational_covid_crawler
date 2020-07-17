@@ -190,7 +190,11 @@ class JPCityData(URLBase):
                 # May as well use English prefecture names to and allow the system to
                 # auto-translate to ISO-3166-2 later
                 resident_of = item['居住都道府県']
-                assert resident_of, item
+                if not resident_of:
+                    assert item['居住都道府県コード'] == '#N/A', item
+                    continue # TODO: Add for other info!!! ===========================
+                
+                #assert resident_of, item
                 # e.g. 中富良野町 will be different to the English 'Release' field
                 #announced_in = item['Release']
                 city = item.get('居住市区町村') or 'Unknown'  # Japanese only
