@@ -83,7 +83,7 @@ class HRData(URLBase):
             for text_elm in pq(data)('text.zarazeni'):
                 if not text_elm.get('data-url').strip():
                     continue
-                value = int(pq(text_elm).text())
+                value = int(pq(text_elm).text().replace('.', ''))
                 region_child = region_map[text_elm.get('data-url').split('/')[-2]]
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
@@ -98,7 +98,7 @@ class HRData(URLBase):
             for text_elm in pq(data)('text.aktivni'):
                 if not text_elm.get('data-url').strip():
                     continue
-                value = int(pq(text_elm).text())
+                value = int(pq(text_elm).text().replace('.', ''))
                 region_child = region_map[text_elm.get('data-url').split('/')[-2]]
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,

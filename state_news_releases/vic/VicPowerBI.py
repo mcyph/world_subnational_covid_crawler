@@ -1987,7 +1987,7 @@ running_total_req = {
         "QueryId": ""
       }
 
-unknown_please_categorize_5_req = {
+total_updated_date_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -3699,7 +3699,7 @@ total_updated_date_2_req = {
         "QueryId": ""
       }
 
-total_updated_date_req = {
+total_updated_date_3_req = {
         "ApplicationContext": {
           "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
           "Sources": [
@@ -4554,6 +4554,341 @@ source_of_infection_5_req = {
                     }
                   ],
                   "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+regions_active_7_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}},{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d1"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d1"
+                                                            }
+                                                        },
+                                                        "Property": "LGAName"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "l"
+                                                        }
+                                                    },
+                                                    "Property": "clin_status_n"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted to ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted, not known to be in ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Home isolation'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hospital in the home'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hotel detention'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+regions_active_8_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}},{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Under investigation'\"}}]]}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Window": {
+                        "Count": 500
+                      }
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "dimLGA",
+                      "Name": "d1",
+                      "Type": 0
+                    },
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l",
+                      "Type": 0
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "d1"
+                          }
+                        },
+                        "Property": "LGAName"
+                      },
+                      "Name": "dimLGA.LGAName"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "Not": {
+                          "Expression": {
+                            "Comparison": {
+                              "ComparisonKind": 0,
+                              "Left": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Source": "d1"
+                                    }
+                                  },
+                                  "Property": "LGAName"
+                                }
+                              },
+                              "Right": {
+                                "Literal": {
+                                  "Value": "null"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "Condition": {
+                        "In": {
+                          "Expressions": [
+                            {
+                              "Column": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "l"
+                                  }
+                                },
+                                "Property": "clin_status_n"
+                              }
+                            }
+                          ],
+                          "Values": [
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted to ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted, not known to be in ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Home isolation'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hotel detention'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hospital in the home'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Under investigation'"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }

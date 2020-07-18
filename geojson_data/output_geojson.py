@@ -22,7 +22,7 @@ from covid_19_au_grab.geojson_data.se_asia.ProcessMYDistrict import FIXME
 
 from covid_19_au_grab.geojson_data.w_europe.ProcessCRCanton import FIXME
 from covid_19_au_grab.geojson_data.w_europe.ProcessUKArea import FIXME
-from covid_19_au_grab.geojson_data.w_europe.ProcessDEAGS import FIXME
+from covid_19_au_grab.geojson_data.w_europe.ProcessDEKreis import FIXME
 from covid_19_au_grab.geojson_data.w_europe.ProcessESAutonomousCommunity import FIXME
 from covid_19_au_grab.geojson_data.w_europe.ProcessESMadridMunicipality import FIXME
 from covid_19_au_grab.geojson_data.w_europe.ProcessFRDepartment import  FIXME

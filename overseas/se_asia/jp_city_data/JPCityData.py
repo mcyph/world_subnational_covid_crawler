@@ -140,7 +140,7 @@ class JPCityData(URLBase):
             for k in item:
                 item[k] = item[k].strip()
 
-            for xxx in range(int(item['人数'].strip() or 1)):
+            for xxx in range(int(item.get('人数', '').strip() or 1)):
                 #print(item)
                 #item = item['properties']
 
@@ -151,13 +151,6 @@ class JPCityData(URLBase):
                     print("NOT 確定日", item)
                     assert not ''.join(item.values()).strip(), item
                     continue  # WARNING!
-
-                #if item['累計'].strip('#REF!') and int(item['累計']) > 1:
-                #    print('RUIKEI:', item['累計'])
-                #    print(item)
-                if item['人数'].strip('#REF!') and int(item['人数']) > 1:
-                    print('NUM PPL:', item['人数'])
-                    print(item)
 
                 if item.get('年代') == '0-10':
                     agerange = '0-9'

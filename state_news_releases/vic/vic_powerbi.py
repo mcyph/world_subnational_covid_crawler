@@ -87,13 +87,7 @@ class _VicPowerBI(PowerBIDataReader):
     def _get_updated_date(self, response_dict):
         # Try to get updated date from source, if possible
         # "M0": "08/04/2020 - 12:03:00 PM"
-        try:
-            try:
-                data = response_dict['unknown_please_categorize_5'][1]  #  ??? ====================================================================
-            except (KeyError, IndexError, AttributeError):
-                data = response_dict['total_updated_date'][1]
-        except KeyError:
-            data = response_dict['total_updated_date_2'][1]
+        data = response_dict['total_updated_date'][1]
 
         updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         updated_date = datetime.strptime(
@@ -106,12 +100,9 @@ class _VicPowerBI(PowerBIDataReader):
         The active updated date may not always be the same as the totals date
         """
         try:
-            try:
-                data = response_dict['active_updated_date'][1]
-            except KeyError:
-                data = response_dict['active_updated_date_2'][1]
+            data = response_dict['active_updated_date'][1]
         except KeyError:
-            data = response_dict['active_updated_date_3'][1]
+            data = response_dict['total_updated_date'][1]
 
         updated_str = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         updated_date = datetime.strptime(
@@ -121,23 +112,7 @@ class _VicPowerBI(PowerBIDataReader):
 
     def _get_regions(self, updated_date, response_dict):
         output = []
-        try:
-            try:
-                try:
-                    try:
-                        try:
-                            data = response_dict['regions'][1]
-                        except KeyError:
-                            data = response_dict['regions_2'][1]
-                    except KeyError:
-                        data = response_dict['regions_3'][1]
-                except KeyError:
-                    data = response_dict['regions_4'][1]
-            except KeyError:
-                data = response_dict['regions_5'][1]
-        except KeyError:
-            data = response_dict['regions_6'][1]
-
+        data = response_dict['regions'][1]
         previous_value = None
 
         for region_child in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
@@ -168,22 +143,7 @@ class _VicPowerBI(PowerBIDataReader):
             return []
 
         output = []
-        try:
-            try:
-                try:
-                    try:
-                        try:
-                            data = response_dict['regions_active'][1]
-                        except KeyError:
-                            data = response_dict['regions_active_2'][1]
-                    except KeyError:
-                        data = response_dict['regions_active_3'][1]
-                except KeyError:
-                    data = response_dict['regions_active_4'][1]
-            except KeyError:
-                data = response_dict['regions_active_5'][1]
-        except KeyError:
-            data = response_dict['regions_active_6'][1]
+        data = response_dict['regions_active'][1]
 
         previous_value = None
         currently_active_regions = set()
@@ -249,20 +209,14 @@ class _VicPowerBI(PowerBIDataReader):
     def _get_age_data(self, updated_date, response_dict):
         output = []
         DT_TOTAL_NOTSTATED = 999999999 # HACK!
-        try:
-            try:
-                data = response_dict['age_data'][1]
-            except KeyError:
-                data = response_dict['age_data_2'][1]
-        except KeyError:
-            data = response_dict['age_data_3'][1]
+        data = response_dict['age_data'][1]
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         cols = [i['G1'].rstrip('s') for i in cols]
         #print("COLS:", cols)
 
         gender_mapping = {
-            '': None,  # HACK!!!
+            '': DT_TOTAL_NOTSTATED,
             'Female': DT_TOTAL_FEMALE,
             'Male': DT_TOTAL_MALE,
             'Not stated': DT_TOTAL_NOTSTATED,
@@ -315,7 +269,7 @@ class _VicPowerBI(PowerBIDataReader):
             while i < len(X):
                 if X[i].get('I'):
                     # "jump to column index"
-                    X_i = X[X_i]['I']
+                    X_i = X[i]['I']
                 
                 if len(X) > 0:
                     # Note that previous value simply means the very last value seen
@@ -328,7 +282,12 @@ class _VicPowerBI(PowerBIDataReader):
                 else:
                     value_1 = 0
 
-                vals_dict[col_mapping[X_i]] = value_1
+                # Make it so that if there's a blank column and a
+                # "not specified" column they're both added together
+                # into the total
+                vals_dict[col_mapping[X_i]] = (
+                    vals_dict.get(col_mapping[X_i], 0) + value_1
+                )
                 X_i += 1
                 i += 1
 
@@ -385,19 +344,7 @@ class _VicPowerBI(PowerBIDataReader):
         }
 
         output = []
-        try:
-            try:
-                try:
-                    try:
-                        data = response_dict['source_of_infection'][1]
-                    except KeyError:
-                        data = response_dict['source_of_infection_2'][1]
-                except KeyError:
-                    data = response_dict['source_of_infection_3'][1]
-            except KeyError:
-                data = response_dict['source_of_infection_4'][1]
-        except KeyError:
-            data = response_dict['source_of_infection_5'][1]
+        data = response_dict['source_of_infection'][1]
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(

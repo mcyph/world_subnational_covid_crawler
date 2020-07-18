@@ -246,7 +246,7 @@
         },
         "br_city": {
             "iso_3166": "BR",
-            "min_zoom": 4,
+            "min_zoom": 5,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
@@ -270,18 +270,30 @@
             "priority": 5,
             "split_by_parent_region": false
         },
+        "cz_okres": {
+            "iso_3166": "CZ",
+            "min_zoom": 2,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
         "cu_municipality": {
             "iso_3166": "CU",
             "min_zoom": 6,
             "priority": 5,
             "split_by_parent_region": false
         },
-        "de_ags": {
+        "de_kreis": {
             "iso_3166": "DE",
-            "min_zoom": 4,
-            "priority": -1,
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
+        },
+        "fi_health_district": {
+            "iso_3166": "FI",
+            "min_zoom": 2,
+            "priority": 5,
+            "split_by_parent_region": false
         },
         "in_district": {
             "iso_3166": "IN",
@@ -300,6 +312,13 @@
         "jp_city": {
             "iso_3166": "JP",
             "min_zoom": 7,
+            "priority": 5,
+            "line_width": 0.5,
+            "split_by_parent_region": true
+        },
+        "lt_municipality": {
+            "iso_3166": "LT",
+            "min_zoom": 5,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true
@@ -325,6 +344,18 @@
         },
         "ps_province": {
             "iso_3166": "PS",
+            "min_zoom": 2,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
+        "pt_municipality": {
+            "iso_3166": "PT",
+            "min_zoom": 2,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
+        "nuts_1": {
+            "iso_3166": "TR",
             "min_zoom": 2,
             "priority": 5,
             "split_by_parent_region": false

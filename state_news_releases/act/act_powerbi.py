@@ -61,14 +61,7 @@ class _ACTPowerBI(PowerBIDataReader):
         return int(i.rstrip('L'))
 
     def _get_updated_date(self, updated_date, response_dict):
-        try:
-            try:
-                ts = response_dict['updated_date'][1]
-            except KeyError:
-                ts = response_dict['updated_date_2'][1]
-        except KeyError:
-            ts = response_dict['updated_date_3'][1]
-
+        ts = response_dict['updated_date'][1]
         ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
         if ts < 1000:
@@ -79,31 +72,8 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_age_groups_data(self, updated_date, response_dict):
         r = []
-        data = None
-        for key in (
-            'age_groups',
-            'age_groups_2',
-            'age_groups_3',
-            'age_groups_4',
-            'age_groups_5',
-            'age_groups_6',
-            'age_groups_7',
-            'age_groups_8',
-            'age_groups_9',
-            'age_groups_10',
-            'age_groups_11',
-            'age_groups_12',
-        ):
-            try:
-                data = response_dict[key][1]
-                print("USING KEY:", key)
-                break
-            except KeyError:
-                pass
 
-        if not data:
-            raise Exception("age group data not found")
-
+        data = response_dict['age_groups'][1]
         agd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
         m_f_column_details = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
         assert m_f_column_details[0]['G1'] in ('Female', 'Females')
@@ -162,16 +132,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_deaths_data(self, updated_date, response_dict):
         r = []
-        try:
-            try:
-                try:
-                    data = response_dict['deaths'][1]
-                except KeyError:
-                    data = response_dict['deaths_2'][1]
-            except KeyError:
-                data = response_dict['deaths_3'][1]
-        except KeyError:
-            data = response_dict['deaths_4'][1]
+        data = response_dict['deaths'][1]
 
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -184,17 +145,8 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_confirmed_cases_data(self, updated_date, response_dict):
         r = []
-        try:
-            try:
-                try:
-                    data = response_dict['confirmed_cases'][1]
-                except KeyError:
-                    data = response_dict['confirmed_cases_2'][1]
-            except KeyError:
-                data = response_dict['confirmed_cases_3'][1]
-        except KeyError:
-            data = response_dict['confirmed_cases_4'][1]
 
+        data = response_dict['confirmed_cases'][1]
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
             datatype=DT_TOTAL,
@@ -207,18 +159,9 @@ class _ACTPowerBI(PowerBIDataReader):
     def _get_gender_balance_data(self, updated_date, response_dict):
         r = []
         try:
-            try:
-                try:
-                    data = response_dict['gender_balance'][1]
-                except KeyError:
-                    data = response_dict['gender_balance_2'][1]
-            except KeyError:
-                data = response_dict['gender_balance_3'][1]
+            data = response_dict['gender_balance'][1]
         except KeyError:
-            try:
-                data = response_dict['gender_balance_4'][1]
-            except KeyError:
-                return [] # WARNING!!! ==================================================================================
+            return [] # WARNING!!! ==================================================================================
 
         # WARNING: This sometimes has another query before it!!! =======================================================
         try:
@@ -255,19 +198,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_infection_source_data(self, updated_date, response_dict):
         # TODO: SHOULD THIS ONLY USE THE MOST RECENT VALUES?? ================================================================================
-        try:
-            try:
-                try:
-                    try:
-                        data = response_dict['infection_source_time_series']
-                    except KeyError:
-                        data = response_dict['infection_source_time_series_2']
-                except KeyError:
-                    data = response_dict['infection_source_time_series_3']
-            except KeyError:
-                data = response_dict['infection_source_time_series_4']
-        except KeyError:
-            data = response_dict['infection_source_time_series_5']
+        data = response_dict['infection_source_time_series']
 
         act_norm_map = {
             'Overseas acquired': DT_SOURCE_OVERSEAS,
@@ -334,22 +265,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_recovered_data(self, updated_date, response_dict):
         r = []
-        try:
-            try:
-                try:
-                    try:
-                        try:
-                            data = response_dict['recovered'][1]
-                        except KeyError:
-                            data = response_dict['recovered_2'][1]
-                    except KeyError:
-                        data = response_dict['recovered_3'][1]
-                except KeyError:
-                    data = response_dict['recovered_4'][1]
-            except KeyError:
-                data = response_dict['recovered_5'][1]
-        except KeyError:
-            data = response_dict['recovered_6'][1]
+        data = response_dict['recovered'][1]
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
@@ -362,17 +278,8 @@ class _ACTPowerBI(PowerBIDataReader):
 
     def _get_regions_data(self, updated_date, response_dict):
         r = []
-        try:
-            try:
-                try:
-                    data = response_dict['regions_exact'][1]
-                except KeyError:
-                    data = response_dict['regions_exact_2'][1]
-            except KeyError:
-                data = response_dict['regions_exact_3'][1]
-        except KeyError:
-            data = response_dict['regions_exact_4'][1]
 
+        data = response_dict['regions_exact'][1]
         rd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         for region_child in rd:

@@ -20,13 +20,38 @@
 
 * https://sedac.ciesin.columbia.edu/data/collection/gpw-v4/sets/browse
 
-* https://www.abs.gov.au/websitedbs/d3310114.nsf/home/additional+abs+products+to+measure+impact+of+covid-19
 
 * https://towardsdatascience.com/a-short-review-of-covid-19-data-sources-ba7f7aa1c342?fbclid=IwAR1KChh5mZqC_eccw0EQ3rjeqrvVNw0hWvCuF2DB8eWegEi-R23Db_r_Nl8
 
 * https://data.humdata.org/organization/facebook for population data by lat/long coords
 
 * https://gis.stackexchange.com/questions/23028/getting-polygons-of-all-countries-and-iso-3166-2-subdivisons
+
+* https://opensky-network.org/
+
+* https://movement.uber.com
+
+* ABS
+
+    * https://www.abs.gov.au/websitedbs/d3310114.nsf/home/additional+abs+products+to+measure+impact+of+covid-19
+
+    * http://stat.data.abs.gov.au//Index.aspx?QueryId=314
+    
+    * https://absstats.maps.arcgis.com/apps/MapSeries/index.html?appid=d87672af65ea4975950e1588e630eea5
+    
+    * https://www.arcgis.com/apps/MapSeries/index.html?appid=8a6e970b01d84f49a05e3d7da86221b2
+    
+    * https://absstats.maps.arcgis.com/apps/MapSeries/index.html?appid=3b5d8b80687c4a1a8a3dd0b3e2537082
+    
+    * http://stat.data.abs.gov.au//Index.aspx?QueryId=317
+    
+    * https://www.abs.gov.au/ausstats/abs@.nsf/mf/6291.0.55.001
+    
+    * https://www.abs.gov.au/ausstats/abs@.nsf/mf/3401.0.55.004
+    
+    * https://www.abs.gov.au/ausstats/abs@.nsf/mf/8501.0.55.008
+    
+    * https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/6202.0May%202020?OpenDocument
 
 # Geographic resources
 
@@ -42,13 +67,16 @@
 
 * https://www.unsalb.org/data
 
-* https://www.geofabrik.de/data/
-
 * https://overpass-turbo.eu/
 
 * https://jakevdp.github.io/PythonDataScienceHandbook/04.13-geographic-data-with-basemap.html (maybe)
 
 * https://wiki.openstreetmap.org/wiki/Potential_Datasources and https://wiki.openstreetmap.org/wiki/Shapefiles
+
+* https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.15109
+
+* https://www.geofabrik.de/data/
+    * http://www.geofabrik.de/data/shapefiles.html may be one of the most comprehensive ones available under a CC-BY license
 
 # Global COVID-19 Data-related links (easily machine readable)
 

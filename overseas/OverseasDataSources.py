@@ -1,4 +1,7 @@
+import multiprocessing
+
 from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1
+from covid_19_au_grab.datatypes.DataPoint import _DataPoint
 
 #from covid_19_au_grab.overseas.ml_data.MLData import MLData
 #from covid_19_au_grab.overseas.fi_data.FIData import FIData
@@ -88,6 +91,7 @@ from covid_19_au_grab.overseas.w_europe.be_data.BEData import BEData
 from covid_19_au_grab.overseas.w_europe.ch_data.CHData import CHData
 from covid_19_au_grab.overseas.w_europe.cz_data.CZData import CZData
 from covid_19_au_grab.overseas.w_europe.de_data.DEData import DEData
+from covid_19_au_grab.overseas.w_europe.de_data.DERKIData import DERKIData
 from covid_19_au_grab.overseas.w_europe.es_data.ESData import ESData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRData import FRData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRGovData import FRGovData
@@ -101,10 +105,10 @@ from covid_19_au_grab.overseas.w_europe.si_data.SIData import SIData
 from covid_19_au_grab.overseas.w_europe.uk_data.UKData import UKData
 
 EUROPE_DATA = (
-    BEData, CHData, CZData, DEData, ESData, EUSubNationalData,
-    FRData, FRGovData, GRCovid19Greece, HRData, IEData, ISData,
-    ITData, KGData, KHData, KZData, MKData, PTData, RSData,
-    SIData, UKData,
+    BEData, CHData, CZData, DEData, DERKIData, ESData,
+    EUSubNationalData, FRData, FRGovData, GRCovid19Greece,
+    HRData, IEData, ISData, ITData, KGData, KHData, KZData,
+    MKData, PTData, RSData, SIData, UKData,
 )
 
 #==================================================================#
@@ -119,11 +123,13 @@ from covid_19_au_grab.overseas.mid_east.om_data.OMData import OMData
 from covid_19_au_grab.overseas.mid_east.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.mid_east.sa_data.SAData import SAData
 from covid_19_au_grab.overseas.mid_east.tr_data.TRData import TRData
+from covid_19_au_grab.overseas.mid_east.tr_data.TRWikiData import TRWikiData
 from covid_19_au_grab.overseas.mid_east.ye_data.YEData import YEData
 #from covid_19_au_grab.overseas.ye_data.YEData import YEData
 
 MIDDLE_EAST_DATA = (
-    AFData, IQData, LYData, OMData, PSData, SAData, TRData, YEData,
+    AFData, IQData, LYData, OMData, PSData, SAData,
+    TRData, TRWikiData, YEData,
 )
 
 #==================================================================#
@@ -147,44 +153,76 @@ class OverseasDataSources:
         self._status = {}
 
     def iter_data_sources(self):
-        for i in (
-            AFRICA_SOURCES +
-            AMERICAS_SOURCES +
-            ASIA_SOURCES +
-            EUROPE_DATA +
-            MIDDLE_EAST_DATA +
+        processes = []
+        send_q = multiprocessing.Queue()
+
+        for classes in (
+            AFRICA_SOURCES,
+            AMERICAS_SOURCES,
+            ASIA_SOURCES,
+            EUROPE_DATA,
+            MIDDLE_EAST_DATA,
             WORLD_DATA
         ):
-            # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
-            print("Getting using class:", i)
+            process = multiprocessing.Process(target=_get_datapoints, args=(classes, send_q))
+            process.start()
+            processes.append(process)
 
-            try:
-                inst = i()
-                new_datapoints = []
+        num_done = 0
+        while num_done != len(processes):
+            q_item = send_q.get()
+            if q_item is None:
+                num_done += 1
+                continue
 
-                for datapoint in inst.get_datapoints():
-                    # We won't use Australian data from international sources,
-                    # as it comes from the dept of Health, which doesn't always
-                    # match with state data
-                    if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'au':
-                        continue
-                    new_datapoints.append(datapoint)
+            source_id, source_url, source_description, new_datapoints, status_dict = q_item
+            self._status[source_id] = status_dict
 
-                yield inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, new_datapoints
+            if new_datapoints is not None:
+                new_datapoints = [_DataPoint(*i) for i in new_datapoints]
+                yield source_id, source_url, source_description, new_datapoints
 
-                self._status[i.SOURCE_ID] = {
-                    'status': 'OK',
-                    'message': None,
-                }
-
-            except:
-                import traceback
-                traceback.print_exc()
-
-                self._status[i.SOURCE_ID] = {
-                    'status': 'ERROR',
-                    'message': traceback.format_exc()
-                }
+        for process in processes:
+            process.join()
 
     def get_status_dict(self):
         return self._status
+
+
+def _get_datapoints(classes, send_q):
+    for i in classes:
+        # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
+        print("Getting using class:", i)
+
+        try:
+            inst = i()
+            new_datapoints = []
+
+            for datapoint in inst.get_datapoints():
+                # We won't use Australian data from international sources,
+                # as it comes from the dept of Health, which doesn't always
+                # match with state data
+                if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'au':
+                    continue
+                new_datapoints.append(tuple(datapoint))
+
+            send_q.put((inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, new_datapoints, {
+                'status': 'OK',
+                'message': None,
+            }))
+
+        except:
+            import traceback
+            traceback.print_exc()
+
+            send_q.put((i.SOURCE_ID, i.SOURCE_URL, i.SOURCE_DESCRIPTION, None, {
+                'status': 'ERROR',
+                'message': traceback.format_exc()
+            }))
+
+    send_q.put(None)
+
+
+if __name__ == '__main__':
+    for i in OverseasDataSources().iter_data_sources():
+        print(i[:3])

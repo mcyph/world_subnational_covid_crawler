@@ -63,6 +63,8 @@ class MMData(URLBase):
 
             if item['lab tested date'].count('/') == 1:
                 item['lab tested date'] += '/2020'
+            if item['announced date'].count('/') == 1:
+                item['announced date'] += '/2020'
 
             date = self.convert_date(
                 item['lab tested date'].strip() or

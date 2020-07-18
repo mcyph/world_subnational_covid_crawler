@@ -36,16 +36,16 @@ class NSWJSONData:
             makedirs(dir_)
 
         r = []
-        self.get_nsw_cases_data(dir_)  # Just for the postcode->lga data
-        self.get_nsw_tests_data(dir_)
-        r.extend(self.get_nsw_postcode_data(dir_))
+        r.extend(self.get_nsw_cases_data(dir_))  # For infection source only
+        r.extend(self.get_nsw_tests_data(dir_))
+        r.extend(self.get_nsw_postcode_data(dir_))  # For totals only
         r.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', r))
-        r.extend(self.get_nsw_age_data(dir_, date, download=True))
+        r.extend(self.get_nsw_age_data(dir_, date, download=True))  # Age distributions
 
         for i_date in listdir(get_data_dir() / 'nsw' / 'open_data'):
             if i_date == date:
                 continue
-            i_dir = get_data_dir() / 'nsw' / 'open_data' / date
+            i_dir = get_data_dir() / 'nsw' / 'open_data' / i_date
             r.extend(self.get_nsw_age_data(i_dir, i_date, download=False))
         return r
 
@@ -285,10 +285,11 @@ class NSWJSONData:
         r = []
 
         # Add general totals
+        # Probably best to use the JSON file for this+not mix sources!
         for region_schema, cases_dict in (
-            (SCHEMA_POSTCODE, by_postcode),
-            (SCHEMA_LGA, by_lga),
-            (SCHEMA_LHD, by_lhd)
+            #(SCHEMA_POSTCODE, by_postcode),
+            #(SCHEMA_LGA, by_lga),
+            #(SCHEMA_LHD, by_lhd)
         ):
             current_counts = {}
 
@@ -370,7 +371,7 @@ class NSWJSONData:
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/tests'
         active_data = self.__get_active_data(path_active)
         r.extend(self.__get_active_deaths_datapoints(SOURCE_URL, path_active_deaths, active_data))
-        r.extend(self.__get_tests_datapoints(SOURCE_URL, path_tests))
+        #r.extend(self.__get_tests_datapoints(SOURCE_URL, path_tests))  # NOTE ME: Will use open data for tests!! ===============
         r.extend(self.__get_totals_datapoints(SOURCE_URL, path_totals))
         return r
 
@@ -587,8 +588,14 @@ class NSWJSONData:
 
         r = []
 
-        def get_datapoints(region_schema, cases_dict):
-            r = []
+        # Add general totals
+        for region_schema, cases_dict in (
+            # I'm really not sure there's much reason to get tests data
+            # by postcode/LHD? It'll take too much space by postcode!
+            (SCHEMA_POSTCODE, by_postcode),
+            (SCHEMA_LGA, by_lga),
+            (SCHEMA_LHD, by_lhd)
+        ):
             current_counts = {}
 
             for date, schema_dict in cases_dict.items():
@@ -606,17 +613,13 @@ class NSWJSONData:
                         source_url=SOURCE_URL,
                         text_match=None
                     ))
-            return r
 
-        # I'm really not sure there's much reason to get tests data
-        # by postcode/LHD? It'll take too much space by postcode!
-
-        r.extend(get_datapoints(SCHEMA_POSTCODE, by_postcode))
-        r.extend(get_datapoints(SCHEMA_LGA, by_lga))
-        r.extend(get_datapoints(SCHEMA_LHD, by_lhd))
-
-        def get_posneg_datapoints(region_schema, cases_dict):
-            r = []
+        # Add general totals
+        for region_schema, cases_dict in (
+            #(SCHEMA_POSTCODE, by_postcode_posneg),
+            #(SCHEMA_LGA, by_lga_posneg),
+            #(SCHEMA_LHD, by_lhd_posneg)
+        ):
             current_counts = {}
 
             for date, schema_dict in cases_dict.items():
@@ -635,11 +638,6 @@ class NSWJSONData:
                             source_url=SOURCE_URL,
                             text_match=None
                         ))
-            return r
-
-        #r.extend(get_posneg_datapoints(SCHEMA_POSTCODE, by_postcode_posneg))
-        #r.extend(get_posneg_datapoints(SCHEMA_LGA, by_lga_posneg))
-        #r.extend(get_posneg_datapoints(SCHEMA_LHD, by_lhd_posneg))
 
         return r
 

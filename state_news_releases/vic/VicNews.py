@@ -5,7 +5,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA,
+    SCHEMA_LGA, SCHEMA_ADMIN_1,
     DT_NEW, DT_TOTAL, DT_TESTS_TOTAL,
     DT_TOTAL_MALE, DT_TOTAL_FEMALE,
     DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
@@ -47,8 +47,31 @@ class VicNews(StateNewsBase):
     )
 
     def get_data(self):
-        r = get_powerbi_data()
-        r.extend(StateNewsBase.get_data(self))
+        r = []
+        powerbi_datapoints = get_powerbi_data()
+        pr_datapoints = StateNewsBase.get_data(self)
+
+        def get_key(datapoint):
+            return (
+                datapoint.region_schema,
+                datapoint.region_parent,
+                datapoint.region_child,
+                datapoint.agerange,
+                datapoint.date_updated,
+                datapoint.value
+            )
+
+        # Prioritize press release values over powerbi
+        added = set()
+
+        for datapoint in pr_datapoints:
+            added.add(get_key(datapoint))
+            r.append(datapoint)
+
+        for datapoint in powerbi_datapoints:
+            if not get_key(datapoint) in added:
+                r.append(datapoint)
+
         return r
 
     def _get_date(self, href, html):
@@ -243,6 +266,56 @@ class VicNews(StateNewsBase):
         Wellington and Yarriambiack have all recorded one case.
         """
         regions = []
+
+        regional_table = pq(html)('table:contains("LGA")')
+
+        if regional_table and len(regional_table):
+            datatype_map = {
+                'confirmed cases (ever)': DT_TOTAL,
+                'total confirmed cases (ever)': DT_TOTAL,
+                'active cases (current)': DT_STATUS_ACTIVE,
+                'currently active cases': DT_STATUS_ACTIVE,
+            }
+            datatypes = [
+                datatype_map[pq(th).text().strip().lower()]
+                for th in pq(regional_table)('thead th')[1:]
+            ]
+            date = self._get_date(href, html)
+
+            for tr in pq(regional_table)('tbody tr'):
+                if not tr or not len(tr):
+                    continue # ???
+                region = pq(tr[0]).text().strip().lower()
+                tr = pq(tr)('td')
+
+                if region == 'total':
+                    for value, datatype in zip(tr[1:], datatypes):
+                        value = pq(value).text().strip().strip('*-').replace(',', '')
+                        if value:
+                            value = int(value)
+                            regions.append(DataPoint(
+                                region_schema=SCHEMA_ADMIN_1,
+                                region_parent='AU',
+                                region_child='AU-VIC',
+                                datatype=datatype,
+                                value=value,
+                                date_updated=date,
+                                source_url=href
+                            ))
+                else:
+                    for value, datatype in zip(tr[1:], datatypes):
+                        value = pq(value).text().strip().strip('*-').replace(',', '')
+                        if value:
+                            value = int(value)
+                            regions.append(DataPoint(
+                                region_schema=SCHEMA_LGA,
+                                region_parent='AU-VIC',
+                                region_child=region,
+                                datatype=datatype,
+                                value=value,
+                                date_updated=date,
+                                source_url=href
+                            ))
 
         if 'regional local government areas of' in html:
             multi_region_info = html.split(

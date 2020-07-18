@@ -45,7 +45,7 @@ class PowerBIDataReader:
                             break
 
             if match:
-                r[match] = (request_data, response_data)
+                r[match.rstrip('_0123456789')] = (request_data, response_data)
             else:
                 print("WARNING - no match:", json.dumps(request_data, indent=4))
                 print(json.dumps(response_data, indent=4))
@@ -93,4 +93,4 @@ class PowerBIDataReader:
                 except IndexError:
                     value.insert(bit, None)
 
-        return value, previous_value
+        return value, value

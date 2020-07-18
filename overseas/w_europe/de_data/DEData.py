@@ -5,7 +5,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_DE_AGS,
+    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, #SCHEMA_DE_AGS,
     DT_TOTAL,
     DT_STATUS_DEATHS
 )
