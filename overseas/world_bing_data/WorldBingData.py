@@ -69,6 +69,9 @@ class WorldBingData(GithubRepo):
                         warning_printed.add((item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']))
                         print("WARNING, IGNORING:", item)
                         continue  # HACK!!! =====================================================================================
+                elif item['ISO2'] == 'US':
+                    # Will use other sources for the US
+                    continue
 
                 elif item['AdminRegion1']:
                     region_schema = SCHEMA_ADMIN_1
@@ -88,6 +91,8 @@ class WorldBingData(GithubRepo):
                     date_updated=date,
                     source_url='Bing'
                 ))
+                #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                #    print(r[-1])
 
                 if item['ConfirmedChange']:
                     r.append(DataPoint(

@@ -20,13 +20,14 @@ from covid_19_au_grab.overseas.africa.gh_data.GHDataDash import GHDataDash
 from covid_19_au_grab.overseas.africa.ma_data.MAData import MAData
 from covid_19_au_grab.overseas.africa.mw_data.MWData import MWData
 from covid_19_au_grab.overseas.africa.na_data.NAData import NAData
+from covid_19_au_grab.overseas.africa.ng_data.NGData import NGData
 from covid_19_au_grab.overseas.africa.sd_data.SDData import SDData
 from covid_19_au_grab.overseas.africa.west_africa_data.WestAfricaData import WestAfricaData
 from covid_19_au_grab.overseas.africa.za_data.ZAData import ZAData
 
 AFRICA_SOURCES = (
     WestAfricaData, BWData, ETData, GHDataDash, MAData, MWData,
-    NAData, SDData, SNData, SOData, ZAData
+    NAData, NGData, SDData, SNData, SOData, ZAData
 )
 
 #==================================================================#
@@ -61,6 +62,7 @@ from covid_19_au_grab.overseas.se_asia.my_data.MYData import MYData
 from covid_19_au_grab.overseas.se_asia.th_data.THData import THData
 from covid_19_au_grab.overseas.se_asia.tw_data.TWData import TWData
 from covid_19_au_grab.overseas.se_asia.vn_data.VNData import VNData
+from covid_19_au_grab.overseas.se_asia.hk_data.HKData import HKData
 
 from covid_19_au_grab.overseas.s_asia.bd_data.BDData import BDData
 from covid_19_au_grab.overseas.s_asia.lk_data.LKData import LKData
@@ -72,7 +74,7 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 
 ASIA_SOURCES = (
     BDData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
-    MMData, MYData, NPData, NZData, THData, TWData, VNData,
+    MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData
 )
 
 #==================================================================#
@@ -100,6 +102,8 @@ from covid_19_au_grab.overseas.w_europe.hr_data.HRData import HRData
 from covid_19_au_grab.overseas.w_europe.ie_data.IEData import IEData
 from covid_19_au_grab.overseas.w_europe.is_data.ISData import ISData
 from covid_19_au_grab.overseas.w_europe.it_data.ITData import ITData
+from covid_19_au_grab.overseas.w_europe.lt_data.LTData import LTData
+from covid_19_au_grab.overseas.w_europe.lv_data.LVData import LVData
 from covid_19_au_grab.overseas.w_europe.pt_data.PTData import PTData
 from covid_19_au_grab.overseas.w_europe.si_data.SIData import SIData
 from covid_19_au_grab.overseas.w_europe.uk_data.UKData import UKData
@@ -108,7 +112,7 @@ EUROPE_DATA = (
     BEData, CHData, CZData, DEData, DERKIData, ESData,
     EUSubNationalData, FRData, FRGovData, GRCovid19Greece,
     HRData, IEData, ISData, ITData, KGData, KHData, KZData,
-    MKData, PTData, RSData, SIData, UKData,
+    MKData, PTData, RSData, SIData, UKData, LVData, LTData,
 )
 
 #==================================================================#
@@ -119,6 +123,8 @@ from covid_19_au_grab.overseas.c_asia.af_data.AFData import AFData
 from covid_19_au_grab.overseas.humdata.iq_data.IQData import IQData
 from covid_19_au_grab.overseas.humdata.ly_data.LYData import LYData
 
+from covid_19_au_grab.overseas.mid_east.il_data.ILWikiData import ILWikiData
+from covid_19_au_grab.overseas.mid_east.iq_data.IQWikiData import IQWikiData
 from covid_19_au_grab.overseas.mid_east.om_data.OMData import OMData
 from covid_19_au_grab.overseas.mid_east.ps_data.PSData import PSData
 from covid_19_au_grab.overseas.mid_east.sa_data.SAData import SAData
@@ -129,7 +135,7 @@ from covid_19_au_grab.overseas.mid_east.ye_data.YEData import YEData
 
 MIDDLE_EAST_DATA = (
     AFData, IQData, LYData, OMData, PSData, SAData,
-    TRData, TRWikiData, YEData,
+    TRData, TRWikiData, YEData, ILWikiData, IQWikiData
 )
 
 #==================================================================#

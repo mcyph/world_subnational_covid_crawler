@@ -41,7 +41,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_NUTS_1, DT_TESTS_TOTAL,
+    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
     DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
@@ -96,7 +96,7 @@ class TRData(URLBase):
 
                 if confirmed is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_NUTS_1,
+                        region_schema=SCHEMA_ADMIN_1,
                         region_parent='TR',
                         region_child=region,
                         datatype=DT_TOTAL,
@@ -107,7 +107,7 @@ class TRData(URLBase):
 
                 if recovered is not None and False:  # A lot of these values are 0(?)
                     r.append(DataPoint(
-                        region_schema=SCHEMA_NUTS_1,
+                        region_schema=SCHEMA_ADMIN_1,
                         region_parent='TR',
                         region_child=region,
                         datatype=DT_STATUS_RECOVERED,
@@ -118,7 +118,7 @@ class TRData(URLBase):
 
                 if deaths is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_NUTS_1,
+                        region_schema=SCHEMA_ADMIN_1,
                         region_parent='TR',
                         region_child=region,
                         datatype=DT_STATUS_DEATHS,

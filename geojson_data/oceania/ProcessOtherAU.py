@@ -1,4 +1,7 @@
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
+from covid_19_au_grab.geojson_data.oceania.get_postcodes_map import (
+    get_postcodes_map
+)
 from covid_19_au_grab.geojson_data.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
@@ -60,20 +63,34 @@ class ProcessTasTHS(ProcessGeoJSONBase):
         return feature['tas_ths'].title()
 
 
+postcodes_dict = get_postcodes_map()
+
+
 class ProcessNSWPostcode(ProcessGeoJSONBase):
     def __init__(self):
         ProcessGeoJSONBase.__init__(self, 'postcode')
 
     def get_region_parent(self, fnam, feature):
-        return 'AU-NSW'
+        if feature['POA_CODE16'][0] == '3':
+            return 'AU-VIC'
+        elif feature['POA_CODE16'][0] == '2':
+            return 'AU-NSW'
+        else:
+            raise Exception(feature)
 
     def get_region_child(self, fnam, feature):
         # NSW postcode ID
-        return feature['loc_pid'].replace('NSW', '')
+        return feature['POA_CODE16']
 
     def get_region_printable(self, fnam, feature):
         # NSW postcode name
-        return feature['nsw_loca_2'].title()
+        if feature['POA_CODE16'] in postcodes_dict and True:
+            return '%s: %s, ...' % (
+                feature['POA_CODE16'],
+                postcodes_dict[feature['POA_CODE16']][0]
+            )
+        else:
+            return feature['POA_CODE16']
 
 
 if __name__ == '__main__':
@@ -81,4 +98,7 @@ if __name__ == '__main__':
     ProcessQLDHHS().output_json([DATA_DIR / 'au' / 'hhs' / 'hhs_qld.geojson'], OUTPUT_DIR, pretty_print=False)
     ProcessNSWLHD().output_json([DATA_DIR / 'au' / 'lhd' / 'lhd_nsw.geojson'], OUTPUT_DIR, pretty_print=False)
     ProcessTasTHS().output_json([DATA_DIR / 'au' / 'ths' / 'ths_tas.geojson'], OUTPUT_DIR, pretty_print=False)
-    ProcessNSWPostcode().output_json([DATA_DIR / 'au' / 'postcode' / 'suburb_nsw.geojson'], OUTPUT_DIR, pretty_print=False)
+    ProcessNSWPostcode().output_json([
+        DATA_DIR / 'au' / 'postcode' / 'suburb_nsw.json',
+        DATA_DIR / 'au' / 'postcode' / 'postcode_vic.json'
+    ], OUTPUT_DIR, pretty_print=False)

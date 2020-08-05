@@ -87,6 +87,8 @@ class WorldJHUData(GithubRepo):
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
+                    #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                    #    print(r[-1])
 
                     r.append(DataPoint(
                         region_schema=region_schema,
@@ -256,6 +258,9 @@ class WorldJHUData(GithubRepo):
                             date_updated=date,
                             source_url='JHU'  # HACK: JHU is larger than any of the other sources, so makes sense to reduce the source just for this file!
                         ))
+                        #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                        #    print(r[-1])
+                        #    print(item)
 
                     if item['Deaths']:
                         r.append(DataPoint(

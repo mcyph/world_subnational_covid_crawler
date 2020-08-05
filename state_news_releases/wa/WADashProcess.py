@@ -116,7 +116,7 @@ class WARegionsProcess:
             elif len(attributes) == 1:
                 continue
 
-            if 'Confirmed_cases' in feature_dict:
+            if 'Confirmed_cases' in attributes:
                 value = attributes['Confirmed_cases']
             else:
                 try:
@@ -147,6 +147,16 @@ class WARegionsProcess:
                 source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
             )
             r.append(num)
+
+            if 'Active_Case' in attributes and attributes['Active_Case'] is not None:
+                r.append(DataPoint(
+                    region_schema=SCHEMA_LGA,
+                    datatype=DT_STATUS_ACTIVE,
+                    region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
+                    value=int(attributes['Active_Case']),
+                    date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
+                    source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
+                ))
         return r
 
     def __get_date(self, ts):

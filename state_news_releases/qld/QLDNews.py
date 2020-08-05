@@ -388,7 +388,7 @@ class QLDNews(StateNewsBase):
                 for i in table[0][0][1:]
             ]
             for tr in table[3]:
-                hhs = pq(tr[0]).text().strip()
+                hhs = pq(tr[0]).text().strip().strip('*')
 
                 for xx, td in enumerate(tr[1:]):
                     value = int(pq(td).text().strip().replace(',', ''))
@@ -448,7 +448,7 @@ class QLDNews(StateNewsBase):
                 for x, td in enumerate(tds):
                     if x == 0:
                         # HACK: one day had "271" prefixed to "North West"
-                        hhs_region = pq(td).text().strip().lstrip('271').strip()
+                        hhs_region = pq(td).text().strip().lstrip('271*').strip()
                     elif x >= 1:
                         if len(tds) > 2:
                             # New format:
@@ -505,7 +505,7 @@ class QLDNews(StateNewsBase):
 
             for x, td in enumerate(pq(tr)('td')):
                 if x == 0:
-                    hhs_region = pq(td).text().strip()
+                    hhs_region = pq(td).text().strip().strip('*')
                 elif x == 1:
                     try:
                         value = int(pq(td).text().strip())

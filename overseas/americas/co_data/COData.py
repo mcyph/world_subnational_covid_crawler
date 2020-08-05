@@ -159,105 +159,105 @@ class COData(URLBase):
 
         cumulative = Counter()
         for (notification_date, admin1), value in sorted(by_admin1.items()):
-            cumulative[notification_date, admin1] += value
+            cumulative[admin1] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
                 datatype=DT_TOTAL,
-                value=cumulative[notification_date, admin1],
+                value=cumulative[admin1],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, admin1, municipality), value in sorted(by_municipality.items()):
-            cumulative[notification_date, admin1] += value
+            cumulative[admin1, municipality] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
                 datatype=DT_TOTAL,
-                value=cumulative[notification_date, admin1],
+                value=cumulative[admin1, municipality],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, age), value in sorted(by_age.items()):
-            cumulative[notification_date, age] += value
+            cumulative[age] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Colombia',
                 datatype=DT_TOTAL,
                 agerange=age,
-                value=cumulative[notification_date, age],
+                value=cumulative[age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, status), value in sorted(by_status.items()):
-            cumulative[notification_date, status] += value
+            cumulative[status] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_0,
                 region_child='Colombia',
                 datatype=status,
-                value=cumulative[notification_date, status],
+                value=cumulative[status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, admin1, age), value in sorted(by_admin1_age.items()):
-            cumulative[notification_date, admin1, age] += value
+            cumulative[admin1, age] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
                 agerange=age,
                 datatype=DT_TOTAL,
-                value=cumulative[notification_date, admin1, age],
+                value=cumulative[admin1, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, admin1, status), value in sorted(by_admin1_status.items()):
-            cumulative[notification_date, admin1, status] += value
+            cumulative[admin1, status] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
                 datatype=status,
-                value=cumulative[notification_date, admin1, status],
+                value=cumulative[admin1, status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, admin1, municipality, age), value in sorted(by_municipality_age.items()):
-            cumulative[notification_date, admin1, municipality, age] += value
+            cumulative[admin1, municipality, age] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
                 agerange=age,
                 datatype=DT_TOTAL,
-                value=cumulative[notification_date, admin1, municipality, age],
+                value=cumulative[admin1, municipality, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
 
         cumulative = Counter()
         for (notification_date, admin1, municipality, status), value in sorted(by_municipality_status.items()):
-            cumulative[notification_date, admin1, municipality, status] += value
+            cumulative[admin1, municipality, status] += value
             r.append(DataPoint(
                 region_schema=SCHEMA_CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
                 datatype=status,
-                value=cumulative[notification_date, admin1, municipality, status],
+                value=cumulative[admin1, municipality, status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
             ))
@@ -266,7 +266,7 @@ class COData(URLBase):
 
     def _age_to_range(self, age):
         age = int(age)
-        for x in range(0, 120, 10):
+        for x in range(0, 150, 10):
             if x <= age <= x+9:
                 return f'{x}-{x+9}'
         raise Exception(age)

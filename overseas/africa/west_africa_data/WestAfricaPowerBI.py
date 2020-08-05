@@ -593,7 +593,7 @@ country_data_3_req = {
     "QueryId": ""
 }
 
-country_data_4_req = {
+IGNORE_country_data_4_req = {
     "ApplicationContext": {
         "DatasetId": "bbedabd3-11a6-4f6c-86a9-4244f1092233",
         "Sources": [
@@ -756,7 +756,7 @@ country_data_4_req = {
     "QueryId": ""
 }
 
-country_data_5_req = {
+IGNORE_country_data_5_req = {
     "ApplicationContext": {
         "DatasetId": "bbedabd3-11a6-4f6c-86a9-4244f1092233",
         "Sources": [
@@ -765,17 +765,16 @@ country_data_5_req = {
             }
         ]
     },
-    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"cases_data23042020\"}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"admin0Name\"},\"Name\":\"cases_data23042020.admin0Name\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"cas_confirm\u00e9s\"}},\"Function\":0},\"Name\":\"Sum(cases_data23042020.cas_confirm\u00e9s)\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"d\u00e9c\u00e8s\"}},\"Function\":0},\"Name\":\"Sum(cases_data23042020.d\u00e9c\u00e8s)\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Gueris\"}},\"Function\":0},\"Name\":\"Sum(cases_data23042020.Gueris)\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"cas_confirm\u00e9s\"}},\"Function\":0}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1,2,3]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":1000}}},\"Version\":1}}}]}",
     "Query": {
         "Commands": [
             {
                 "SemanticQueryDataShapeCommand": {
                     "Binding": {
                         "DataReduction": {
-                            "DataVolume": 4,
+                            "DataVolume": 3,
                             "Primary": {
-                                "Window": {
-                                    "Count": 1000
+                                "Sample": {
+                                    "Count": 30000
                                 }
                             }
                         },
@@ -786,7 +785,8 @@ country_data_5_req = {
                                         0,
                                         1,
                                         2,
-                                        3
+                                        3,
+                                        4
                                     ]
                                 }
                             ]
@@ -797,25 +797,26 @@ country_data_5_req = {
                         "From": [
                             {
                                 "Entity": "cases_data23042020",
-                                "Name": "c"
+                                "Name": "c1",
+                                "Type": 0
                             }
                         ],
                         "OrderBy": [
                             {
-                                "Direction": 2,
+                                "Direction": 1,
                                 "Expression": {
                                     "Aggregation": {
                                         "Expression": {
                                             "Column": {
                                                 "Expression": {
                                                     "SourceRef": {
-                                                        "Source": "c"
+                                                        "Source": "c1"
                                                     }
                                                 },
-                                                "Property": "cas_confirm\u00e9s"
+                                                "Property": "admin0Name"
                                             }
                                         },
-                                        "Function": 0
+                                        "Function": 3
                                     }
                                 }
                             }
@@ -825,12 +826,12 @@ country_data_5_req = {
                                 "Column": {
                                     "Expression": {
                                         "SourceRef": {
-                                            "Source": "c"
+                                            "Source": "c1"
                                         }
                                     },
-                                    "Property": "admin0Name"
+                                    "Property": "admin1Pcod"
                                 },
-                                "Name": "cases_data23042020.admin0Name"
+                                "Name": "cases_data_23042020.admin1Pcod"
                             },
                             {
                                 "Aggregation": {
@@ -838,7 +839,55 @@ country_data_5_req = {
                                         "Column": {
                                             "Expression": {
                                                 "SourceRef": {
-                                                    "Source": "c"
+                                                    "Source": "c1"
+                                                }
+                                            },
+                                            "Property": "L\u00e9gende"
+                                        }
+                                    },
+                                    "Function": 3
+                                },
+                                "Name": "Min(cases_data23042020.L\u00e9gende)"
+                            },
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "c1"
+                                                }
+                                            },
+                                            "Property": "admin0Name"
+                                        }
+                                    },
+                                    "Function": 3
+                                },
+                                "Name": "Min(cases_data23042020.admin0Name)"
+                            },
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "c1"
+                                                }
+                                            },
+                                            "Property": "admin1Name"
+                                        }
+                                    },
+                                    "Function": 3
+                                },
+                                "Name": "Min(cases_data23042020.admin1Name)"
+                            },
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "c1"
                                                 }
                                             },
                                             "Property": "cas_confirm\u00e9s"
@@ -847,41 +896,38 @@ country_data_5_req = {
                                     "Function": 0
                                 },
                                 "Name": "Sum(cases_data23042020.cas_confirm\u00e9s)"
-                            },
-                            {
-                                "Aggregation": {
-                                    "Expression": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "c"
-                                                }
-                                            },
-                                            "Property": "d\u00e9c\u00e8s"
-                                        }
-                                    },
-                                    "Function": 0
-                                },
-                                "Name": "Sum(cases_data23042020.d\u00e9c\u00e8s)"
-                            },
-                            {
-                                "Aggregation": {
-                                    "Expression": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {
-                                                    "Source": "c"
-                                                }
-                                            },
-                                            "Property": "Gueris"
-                                        }
-                                    },
-                                    "Function": 0
-                                },
-                                "Name": "Sum(cases_data23042020.Gueris)"
                             }
                         ],
-                        "Version": 2
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "c1"
+                                                        }
+                                                    },
+                                                    "Property": "Week"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Week 28'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
             }
@@ -1081,6 +1127,132 @@ country_data_6_req = {
                             }
                         ],
                         "Version": 2
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
+country_data_7_req = {
+    "ApplicationContext": {
+        "DatasetId": "bbedabd3-11a6-4f6c-86a9-4244f1092233",
+        "Sources": [
+            {
+                "ReportId": "7c067b82-3dc8-42e6-b085-27a3fd78c990"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"c1\",\"Entity\":\"cases_data23042020\"}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Femmes\"}},\"Function\":0},\"Name\":\"Sum(cases_data_23042020.Femmes)\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Hommes\"}},\"Function\":0},\"Name\":\"Sum(cases_data_23042020.Hommes)\"}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Week\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Week 22'\"}}]]}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Femmes\"}},\"Function\":0}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "cases_data23042020",
+                                "Name": "c1"
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Aggregation": {
+                                        "Expression": {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {
+                                                        "Source": "c1"
+                                                    }
+                                                },
+                                                "Property": "Femmes"
+                                            }
+                                        },
+                                        "Function": 0
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "c1"
+                                                }
+                                            },
+                                            "Property": "Femmes"
+                                        }
+                                    },
+                                    "Function": 0
+                                },
+                                "Name": "Sum(cases_data_23042020.Femmes)"
+                            },
+                            {
+                                "Aggregation": {
+                                    "Expression": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {
+                                                    "Source": "c1"
+                                                }
+                                            },
+                                            "Property": "Hommes"
+                                        }
+                                    },
+                                    "Function": 0
+                                },
+                                "Name": "Sum(cases_data_23042020.Hommes)"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "c1"
+                                                        }
+                                                    },
+                                                    "Property": "Week"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Week 22'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
             }

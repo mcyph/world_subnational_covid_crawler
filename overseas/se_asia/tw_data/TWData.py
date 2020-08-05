@@ -19,29 +19,29 @@ from covid_19_au_grab.get_package_dir import (
 
 
 place_map = dict([i.split('\t')[::-1] for i in """
-TW-CHA	Changhua
-TW-CYI	Chiayi
-TW-CYQ	Chiayi
-TW-HSZ	Hsinchu
-TW-HSQ	Hsinchu
-TW-HUA	Hualien
-TW-KHH	Kaohsiung
-TW-KEE	Keelung
-TW-KIN	Kinmen
-TW-LIE	Lienchiang
-TW-MIA	Miaoli
-TW-NAN	Nantou
-TW-NWT	New Taipei
-TW-PEN	Penghu
-TW-PIF	Pingtung
-TW-TXG	Taichung
-TW-TNN	Tainan
-TW-TPE	Taipei
-TW-TTT	Taitung
-TW-TAO	Taoyuan
-TW-ILA	Yilan
-TW-YUN	Yunlin
-""".strip().split('\n')])
+TW-CHA	Changhua county
+TW-CYI	Chiayi city
+TW-CYQ	Chiayi county
+TW-HSZ	Hsinchu city
+TW-HSQ	Hsinchu county
+TW-HUA	Hualien county
+TW-KHH	Kaohsiung city
+TW-KEE	Keelung city
+TW-KIN	Kinmen county
+TW-LIE	Lienchiang county
+TW-MIA	Miaoli county
+TW-NAN	Nantou county
+TW-NWT	New Taipei city
+TW-PEN	Penghu county
+TW-PIF	Pingtung county
+TW-TXG	Taichung city
+TW-TNN	Tainan city
+TW-TPE	Taipei city
+TW-TTT	Taitung county
+TW-TAO	Taoyuan city
+TW-ILA	Yilan county
+TW-YUN	Yunlin county
+""".strip().lower().split('\n')])
 
 
 class TWData(URLBase):
@@ -73,12 +73,17 @@ class TWData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 html = f.read()
 
-            data = html.split('var jdata1 = ')[-1].split('\n')[0].strip().strip(';').replace("'", '"')
-            #print(data)
+            new_data_template = '.geojson","series":[{'
+            if new_data_template in html:
+                data = '[{%s}]' % html.split(new_data_template)[-1].split('}],')[0]
+            else:
+                data = html.split('var jdata1 = ')[-1].split('\n')[0].strip().strip(';').replace("'", '"')
+
+            print(date, data)
 
             for item in json.loads(data):
                 # [{'code':'Taipei City', 'value':118}, ...]
-                region = place_map[item['code'].strip().rpartition(' ')[0]]
+                region = place_map[item['code'].strip().lower()]
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,

@@ -345,6 +345,7 @@ class _VicPowerBI(PowerBIDataReader):
 
         output = []
         data = response_dict['source_of_infection'][1]
+        added = set()
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(
@@ -353,6 +354,21 @@ class _VicPowerBI(PowerBIDataReader):
                 date_updated=updated_date,
                 source_url=SOURCE_URL
             ))
+            added.add(vic_norm_map[source['C'][0]])
+
+        for datatype in vic_norm_map.values():
+            if datatype in added:
+                continue
+
+            # Sometimes "under investigation" isn't provided,
+            # but probably can assume at 0 for these days
+            output.append(DataPoint(
+                datatype=datatype,
+                value=0,
+                date_updated=updated_date,
+                source_url=SOURCE_URL
+            ))
+
         return output
 
 
@@ -367,4 +383,7 @@ def get_powerbi_data():
 if __name__ == '__main__':
     from pprint import pprint
     __r = get_powerbi_data()
-    pprint(__r)
+    for i in __r:
+        if i.datatype in (DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION):
+            print(i)
+    #pprint(__r)

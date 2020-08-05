@@ -85,6 +85,7 @@ VN-DN	Đà Nẵng
 VN-HN	Hà Nội
 VN-HP	Hai Phong
 VN-SG	Hồ Chí Minh
+VN-14	Hoà Bình
 """.strip().split('\n')])
 
 

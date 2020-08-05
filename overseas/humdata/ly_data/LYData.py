@@ -8,7 +8,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
 )
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_ADMIN_1,
-    DT_TOTAL,
+    DT_TOTAL, DT_TESTS_TOTAL,
     DT_STATUS_ACTIVE,
     DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
@@ -60,17 +60,18 @@ class LYData(URLBase):
             if first_item:
                 first_item = False
                 continue
-            #print(item)
-            date = self.convert_date(item['Date'])
+
+            print(item)
+            date = self.convert_date(item['Date'], formats=('%m/%d/%Y',))
             region_child = item['Location'].title() # Location was Governorate
 
-            if item['Confirmed Cases']:
+            if item['Confirmed']:
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_TOTAL,
-                    value=int(item['Confirmed Cases']),
+                    value=int(item['Confirmed']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
@@ -104,6 +105,17 @@ class LYData(URLBase):
                     region_child=region_child,
                     datatype=DT_STATUS_ACTIVE,
                     value=int(item['Active']),
+                    source_url=self.SOURCE_URL,
+                    date_updated=date
+                ))
+
+            if item['Test Samples']:
+                r.append(DataPoint(
+                    region_schema=SCHEMA_ADMIN_1,
+                    region_parent='Libya',
+                    region_child=region_child,
+                    datatype=DT_TESTS_TOTAL,
+                    value=int(item['Test Samples']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))

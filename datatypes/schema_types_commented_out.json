@@ -1,0 +1,6 @@
+["Probable Cases", "probable"],
+            ["Confirmed Cases", "confirmed"],
+
+["Total Admitted to ICU", "status_icu_runningtotal"],
+            ["Total Admitted to ICU w/Ventilator", "status_icu_ventilators_runningtotal"],
+            ["Total Admitted to Hospital", "status_hospitalized_runningtotal"]

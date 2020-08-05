@@ -18,6 +18,9 @@ from covid_19_au_grab.datatypes.DataPoint import (
 from covid_19_au_grab.state_news_releases.vic.vic_powerbi import (
     get_powerbi_data
 )
+from covid_19_au_grab.state_news_releases.vic.vic_google_sheets import (
+    get_from_google_sheets
+)
 from covid_19_au_grab.word_to_number import (
     word_to_number
 )
@@ -71,7 +74,8 @@ class VicNews(StateNewsBase):
         for datapoint in powerbi_datapoints:
             if not get_key(datapoint) in added:
                 r.append(datapoint)
-
+        
+        r.extend(get_from_google_sheets())  # TODO: ADD HISTORICAL VALS!!! ============================================
         return r
 
     def _get_date(self, href, html):

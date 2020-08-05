@@ -42,6 +42,7 @@ class NPData(URLBase):
     SOURCE_ID = 'np_bipad'
 
     def __init__(self):
+        # https://bipad.gov.np/api/v1/covid19-case/?expand=district,nationality&limit=-1
         URLBase.__init__(self,
             output_dir=get_overseas_dir() / 'np' / 'data',
             urls_dict={
@@ -51,7 +52,8 @@ class NPData(URLBase):
                 'quarantine_history.json': URL('https://bipad.gov.np/api/v1/covid19-quarantineinfo/'
                                                '?fields=province%2Cdistrict%2Cid%2Cquarantined_count%2Creported_on&limit=-1',
                                                static_file=False),
-                'cases.json': URL('https://bipad.gov.np/api/v1/covid19-case/',
+                'cases.json': URL('https://bipad.gov.np/api/v1/covid19-case/?expand=district,nationality&limit=-1',
+                                  #'https://bipad.gov.np/api/v1/covid19-case/',
                                   static_file=False)
             }
         )
@@ -132,13 +134,16 @@ class NPData(URLBase):
             for x in range(0, 100, 10):
                 if x <= age < x+10:
                     return f'{x}-{x+9}'
-            raise Exception()
+            raise Exception(age)
 
         for result in data['results']:
             print(result)
             date = self.convert_date(result['reportedOn'])
             province = f'NP-P{result["province"]}'
-            district = _get_district(province, self._district_map[result['district']][0])
+            if isinstance(result['district'], dict):
+                district = result['district']['titleEn']
+            else:
+                district = _get_district(province, self._district_map[result['district']][0])
 
             by_total[date] += 1
 
@@ -148,7 +153,7 @@ class NPData(URLBase):
             if result['type']:
                 by_infection_source[date, infection_sources[result['type']]] += 1
 
-            if result['age']:
+            if result['age'] and result['age'] < 130:  # 523 is a very unlikely age!
                 agerange = age_to_range(int(result['age']))
                 by_age[date, agerange] += 1
 

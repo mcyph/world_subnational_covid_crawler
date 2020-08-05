@@ -77,10 +77,10 @@ class PSData(URLBase):
                     new = int(pq(new).text().strip())
 
                 governorate = place_map[pq(governorate).text().strip()]
-                death = int(pq(death).text().strip())
-                recovery = int(pq(recovery).text().strip())
-                active = int(pq(active).text().strip())
-                total = int(pq(total).text().strip())
+                death = int(pq(death).text().replace(',', '').strip())
+                recovery = int(pq(recovery).text().replace(',', '').strip())
+                active = int(pq(active).text().replace(',', '').strip())
+                total = int(pq(total).text().replace(',', '').strip())
 
                 if governorate is None:
                     continue

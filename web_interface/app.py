@@ -1,17 +1,13 @@
 import io
-import csv
 import json
 import time
 import random
 import _thread
-import zipfile
 import cherrypy
 import datetime
 import mimetypes
 from shlex import quote
-from io import StringIO
 from os import listdir, system
-from cherrypy.lib.static import serve_file
 from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
 
@@ -19,18 +15,6 @@ from cherrypy import _json
 _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
 
 env = Environment(loader=FileSystemLoader('./templates'))
-
-from covid_19_au_grab.normalize_locality_name import \
-    normalize_locality_name
-#from covid_19_au_grab.web_interface.CSVDataRevision import \
-#    CSVDataRevision
-#from covid_19_au_grab.web_interface.CSVDataRevisions import \
-#    CSVDataRevisions
-
-from covid_19_au_grab.db.SQLiteDataRevision import \
-    SQLiteDataRevision
-from covid_19_au_grab.db.SQLiteDataRevisions import \
-    SQLiteDataRevisions
 
 from covid_19_au_grab.datatypes.constants import (
     datatype_to_name, schema_to_name,
@@ -46,12 +30,20 @@ from covid_19_au_grab.datatypes.constants import (
     DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
     DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
     DT_SOURCE_INTERSTATE,
-
     SCHEMA_JP_CITY
 )
-from covid_19_au_grab.get_package_dir import get_package_dir
-from covid_19_au_grab.datatypes import date_fns
-from covid_19_au_grab.datatypes.schema_types import schema_types
+from covid_19_au_grab.db.SQLiteDataRevision import \
+    SQLiteDataRevision
+from covid_19_au_grab.db.SQLiteDataRevisions import \
+    SQLiteDataRevisions
+from covid_19_au_grab.get_package_dir import \
+    get_package_dir
+from covid_19_au_grab.datatypes import \
+    date_fns
+from covid_19_au_grab.db.output_revision_datapoints_to_zip import \
+    output_revision_datapoints_to_zip
+from covid_19_au_grab.normalize_locality_name import \
+    normalize_locality_name
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
@@ -552,6 +544,7 @@ class App(object):
             )),
             (SCHEMA_LGA, 'AU-WA', None, (
                 DT_TOTAL,
+                DT_STATUS_ACTIVE,
             )),
 
             # NSW by postcode is possible, debating whether
@@ -633,99 +626,8 @@ class App(object):
 
     @cherrypy.expose
     def regionsTimeSeries2(self, rev_date=None, rev_subid=None):
-        r = {}
-        inst = SQLiteDataRevision(rev_date, rev_subid)
-
-        for region_schema in inst.get_region_schemas():
-            region_schema_str = schema_to_name(region_schema)
-            region_dict = schema_types['schemas'][region_schema_str]
-
-            #if region_schema != SCHEMA_JP_CITY:
-            #    continue
-            #if region_schema != SCHEMA_ADMIN_1:
-            #    continue
-
-            if region_dict['split_by_parent_region']:
-                # Split into different json files for each region parent
-                datatypes = inst.get_datatypes_by_region_schema(region_schema)
-                datatypes.sort()  # HACK: Really should sort based on largest number to allow for compression!
-
-                for region_parent in inst.get_region_parents(region_schema):
-                    i_r = {}
-                    date_ids_dict = {}
-
-                    #if region_parent.lower() != 'jp-13':
-                    #    continue
-                    #print(region_parent)
-                    #if region_parent != 'cn':
-                    #    continue
-
-                    i_max_date, datapoints = self.__get_time_series(
-                        inst, region_schema, region_parent, None,
-                        datatypes, date_ids_dict
-                    )
-                    i_r.setdefault(region_schema_str, {})[region_parent.lower()] = datapoints
-                    max_dates = {region_schema_str: {region_parent.lower(): i_max_date}}
-
-                    k = f'{region_schema_str}_{region_parent.lower()}'
-                    assert not k in r, k
-
-                    r[k] = {
-                        'date_ids': {
-                            date_id: date_string
-                            for (date_string, date_id)
-                            in date_ids_dict.items()
-                        },
-                        'time_series_data': i_r,
-                        'updated_dates': max_dates
-                    }
-            else:
-                # Put everything for a region schema in one json file
-                i_r = {}
-                date_ids_dict = {}
-                max_dates = {}
-
-                datatypes = inst.get_datatypes_by_region_schema(region_schema)
-                datatypes.sort()  # HACK: Really should sort based on largest number to allow for compression!
-
-                for region_parent in inst.get_region_parents(region_schema):
-                    i_max_date, datapoints = self.__get_time_series(
-                        inst, region_schema, region_parent, None,
-                        datatypes, date_ids_dict
-                    )
-                    i_r.setdefault(region_schema_str, {})[region_parent.lower()] = datapoints
-                    if (
-                        max_dates.setdefault(region_schema_str, {}).get(region_parent.lower(), None) is None or
-                        i_max_date > max_dates[region_schema_str][region_parent.lower()]
-                    ):
-                        max_dates[region_schema_str][region_parent.lower()] = i_max_date
-
-                assert not region_schema_str in r, region_schema_str
-                r[region_schema_str] = {
-                    'date_ids': {
-                        date_id: date_string
-                        for (date_string, date_id)
-                        in date_ids_dict.items()
-                    },
-                    'time_series_data': i_r,
-                    'updated_dates': max_dates
-                }
-
-        for k in r:
-            assert k.lower() == k, k
-
         zip_buffer = io.BytesIO()
-
-        with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
-            for file_name, data in r.items():
-                zip_file.writestr(
-                    file_name+'.json',
-                    json.dumps(
-                        data,
-                        separators=(',', ':'),
-                        ensure_ascii=False
-                    ).encode('utf-8')
-                )
+        output_revision_datapoints_to_zip(zip_buffer, rev_date, rev_subid)
 
         cherrypy.response.headers['Content-Disposition'] = \
             'attachment; filename="covid_time_series_data.zip"'
@@ -751,8 +653,9 @@ class App(object):
         ).items()):
 
             values = []
-            for date_updated, datapoints in sorted(date_updated_dict.items(), reverse=True):
-
+            for date_updated, datapoints in sorted(
+                date_updated_dict.items(), reverse=True
+            ):
                 if max_date is None or date_updated > max_date:
                     max_date = date_updated
 
@@ -797,7 +700,7 @@ if __name__ == '__main__':
         'global': {
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 6006,
-            'environment': 'production',
+            #'environment': 'production',
         },
         '/': {
 

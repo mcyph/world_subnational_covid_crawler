@@ -1,0 +1,88 @@
+# https://covid19.gov.lv/covid-19/covid-19-statistika/covid-19-izplatiba-latvija
+import json
+import datetime
+from pyquery import PyQuery as pq
+from os import listdir
+from collections import Counter
+
+from covid_19_au_grab.overseas.URLBase import (
+    URL, URLBase
+)
+from covid_19_au_grab.datatypes.DataPoint import (
+    DataPoint
+)
+from covid_19_au_grab.datatypes.constants import (
+    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
+    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
+)
+from covid_19_au_grab.get_package_dir import (
+    get_overseas_dir, get_package_dir
+)
+
+
+REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'
+
+
+regions_map = {
+    'kocēnu novads',
+    'līgatnes novads',
+    'pārgaujas novads',
+    'priekuļu novads',
+    'rūjienas novads',
+    'strenču novads',
+    'varakļānu novads',
+    'viļānu novads'
+}
+
+
+class LVData(URLBase):
+    SOURCE_URL = 'https://covid19.gov.lv/covid-19/covid-19-statistika/covid-19-izplatiba-latvija'
+    SOURCE_DESCRIPTION = ''
+    SOURCE_ID = 'lv_infogram'
+
+    def __init__(self):
+        URLBase.__init__(self,
+            output_dir=get_overseas_dir() / 'lv' / 'data',
+            urls_dict={
+                'regions_data.json': URL(REGIONS_URL, static_file=False),
+            }
+        )
+        self.update()
+
+    def get_datapoints(self):
+        r = []
+        r.extend(self._get_regions_data())
+        return r
+
+    def _get_regions_data(self):
+        # # {"data":[[["Aglonas novads",0,"0","56.0965 27.114","Aglonas novads"],
+        r = []
+        base_dir = self.get_path_in_dir('')
+
+        for date in sorted(listdir(base_dir)):
+            path = f'{base_dir}/{date}/regions_data.json'
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.loads(f.read())
+
+            for i_data in data['data']:
+                for region_name, value, *leftover in i_data:
+                    # Only confirmed and deaths are shown in the dashboard
+                    date = datetime.datetime.fromtimestamp(1595133942147/1000.0).strftime('%Y_%m_%d')
+
+                    if value is not None:
+                        r.append(DataPoint(
+                            region_schema=SCHEMA_ADMIN_1,
+                            region_parent='LV',
+                            region_child=region_name,
+                            datatype=DT_TOTAL,
+                            value=int(value),
+                            date_updated=date,
+                            source_url=self.SOURCE_URL
+                        ))
+
+        return r
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    pprint(LVData().get_datapoints())

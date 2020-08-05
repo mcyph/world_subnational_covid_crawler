@@ -49,11 +49,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         return int(i.rstrip('L'))
 
     def _get_updated_date(self, updated_date, response_dict):
-        try:
-            ts = response_dict['updated_date'][1]
-        except KeyError:
-            ts = response_dict['updated_date_2'][1]
-
+        ts = response_dict['updated_date'][1]
         ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
         if ts < 1000:
@@ -64,22 +60,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
 
     def _get_regions_data(self, updated_date, response_dict):
         r = []
-        try:
-            try:
-                try:
-                    try:
-                        try:
-                            data = response_dict['country_data'][1]
-                        except KeyError:
-                            data = response_dict['country_data_2'][1]
-                    except KeyError:
-                        data = response_dict['country_data_3'][1]
-                except KeyError:
-                    data = response_dict['country_data_4'][1]
-            except KeyError:
-                data = response_dict['country_data_5'][1]
-        except KeyError:
-            data = response_dict['country_data_6'][1]
+        data = response_dict['country_data'][1]
 
         previous_value = None
         SOURCE_URL = 'https://app.powerbi.com/view?r=eyJrIjoiZTRkZDhmMDctM2NmZi00NjRkLTgzYzMtYzI1MDMzNWI3NTRhIiwidCI6IjBmOWUzNWRiLTU0NGYtNGY2MC1iZGNjLTVlYTQxNmU2ZGM3MCIsImMiOjh9'
@@ -112,7 +93,10 @@ class _WestAfricaPowerBI(PowerBIDataReader):
             if get_index(k) is not None
         }
 
-        for region_dict in data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']:
+        #print(data['result']['data']['dsr']['DS'][0])
+        region_dicts = data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']
+
+        for region_dict in region_dicts:
             print(region_dict, previous_value)
             value, previous_value = self.process_powerbi_value(region_dict, previous_value, data)
 

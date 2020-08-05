@@ -2,10 +2,11 @@ import sys
 import json
 import datetime
 from git import Repo
+from os import system
 
 from covid_19_au_grab.Logger import Logger
 from covid_19_au_grab.get_package_dir import \
-    get_output_dir, get_global_subnational_covid_data_dir
+    get_output_dir, get_global_subnational_covid_data_dir, get_package_dir
 from covid_19_au_grab.overseas.OverseasDataSources import OverseasDataSources
 from covid_19_au_grab.state_news_releases.StateDataSources import StateDataSources
 from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import InfrequentStateDataJobs
@@ -15,12 +16,16 @@ from covid_19_au_grab.db.DerivedData import DerivedData
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
 from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
+from covid_19_au_grab.db.output_revision_datapoints_to_zip import \
+    output_revision_datapoints_to_zip
+from covid_19_au_grab.db.delete_old_dbs import delete_old_dbs
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
 TIME_FORMAT = datetime.datetime.now().strftime('%Y_%m_%d')
 LATEST_REVISION_ID = RevisionIDs.get_latest_revision_id(TIME_FORMAT)
 RUN_INFREQUENT_JOBS = '--run-infrequent-jobs' in [i.strip() for i in sys.argv]
+SOURCE_INFO = []
 
 
 def run_infrequent_jobs():
@@ -41,10 +46,12 @@ def _rem_dupes(datapoints):
     Remove dupes!
     """
     add_me = set()
+
     for datapoint in datapoints:
         if datapoint in add_me:
             continue
         add_me.add(datapoint)
+
     return list(add_me)
 
 
@@ -53,8 +60,11 @@ def output_overseas_data(dpdb):
     Output from overseas data
     """
     ods = OverseasDataSources()
+
     for source_id, source_url, source_desc, datapoints in ods.iter_data_sources():
+        SOURCE_INFO.append([source_id, source_url, source_desc])
         dpdb.extend(source_id, _rem_dupes(datapoints), is_derived=False)
+
     return ods.get_status_dict()
 
 
@@ -63,8 +73,11 @@ def output_state_data(dpdb):
     Output from state data
     """
     sds = StateDataSources()
+
     for source_id, source_url, source_desc, datapoints in sds.iter_data_sources():
+        SOURCE_INFO.append([source_id, source_url, source_desc])
         dpdb.extend(source_id, _rem_dupes(datapoints), is_derived=False)
+
     return sds.get_status_dict()
 
 
@@ -131,12 +144,49 @@ if __name__ == '__main__':
         print(f"* {source_id}")
         with open(get_global_subnational_covid_data_dir() / f'covid_{source_id}.tsv',
                   'w', encoding='utf-8') as f:
-            f.write(sqlite_data_revision.get_tsv_data(source_id))
+
+            # NOTE: I'm using "thin_datapoints" to reduce the amount of data output on the git repo!
+            f.write(sqlite_data_revision.get_tsv_data(source_id,
+                                                      thin_out=True))
     print('TSV write done')
 
+    # Output the source info into a .tsv (tab-separated) file
+    with open(get_global_subnational_covid_data_dir() / 'source_info_table.tsv', 'w', encoding='utf-8') as f:
+        f.write('source_id\tsource_url\tsource_desc\n')
+        for source_id, source_url, source_desc in sorted(SOURCE_INFO):
+            f.write(f'{source_id}\t{source_url}\t{source_desc}\n')
+
+    # Output the source info into a .md (markdown) file
+    with open(get_global_subnational_covid_data_dir() / 'source_info_table.md', 'w', encoding='utf-8') as f:
+        f.write('| source_id | source_url | source_desc |\n')
+        f.write('| --- | --- | --- |\n')
+        for source_id, source_url, source_desc in sorted(SOURCE_INFO):
+            f.write(f'| {source_id} | {source_url} | {source_desc} |\n')
+
     # Commit to GitHub
-    #repo = Repo(str(get_global_subnational_covid_data_dir()))
-    #repo.git.add(update=True)
-    #repo.index.commit('update data')
-    #origin = repo.remote(name='origin')
-    #origin.push()
+    print("Committing+pushing to GitHub...")
+    if False:
+        repo = Repo(str(get_global_subnational_covid_data_dir()))
+        repo.git.add(update=True)
+        repo.index.commit('update data')
+        origin = repo.remote(name='origin')
+        origin.push()
+    else:
+        repo_dir = str(get_global_subnational_covid_data_dir()).rstrip('/')
+        system('git --git-dir=%s/.git add %s/*' % (repo_dir, repo_dir))
+        system('git --git-dir=%s/.git commit -m "update data"' % repo_dir)
+        system('git --git-dir=%s/.git push' % repo_dir)
+    print("Push to GitHub done!")
+
+    # Output datapoints to zip
+    print("Outputting datapoints to zip...")
+    with open(get_output_dir() / 'output' / f'{TIME_FORMAT}-{LATEST_REVISION_ID}.zip', 'wb') as f:
+        output_revision_datapoints_to_zip(f, TIME_FORMAT, LATEST_REVISION_ID)
+
+    # Upload them to remote AWS instance
+    print("Uploading zip file to remote server...")
+    system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
+
+    # Clean up old DBs to save on space
+    delete_old_dbs()
+    print("[end of script]")

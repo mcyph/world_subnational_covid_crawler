@@ -293,6 +293,7 @@ class ITData(GithubRepo):
         #     },
 
         # NOTE: Provinces/regions are reversed from most other countries.
+        # TODO: Change the admin_1 to be regions and have provinces as a separate schema!!! ======================
 
         with open(self.get_path_in_dir('dati-json/dpc-covid19-ita-province.json'),
                   'r', encoding='utf-8') as f:
@@ -367,7 +368,7 @@ class ITData(GithubRepo):
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_STATUS_HOSPITALIZED,
                     value=int(hospitalized),
@@ -376,7 +377,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_STATUS_ACTIVE,
                     value=int(active),
@@ -385,7 +386,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_NEW,
                     value=int(new),
@@ -394,7 +395,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_STATUS_RECOVERED,
                     value=int(recovered),
@@ -403,7 +404,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_STATUS_DEATHS,
                     value=int(deaths),
@@ -412,7 +413,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_TOTAL,
                     value=int(total),
@@ -421,7 +422,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_TESTS_TOTAL,
                     value=int(tests_total),
@@ -430,7 +431,7 @@ class ITData(GithubRepo):
                 ))
                 r.append(DataPoint(
                     region_schema=SCHEMA_ADMIN_1,
-                    region_parent='Italy',
+                    region_parent='IT',
                     region_child=item['denominazione_regione'],
                     datatype=DT_STATUS_ICU,
                     value=int(icu),

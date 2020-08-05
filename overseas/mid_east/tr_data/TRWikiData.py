@@ -16,7 +16,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
+    SCHEMA_TR_NUTS1,
     DT_TESTS_TOTAL, DT_NEW,
     DT_TOTAL, DT_STATUS_RECOVERED,
     DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
@@ -28,22 +28,6 @@ from covid_19_au_grab.get_package_dir import (
 from covid_19_au_grab.set_locale import set_locale
 
 WIKI_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_COVID-19_pandemisi'
-
-
-region_map = {
-    'İstanbul': 'Istanbul',
-    'Batı Marmara': '',
-    'Ege': '',
-    'Doğu Marmara': 'Dogu Marmara',
-    'Batı Anadolu': '',
-    'Akdeniz': '',
-    'Orta Anadolu': '',
-    'Batı Karadeniz': '',
-    'Doğu Karadeniz': 'Dogu Karadeniz',
-    'Kuzeydoğu Anadolu': '',
-    'Ortadoğu Anadolu': '',
-    'Güneydoğu Anadolu ': '',
-}
 
 
 class TRWikiData(URLBase):
@@ -91,7 +75,7 @@ class TRWikiData(URLBase):
                 value = int(pq(value).text().replace('.', ''))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_TR_NUTS1,
                     region_parent='TR',
                     region_child=region,
                     datatype=DT_TOTAL,
@@ -123,7 +107,7 @@ class TRWikiData(URLBase):
                 value = int(pq(value).text().replace('.', ''))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=SCHEMA_TR_NUTS1,
                     region_parent='TR',
                     region_child=region,
                     datatype=DT_STATUS_DEATHS,

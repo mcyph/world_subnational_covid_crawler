@@ -51,5 +51,5 @@ class PressReleaseBase(GlobalBase):
                     html = self.url_archiver.get_url_data(
                         url, period=self._get_date
                     )
-                    date = self._get_date(html)
+                    date = self._get_date(url, html)
                     yield url, date, html

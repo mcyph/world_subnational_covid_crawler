@@ -106,11 +106,11 @@ class ProcessGeoJSONBase(ABC):
             # TODO: Split into '{schema_name}_{parent_region}'
             for schema_name, schema_dict in r.items():
                 for parent_name, parent_dict in schema_dict.items():
-                    output(f'{out_dir}/{self.schema_name}_{parent_name.lower()}.geojson', {
+                    output(f'{out_dir}/{self.schema_name}_{parent_name.lower()}.json', {
                         self.schema_name: {parent_name: parent_dict}
                     })
         else:
-            output(f'{out_dir}/{self.schema_name}.geojson', r)
+            output(f'{out_dir}/{self.schema_name}.json', r)
 
     #===========================================================#
     #                  Methods to be overridden                 #

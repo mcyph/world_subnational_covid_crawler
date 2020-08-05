@@ -13,21 +13,15 @@
     "constant_select": [
         ["Basic Numbers", [
             ["Total Cases", "total"],
-            ["Probable Cases", "probable"],
-            ["Confirmed Cases", "confirmed"],
             ["Active Cases", "status_active"],
-            ["Days Since Last Case", "days_since"],
             ["New Cases", "new"],
             ["Recovered Cases", "status_recovered"],
             ["Deaths", "status_deaths"]
-        ],
-        ["Hospitalizations",
+        ]],
+        ["Hospitalizations", [
             ["Currently in ICU", "status_icu"],
             ["Currently in ICU w/Ventilator", "status_icu_ventilators"],
-            ["Currently Hospitalized", "status_hospitalized"],
-            ["Total Admitted to ICU", "status_icu_runningtotal"],
-            ["Total Admitted to ICU w/Ventilator", "status_icu_ventilators_runningtotal"],
-            ["Total Admitted to Hospital", "status_hospitalized_runningtotal"]
+            ["Currently Hospitalized", "status_hospitalized"]
         ]],
         ["Test Numbers", [
             ["Total People Tested", "tests_total"],
@@ -61,19 +55,20 @@
             "percapita": true
         },
         "status_active": {
-            "timeperiods": false,
+            "timeperiods": true,
             "dayssince": false,
             "roc": true,
             "percapita": true
         },
         "new": {
-            "timeperiods": false,
+            "averagedata": true,
+            "timeperiods": true,
             "dayssince": false,
             "roc": true,
             "percapita": false
         },
         "status_recovered": {
-            "timeperiods": false,
+            "timeperiods": true,
             "dayssince": false,
             "roc": true,
             "percapita": true
@@ -86,19 +81,19 @@
         },
 
         "status_icu": {
-            "timeperiods": false,
+            "timeperiods": true,
             "dayssince": true,
             "roc": true,
             "percapita": true
         },
         "status_icu_ventilators": {
-            "timeperiods": false,
+            "timeperiods": true,
             "dayssince": true,
             "roc": true,
             "percapita": true
         },
         "status_hospitalized": {
-            "timeperiods": false,
+            "timeperiods": true,
             "dayssince": true,
             "roc": true,
             "percapita": true
@@ -142,7 +137,8 @@
             "percapita": true
         },
         "tests_new": {
-            "timeperiods": false,
+            "averagedata": true,
+            "timeperiods": true,
             "dayssince": false,
             "roc": true,
             "percapita": false
@@ -193,7 +189,7 @@
             "#3": "May contain additional 'cutouts' for cities, when",
             "#4": "additional data is provided within an admin_1 area",
             "iso_3166": null,
-            "min_zoom": 2,
+            "min_zoom": 4,
             "priority": 1,
             "split_by_parent_region": true
         },
@@ -207,13 +203,13 @@
         },
         "hhs": {
             "iso_3166": "AU-QLD",
-            "min_zoom": 3,
+            "min_zoom": 4,
             "priority": 4,
             "split_by_parent_region": false
         },
         "lhd": {
             "iso_3166": "AU-NSW",
-            "min_zoom": 3,
+            "min_zoom": 4,
             "priority": 2,
             "split_by_parent_region": false
         },
@@ -225,16 +221,16 @@
         },
         "ths": {
             "iso_3166": "AU-TAS",
-            "min_zoom": 2,
-            "priority": 2,
+            "min_zoom": 4,
+            "priority": 5,
             "split_by_parent_region": false
         },
         "postcode": {
-            "iso_3166": "AU-NSW",
-            "min_zoom": 8,
+            "iso_3166": "AU",
+            "min_zoom": 10,
             "priority": 5,
             "line_width": 0.5,
-            "split_by_parent_region": false
+            "split_by_parent_region": true
         },
 
         "bd_district": {
@@ -253,7 +249,7 @@
         },
         "ca_health_region": {
             "iso_3166": "CA",
-            "min_zoom": 3,
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },
@@ -272,7 +268,7 @@
         },
         "cz_okres": {
             "iso_3166": "CZ",
-            "min_zoom": 2,
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },
@@ -291,7 +287,13 @@
         },
         "fi_health_district": {
             "iso_3166": "FI",
-            "min_zoom": 2,
+            "min_zoom": 4,
+            "priority": 5,
+            "split_by_parent_region": false
+        },
+        "hk_district": {
+            "iso_3166": "HK",
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },
@@ -302,9 +304,16 @@
             "line_width": 0.5,
             "split_by_parent_region": true
         },
+        "il_municipality": {
+            "iso_3166": "IL",
+            "min_zoom": 5,
+            "priority": 5,
+            "line_width": 0.5,
+            "split_by_parent_region": false
+        },
         "it_province": {
             "iso_3166": "IT",
-            "min_zoom": 2,
+            "min_zoom": 5,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
@@ -321,12 +330,12 @@
             "min_zoom": 5,
             "priority": 5,
             "line_width": 0.5,
-            "split_by_parent_region": true
+            "split_by_parent_region": false
         },
         "my_district": {
             "iso_3166": "MY",
-            "min_zoom": 4,
-            "priority": 5,
+            "min_zoom": 50,
+            "priority": -1,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
@@ -344,25 +353,25 @@
         },
         "ps_province": {
             "iso_3166": "PS",
-            "min_zoom": 2,
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },
         "pt_municipality": {
             "iso_3166": "PT",
-            "min_zoom": 2,
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },
-        "nuts_1": {
+        "tr_nuts1": {
             "iso_3166": "TR",
-            "min_zoom": 2,
+            "min_zoom": 3,
             "priority": 5,
             "split_by_parent_region": false
         },
         "uk_area": {
             "iso_3166": "GB",
-            "min_zoom": 2,
+            "min_zoom": 4,
             "priority": 5,
             "split_by_parent_region": false
         },

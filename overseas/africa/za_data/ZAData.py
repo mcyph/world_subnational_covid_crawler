@@ -40,7 +40,7 @@ class ZAData(PressReleaseBase):
         )
         self.update()
 
-    def _get_date(self, html):
+    def _get_date(self, href, html):
         date = self.convert_date(
             pq(html)('.updated.rich-snippet-hidden').text().strip().split('T')[0]
         )
@@ -49,6 +49,7 @@ class ZAData(PressReleaseBase):
     def get_datapoints(self):
         r = []
         for url, date, html in self.iter_press_releases():
+            print(url, date)
             r.extend(self._get_total_datapoints(date, html))
             r.extend(self._get_recovered_death_datapoints(date, html))
         return r
@@ -86,7 +87,12 @@ class ZAData(PressReleaseBase):
         else:
             TRs = pq(html)('.NormalTable:contains("Total cases") tbody tr')
 
-            for province, cases, percentage in TRs[1:]:
+            for tr in TRs[1:]:
+                try:
+                    province, cases, percentage = tr
+                except ValueError:
+                    province, cases = tr
+
                 province = self._elm_to_province(province)
                 if province == 'total':
                     continue

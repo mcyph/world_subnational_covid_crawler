@@ -8,6 +8,8 @@ from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
 from covid_19_au_grab.datatypes.constants import \
     schema_to_name, datatype_to_name
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
+from covid_19_au_grab.datatypes.datapoints_thinned_out import \
+    datapoints_thinned_out
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
@@ -78,6 +80,8 @@ class SQLiteDataRevision:
             region_parent=['= ?', [region_parent]] if region_parent else None,
             region_child=['= ?', [region_child]] if region_child else None,
             datatype=[f"IN ({','.join('?' for _ in datatypes)})", datatypes],
+
+            source_id=['!= ?', ['us_nytimes']],  # HACK!
         )
 
         r = {}
@@ -161,9 +165,19 @@ class SQLiteDataRevision:
             x.region_child
         )
 
-    def get_tsv_data(self, source_id):
+    def get_tsv_data(self, source_id, thin_out=True):
         datapoints = self.get_datapoints_by_source_id(source_id)
+
+        datapoints.sort(
+            key=lambda i: i.date_updated,
+            reverse=True
+        )
+
         assert datapoints
+
+        if thin_out:
+            datapoints = datapoints_thinned_out(datapoints)
+
         datapoints.sort(key=lambda i: (
             i.date_updated,
             i.region_schema,
@@ -213,10 +227,16 @@ class SQLiteDataRevision:
         if isinstance(region_schema, int):
             region_schema = schema_to_name(region_schema)
 
+        if region_parent:
+            region_parent = region_parent.lower()
+        if region_child:
+            region_child = region_child.lower()
+
         combined = {}
         for datatype in datatypes:
             if isinstance(datatype, int):
                 datatype = datatype_to_name(datatype)
+            datatype = datatype.lower()
 
             for datapoint in self.get_combined_value(region_schema, datatype,
                                                      from_date=from_date,
@@ -279,6 +299,12 @@ class SQLiteDataRevision:
             if isinstance(datatype, int):
                 datatype = datatype_to_name(datatype)
 
+            if region_parent:
+                region_parent = region_parent.lower()
+
+            region_schema = region_schema.lower()
+            datatype = datatype.lower()
+
             for datapoint in self.get_combined_value(region_schema,
                                                      datatype,
                                                      region_parent,
@@ -334,6 +360,11 @@ class SQLiteDataRevision:
             region_schema = schema_to_name(region_schema)
         if isinstance(datatype, int):
             datatype = datatype_to_name(datatype)
+
+        region_schema = region_schema.lower()
+        if region_child: region_child = region_child.lower()
+        if region_parent: region_parent = region_parent.lower()
+        datatype = datatype.lower()
 
         datapoints = self._datapoints_db.select_many(
             region_schema=['= ?', [region_schema]] if region_schema is not None else None,
