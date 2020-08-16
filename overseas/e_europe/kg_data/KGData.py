@@ -1,6 +1,7 @@
 import json
 from pyquery import PyQuery as pq
 from os import listdir
+from os.path import exists
 from collections import Counter
 
 from covid_19_au_grab.overseas.URLBase import (
@@ -20,14 +21,19 @@ from covid_19_au_grab.get_package_dir import (
 
 place_map = {
     'Иссык-Куль': 'KG-Y',
+    'Ысык-Көл': 'KG-Y',
     'Джалал-Абад': 'KG-J',
+    'Жалал-Абад': 'KG-J',
     'Талас': 'KG-T',
     'Баткен': 'KG-B',
     'Ош': 'KG-O',
     'Чуй': 'KG-C',
+    'Чүй': 'KG-C',
     'Нарын': 'KG-N',
     'г. Бишкек': 'KG-GB',
+    'Бишкек шаары': 'KG-GB',
     'г. Ош': 'KG-GO',
+    'Ош шаары': 'KG-GO',
 }
 
 
@@ -41,7 +47,9 @@ class KGData(URLBase):
             output_dir=get_overseas_dir() / 'kg' / 'data',
             urls_dict={
                 'kz_corona.html': URL('https://covid.kg/',
-                                      static_file=False)
+                                      static_file=False),
+                'kz_corona_map.html': URL('https://covid.kg/map',
+                                          static_file=False)
             }
         )
         self.update()
@@ -56,12 +64,17 @@ class KGData(URLBase):
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
-            path = f'{base_dir}/{date}/kz_corona.html'
+            path = f'{base_dir}/{date}/kz_corona_map.html'
+            if not exists(path):
+                path = f'{base_dir}/{date}/kz_corona.html'
+
             with open(path, 'r', encoding='utf-8') as f:
                 html = f.read()
+            if not 'data: ' in html or not 'name: ' in html:
+                continue
 
             # TODO: Add other national stats from this page!
-            chart_js = html.split('var options = {')[-1]
+            chart_js = html.split(' options = {')[-1]
             dates = json.loads(
                 chart_js.split('categories: ')[1]
                     .split('\n')[0]

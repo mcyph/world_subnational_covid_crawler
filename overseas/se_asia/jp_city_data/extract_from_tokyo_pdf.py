@@ -145,7 +145,7 @@ def get_text_from_pdf(path, page_nums=None):
                 continue
             merged.add(y)
 
-            if dist <= 30:
+            if dist <= 18:  # NOTE ME: This threshold may need to be tuned!!! =====================================
                 r[y] = TextItem(
                     text=text_item_2.text,
                     x1=text_item_2.x1,
@@ -349,6 +349,8 @@ class ExtractFromTokyoPDF:
         for fnam in sorted(listdir(base_dir)):
             if not '.pdf' in fnam:
                 continue
+            #elif not '2020_08_09' in fnam:
+            #    continue
             path = base_dir / fnam
 
             found_fumei = False

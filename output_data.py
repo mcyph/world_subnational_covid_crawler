@@ -2,7 +2,7 @@ import sys
 import json
 import datetime
 from git import Repo
-from os import system
+from os import system, listdir
 
 from covid_19_au_grab.Logger import Logger
 from covid_19_au_grab.get_package_dir import \
@@ -137,6 +137,19 @@ if __name__ == '__main__':
     with open(status_json_path, 'w', encoding='utf-8') as f:
         f.write(json.dumps({'status': status}, indent=4))
 
+    # Output datapoints to zip
+    print("Outputting datapoints to zip...")
+    with open(get_output_dir() / 'output' / f'{TIME_FORMAT}-{LATEST_REVISION_ID}.zip', 'wb') as f:
+        output_revision_datapoints_to_zip(f, TIME_FORMAT, LATEST_REVISION_ID)
+
+    # Upload them to remote AWS instance
+    print("Uploading zip file to remote server...")
+    system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
+
+    # Clean up old DBs to save on space
+    print("Deleting older DBs to save space..")
+    delete_old_dbs()
+
     # Update the csv output
     print("Outputting TSV files:")
     sqlite_data_revision = SQLiteDataRevision(TIME_FORMAT, LATEST_REVISION_ID)
@@ -144,7 +157,6 @@ if __name__ == '__main__':
         print(f"* {source_id}")
         with open(get_global_subnational_covid_data_dir() / f'covid_{source_id}.tsv',
                   'w', encoding='utf-8') as f:
-
             # NOTE: I'm using "thin_datapoints" to reduce the amount of data output on the git repo!
             f.write(sqlite_data_revision.get_tsv_data(source_id,
                                                       thin_out=True))
@@ -164,29 +176,26 @@ if __name__ == '__main__':
             f.write(f'| {source_id} | {source_url} | {source_desc} |\n')
 
     # Commit to GitHub
-    print("Committing+pushing to GitHub...")
     if False:
-        repo = Repo(str(get_global_subnational_covid_data_dir()))
-        repo.git.add(update=True)
-        repo.index.commit('update data')
-        origin = repo.remote(name='origin')
-        origin.push()
-    else:
-        repo_dir = str(get_global_subnational_covid_data_dir()).rstrip('/')
-        system('git --git-dir=%s/.git add %s/*' % (repo_dir, repo_dir))
-        system('git --git-dir=%s/.git commit -m "update data"' % repo_dir)
-        system('git --git-dir=%s/.git push' % repo_dir)
-    print("Push to GitHub done!")
+        print("Committing+pushing to GitHub...")
+        if False:
+            repo = Repo(str(get_global_subnational_covid_data_dir()))
+            repo.git.add(update=True)
+            repo.index.commit('update data')
+            origin = repo.remote(name='origin')
+            origin.push()
+        else:
+            repo_dir = str(get_global_subnational_covid_data_dir()).rstrip('/')
+            system('git --git-dir=%s/.git add %s' % (
+                repo_dir,
+                ' '.join([
+                    i.replace(' ', '\\ ') for i
+                    in listdir(repo_dir)
+                    if not i.startswith('.')
+                ])
+            ))
+            system('git --git-dir=%s/.git commit -m "update data"' % repo_dir)
+            system('git --git-dir=%s/.git push' % repo_dir)
+        print("Push to GitHub done!")
 
-    # Output datapoints to zip
-    print("Outputting datapoints to zip...")
-    with open(get_output_dir() / 'output' / f'{TIME_FORMAT}-{LATEST_REVISION_ID}.zip', 'wb') as f:
-        output_revision_datapoints_to_zip(f, TIME_FORMAT, LATEST_REVISION_ID)
-
-    # Upload them to remote AWS instance
-    print("Uploading zip file to remote server...")
-    system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
-
-    # Clean up old DBs to save on space
-    delete_old_dbs()
     print("[end of script]")

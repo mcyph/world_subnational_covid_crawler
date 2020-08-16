@@ -29,5 +29,5 @@ class ProcessAdmin0(ProcessGeoJSONBase):
 
 if __name__ == '__main__':
     ProcessAdmin0().output_json([
-        DATA_DIR / 'admin0' / 'admin_0.json'
+        DATA_DIR / 'admin0' / 'admin_0_heavycompressed.json'
     ], OUTPUT_DIR, pretty_print=False)

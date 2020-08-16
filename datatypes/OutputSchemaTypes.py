@@ -45,7 +45,7 @@ class OutputSchemaTypes:
         dir_ = get_package_dir() / 'geojson_data' / 'output'
 
         for fnam in listdir(dir_):
-            if not (fnam == 'admin_0.geojson' or fnam.startswith('admin_1')):
+            if not (fnam == 'admin_0.json' or fnam.startswith('admin_1')):
                 continue
 
             with open(dir_ / fnam, 'r', encoding='utf-8') as f:
@@ -113,12 +113,12 @@ class OutputSchemaTypes:
             ]
 
         for k, v in {
-            'case_data_listing': do_listdir(
-                '~/dev/pull_req/covid-19-au.github.io/src/data/caseData'
-            ),
-            'geo_json_data_listing': do_listdir(
-                '~/dev/pull_req/covid-19-au.github.io/src/data/geoJSONData'
-            ),
+            #'case_data_listing': do_listdir(
+            #    '~/dev/pull_req/covid-19-au.github.io/src/data/caseData'
+            #),
+            #'geo_json_data_listing': do_listdir(
+            #    '~/dev/pull_req/covid-19-au.github.io/src/data/geoJSONData'
+            #),
             'underlay_data_listing': do_listdir(
                 '~/dev/pull_req/covid-19-au.github.io/src/data/underlayData'
             )

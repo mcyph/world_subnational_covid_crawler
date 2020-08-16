@@ -50,6 +50,7 @@ VN-14	Hòa Bình
 VN-66	Hưng Yên
 VN-34	Khánh Hòa
 VN-47	Kiến Giang
+VN-47	Kiên Giang
 VN-28	Kon Tum
 VN-01	Lai Châu
 VN-35	Lâm Đồng
@@ -138,7 +139,10 @@ class VNData(URLBase):
             # There are quite a few more stats e.g. lower than governorate level etc =====================================
 
             for region, total, active, recovery, death in pq(html('#sailorTable')[0])('tbody tr'):
-                region = place_map[pq(region).text().strip()]
+                region = pq(region).text().strip()
+                if not region:
+                    continue  # FIXME!
+                region = place_map[region]
                 death = int(pq(death).text().strip())
                 recovery = int(pq(recovery).text().strip())
                 active = int(pq(active).text().strip())

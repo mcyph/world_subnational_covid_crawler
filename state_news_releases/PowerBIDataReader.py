@@ -12,7 +12,7 @@ class PowerBIDataReader:
         self.globals_dict = globals_dict
 
     def _iter_all_dates(self):
-        for sub_dir in listdir(self.base_dir):
+        for sub_dir in sorted(listdir(self.base_dir)):
             date, subid = sub_dir.split('-')
             yield date, int(subid), self._match_grabbed_with_types(
                 f'{self.base_dir}/{sub_dir}'

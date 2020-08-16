@@ -377,7 +377,7 @@
         },
         "us_county": {
             "iso_3166": "US",
-            "min_zoom": 4,
+            "min_zoom": 5,
             "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": true

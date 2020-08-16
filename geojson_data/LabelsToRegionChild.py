@@ -1,7 +1,7 @@
 import json
 from os import listdir
 from covid_19_au_grab.get_package_dir import get_package_dir
-from covid_19_au_grab.datatypes.constants import name_to_schema, SCHEMA_ADMIN_1, SCHEMA_JP_CITY, SCHEMA_ADMIN_0
+from covid_19_au_grab.datatypes.constants import name_to_schema, schema_to_name, SCHEMA_ADMIN_1, SCHEMA_JP_CITY, SCHEMA_ADMIN_0
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 
 
@@ -19,7 +19,14 @@ class __LabelsToRegionChild:
         """
 
         """
-        self.__english, self.__non_english = self.__get_labels_to_admin_1()
+        self.__english, self.__non_english, self.__all_possible = self.__get_labels_to_admin_1()
+
+    def region_child_in_geojson(self, region_schema, region_parent, region_child):
+        return (
+            region_schema,
+            region_parent or '',
+            region_child or ''
+        ) in self.__all_possible
 
     def get_by_label(self, region_schema, region_parent, label, default=KeyError):
         """
@@ -50,6 +57,7 @@ class __LabelsToRegionChild:
     def __get_labels_to_admin_1(self):
         english = {}
         non_english = {}
+        all_possible = set()
 
         dir_ = get_package_dir() / 'geojson_data' / 'output'
 
@@ -71,6 +79,12 @@ class __LabelsToRegionChild:
                                 region_child_item['label']['en'].strip().lower()
                             ] = region_child
 
+                            all_possible.add((
+                                region_schema,
+                                region_parent.lower(),
+                                region_child.lower()
+                            ))
+
                         for label in self.__iter_non_english_labels(region_child_item['label']):
                             non_english[
                                 region_schema,
@@ -78,7 +92,13 @@ class __LabelsToRegionChild:
                                 label
                             ] = region_child
 
-        return english, non_english
+                            all_possible.add((
+                                region_schema,
+                                region_parent.lower(),
+                                region_child.lower()
+                            ))
+
+        return english, non_english, all_possible
 
     def __iter_non_english_labels(self, labels):
         for k, label in labels.items():

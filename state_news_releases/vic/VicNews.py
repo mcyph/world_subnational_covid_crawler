@@ -275,6 +275,7 @@ class VicNews(StateNewsBase):
 
         if regional_table and len(regional_table):
             datatype_map = {
+                'confirmed cases': DT_TOTAL,
                 'confirmed cases (ever)': DT_TOTAL,
                 'total confirmed cases (ever)': DT_TOTAL,
                 'active cases (current)': DT_STATUS_ACTIVE,

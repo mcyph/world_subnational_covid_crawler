@@ -15,7 +15,8 @@ class VicPowerBI(PowerBIBase):
         PowerBIBase.__init__(self,
                              self.PATH_PREFIX,
                              globals(),
-                             self.POWERBI_URL)
+                             self.POWERBI_URL,
+                             num_pages=8)
 
 
 def get_globals():
@@ -4897,8 +4898,683 @@ regions_active_8_req = {
         "QueryId": ""
       }
 
+source_of_infection_6_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"acquired_n\"},\"Name\":\"Linelist.acquired_n\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l",
+                      "Type": 0
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "l"
+                            }
+                          },
+                          "Property": "Cases"
+                        }
+                      }
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "acquired_n"
+                      },
+                      "Name": "Linelist.acquired_n"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+source_of_infection_7_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Linelist",
+                      "Name": "l",
+                      "Type": 0
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "l"
+                            }
+                          },
+                          "Property": "Cases"
+                        }
+                      }
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "acquired_n"
+                      },
+                      "Name": "Linelist.acquired_n"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "l"
+                          }
+                        },
+                        "Property": "Cases"
+                      },
+                      "Name": "Linelist.Cases"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+
+regions_postcode_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"COVID public report line list\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Postcode\"},\"Name\":\"COVID public report line list.Postcode\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"CasesPostcode\"},\"Name\":\"COVID public report line list.CasesPostcode\"}],\"Where\":[{\"Condition\":{\"StartsWith\":{\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Postcode\"}},\"Right\":{\"Literal\":{\"Value\":\"'3'\"}}}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"CasesPostcode\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":1,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "Aggregates": [
+                    {
+                      "Aggregations": [
+                        {
+                          "Min": {}
+                        },
+                        {
+                          "Max": {}
+                        }
+                      ],
+                      "Select": 1
+                    }
+                  ],
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "COVID public report line list",
+                      "Name": "c",
+                      "Type": 0
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "c"
+                            }
+                          },
+                          "Property": "CasesPostcode"
+                        }
+                      }
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "Postcode"
+                      },
+                      "Name": "COVID public report line list.Postcode"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "CasesPostcode"
+                      },
+                      "Name": "COVID public report line list.CasesPostcode"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "StartsWith": {
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "c"
+                                }
+                              },
+                              "Property": "Postcode"
+                            }
+                          },
+                          "Right": {
+                            "Literal": {
+                              "Value": "'3'"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+regions_active_postcode_req = {
+        "ApplicationContext": {
+          "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+          "Sources": [
+            {
+              "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"COVID public report line list\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Postcode\"},\"Name\":\"COVID public report line list.Postcode\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"CasesPostcode\"},\"Name\":\"COVID public report line list.CasesPostcode\"}],\"Where\":[{\"Condition\":{\"StartsWith\":{\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Postcode\"}},\"Right\":{\"Literal\":{\"Value\":\"'3'\"}}}}},{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"clin_status\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}],[{\"Literal\":{\"Value\":\"'Under investigation'\"}}]]}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"CasesPostcode\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Top\":{}}},\"Aggregates\":[{\"Select\":1,\"Aggregations\":[{\"Min\":{}},{\"Max\":{}}]}],\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "Aggregates": [
+                    {
+                      "Aggregations": [
+                        {
+                          "Min": {}
+                        },
+                        {
+                          "Max": {}
+                        }
+                      ],
+                      "Select": 1
+                    }
+                  ],
+                  "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0,
+                          1
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "COVID public report line list",
+                      "Name": "c",
+                      "Type": 0
+                    }
+                  ],
+                  "OrderBy": [
+                    {
+                      "Direction": 2,
+                      "Expression": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Source": "c"
+                            }
+                          },
+                          "Property": "CasesPostcode"
+                        }
+                      }
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "Postcode"
+                      },
+                      "Name": "COVID public report line list.Postcode"
+                    },
+                    {
+                      "Measure": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "c"
+                          }
+                        },
+                        "Property": "CasesPostcode"
+                      },
+                      "Name": "COVID public report line list.CasesPostcode"
+                    }
+                  ],
+                  "Version": 2,
+                  "Where": [
+                    {
+                      "Condition": {
+                        "StartsWith": {
+                          "Left": {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "c"
+                                }
+                              },
+                              "Property": "Postcode"
+                            }
+                          },
+                          "Right": {
+                            "Literal": {
+                              "Value": "'3'"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "Condition": {
+                        "In": {
+                          "Expressions": [
+                            {
+                              "Column": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "c"
+                                  }
+                                },
+                                "Property": "clin_status"
+                              }
+                            }
+                          ],
+                          "Values": [
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted to ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Admitted, not known to be in ICU'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Home isolation'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hospital in the home'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Hotel detention'"
+                                }
+                              }
+                            ],
+                            [
+                              {
+                                "Literal": {
+                                  "Value": "'Under investigation'"
+                                }
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
+regions_active_req = {
+    "ApplicationContext": {
+        "DatasetId": "5b547437-24c9-4b22-92de-900b3b3f4785",
+        "Sources": [
+            {
+                "ReportId": "964ef513-8ff4-407c-8068-ade1e7f64ca5"
+            }
+        ]
+    },
+    "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d1\",\"Entity\":\"dimLGA\",\"Type\":0},{\"Name\":\"l\",\"Entity\":\"Linelist\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"},\"Name\":\"dimLGA.LGAName\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"},\"Name\":\"Linelist.Cases\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"Comparison\":{\"ComparisonKind\":0,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d1\"}},\"Property\":\"LGAName\"}},\"Right\":{\"Literal\":{\"Value\":\"null\"}}}}}}},{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"clin_status_n\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Admitted to ICU'\"}}],[{\"Literal\":{\"Value\":\"'Admitted, not known to be in ICU'\"}}],[{\"Literal\":{\"Value\":\"'Home isolation'\"}}],[{\"Literal\":{\"Value\":\"'Hotel detention'\"}}],[{\"Literal\":{\"Value\":\"'Hospital in the home'\"}}],[{\"Literal\":{\"Value\":\"'Under investigation'\"}}]]}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"l\"}},\"Property\":\"Cases\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Window\":{\"Count\":500}}},\"Version\":1}}}]}",
+    "Query": {
+        "Commands": [
+            {
+                "SemanticQueryDataShapeCommand": {
+                    "Binding": {
+                        "DataReduction": {
+                            "DataVolume": 3,
+                            "Primary": {
+                                "Window": {
+                                    "Count": 500
+                                }
+                            }
+                        },
+                        "Primary": {
+                            "Groupings": [
+                                {
+                                    "Projections": [
+                                        0,
+                                        1
+                                    ]
+                                }
+                            ]
+                        },
+                        "Version": 1
+                    },
+                    "Query": {
+                        "From": [
+                            {
+                                "Entity": "dimLGA",
+                                "Name": "d1",
+                                "Type": 0
+                            },
+                            {
+                                "Entity": "Linelist",
+                                "Name": "l",
+                                "Type": 0
+                            }
+                        ],
+                        "OrderBy": [
+                            {
+                                "Direction": 2,
+                                "Expression": {
+                                    "Measure": {
+                                        "Expression": {
+                                            "SourceRef": {
+                                                "Source": "l"
+                                            }
+                                        },
+                                        "Property": "Cases"
+                                    }
+                                }
+                            }
+                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "d1"
+                                        }
+                                    },
+                                    "Property": "LGAName"
+                                },
+                                "Name": "dimLGA.LGAName"
+                            },
+                            {
+                                "Measure": {
+                                    "Expression": {
+                                        "SourceRef": {
+                                            "Source": "l"
+                                        }
+                                    },
+                                    "Property": "Cases"
+                                },
+                                "Name": "Linelist.Cases"
+                            }
+                        ],
+                        "Version": 2,
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "Comparison": {
+                                                "ComparisonKind": 0,
+                                                "Left": {
+                                                    "Column": {
+                                                        "Expression": {
+                                                            "SourceRef": {
+                                                                "Source": "d1"
+                                                            }
+                                                        },
+                                                        "Property": "LGAName"
+                                                    }
+                                                },
+                                                "Right": {
+                                                    "Literal": {
+                                                        "Value": "null"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {
+                                                            "Source": "l"
+                                                        }
+                                                    },
+                                                    "Property": "clin_status_n"
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted to ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Admitted, not known to be in ICU'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Home isolation'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hotel detention'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Hospital in the home'"
+                                                    }
+                                                }
+                                            ],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Under investigation'"
+                                                    }
+                                                }
+                                            ]
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "QueryId": ""
+}
+
 
 if __name__ == '__main__':
     vpb = VicPowerBI()
     vpb.run_powerbi_grabber()
-

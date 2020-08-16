@@ -170,6 +170,7 @@ class JPCityData(URLBase):
                     '女性': DT_TOTAL_FEMALE,
                     '不明': None,
                     '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
+                    '未満 女性': DT_TOTAL_FEMALE,
                     '': None,
                     None: None
                 }[item['性別']]

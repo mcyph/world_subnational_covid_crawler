@@ -34,4 +34,3 @@ from covid_19_au_grab.geojson_data.world.ProcessAdmin1 import FIXME
 
 if __name__ == '__main__':
     FIXME
-

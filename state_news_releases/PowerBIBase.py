@@ -30,10 +30,11 @@ GECKO_BROWSER_DIR = expanduser(
 
 
 class PowerBIBase:
-    def __init__(self, path_prefix, globals_dict, powerbi_url):
+    def __init__(self, path_prefix, globals_dict, powerbi_url, num_pages=4):
         self.path_prefix = path_prefix
         self.globals_dict = globals_dict
         self.powerbi_url = powerbi_url
+        self.num_pages = num_pages
 
     def run_powerbi_grabber(self):
         self.output_dir = self._get_output_json_dir()
@@ -132,7 +133,7 @@ class PowerBIBase:
                                             'captureContent': True})
         driver.get(self.powerbi_url)
 
-        for x in range(4):
+        for x in range(self.num_pages):
             time.sleep(25)
 
             proxy.wait_for_traffic_to_stop(10, 60)

@@ -229,19 +229,22 @@ class MWData(URLBase):
             #    date_updated=date,
             #    source_url=self.SOURCE_URL
             #))
-            r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DT_TESTS_TOTAL,
-                value=data['numberOfTestedSamples'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            ))
+
+            if 'numberOfTestedSamples' in data:
+                r.append(DataPoint(
+                    region_schema=SCHEMA_ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DT_TESTS_TOTAL,
+                    value=data['numberOfTestedSamples'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
 
         return r
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(MWData().get_datapoints())
+    d = MWData().get_datapoints()
+    pprint(d)

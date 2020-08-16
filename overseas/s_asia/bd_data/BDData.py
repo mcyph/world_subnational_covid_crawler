@@ -64,6 +64,7 @@ BD-20	Hobiganj
 BD-20	Habiganj
 BD-21	Jamalpur
 BD-22	Jessore
+BD-22	Jashore
 BD-23	Jhenaidah
 BD-24	Joypurhat
 BD-25	Jhalakathi

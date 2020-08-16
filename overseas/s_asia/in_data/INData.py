@@ -78,12 +78,14 @@ IN-UT	Uttarakhand
 IN-UP	Uttar Pradesh
 IN-WB	West Bengal
 IN-AN	Andaman and Nicobar Islands
+IN-AN	Andaman & Nicobar
 IN-CH	Chandigarh
 IN-DN	Dadra and Nagar Haveli
-IN-DD	Daman and Diu
+IN-DN	Daman and Diu
 IN-DN	Dadra and Nagar Haveli and Daman and Diu
 IN-DL	Delhi
 IN-JK	Jammu and Kashmir
+IN-JK	Jammu & Kashmir
 IN-LA	Ladakh
 IN-LD	Lakshadweep
 IN-PY	Puducherry

@@ -13,7 +13,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA, SCHEMA_POSTCODE, SCHEMA_LHD,
+    SCHEMA_ADMIN_1, SCHEMA_LGA, SCHEMA_POSTCODE, SCHEMA_LHD,
     DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_INTERSTATE,
     DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
     DT_SOURCE_OVERSEAS,
@@ -30,23 +30,46 @@ class NSWJSONData:
         self.postcode_to_lga = {}
 
     def get_datapoints(self):
-        date = (datetime.now() - timedelta(hours=20, minutes=30)).strftime('%Y_%m_%d')
+        date = (
+            datetime.now() - timedelta(hours=20, minutes=30)
+        ).strftime('%Y_%m_%d')
+
+        r = []
+        added = set()
+        dates = sorted(listdir(get_data_dir() / 'nsw' / 'open_data'))
+        if not date in dates:
+            dates.append(date)
+
+        for i_date in dates:
+            download = i_date == date
+
+            for datapoint in self.__get_datapoints(i_date, download=download):
+                k = (
+                    datapoint.region_schema,
+                    datapoint.region_parent,
+                    datapoint.region_child,
+                    datapoint.agerange,
+                    datapoint.datatype,
+                    datapoint.date_updated
+                )
+                if k in added:
+                    continue
+                added.add(k)
+                r.append(datapoint)
+
+        return r
+
+    def __get_datapoints(self, date, download=True):
         dir_ = get_data_dir() / 'nsw' / 'open_data' / date
         if not exists(dir_):
             makedirs(dir_)
 
         r = []
-        r.extend(self.get_nsw_cases_data(dir_))  # For infection source only
-        r.extend(self.get_nsw_tests_data(dir_))
-        r.extend(self.get_nsw_postcode_data(dir_))  # For totals only
+        r.extend(self.get_nsw_cases_data(dir_, download=download))  # For infection source only
+        r.extend(self.get_nsw_tests_data(dir_, download=download))
+        r.extend(self.get_nsw_postcode_data(dir_, download=download))  # For totals only
         r.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', r))
-        r.extend(self.get_nsw_age_data(dir_, date, download=True))  # Age distributions
-
-        for i_date in listdir(get_data_dir() / 'nsw' / 'open_data'):
-            if i_date == date:
-                continue
-            i_dir = get_data_dir() / 'nsw' / 'open_data' / i_date
-            r.extend(self.get_nsw_age_data(i_dir, i_date, download=False))
+        r.extend(self.get_nsw_age_data(dir_, date, download=download))  # Age distributions
         return r
 
     def __postcode_datapoints_to_lga(self, SOURCE_URL, r):
@@ -134,15 +157,19 @@ class NSWJSONData:
                 path_listing
             )
 
-        with open(path_listing, 'r', encoding='utf-8') as f:
-            html = f.read()
-            try:
-                _date = html.split('Last updated')[1].strip().partition(' ')[-1].split('.')[0].strip()
-                date = datetime.strptime(_date, '%d %B %Y').strftime('%Y_%m_%d')
-            except IndexError:
-                # It seems this info isn't always supplied(?) =============================================================
-                import traceback
-                traceback.print_exc()
+        if False:
+            # This actually could be unreliable - it's on an external web service even though on the
+            # same page and suspect doesn't necessarily get updated at the same as other elements on the page
+
+            with open(path_listing, 'r', encoding='utf-8') as f:
+                html = f.read()
+                try:
+                    _date = html.split('Last updated')[1].strip().partition(' ')[-1].split('.')[0].strip()
+                    date = datetime.strptime(_date, '%d %B %Y').strftime('%Y_%m_%d')
+                except IndexError:
+                    # It seems this info isn't always supplied(?) =============================================================
+                    import traceback
+                    traceback.print_exc()
 
         with open(path_agedata, 'r', encoding='utf-8') as f:
             # {"data":[{"ageGroup":"0-9","Males":null,"Females":null},
@@ -219,6 +246,7 @@ class NSWJSONData:
         by_postcode_soi = {}
         by_lhd_soi = {}
         by_lga_soi = {}
+        by_admin_1_soi = {}  # Statewide
 
         soi_map = {
             'Overseas': DT_SOURCE_OVERSEAS,
@@ -246,7 +274,6 @@ class NSWJSONData:
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Date already in the format I use, aside from hyphens
                 if '/' in row['notification_date']:
                     pad = lambda i: '%02d' % int(i)
                     dd, mm, yyyy = row['notification_date'].split('/')
@@ -274,6 +301,9 @@ class NSWJSONData:
                     .setdefault(soi, []).append(row)
                 by_lga_soi.setdefault(date, {}) \
                     .setdefault(row['lga_name19'], {}) \
+                    .setdefault(soi, []).append(row)
+                by_admin_1_soi.setdefault(date, {}) \
+                    .setdefault('AU-NSW', {}) \
                     .setdefault(soi, []).append(row)
 
                 lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
@@ -313,7 +343,8 @@ class NSWJSONData:
         for region_schema, cases_dict in (
             (SCHEMA_POSTCODE, by_postcode_soi),
             (SCHEMA_LGA, by_lga_soi),
-            (SCHEMA_LHD, by_lhd_soi)
+            (SCHEMA_LHD, by_lhd_soi),
+            (SCHEMA_ADMIN_1, by_admin_1_soi)
         ):
             current_counts = {}
 
@@ -325,8 +356,15 @@ class NSWJSONData:
 
                         r.append(DataPoint(
                             region_schema=region_schema,
-                            region_parent='AU-NSW',
-                            region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
+                            region_parent=(
+                                 'AU-NSW'
+                                 if region_schema == SCHEMA_ADMIN_1
+                                 else 'AU'
+                            ),
+                            region_child=(
+                                region_child.split('(')[0].strip() or
+                                DEFAULT_REGION
+                            ),
                             datatype=soi,
                             value=current_counts[region_child, soi],
                             date_updated=date,
@@ -340,7 +378,7 @@ class NSWJSONData:
     # Postcode-level website tests json data
     #=============================================================================#
 
-    def get_nsw_postcode_data(self, dir_):
+    def get_nsw_postcode_data(self, dir_, download=True):
         # {"data":[{"Recovered":5,"POA_NAME16":"2106","Deaths":0,"Cases":5,"Date":"14-May"},
 
         path_totals = dir_ / 'covid_19_cases_by_postcode_totals.json'
@@ -349,30 +387,41 @@ class NSWJSONData:
         path_active = dir_ / 'covid_19_cases_by_postcode_active.json'
 
         if not exists(path_totals) or not exists(path_active_deaths) or not exists(path_active) or not exists(path_tests):
-            # Retrieve these, just in cases...
-            urlretrieve(
-                'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases2.json',
-                path_active_deaths
-            )
-            urlretrieve(
-                'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases.json',
-                path_totals
-            )
-            urlretrieve(
-                'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_tests.json',
-                path_tests
-            )
-            urlretrieve(
-                'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/active_cases.json',
-                path_active
-            )
+            if download:
+                # Retrieve these, just in cases...
+                urlretrieve(
+                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases2.json',
+                    path_active_deaths
+                )
+                urlretrieve(
+                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases.json',
+                    path_totals
+                )
+                urlretrieve(
+                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_tests.json',
+                    path_tests
+                )
+                urlretrieve(
+                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/active_cases.json',
+                    path_active
+                )
 
         r = []
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/tests'
-        active_data = self.__get_active_data(path_active)
-        r.extend(self.__get_active_deaths_datapoints(SOURCE_URL, path_active_deaths, active_data))
+
+        if exists(path_active):
+            active_data = self.__get_active_data(path_active)
+        else:
+            active_data = {}
+
+        if exists(path_active_deaths):
+            r.extend(self.__get_active_deaths_datapoints(SOURCE_URL, path_active_deaths, active_data))
+
         #r.extend(self.__get_tests_datapoints(SOURCE_URL, path_tests))  # NOTE ME: Will use open data for tests!! ===============
-        r.extend(self.__get_totals_datapoints(SOURCE_URL, path_totals))
+
+        if exists(path_totals):
+            r.extend(self.__get_totals_datapoints(SOURCE_URL, path_totals))
+
         return r
 
     def __get_active_data(self, path_active):
@@ -410,15 +459,6 @@ class NSWJSONData:
                     date_updated=date,
                     source_url=SOURCE_URL
                 ))
-                #r.append(DataPoint(
-                #    region_schema=SCHEMA_POSTCODE,
-                #    region_parent='AU-NSW',
-                #    region_child=postcode,
-                #    datatype=DT_STATUS_ACTIVE,
-                #    value=active,
-                #    date_updated=date,
-                #    source_url=SOURCE_URL
-                #))
 
                 if postcode in active_data:
                     num_active = active_data[postcode].pop()
@@ -439,6 +479,16 @@ class NSWJSONData:
                         region_child=postcode,
                         datatype=DT_STATUS_RECOVERED,
                         value=cases-num_active-deaths,  # CHECK ME!!!!! =====================================
+                        date_updated=date,
+                        source_url=SOURCE_URL
+                    ))
+                elif date <= '2020_06_12':
+                    r.append(DataPoint(
+                        region_schema=SCHEMA_POSTCODE,
+                        region_parent='AU-NSW',
+                        region_child=postcode,
+                        datatype=DT_STATUS_ACTIVE,
+                        value=active,
                         date_updated=date,
                         source_url=SOURCE_URL
                     ))
@@ -516,7 +566,7 @@ class NSWJSONData:
     # test_date,postcode,lhd_2010_code,lhd_2010_name,lga_code19,lga_name19,result
     # 2020-01-08,2071,X760,Northern Sydney,14500,Ku-ring-gai (A),Tested & excluded
 
-    def get_nsw_tests_data(self, dir_):
+    def get_nsw_tests_data(self, dir_, download=True):
         DEFAULT_REGION = 'Unknown'
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/tests'
 
@@ -533,11 +583,13 @@ class NSWJSONData:
             dir_ / 'covid-19-tests-by-date-and-location-and-result.csv'
         )
 
-        if not exists(path):
+        if not exists(path) and download:
             urlretrieve(
                 'https://data.nsw.gov.au/data/dataset/5424aa3b-550d-4637-ae50-7f458ce327f4/resource/227f6b65-025c-482c-9f22-a25cf1b8594f/download/covid-19-tests-by-date-and-location-and-result.csv',
                 path
             )
+        elif not exists(path):
+            return []
 
         posneg_map = {
             'Tested & excluded': DT_TESTS_NEGATIVE,

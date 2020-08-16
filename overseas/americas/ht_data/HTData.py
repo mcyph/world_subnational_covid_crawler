@@ -66,7 +66,7 @@ class HTData(URLBase):
                     region_parent='Haiti',
                     region_child=region_child,
                     datatype=DT_TOTAL,
-                    value=int(item['Cumulative cases']),
+                    value=int(item['Cumulative cases'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
                 ))
@@ -77,7 +77,7 @@ class HTData(URLBase):
                     region_parent='Haiti',
                     region_child=region_child,
                     datatype=DT_NEW,
-                    value=int(item['New cases (24h)']),
+                    value=int(item['New cases (24h)'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
                 ))
@@ -88,7 +88,7 @@ class HTData(URLBase):
                     region_parent='Haiti',
                     region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
-                    value=int(item['Cumulative Deaths']),
+                    value=int(item['Cumulative Deaths'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
                 ))

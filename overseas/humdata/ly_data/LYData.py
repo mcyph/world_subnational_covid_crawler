@@ -71,7 +71,7 @@ class LYData(URLBase):
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_TOTAL,
-                    value=int(item['Confirmed']),
+                    value=int(item['Confirmed'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
@@ -82,7 +82,7 @@ class LYData(URLBase):
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_STATUS_DEATHS,
-                    value=int(item['Deaths']),
+                    value=int(item['Deaths'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
@@ -93,7 +93,7 @@ class LYData(URLBase):
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_STATUS_RECOVERED,
-                    value=int(item['Recoveries']),
+                    value=int(item['Recoveries'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
@@ -104,7 +104,7 @@ class LYData(URLBase):
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_STATUS_ACTIVE,
-                    value=int(item['Active']),
+                    value=int(item['Active'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
@@ -115,7 +115,7 @@ class LYData(URLBase):
                     region_parent='Libya',
                     region_child=region_child,
                     datatype=DT_TESTS_TOTAL,
-                    value=int(item['Test Samples']),
+                    value=int(item['Test Samples'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))

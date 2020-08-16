@@ -5,7 +5,7 @@ DB_DIR = '/mnt/ssd_970pro_512gb/covid_19_au_grab/output/'
 
 ACTUALLY_DELETE = True
 DELETE_BEFORE = (
-    datetime.datetime.now() - datetime.timedelta(days=3)
+    datetime.datetime.now() - datetime.timedelta(days=2)
 )
 
 

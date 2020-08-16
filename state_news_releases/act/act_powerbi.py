@@ -61,6 +61,7 @@ class _ACTPowerBI(PowerBIDataReader):
         return int(i.rstrip('L'))
 
     def _get_updated_date(self, updated_date, response_dict):
+        print(updated_date)
         ts = response_dict['updated_date'][1]
         ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
@@ -231,7 +232,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
             xx = 0
             for sub_item in item['X']:
-                print(sub_item)
+                #print(sub_item)
                 if len(sub_item.keys()) == 1 and list(sub_item.keys())[0] == 'S':
                     continue
                 xx = sub_item.get('I', xx)
@@ -283,7 +284,7 @@ class _ACTPowerBI(PowerBIDataReader):
         rd = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']
 
         for region_child in rd:
-            print(region_child)
+            #print(region_child)
             if isinstance(region_child['C'][0], int):
                 # {'C': [1], 'Ø': 1}
                 # (what is this for???)

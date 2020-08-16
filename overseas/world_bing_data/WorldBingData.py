@@ -4,6 +4,12 @@ from os import listdir
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import (
+    StrictDataPointsFactory, MODE_STRICT, MODE_DEV
+)
+from covid_19_au_grab.overseas.world_bing_data.world_bing_mappings import (
+    world_bing_mappings
+)
 from covid_19_au_grab.datatypes.constants import (
     SCHEMA_US_COUNTY, SCHEMA_IN_DISTRICT, SCHEMA_CR_CANTON,
     SCHEMA_ADMIN_1, SCHEMA_ADMIN_0,
@@ -27,6 +33,11 @@ class WorldBingData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'world_bing' / 'Bing-COVID-19-Data',
                             github_url='https://github.com/microsoft/Bing-COVID-19-Data')
+
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings=world_bing_mappings,
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -35,7 +46,7 @@ class WorldBingData(GithubRepo):
         return r
 
     def _get_daily_reports_us(self):
-        r = []
+        r = self.sdpf()
 
         # ID,Updated,Confirmed,ConfirmedChange,Deaths,DeathsChange,Recovered,RecoveredChange,Latitude,Longitude,ISO2,ISO3,Country_Region,AdminRegion1,AdminRegion2
         # 338995,01/21/2020,262,,0,,,,,,,,Worldwide,,
@@ -82,7 +93,7 @@ class WorldBingData(GithubRepo):
                     region_parent = None
                     region_child = item['Country_Region']
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=region_schema,
                     region_parent=region_parent,
                     region_child=region_child,
@@ -90,12 +101,12 @@ class WorldBingData(GithubRepo):
                     value=int(item['Confirmed']),
                     date_updated=date,
                     source_url='Bing'
-                ))
+                )
                 #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
                 #    print(r[-1])
 
                 if item['ConfirmedChange']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -103,10 +114,10 @@ class WorldBingData(GithubRepo):
                         value=int(item['ConfirmedChange']),
                         date_updated=date,
                         source_url='Bing'
-                    ))
+                    )
 
                 if item['Deaths']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -114,10 +125,10 @@ class WorldBingData(GithubRepo):
                         value=int(item['Deaths']),
                         date_updated=date,
                         source_url='Bing'
-                    ))
+                    )
 
                 if item['Recovered']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -125,8 +136,8 @@ class WorldBingData(GithubRepo):
                         value=int(item['Recovered']),
                         date_updated=date,
                         source_url='Bing'
-                    ))
-                    r.append(DataPoint(
+                    )
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -136,13 +147,14 @@ class WorldBingData(GithubRepo):
                               int(item['Recovered']),
                         date_updated=date,
                         source_url='Bing'
-                    ))
+                    )
 
         return r
 
 
-
 if __name__ == '__main__':
     from pprint import pprint
-    WorldBingData().get_datapoints()
+    inst = WorldBingData()
+    datapoints = inst.get_datapoints()
     #pprint(WorldBingData().get_datapoints())
+    inst.sdpf.print_mappings()

@@ -75,7 +75,7 @@ class IDGoogleDocsData(URLBase):
         for item in csv.DictReader(f):
             if not item['Total Kasus'].strip():
                 break
-            date = self.convert_date(item['Total Kasus']+'-20')
+            date = self.convert_date(item['Total Kasus'].replace(' ', '-')+'-20')
 
             for province in list(item.keys())[1:]:
                 value = item[province].replace(',', '')
