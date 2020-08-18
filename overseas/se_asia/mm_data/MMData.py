@@ -29,8 +29,6 @@ class MMData(URLBase):
     SOURCE_ID = 'mm_covidmyanmar'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
              output_dir=get_overseas_dir() / 'mm' / 'data',
              urls_dict={

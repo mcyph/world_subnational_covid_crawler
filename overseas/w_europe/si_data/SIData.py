@@ -239,6 +239,7 @@ SI-191	Žetale
 SI-147	Žiri
 SI-192	Žirovnica
 SI-193	Žužemberk
+SI-197	Kostanjevica na Krki
 Other	tujina
 """.lower().strip().split('\n')])
 

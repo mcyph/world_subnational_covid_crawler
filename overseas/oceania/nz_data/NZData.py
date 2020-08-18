@@ -1,4 +1,4 @@
-import csv
+import json
 from collections import Counter
 
 from covid_19_au_grab.datatypes.DataPoint import (
@@ -22,21 +22,21 @@ from covid_19_au_grab.get_package_dir import (
 
 
 class NZData(GithubRepo):
-    SOURCE_URL = 'https://github.com/nzherald/nz-covid19-data'
+    SOURCE_URL = 'https://github.com/philiprenich/nz-covid19-data'
     SOURCE_DESCRIPTION = ''
-    SOURCE_ID = 'nz_herald'
+    SOURCE_ID = 'nz_moh'
 
     def __init__(self):
         GithubRepo.__init__(self,
-                            output_dir=get_overseas_dir() / 'nz' / 'nz-covid19-data' / 'data',
-                            github_url='https://github.com/nzherald/nz-covid19-data')
+                            output_dir=get_overseas_dir() / 'nz' / 'nz-covid19-data',
+                            github_url='https://github.com/philiprenich/nz-covid19-data')
         self.update()
 
     def get_datapoints(self):
         r = []
         r.extend(self._get_cases())
-        r.extend(self._get_days())
-        r.extend(self._get_dhb_cases())
+        #r.extend(self._get_days())
+        #r.extend(self._get_dhb_cases())
         return r
 
     def _get_cases(self):
@@ -60,32 +60,39 @@ class NZData(GithubRepo):
         origins_by_agerange = Counter()
         gender_balances_by_agerange = Counter()
 
-        with open(self.get_path_in_dir('cases.csv'),
+        with open(self.get_path_in_dir('nz-covid-cases.json'),
                   'r', encoding='utf-8') as f:
-            for item in csv.DictReader(f):
-                if item['Status'] == 'Probable':
+            data = json.loads(f.read())
+
+        for status, items in (
+            ('Confirmed', data['confirmed']),
+            ('Probable', data['probable'])
+        ):
+            for item in items:
+                if status == 'Probable':
                     # HACK: We won't count cases only deemed probable for now! =========================================
                     continue
-                assert item['Status'] == 'Confirmed', item['Status']
+                assert status == 'Confirmed', item['Status']
 
                 print(item)
 
-                date = self.convert_date(item['Reported'].split('T')[0])
-                agerange = item['Age'].replace(' to ', '-')
+                date = self.convert_date(item['Date notified of potential case'].split('T')[0])
+                agerange = item['Age group'].strip().replace(' to ', '-') or 'Unknown'
 
                 # Gender balances
-                if item['Sex'] == 'Male':
-                    gender_balances[date, DT_TOTAL_MALE] += 1
-                    gender_balances_by_dhb[date, DT_TOTAL_MALE, item['DHB']] += 1
-                    gender_balances_by_agerange[date, DT_TOTAL_MALE, agerange] += 1
-                elif item['Sex'] == 'Female':
-                    gender_balances[date, DT_TOTAL_FEMALE] += 1
-                    gender_balances_by_dhb[date, DT_TOTAL_FEMALE, item['DHB']] += 1
-                    gender_balances_by_agerange[date, DT_TOTAL_FEMALE, agerange] += 1
-                elif item['Sex'] == 'NA':
-                    pass  # Register in overall total only for now
-                else:
-                    raise Exception(item['Sex'])
+                if 'Sex' in item:
+                    if item['Sex'] == 'Male':
+                        gender_balances[date, DT_TOTAL_MALE] += 1
+                        gender_balances_by_dhb[date, DT_TOTAL_MALE, item['DHB']] += 1
+                        gender_balances_by_agerange[date, DT_TOTAL_MALE, agerange] += 1
+                    elif item['Sex'] == 'Female':
+                        gender_balances[date, DT_TOTAL_FEMALE] += 1
+                        gender_balances_by_dhb[date, DT_TOTAL_FEMALE, item['DHB']] += 1
+                        gender_balances_by_agerange[date, DT_TOTAL_FEMALE, agerange] += 1
+                    elif item['Sex'] == 'NA':
+                        pass  # Register in overall total only for now
+                    else:
+                        raise Exception(item['Sex'])
 
                 # Overall total
                 gender_balances[date, DT_TOTAL] += 1
@@ -93,20 +100,21 @@ class NZData(GithubRepo):
                 gender_balances_by_agerange[date, DT_TOTAL, agerange] += 1
 
                 # Source of infection
-                if item['Origin'] == 'Overseas':
-                    origins[date, DT_SOURCE_OVERSEAS] += 1
-                    origins_by_dhb[date, DT_SOURCE_OVERSEAS, item['DHB']] += 1
-                    origins_by_agerange[date, DT_SOURCE_OVERSEAS, agerange] += 1
-                elif item['Origin'] == 'In New Zealand':
-                    origins[date, DT_SOURCE_CONFIRMED] += 1
-                    origins_by_dhb[date, DT_SOURCE_CONFIRMED, item['DHB']] += 1
-                    origins_by_agerange[date, DT_SOURCE_CONFIRMED, agerange] += 1
-                elif item['Origin'] == 'Unknown':
+                if 'Overseas travel' in item and item['Overseas travel'].strip():
+                    if item['Overseas travel'] == 'Yes':
+                        origins[date, DT_SOURCE_OVERSEAS] += 1
+                        origins_by_dhb[date, DT_SOURCE_OVERSEAS, item['DHB']] += 1
+                        origins_by_agerange[date, DT_SOURCE_OVERSEAS, agerange] += 1
+                    elif item['Overseas travel'] == 'No':
+                        origins[date, DT_SOURCE_CONFIRMED] += 1
+                        origins_by_dhb[date, DT_SOURCE_CONFIRMED, item['DHB']] += 1
+                        origins_by_agerange[date, DT_SOURCE_CONFIRMED, agerange] += 1
+                    else:
+                        raise Exception(item['Overseas travel'])
+                else:
                     origins[date, DT_SOURCE_COMMUNITY] += 1
                     origins_by_dhb[date, DT_SOURCE_COMMUNITY, item['DHB']] += 1
                     origins_by_agerange[date, DT_SOURCE_COMMUNITY, agerange] += 1
-                else:
-                    raise Exception(item['Origin'])
 
                 # Age groups
                 age_groups[date, agerange] += 1

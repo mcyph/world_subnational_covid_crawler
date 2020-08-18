@@ -1,3 +1,4 @@
+import threading
 import multiprocessing
 
 from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1
@@ -59,10 +60,12 @@ from covid_19_au_grab.overseas.se_asia.jp_city_data.JPCityData import JPCityData
 from covid_19_au_grab.overseas.se_asia.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.se_asia.mm_data.MMData import MMData
 from covid_19_au_grab.overseas.se_asia.my_data.MYData import MYData
+from covid_19_au_grab.overseas.se_asia.my_data.MYESRIDashData import MYESRIDashData
 from covid_19_au_grab.overseas.se_asia.th_data.THData import THData
 from covid_19_au_grab.overseas.se_asia.tw_data.TWData import TWData
 from covid_19_au_grab.overseas.se_asia.vn_data.VNData import VNData
 from covid_19_au_grab.overseas.se_asia.hk_data.HKData import HKData
+from covid_19_au_grab.overseas.se_asia.kh_data.KHData import KHData
 
 from covid_19_au_grab.overseas.s_asia.bd_data.BDData import BDData
 from covid_19_au_grab.overseas.s_asia.lk_data.LKData import LKData
@@ -74,7 +77,8 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 
 ASIA_SOURCES = (
     BDData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
-    MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData
+    MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData,
+    KHData, MYESRIDashData
 )
 
 #==================================================================#
@@ -84,7 +88,6 @@ ASIA_SOURCES = (
 from covid_19_au_grab.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
 
 from covid_19_au_grab.overseas.e_europe.kg_data.KGData import KGData
-from covid_19_au_grab.overseas.e_europe.kh_data.KHData import KHData
 from covid_19_au_grab.overseas.e_europe.kz_data.KZData import KZData
 from covid_19_au_grab.overseas.e_europe.mk_data.MKData import MKData
 from covid_19_au_grab.overseas.e_europe.rs_data.RSData import RSData
@@ -95,6 +98,7 @@ from covid_19_au_grab.overseas.w_europe.cz_data.CZData import CZData
 from covid_19_au_grab.overseas.w_europe.de_data.DEData import DEData
 from covid_19_au_grab.overseas.w_europe.de_data.DERKIData import DERKIData
 from covid_19_au_grab.overseas.w_europe.es_data.ESData import ESData
+from covid_19_au_grab.overseas.w_europe.es_data.ESISCIIIData import ESISCIIIData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRData import FRData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRGovData import FRGovData
 from covid_19_au_grab.overseas.w_europe.gr_data.GRCovid19Greece import GRCovid19Greece
@@ -107,12 +111,14 @@ from covid_19_au_grab.overseas.w_europe.lv_data.LVData import LVData
 from covid_19_au_grab.overseas.w_europe.pt_data.PTData import PTData
 from covid_19_au_grab.overseas.w_europe.si_data.SIData import SIData
 from covid_19_au_grab.overseas.w_europe.uk_data.UKData import UKData
+from covid_19_au_grab.overseas.w_europe.uk_data.UKGovData import UKGovData
 
 EUROPE_DATA = (
-    BEData, CHData, CZData, DEData, DERKIData, ESData,
+    BEData, CHData, CZData, DEData, DERKIData, ESData, ESISCIIIData,
     EUSubNationalData, FRData, FRGovData, GRCovid19Greece,
-    HRData, IEData, ISData, ITData, KGData, KHData, KZData,
-    MKData, PTData, RSData, SIData, UKData, LVData, LTData,
+    HRData, IEData, ISData, ITData, KGData, KZData,
+    MKData, PTData, RSData, SIData, UKData, UKGovData, LVData,
+    LTData,
 )
 
 #==================================================================#
@@ -160,6 +166,7 @@ class OverseasDataSources:
 
     def iter_data_sources(self):
         processes = []
+        all_source_ids = []
         send_q = multiprocessing.Queue()
 
         for classes in (
@@ -170,13 +177,30 @@ class OverseasDataSources:
             MIDDLE_EAST_DATA,
             WORLD_DATA
         ):
-            process = multiprocessing.Process(target=_get_datapoints, args=(classes, send_q))
-            process.start()
+            all_source_ids.extend([i.SOURCE_ID for i in classes])
+            #process = multiprocessing.Process(target=_get_datapoints, args=(classes, send_q))
+            process = threading.Thread(target=_get_datapoints, args=(classes, send_q))
             processes.append(process)
+
+        for process in processes:
+            process.start()
 
         num_done = 0
         while num_done != len(processes):
-            q_item = send_q.get()
+            while True:
+                print("OVERSEAS GETTING FROM QUEUE!!", num_done, len(processes))
+                try:
+                    q_item = send_q.get(timeout=60*3)
+                    break
+                except:
+                    found = False
+                    for i in all_source_ids:
+                        if i not in self._status:
+                            print('NOT COMPLETED:', i)
+                            found = True
+                    if not found:
+                        print("ALL DONE(??)")
+
             if q_item is None:
                 num_done += 1
                 continue
@@ -188,8 +212,14 @@ class OverseasDataSources:
                 new_datapoints = [_DataPoint(*i) for i in new_datapoints]
                 yield source_id, source_url, source_description, new_datapoints
 
+        print("All processes done - waiting for join")
         for process in processes:
-            process.join()
+            try:
+                process.join(timeout=10)
+            except:
+                import traceback
+                traceback.print_exc()
+        print("Process join end")
 
     def get_status_dict(self):
         return self._status
@@ -212,12 +242,14 @@ def _get_datapoints(classes, send_q):
                     continue
                 new_datapoints.append(tuple(datapoint))
 
+            print("Class done:", i)
             send_q.put((inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, new_datapoints, {
                 'status': 'OK',
                 'message': None,
             }))
 
         except:
+            print("Class done with exception:", i)
             import traceback
             traceback.print_exc()
 
@@ -226,6 +258,7 @@ def _get_datapoints(classes, send_q):
                 'message': traceback.format_exc()
             }))
 
+    print("End of worker:", classes)
     send_q.put(None)
 
 

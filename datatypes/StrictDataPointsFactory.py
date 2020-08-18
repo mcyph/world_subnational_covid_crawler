@@ -75,6 +75,9 @@ class _StrictDataPoints(list):
                source_url=None,
                text_match=None):
 
+        region_parent = (region_parent or '').lower()
+        region_child = (region_child or '').lower()
+
         # Use any previously-defined mappings (if they exist)
         mapping_key = (
             schema_to_name(region_schema),
@@ -83,7 +86,7 @@ class _StrictDataPoints(list):
         )
         replace_index = None
 
-        print(mapping_key)
+        #print(mapping_key)
         if mapping_key in self.__region_mappings:
             mapping = self.__region_mappings[mapping_key]
             if mapping is None:

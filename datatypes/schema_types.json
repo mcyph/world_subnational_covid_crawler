@@ -285,6 +285,13 @@
             "line_width": 0.5,
             "split_by_parent_region": true
         },
+        "es_province": {
+            "iso_3166": "ES",
+            "min_zoom": 5,
+            "priority": 5,
+            "line_width": 0.5,
+            "split_by_parent_region": false
+        },
         "fi_health_district": {
             "iso_3166": "FI",
             "min_zoom": 4,
@@ -334,8 +341,8 @@
         },
         "my_district": {
             "iso_3166": "MY",
-            "min_zoom": 50,
-            "priority": -1,
+            "min_zoom": 5,
+            "priority": 5,
             "line_width": 0.5,
             "split_by_parent_region": false
         },
@@ -359,7 +366,7 @@
         },
         "pt_municipality": {
             "iso_3166": "PT",
-            "min_zoom": 4,
+            "min_zoom": 5,
             "priority": 5,
             "split_by_parent_region": false
         },
@@ -371,7 +378,7 @@
         },
         "uk_area": {
             "iso_3166": "GB",
-            "min_zoom": 4,
+            "min_zoom": 6,
             "priority": 5,
             "split_by_parent_region": false
         },

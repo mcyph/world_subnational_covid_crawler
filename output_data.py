@@ -100,8 +100,11 @@ if __name__ == '__main__':
         status.update(run_infrequent_jobs())
 
     # Output both state and overseas data from crawlers
+    print("Outputting state data...")
     status.update(output_state_data(dpdb))
+    print("State data done. Outputting overseas data...")
     status.update(output_overseas_data(dpdb))
+    print("Overseas data done. Migrating sources with errors...")
 
     # If any of them failed, copy them across from the previous revision.
     # Note the previous revision might have failed too, but should have

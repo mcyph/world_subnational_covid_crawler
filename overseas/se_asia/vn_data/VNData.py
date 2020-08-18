@@ -87,6 +87,7 @@ VN-HN	Hà Nội
 VN-HP	Hai Phong
 VN-SG	Hồ Chí Minh
 VN-14	Hoà Bình
+VN-62	Hải Phòng
 """.strip().split('\n')])
 
 

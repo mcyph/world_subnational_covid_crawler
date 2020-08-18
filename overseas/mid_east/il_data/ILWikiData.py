@@ -45,13 +45,14 @@ class ILWikiData(URLBase):
     def _get_datapoints(self):
         r = []
 
-        for dir_ in listdir(self.output_dir):
+        for dir_ in sorted(listdir(self.output_dir)):
             with open(self.output_dir / dir_ / 'covid19_in_israel.html', 'r', encoding='utf-8') as f:
                 html = f.read()
 
             datatype_mappings = {
                 'מקרי הדבקה': DT_TOTAL,
                 'ל-100,000 תושבים': None,
+                'יישוב': 'LOCALITY',
                 'מקרי מוות': DT_STATUS_DEATHS,
                 'הבריאו': DT_STATUS_RECOVERED,
                 'מקרים פעילים': DT_STATUS_ACTIVE
@@ -64,8 +65,15 @@ class ILWikiData(URLBase):
             ]
             region_trs = pq(table)('tbody tr')
 
+            if datatype_headers[0] == 'יישוב':
+                # HACK: There was a dot thing added sometime around 17 Aug
+                region_trs = [region_tr[1:] for region_tr in region_trs]
+                datatype_headers = datatype_headers[1:]
+
             for region_tr in region_trs:
-                if region_tr[0].tag.lower() != 'td':
+                if not len(region_tr):
+                    continue
+                elif region_tr[0].tag.lower() != 'td':
                     continue
 
                 vals = {}

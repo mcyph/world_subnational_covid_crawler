@@ -47,6 +47,7 @@ SCHEMA_DE_KREIS = 36
 SCHEMA_LT_MUNICIPALITY = 37
 SCHEMA_IL_MUNICIPALITY = 38
 SCHEMA_HK_DISTRICT = 39
+SCHEMA_ES_PROVINCE = 40
 
 #============================================
 # Datatypes

@@ -18,6 +18,7 @@ class StateDataSources:
 
     def iter_data_sources(self):
         processes = []
+        all_source_ids = []
         send_q = multiprocessing.Queue()
 
         # Run all of the other grabbers
@@ -31,6 +32,8 @@ class StateDataSources:
         ]
 
         for klass_set in news_insts:
+            all_source_ids.extend([i.SOURCE_ID for i in klass_set])
+
             process = multiprocessing.Process(
                 target=_get_datapoints, args=(klass_set, send_q)
             )
@@ -41,7 +44,15 @@ class StateDataSources:
         num_done = 0
 
         while num_done != len(processes):
-            q_item = send_q.get()
+            while True:
+                try:
+                    q_item = send_q.get(timeout=60 * 3)
+                    break
+                except:
+                    for i in all_source_ids:
+                        if i not in self._status:
+                            print('NOT COMPLETED:', i)
+
             if q_item is None:
                 num_done += 1
                 continue
@@ -54,7 +65,11 @@ class StateDataSources:
                 yield source_id, source_url, source_description, new_datapoints
 
         for process in processes:
-            process.join()
+            try:
+                process.join(timeout=10)
+            except:
+                import traceback
+                traceback.print_exc()
 
     def get_status_dict(self):
         return self._status
@@ -94,6 +109,7 @@ def _get_datapoints(classes, send_q):
                 ) for dp in datapoints
             ]
 
+            print("Class done:", i)
             send_q.put((inst.SOURCE_ID,
                   inst.SOURCE_URL,
                   inst.SOURCE_DESCRIPTION,
@@ -103,6 +119,7 @@ def _get_datapoints(classes, send_q):
             }))
 
         except:
+            print("Class done with exception:", i)
             import traceback
             traceback.print_exc()
 
@@ -114,6 +131,7 @@ def _get_datapoints(classes, send_q):
                 'message': traceback.format_exc()
             }))
 
+    print("End of worker:", classes)
     send_q.put(None)
 
 

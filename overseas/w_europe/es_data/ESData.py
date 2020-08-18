@@ -31,59 +31,6 @@ from covid_19_au_grab.get_package_dir import (
 #             "split_by_parent_region": false
 #         },
 
-_provinces = '''
-ES-C	GA	Bizkaia
-ES-VI	PV	Álava
-ES-AB	CM	Albacete 
-ES-A	VC	Alicante Alacan
-ES-AL	AN	Almería 
-ES-O	AS	Asturias 
-ES-AV	CL	Ávila 
-ES-BA	EX	Badajoz 
-ES-PM	IB	Balears
-ES-B	CT	Barcelona
-ES-BI	PV	Bizkaia
-ES-BU	CL	Burgos 
-ES-CC	EX	Cáceres 
-ES-CA	AN	Cádiz 
-ES-S	CB	Cantabria 
-ES-CS	VC	Castellón Castell
-ES-CR	CM	Ciudad Real 
-ES-CO	AN	Córdoba 
-ES-CU	CM	Cuenca 
-ES-SS	PV	Gipuzkoa
-ES-GI	CT	Girona
-ES-GR	AN	Granada 
-ES-GU	CM	Guadalajara 
-ES-H	AN	Huelva 
-ES-HU	AR	Huesca 
-ES-J	AN	Jaén 
-ES-LO	RI	La Rioja 
-ES-GC	CN	Las Palmas 
-ES-LE	CL	León 
-ES-L	CT	Lleida
-ES-LU	GA	Lugo
-ES-M	MD	Madrid 
-ES-MA	AN	Málaga 
-ES-MU	MC	Murcia 
-ES-NA	NC	Navarra
-ES-OR	GA	Ourense
-ES-P	CL	Palencia 
-ES-PO	GA	Pontevedra
-ES-SA	CL	Salamanca 
-ES-TF	CN	Santa Cruz de Tenerife
-ES-SG	CL	Segovia
-ES-SE	AN	Sevilla
-ES-SO	CL	Soria
-ES-T	CT	Tarragona
-ES-TE	AR	Teruel
-ES-TO	CM	Toledo
-ES-V	VC	Valencia
-ES-VA	CL	Valladolid
-ES-ZA	CL	Zamora
-ES-Z	AR	Zaragoza
-'''.strip()
-
 
 region_map = {
     'Melilla': 'ES-ML',
@@ -108,18 +55,7 @@ region_map = {
 }
 
 
-def _get_provinces_map():
-    province_map = {}
-    for province_code, ac_code, province_name in [
-        i.split('\t') for i in _provinces.split('\n')
-    ]:
-        province_map[province_name.lower().strip()] = (
-            province_code, 'ES-'+ac_code
-        )
-    return province_map
 
-
-_provinces_map = _get_provinces_map()
 
 
 # This PDF has a lot of info that might not be in other places
