@@ -36,7 +36,7 @@ class ProcessMYDistrict(ProcessGeoJSONBase):
         ProcessGeoJSONBase.__init__(self, 'my_district')
 
     def get_region_parent(self, fnam, feature):
-        return place_map[feature['ADM1_EN']]
+        return 'MY' #place_map[feature['ADM1_EN']]
 
     def get_region_child(self, fnam, feature):
         return normalize_locality_name(feature['ADM2_EN'])

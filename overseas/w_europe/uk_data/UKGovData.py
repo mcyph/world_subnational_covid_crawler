@@ -69,8 +69,14 @@ class UKGovData(URLBase):
                          urls_dict={})
 
         self.update()
+
         self.__download_dataset('utla')
         self.__download_dataset('ltla')
+        self.__download_dataset('region')
+        self.__download_dataset('nhsRegion')
+        self.__download_dataset('nation')
+        self.__download_dataset('overview')
+
         self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
 
     def get_datapoints(self):

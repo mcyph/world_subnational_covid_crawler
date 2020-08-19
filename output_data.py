@@ -1,6 +1,7 @@
 import sys
 import json
 import datetime
+import threading
 from git import Repo
 from os import system, listdir
 
@@ -100,11 +101,22 @@ if __name__ == '__main__':
         status.update(run_infrequent_jobs())
 
     # Output both state and overseas data from crawlers
-    print("Outputting state data...")
-    status.update(output_state_data(dpdb))
-    print("State data done. Outputting overseas data...")
-    status.update(output_overseas_data(dpdb))
-    print("Overseas data done. Migrating sources with errors...")
+    if True:
+        print("Outputting state data...")
+        status.update(output_state_data(dpdb))
+        print("State data done. Outputting overseas data...")
+        status.update(output_overseas_data(dpdb))
+        print("Overseas data done. Migrating sources with errors...")
+    else:
+        # WARNING!!!! THIS CODE HAS BUGS+DOESN'T OUTPUT THE CASES!!!! ===============================================
+        print("Outputting state and overseas data...")
+        _output_state_data = lambda: status.update(output_state_data(dpdb))
+        _output_overseas_data = lambda: status.update(output_overseas_data(dpdb))
+        t1 = threading.Thread(target=_output_state_data, args=())
+        t2 = threading.Thread(target=_output_overseas_data, args=())
+        t1.start(); t2.start()
+        t1.join(); t2.join()
+        print("State and overseas data done. Migrating sources with errors...")
 
     # If any of them failed, copy them across from the previous revision.
     # Note the previous revision might have failed too, but should have
@@ -202,3 +214,4 @@ if __name__ == '__main__':
         print("Push to GitHub done!")
 
     print("[end of script]")
+

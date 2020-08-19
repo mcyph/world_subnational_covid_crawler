@@ -13,7 +13,7 @@ from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
 from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_DE_KREIS, DT_TESTS_TOTAL,
+    SCHEMA_DE_KREIS, DT_TESTS_TOTAL, DT_STATUS_ACTIVE,
     DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
 )
 from covid_19_au_grab.get_package_dir import (
@@ -61,7 +61,7 @@ class DERKIData(URLBase):
 
             for feature in data['features']:
                 attributes = feature['attributes']
-                print(attributes)
+                #print(attributes)
 
                 # Only confirmed and deaths are shown in the dashboard
                 date = self.convert_date(
@@ -74,6 +74,10 @@ class DERKIData(URLBase):
                 confirmed = attributes['cases']
                 deaths = attributes['deaths']
                 recovered = attributes['recovered']
+
+                if 'stadt' in attributes['BEZ'].lower():
+                    print(attributes)
+                    region_child += ' Städte'
 
                 if confirmed is not None:
                     r.append(DataPoint(
@@ -113,7 +117,7 @@ class DERKIData(URLBase):
                         region_schema=SCHEMA_DE_KREIS,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DT_STATUS_ACTIVE,
                         value=int(confirmed)-int(recovered)-int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -124,4 +128,6 @@ class DERKIData(URLBase):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(DERKIData().get_datapoints())
+    from covid_19_au_grab.datatypes.datapoints_thinned_out import datapoints_thinned_out
+    datapoints = DERKIData().get_datapoints()
+    pprint(datapoints)

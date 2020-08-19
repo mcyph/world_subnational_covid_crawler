@@ -471,9 +471,9 @@ class DataPointsDB:
         cur = self.conn.cursor()
         cur.execute(query, [source_id])
         results = cur.fetchall()
-        source_url_ids = set([i[-1] for i in results])
 
-        source_ids = set(str(source_url_id)
+        source_url_ids = set([i[-1] for i in results])
+        source_url_ids = set(str(source_url_id)
                          for source_url_id in source_url_ids)
 
         cur.execute(f"""
@@ -482,7 +482,7 @@ class DataPointsDB:
             FROM
                 sourceurls
             WHERE
-                source_url_id IN ({','.join(source_ids)})
+                source_url_id IN ({','.join(source_url_ids)})
             ;
         """)
         source_url_map = dict(cur.fetchall())

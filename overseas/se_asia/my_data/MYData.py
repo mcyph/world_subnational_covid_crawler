@@ -76,7 +76,7 @@ class MYData(GithubRepo):
                             parent = fnam.split('-')[-1].split('.')[0]
                             r.append(DataPoint(
                                 region_schema=SCHEMA_MY_DISTRICT,
-                                region_parent=place_map.get(parent, parent),
+                                region_parent='MY', #place_map.get(parent, parent),
                                 region_child=district.replace('under-investigation', 'Unknown'),
                                 datatype=DT_TOTAL,
                                 value=int(value),

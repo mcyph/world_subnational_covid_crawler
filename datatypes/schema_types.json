@@ -33,6 +33,10 @@
             ["Contracted from Confirmed Case", "source_confirmed"],
             ["Contracted Interstate", "source_interstate"],
             ["Under Investigation", "source_under_investigation"]
+        ]],
+        ["Facebook Symptoms Survey", [
+            ["Number per 100k w/COVID symptoms", "facebook_covid_symptoms"],
+            ["Number per 100k w/flu symptoms", "facebook_flu_symptoms"]
         ]]
     ],
     "constants": {
@@ -173,6 +177,21 @@
             "dayssince": true,
             "roc": true,
             "percapita": true
+        },
+
+        "facebook_covid_symptoms": {
+            "averagedata": true,
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": false
+        },
+        "facebook_flu_symptoms": {
+            "averagedata": true,
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": false
         }
     },
     "schemas": {

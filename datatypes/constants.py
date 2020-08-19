@@ -107,6 +107,9 @@ DT_TESTS_NEGATIVE = 61
 DT_TESTS_POSITIVE = 62  # (Is this necessary?)
 DT_TESTS_NEW = 63
 
+DT_FACEBOOK_COVID_SYMPTOMS = 64
+DT_FACEBOOK_FLU_SYMPTOMS = 65
+
 
 def schema_to_name(x):
     for k, v in globals().items():

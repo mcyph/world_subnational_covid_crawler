@@ -163,14 +163,14 @@ class _StrictDataPoints(list):
 
         if self.__mode == MODE_STRICT:
             # Make sure the region exists in GeoJSON
-            if not self.__ltrc.region_child_in_geojson(
-                region_schema, region_parent, region_child
+            if r.region_child not in ('other', 'unknown') and not self.__ltrc.region_child_in_geojson(
+                r.region_schema, r.region_parent, r.region_child
             ):
                 raise Exception("Region child not found in GeoJSON: %s %s %s %s" % (
                     r,
                     schema_to_name(region_schema),
-                    region_parent.lower() if region_parent else '',
-                    region_child.lower()
+                    region_parent,
+                    region_child
                 ))
 
             # Make sure there aren't dupes on this day!

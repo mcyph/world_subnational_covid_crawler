@@ -24,8 +24,8 @@ class __LabelsToRegionChild:
     def region_child_in_geojson(self, region_schema, region_parent, region_child):
         return (
             region_schema,
-            region_parent or '',
-            region_child or ''
+            (region_parent or '').lower(),
+            (region_child or '').lower()
         ) in self.__all_possible
 
     def get_by_label(self, region_schema, region_parent, label, default=KeyError):
@@ -79,12 +79,6 @@ class __LabelsToRegionChild:
                                 region_child_item['label']['en'].strip().lower()
                             ] = region_child
 
-                            all_possible.add((
-                                region_schema,
-                                region_parent.lower(),
-                                region_child.lower()
-                            ))
-
                         for label in self.__iter_non_english_labels(region_child_item['label']):
                             non_english[
                                 region_schema,
@@ -92,11 +86,11 @@ class __LabelsToRegionChild:
                                 label
                             ] = region_child
 
-                            all_possible.add((
-                                region_schema,
-                                region_parent.lower(),
-                                region_child.lower()
-                            ))
+                        all_possible.add((
+                            int(region_schema),
+                            region_parent.lower(),
+                            region_child.lower()
+                        ))
 
         return english, non_english, all_possible
 
@@ -131,3 +125,5 @@ if __name__ == '__main__':
     print(ltrc.get_by_label(SCHEMA_JP_CITY, 'JP-13', '武蔵野'))
     print(ltrc.get_by_label(SCHEMA_ADMIN_1, 'cn', 'guangdong'))
     print(ltrc.get_by_label(SCHEMA_ADMIN_0, '', 'China'))
+    print(ltrc.get_by_label(SCHEMA_ADMIN_0, '', 'Japan'))
+    print(ltrc.region_child_in_geojson(SCHEMA_ADMIN_0, '', 'jp'))

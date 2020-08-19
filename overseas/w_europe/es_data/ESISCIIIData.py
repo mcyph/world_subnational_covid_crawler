@@ -142,7 +142,7 @@ class ESISCIIIData(URLBase):
             running_total = 0
             for date, value in zip(dates, values):
                 date = self.convert_date(date)
-                running_total += values
+                running_total += value
 
                 r.append(DataPoint(
                     region_schema=SCHEMA_ES_PROVINCE,

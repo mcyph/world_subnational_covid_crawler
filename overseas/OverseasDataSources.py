@@ -57,6 +57,7 @@ AMERICAS_SOURCES = (
 from covid_19_au_grab.overseas.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.overseas.se_asia.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.se_asia.jp_city_data.JPCityData import JPCityData
+from covid_19_au_grab.overseas.se_asia.jp_city_data.JPTokyoCityPDFs import JPTokyoCityPDFs
 from covid_19_au_grab.overseas.se_asia.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.se_asia.mm_data.MMData import MMData
 from covid_19_au_grab.overseas.se_asia.my_data.MYData import MYData
@@ -78,7 +79,7 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 ASIA_SOURCES = (
     BDData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
     MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData,
-    KHData, MYESRIDashData
+    KHData, MYESRIDashData, JPTokyoCityPDFs
 )
 
 #==================================================================#
@@ -151,8 +152,10 @@ MIDDLE_EAST_DATA = (
 from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
 from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import \
     WorldJHUDataAdmin0, WorldJHUDataAdmin1, WorldJHUDataAdmin2
+from covid_19_au_grab.overseas.world_um_data.WorldUMData import WorldUMData
 
 WORLD_DATA = (
+    WorldUMData,
     WorldJHUDataAdmin0,
     WorldJHUDataAdmin1,
     WorldJHUDataAdmin2,
