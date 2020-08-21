@@ -4,17 +4,7 @@ from re import compile, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, singledaystat
 )
-from covid_19_au_grab.datatypes.constants import (
-    DT_TOTAL, DT_NEW,
-    DT_NEW_MALE, DT_NEW_FEMALE,
-    DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_TESTS_TOTAL,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
-    DT_STATUS_RECOVERED, DT_STATUS_HOSPITALIZED,
-    DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -83,7 +73,7 @@ class ACTNews(StateNewsBase):
                 compile(r'total remains at\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -106,7 +96,7 @@ class ACTNews(StateNewsBase):
                 compile(r'tested negative is now\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
-            datatype=DT_TESTS_TOTAL,
+            datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=du
         )
@@ -136,7 +126,7 @@ class ACTNews(StateNewsBase):
                 r'([0-9,]+)\s?(?:</strong>)?\)?\s?new (?:confirmed|cases?)'
             ),
             c_html,
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             date_updated=self._get_date(href, html),
             source_url=href
         )
@@ -176,7 +166,7 @@ class ACTNews(StateNewsBase):
         r = []
         for k, v in ages.items():
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=k,
                 value=v,
                 date_updated=du,
@@ -210,7 +200,7 @@ class ACTNews(StateNewsBase):
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
             source_url=href,
-            datatype=DT_NEW_MALE,
+            datatype=DataTypes.NEW_MALE,
             date_updated=du
         )
         if male:
@@ -219,7 +209,7 @@ class ACTNews(StateNewsBase):
         female = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?female(?:s)?'),
             c_html,
-            datatype=DT_NEW_FEMALE,
+            datatype=DataTypes.NEW_FEMALE,
             source_url=href,
             date_updated=du
         )
@@ -247,7 +237,7 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_TOTAL_FEMALE,
+            datatype=DataTypes.TOTAL_FEMALE,
             source_url=href,
             date_updated=du
         )
@@ -259,7 +249,7 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
-            datatype=DT_TOTAL_MALE,
+            datatype=DataTypes.TOTAL_MALE,
             source_url=href,
             date_updated=du
         )
@@ -295,12 +285,12 @@ class ACTNews(StateNewsBase):
 
         # Normalise it with other states
         act_norm_map = {
-            'Overseas acquired': DT_SOURCE_OVERSEAS,
-            'Cruise ship acquired': DT_SOURCE_CRUISE_SHIP,
-            'Interstate acquired': DT_SOURCE_INTERSTATE,
-            'Contact of a confirmed ACT case': DT_SOURCE_CONFIRMED,
-            'Unknown or local transmission': DT_SOURCE_COMMUNITY,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
+            'Overseas acquired': DataTypes.SOURCE_OVERSEAS,
+            'Cruise ship acquired': DataTypes.SOURCE_CRUISE_SHIP,
+            'Interstate acquired': DataTypes.SOURCE_INTERSTATE,
+            'Contact of a confirmed ACT case': DataTypes.SOURCE_CONFIRMED,
+            'Unknown or local transmission': DataTypes.SOURCE_COMMUNITY,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
         }
         du = self._get_date(url, html)
 
@@ -355,21 +345,21 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
-            datatype=DT_STATUS_HOSPITALIZED,
+            datatype=DataTypes.STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=du
         )
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DataTypes.STATUS_RECOVERED,
             source_url=href,
             date_updated=du
         )
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
-            datatype=DT_STATUS_DEATHS,
+            datatype=DataTypes.STATUS_DEATHS,
             source_url=href,
             date_updated=du
         )

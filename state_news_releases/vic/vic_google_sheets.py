@@ -8,10 +8,7 @@ from covid_19_au_grab.get_package_dir import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_POSTCODE,
-    DT_STATUS_ACTIVE, DT_TOTAL
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 # https://docs.google.com/spreadsheets/d/1oxJt0BBPzk-w2Gn1ImO4zASBCdqeeLJRwHEA4DASBFQ/edit#gid=0
@@ -60,19 +57,19 @@ def _get_from_path(path_data_page, date):
     with open(path_data_page, 'r', encoding='utf-8') as f:
         for item in csv.DictReader(f):
             r.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
+                region_schema=Schemas.POSTCODE,
                 region_parent='AU-VIC',
                 region_child=item['Postcode'],
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=int(item['Confirmed cases (ever)'] or 0),
                 date_updated=date,  # FIXME!!!!!
                 source_url=URL_SOURCE
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
+                region_schema=Schemas.POSTCODE,
                 region_parent='AU-VIC',
                 region_child=item['Postcode'],
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=int(item['Active cases (current)'] or 0),
                 date_updated=date,  # FIXME!!!!!
                 source_url=URL_SOURCE

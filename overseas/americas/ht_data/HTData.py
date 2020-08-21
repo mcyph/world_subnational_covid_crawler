@@ -8,11 +8,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL, DT_NEW,
-    DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -62,10 +58,10 @@ class HTData(URLBase):
 
             if item['Cumulative cases']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Haiti',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['Cumulative cases'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
@@ -73,10 +69,10 @@ class HTData(URLBase):
 
             if item['New cases (24h)']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Haiti',
                     region_child=region_child,
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=int(item['New cases (24h)'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
@@ -84,10 +80,10 @@ class HTData(URLBase):
 
             if item['Cumulative Deaths']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Haiti',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Cumulative Deaths'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date

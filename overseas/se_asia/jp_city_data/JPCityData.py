@@ -69,13 +69,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0,
-    SCHEMA_ADMIN_1,
-    SCHEMA_JP_CITY,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -178,7 +172,7 @@ class JPCityData(URLBase):
         self.update()
         self.sdpf = StrictDataPointsFactory(
             region_mappings={
-                (SCHEMA_JP_CITY, 'jp-13', 'niigata-shi konan-ku'): (SCHEMA_JP_CITY, 'jp-15', '15104')  # HACK (??)
+                (Schemas.JP_CITY, 'jp-13', 'niigata-shi konan-ku'): (Schemas.JP_CITY, 'jp-15', '15104')  # HACK (??)
             },
             mode=MODE_DEV
         )
@@ -239,13 +233,13 @@ class JPCityData(URLBase):
                     )
 
                 gender = {
-                    '男性': DT_TOTAL_MALE,
-                    '男性\xa0': DT_TOTAL_MALE,
-                    '女性\xa0': DT_TOTAL_FEMALE,
-                    '女性': DT_TOTAL_FEMALE,
+                    '男性': DataTypes.TOTAL_MALE,
+                    '男性\xa0': DataTypes.TOTAL_MALE,
+                    '女性\xa0': DataTypes.TOTAL_FEMALE,
+                    '女性': DataTypes.TOTAL_FEMALE,
                     '不明': None,
-                    '惰性': DT_TOTAL_MALE,  # Pretty sure this is a typo
-                    '未満 女性': DT_TOTAL_FEMALE,
+                    '惰性': DataTypes.TOTAL_MALE,  # Pretty sure this is a typo
+                    '未満 女性': DataTypes.TOTAL_FEMALE,
                     '': None,
                     None: None
                 }[item['性別']]
@@ -297,11 +291,11 @@ class JPCityData(URLBase):
                     resident_of = 'unknown'
 
                 resident_of = self._labels_to_region_child.get_by_label(
-                    SCHEMA_ADMIN_1, 'JP', resident_of, default=resident_of
+                    Schemas.ADMIN_1, 'JP', resident_of, default=resident_of
                 )
                 city = city_map.get(city.strip().lower(), city)
                 city = self._labels_to_region_child.get_by_label(
-                    SCHEMA_JP_CITY, resident_of, city, default=city
+                    Schemas.JP_CITY, resident_of, city, default=city
                 )
 
                 print(resident_of, city)
@@ -360,9 +354,9 @@ class JPCityData(URLBase):
             cumulative += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Japan',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -373,9 +367,9 @@ class JPCityData(URLBase):
             cumulative[agerange] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Japan',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=agerange,
                 value=cumulative[agerange],
                 date_updated=date,
@@ -387,10 +381,10 @@ class JPCityData(URLBase):
             cumulative[prefecture] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[prefecture],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -401,7 +395,7 @@ class JPCityData(URLBase):
             cumulative[gender] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Japan',
                 datatype=gender,
                 value=cumulative[gender],
@@ -414,7 +408,7 @@ class JPCityData(URLBase):
             cumulative[gender, agerange] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Japan',
                 datatype=gender,
                 agerange=agerange,
@@ -428,7 +422,7 @@ class JPCityData(URLBase):
             cumulative[prefecture, gender] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
                 datatype=gender,
@@ -442,10 +436,10 @@ class JPCityData(URLBase):
             cumulative[prefecture, agerange] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=agerange,
                 value=cumulative[prefecture, agerange],
                 date_updated=date,
@@ -457,7 +451,7 @@ class JPCityData(URLBase):
             cumulative[prefecture, agerange, gender] += value
 
             r.append(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Japan',
                 region_child=prefecture,
                 datatype=gender,
@@ -472,10 +466,10 @@ class JPCityData(URLBase):
             cumulative[prefecture, city] += value
 
             r.append(
-                region_schema=SCHEMA_JP_CITY,
+                region_schema=Schemas.JP_CITY,
                 region_parent=prefecture,
                 region_child=city,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[prefecture, city],
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
@@ -487,7 +481,7 @@ class JPCityData(URLBase):
             cumulative[prefecture, city, gender] += value
 
             r.append(
-                region_schema=SCHEMA_JP_CITY,
+                region_schema=Schemas.JP_CITY,
                 region_parent=prefecture,
                 region_child=city,
                 datatype=gender,
@@ -501,7 +495,7 @@ class JPCityData(URLBase):
             cumulative[prefecture, city, agerange, gender] += value
 
             r.append(
-                region_schema=SCHEMA_JP_CITY,
+                region_schema=Schemas.JP_CITY,
                 region_parent=prefecture,
                 region_child=city,
                 datatype=gender,

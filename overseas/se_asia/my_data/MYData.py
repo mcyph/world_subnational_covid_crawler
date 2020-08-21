@@ -4,15 +4,7 @@ from os import listdir
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_MY_DISTRICT,
-    DT_TOTAL, DT_STATUS_ICU,
-    DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -75,10 +67,10 @@ class MYData(GithubRepo):
                         if value.strip('-'):
                             parent = fnam.split('-')[-1].split('.')[0]
                             r.append(DataPoint(
-                                region_schema=SCHEMA_MY_DISTRICT,
+                                region_schema=Schemas.MY_DISTRICT,
                                 region_parent='MY', #place_map.get(parent, parent),
                                 region_child=district.replace('under-investigation', 'Unknown'),
-                                datatype=DT_TOTAL,
+                                datatype=DataTypes.TOTAL,
                                 value=int(value),
                                 date_updated=date,
                                 source_url=self.SOURCE_URL
@@ -108,10 +100,10 @@ class MYData(GithubRepo):
                     if value.strip('-'):
                         child = state.replace('under-investigation', 'Unknown')
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='Malaysia',
                             region_child=place_map.get(child, child),
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -135,9 +127,9 @@ class MYData(GithubRepo):
 
                 if item['pui'].replace('-', ''):
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Malaysia',
-                        datatype=DT_SOURCE_UNDER_INVESTIGATION,
+                        datatype=DataTypes.SOURCE_UNDER_INVESTIGATION,
                         value=int(item['pui']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -145,9 +137,9 @@ class MYData(GithubRepo):
 
                 if item['tabligh'].replace('-', '') or item['close-contact'].replace('-', ''):
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Malaysia',
-                        datatype=DT_SOURCE_CONFIRMED,
+                        datatype=DataTypes.SOURCE_CONFIRMED,
                         value=int(item['tabligh'].replace('-', '0') or 0) +
                               int(item['close-contact'].replace('-', '0') or 0),
                         date_updated=date,
@@ -156,9 +148,9 @@ class MYData(GithubRepo):
 
                 if item['surveillance'].replace('-', '') or item['hadr'].replace('-', ''):
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Malaysia',
-                        datatype=DT_SOURCE_COMMUNITY,
+                        datatype=DataTypes.SOURCE_COMMUNITY,
                         value=int(item['surveillance'].replace('-', '0') or 0) +
                               int(item['hadr'].replace('-', '0') or 0),  # CHECK ME!!!! ==============================================
                         date_updated=date,
@@ -167,9 +159,9 @@ class MYData(GithubRepo):
 
                 if item['import'] and item['import'].replace('-', ''):
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Malaysia',
-                        datatype=DT_SOURCE_OVERSEAS,
+                        datatype=DataTypes.SOURCE_OVERSEAS,
                         value=int(item['import']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -192,33 +184,33 @@ class MYData(GithubRepo):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='Malaysia',
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_ADMIN_0,
+                #    region_schema=Schemas.ADMIN_0,
                 #    region_child='Malaysia',
-                #    datatype=DT_STATUS_DISCHARGED,
+                #    datatype=DataTypes.STATUS_DISCHARGED,
                 #    value=int(item['discharged']),
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
                 #))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='Malaysia',
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['death']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='Malaysia',
-                    datatype=DT_STATUS_ICU,
+                    datatype=DataTypes.STATUS_ICU,
                     value=int(item['icu']),
                     date_updated=date,
                     source_url=self.SOURCE_URL

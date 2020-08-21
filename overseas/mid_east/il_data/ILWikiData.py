@@ -10,13 +10,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_IL_MUNICIPALITY,
-    DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -50,12 +44,12 @@ class ILWikiData(URLBase):
                 html = f.read()
 
             datatype_mappings = {
-                'מקרי הדבקה': DT_TOTAL,
+                'מקרי הדבקה': DataTypes.TOTAL,
                 'ל-100,000 תושבים': None,
                 'יישוב': 'LOCALITY',
-                'מקרי מוות': DT_STATUS_DEATHS,
-                'הבריאו': DT_STATUS_RECOVERED,
-                'מקרים פעילים': DT_STATUS_ACTIVE
+                'מקרי מוות': DataTypes.STATUS_DEATHS,
+                'הבריאו': DataTypes.STATUS_RECOVERED,
+                'מקרים פעילים': DataTypes.STATUS_ACTIVE
             }
 
             table = pq(html)('div#corona2 table')  # Get from the longer table
@@ -90,7 +84,7 @@ class ILWikiData(URLBase):
 
                     value = int(value)
                     r.append(DataPoint(
-                        region_schema=SCHEMA_IL_MUNICIPALITY,
+                        region_schema=Schemas.IL_MUNICIPALITY,
                         region_parent='IL',
                         region_child=region,
                         datatype=datatype,

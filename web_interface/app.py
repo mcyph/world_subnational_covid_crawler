@@ -16,22 +16,7 @@ _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
 
 env = Environment(loader=FileSystemLoader('./templates'))
 
-from covid_19_au_grab.datatypes.constants import (
-    datatype_to_name, schema_to_name,
-    SCHEMA_ADMIN_1, SCHEMA_POSTCODE, SCHEMA_LGA,
-    SCHEMA_HHS, SCHEMA_LHD, SCHEMA_SA3, SCHEMA_THS,
-    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_STATUS_DEATHS_NEW, DT_STATUS_RECOVERED_NEW,
-    DT_NEW, DT_TESTS_TOTAL,
-    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED,
-    DT_STATUS_ICU, DT_STATUS_HOSPITALIZED,
-    DT_STATUS_ICU_VENTILATORS, DT_STATUS_DEATHS,
-    DT_STATUS_UNKNOWN,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
-    DT_SOURCE_INTERSTATE,
-    SCHEMA_JP_CITY
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.db.SQLiteDataRevision import \
     SQLiteDataRevision
 from covid_19_au_grab.db.SQLiteDataRevisions import \
@@ -195,8 +180,6 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
-            schema_to_name=schema_to_name,
-            datatype_to_name=datatype_to_name,
             zip=zip,
             date_fns=date_fns,
         )
@@ -235,20 +218,20 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_ADMIN_1, DT_TOTAL, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_NEW, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_DEATHS_NEW, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_RECOVERED_NEW, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_TESTS_TOTAL, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_HOSPITALIZED, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_STATUS_ICU, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_TOTAL_FEMALE, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_TOTAL_MALE, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.TOTAL, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.NEW, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS_NEW, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED_NEW, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.TESTS_TOTAL, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_HOSPITALIZED, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.STATUS_ICU, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.TOTAL_FEMALE, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.TOTAL_MALE, 'AU'),
                     ),
                     from_date=from_date
                 )
@@ -285,11 +268,11 @@ class App(object):
                 from_date,
                 inst.get_combined_values(
                     (
-                        (SCHEMA_ADMIN_1, DT_SOURCE_OVERSEAS, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_CONFIRMED, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_COMMUNITY, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_INTERSTATE, 'AU'),
-                        (SCHEMA_ADMIN_1, DT_SOURCE_UNDER_INVESTIGATION, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_OVERSEAS, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
+                        (Schemas.ADMIN_1, DataTypes.SOURCE_UNDER_INVESTIGATION, 'AU'),
                     ),
                     from_date=from_date
                 )
@@ -312,11 +295,11 @@ class App(object):
     def gender_age(self, rev_date, rev_subid):
         inst = SQLiteDataRevision(rev_date, rev_subid)
         gender_age_datapoints = [i for i in inst.get_combined_values_by_datatype(
-            SCHEMA_ADMIN_1,
+            Schemas.ADMIN_1,
             (
-                DT_TOTAL_FEMALE,
-                DT_TOTAL_MALE,
-                DT_TOTAL,
+                DataTypes.TOTAL_FEMALE,
+                DataTypes.TOTAL_MALE,
+                DataTypes.TOTAL,
             ),
             region_parent='AU'
         ) if i['agerange']]
@@ -339,22 +322,22 @@ class App(object):
 
         out = []
         for region_schema in (
-            SCHEMA_LGA,
-            SCHEMA_SA3,
-            SCHEMA_HHS,
-            SCHEMA_LHD,
-            SCHEMA_THS,
-            SCHEMA_POSTCODE
+            Schemas.LGA,
+            Schemas.SA3,
+            Schemas.HHS,
+            Schemas.LHD,
+            Schemas.THS,
+            Schemas.POSTCODE
         ):
             local_area_case_datapoints = inst.get_combined_values_by_datatype(
                 region_schema,
                 (
                     # TODO: What about by LGA (QLD only, other
-                    #  LGA in DT_CASES_BY_REGION) and LHA (NSW)
-                    DT_TOTAL,
-                    DT_STATUS_ACTIVE,
-                    DT_STATUS_RECOVERED,
-                    DT_STATUS_DEATHS,
+                    #  LGA in DataTypes.CASES_BY_REGION) and LHA (NSW)
+                    DataTypes.TOTAL,
+                    DataTypes.STATUS_ACTIVE,
+                    DataTypes.STATUS_RECOVERED,
+                    DataTypes.STATUS_DEATHS,
                 )
             )
             out.extend(local_area_case_datapoints)
@@ -368,7 +351,6 @@ class App(object):
             not_most_recent_warning=self.revisions.get_not_most_recent_warning(
                 rev_date, rev_subid
             ),
-            schema_to_name=schema_to_name,
             date_fns=date_fns,
         )
 
@@ -438,7 +420,7 @@ class App(object):
             ])
 
         return max_date, {
-            'sub_headers': [datatype_to_name(i) for i in datatypes],
+            'sub_headers': [i.value for i in datatypes],
             'data': out
         }
 

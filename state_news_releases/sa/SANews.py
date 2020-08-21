@@ -7,16 +7,7 @@ from pyquery import PyQuery as pq
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat, singledaystat
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_NEW, DT_TESTS_TOTAL,
-    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_STATUS_ICU, DT_STATUS_HOSPITALIZED,
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_OVERSEAS,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_COMMUNITY,
-    DT_SOURCE_CONFIRMED
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -145,31 +136,31 @@ class SANews(StateNewsBase):
         base_data_date = parse_date(data['hp_date'])
 
         r.append(DataPoint(
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             value=int(data['newcase_sa']),
             date_updated=base_data_date,
             source_url=url
         ))
         r.append(DataPoint(
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             value=int(data['todaycase_sa']),
             date_updated=base_data_date,
             source_url=url
         ))
         r.append(DataPoint(
-            datatype=DT_STATUS_ICU,
+            datatype=DataTypes.STATUS_ICU,
             value=int(data['icu_sa']),
             date_updated=base_data_date,
             source_url=url
         ))
         r.append(DataPoint(
-            datatype=DT_STATUS_DEATHS,
+            datatype=DataTypes.STATUS_DEATHS,
             value=int(data['deaths_sa']),
             date_updated=base_data_date,
             source_url=url
         ))
         r.append(DataPoint(
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DataTypes.STATUS_RECOVERED,
             value=int(data['recovered_sa']),
             date_updated=base_data_date,
             source_url=url
@@ -181,7 +172,7 @@ class SANews(StateNewsBase):
         ):
             agerange = agerange.replace(' - ', '-')
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=agerange,
                 value=int(value),
                 date_updated=parse_date(data['age_char']['datetime']),
@@ -193,8 +184,8 @@ class SANews(StateNewsBase):
             data['gender_char']['data']
         ):
             datatype = {
-                'male': DT_TOTAL_MALE,
-                'female': DT_TOTAL_FEMALE
+                'male': DataTypes.TOTAL_MALE,
+                'female': DataTypes.TOTAL_FEMALE
             }[gender.lower()]
 
             r.append(DataPoint(
@@ -209,11 +200,11 @@ class SANews(StateNewsBase):
             data['infection_char']['data']
         ):
             datatype = {
-                'overseas acquired': DT_SOURCE_OVERSEAS,
-                'contact confirmed': DT_SOURCE_CONFIRMED,
-                'interstate travel': DT_SOURCE_INTERSTATE,
-                'under investigation': DT_SOURCE_UNDER_INVESTIGATION,
-                'locally acquired': DT_SOURCE_COMMUNITY
+                'overseas acquired': DataTypes.SOURCE_OVERSEAS,
+                'contact confirmed': DataTypes.SOURCE_CONFIRMED,
+                'interstate travel': DataTypes.SOURCE_INTERSTATE,
+                'under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
+                'locally acquired': DataTypes.SOURCE_COMMUNITY
             }[source.lower()]
 
             r.append(DataPoint(
@@ -241,7 +232,7 @@ class SANews(StateNewsBase):
             ),
             c_html,
             source_url=href,
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             date_updated=self._get_date(href, html)
         )
 
@@ -258,7 +249,7 @@ class SANews(StateNewsBase):
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=cc,
                     date_updated=self._get_date(href, html),
                     source_url=href
@@ -274,7 +265,7 @@ class SANews(StateNewsBase):
                     compile('total number of cases notified in SA remains at ([0-9,]+)')
                 ),
                 c_html,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 source_url=href,
                 date_updated=self._get_date(href, html)
             )
@@ -287,7 +278,7 @@ class SANews(StateNewsBase):
                 compile(r'(?:undertaken (?:almost|more than) )?([0-9,]+)(?: COVID-19)? tests'),
             ),
             html,
-            datatype=DT_TESTS_TOTAL,
+            datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -358,13 +349,13 @@ class SANews(StateNewsBase):
                 total = int(pq(tds[3]).text())
 
             for datatype, value in (
-                (DT_TOTAL_FEMALE, female),
-                (DT_TOTAL_MALE, male),
-                (DT_TOTAL, total)
+                (DataTypes.TOTAL_FEMALE, female),
+                (DataTypes.TOTAL_MALE, male),
+                (DataTypes.TOTAL, total)
             ):
                 if value is None:
                     continue
-                elif datatype in (DT_TOTAL_FEMALE, DT_TOTAL_MALE):
+                elif datatype in (DataTypes.TOTAL_FEMALE, DataTypes.TOTAL_MALE):
                     continue   # HACK: SA has stopped providing these values, so will stop providing them fullstop for now!!! ===========================================================
 
                 r.append(DataPoint(
@@ -452,8 +443,8 @@ class SANews(StateNewsBase):
                         continue
 
                     num = DataPoint(
-                        region_schema=SCHEMA_LGA,
-                        datatype=DT_TOTAL,
+                        region_schema=Schemas.LGA,
+                        datatype=DataTypes.TOTAL,
                         region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
@@ -474,8 +465,8 @@ class SANews(StateNewsBase):
                         continue
 
                     num = DataPoint(
-                        region_schema=SCHEMA_LGA,
-                        datatype=DT_STATUS_ACTIVE,
+                        region_schema=Schemas.LGA,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
@@ -509,11 +500,11 @@ class SANews(StateNewsBase):
 
         # Normalise it with other states
         sa_norm_map = {
-            'Overseas acquired': DT_SOURCE_OVERSEAS,
-            'Locally acquired (Interstate travel)': DT_SOURCE_INTERSTATE,
-            'Locally acquired (close contact of a confirmed case)': DT_SOURCE_CONFIRMED,
-            'Locally acquired (contact not identified)': DT_SOURCE_COMMUNITY,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION
+            'Overseas acquired': DataTypes.SOURCE_OVERSEAS,
+            'Locally acquired (Interstate travel)': DataTypes.SOURCE_INTERSTATE,
+            'Locally acquired (close contact of a confirmed case)': DataTypes.SOURCE_CONFIRMED,
+            'Locally acquired (contact not identified)': DataTypes.SOURCE_COMMUNITY,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION
         }
 
         for k in (
@@ -566,7 +557,7 @@ class SANews(StateNewsBase):
 
             if c_icu is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_ICU,
+                    datatype=DataTypes.STATUS_ICU,
                     value=c_icu,
                     date_updated=du,
                     source_url=href
@@ -577,7 +568,7 @@ class SANews(StateNewsBase):
             t_d = int(pq(tr[1]).text().strip())
             if t_d is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=t_d,
                     date_updated=du,
                     source_url=href
@@ -591,7 +582,7 @@ class SANews(StateNewsBase):
 
                 if t_d is not None:
                     r.append(DataPoint(
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=t_d,
                         date_updated=du,
                         source_url=href
@@ -605,7 +596,7 @@ class SANews(StateNewsBase):
             active = self._extract_number_using_regex(
                 compile('([0-9,]+) active cases? in SA'),
                 c_html, href,
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 date_updated=du
             )
             if active:
@@ -614,7 +605,7 @@ class SANews(StateNewsBase):
             recovered = self._extract_number_using_regex(
                 compile('([0-9,]+) people have been cleared'),
                 c_html, href,
-                datatype=DT_STATUS_RECOVERED,
+                datatype=DataTypes.STATUS_RECOVERED,
                 date_updated=du
             )
             if recovered:
@@ -623,7 +614,7 @@ class SANews(StateNewsBase):
             deaths = self._extract_number_using_regex(
                 compile('([0-9,]+) reported deaths'),
                 c_html, href,
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 date_updated=du
             )
             if deaths:
@@ -632,7 +623,7 @@ class SANews(StateNewsBase):
             hospital = self._extract_number_using_regex(
                 compile('([0-9,]+) (?:person|people) remains? in hospital'),
                 c_html, href,
-                datatype=DT_STATUS_HOSPITALIZED,
+                datatype=DataTypes.STATUS_HOSPITALIZED,
                 date_updated=du
             )
             if hospital:

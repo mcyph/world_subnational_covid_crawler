@@ -1,7 +1,7 @@
 import threading
 import multiprocessing
 
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import _DataPoint
 
 #from covid_19_au_grab.overseas.ml_data.MLData import MLData
@@ -241,7 +241,7 @@ def _get_datapoints(classes, send_q):
                 # We won't use Australian data from international sources,
                 # as it comes from the dept of Health, which doesn't always
                 # match with state data
-                if datapoint.region_schema == SCHEMA_ADMIN_1 and datapoint.region_parent == 'au':
+                if datapoint.region_schema == Schemas.ADMIN_1 and datapoint.region_parent == 'au':
                     continue
                 new_datapoints.append(tuple(datapoint))
 

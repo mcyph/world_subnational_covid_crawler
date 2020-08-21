@@ -11,11 +11,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -86,10 +82,10 @@ class HRData(URLBase):
                 value = int(pq(text_elm).text().replace('.', ''))
                 region_child = region_map[text_elm.get('data-url').split('/')[-2]]
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='HR',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -101,10 +97,10 @@ class HRData(URLBase):
                 value = int(pq(text_elm).text().replace('.', ''))
                 region_child = region_map[text_elm.get('data-url').split('/')[-2]]
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='HR',
                     region_child=region_child,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL

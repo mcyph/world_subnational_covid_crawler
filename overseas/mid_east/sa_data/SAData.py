@@ -9,10 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -73,10 +70,10 @@ class SAData(URLBase):
 
             for region_child, value in confirmed.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -84,10 +81,10 @@ class SAData(URLBase):
 
             for region_child, value in deaths.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -95,10 +92,10 @@ class SAData(URLBase):
 
             for region_child, value in recovered.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -132,10 +129,10 @@ class SAData(URLBase):
 
             for region_child, value in tested.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_TESTS_TOTAL,
+                    datatype=DataTypes.TESTS_TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -172,10 +169,10 @@ class SAData(URLBase):
 
             for region_child, value in confirmed.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -183,10 +180,10 @@ class SAData(URLBase):
 
             for region_child, value in deaths.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -194,10 +191,10 @@ class SAData(URLBase):
 
             for region_child, value in recovered.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Saudi Arabia',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL

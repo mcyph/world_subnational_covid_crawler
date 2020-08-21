@@ -37,11 +37,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_CZ_OKRES,
-    DT_TESTS_TOTAL, DT_TOTAL,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -95,13 +91,13 @@ class CZData(URLBase):
                     region_child = item['okres_lau_kod']
 
                     for datatype, value in (
-                        (DT_TOTAL, confirmed),
-                        (DT_STATUS_RECOVERED, recovered),
-                        (DT_STATUS_DEATHS, death),
-                        (DT_STATUS_ACTIVE, active)
+                        (DataTypes.TOTAL, confirmed),
+                        (DataTypes.STATUS_RECOVERED, recovered),
+                        (DataTypes.STATUS_DEATHS, death),
+                        (DataTypes.STATUS_ACTIVE, active)
                     ):
                         r.append(DataPoint(
-                            region_schema=SCHEMA_CZ_OKRES,
+                            region_schema=Schemas.CZ_OKRES,
                             region_parent='CZ',  # FIXME!
                             region_child=region_child,
                             datatype=datatype,

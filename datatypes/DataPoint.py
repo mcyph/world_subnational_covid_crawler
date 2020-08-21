@@ -2,7 +2,7 @@ import csv
 import unidecode
 from collections import namedtuple
 
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, name_to_schema, schema_to_name
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.other_data.iso_3166_1 import iso_3166_data
 from covid_19_au_grab.other_data.iso_3166_2 import iso_3166_2_data
 from covid_19_au_grab.get_package_dir import get_package_dir
@@ -16,8 +16,8 @@ def _get_mappings_to_iso_3166():
     with open(get_package_dir() / 'datatypes' / 'schema_mappings.csv',
               'r', encoding='utf-8') as f:
         for item in csv.DictReader(f, delimiter='\t'):
-            r[name_to_schema(item['original_schema'].strip()), item['original_parent'].strip(), item['original_child'].strip()] = (
-                name_to_schema(item['schema'].strip()), item['parent'].strip(), item['child'].strip()
+            r[Schemas(item['original_schema'].strip()), item['original_parent'].strip(), item['original_child'].strip()] = (
+                Schemas(item['schema'].strip()), item['parent'].strip(), item['child'].strip()
             )
 
     return r
@@ -27,7 +27,7 @@ _mappings_to_iso_3166 = _get_mappings_to_iso_3166()
 _labels_to_region_child = LabelsToRegionChild()
 
 
-def DataPoint(region_schema=SCHEMA_ADMIN_1,
+def DataPoint(region_schema=Schemas.ADMIN_1,
               region_parent=None,
               region_child=None,
 
@@ -44,18 +44,20 @@ def DataPoint(region_schema=SCHEMA_ADMIN_1,
     arguments for this `namedtuple`.
     """
 
-    region_schema = int(region_schema)
+    assert isinstance(region_schema, Schemas), region_schema
+    assert isinstance(datatype, DataTypes), datatype
+
     region_parent = (region_parent or '').strip()
     region_child = (region_child or '').strip()
     agerange = agerange or ''
     value = int(value)
 
-    if region_schema == SCHEMA_ADMIN_1:
+    if region_schema == Schemas.ADMIN_1:
         if region_parent and region_parent.lower() == 'china':
             region_parent = 'cn'
         elif region_parent:
             region_parent = _labels_to_region_child.get_by_label(
-                SCHEMA_ADMIN_0, None, region_parent,
+                Schemas.ADMIN_0, None, region_parent,
                 default=region_parent
             )
 

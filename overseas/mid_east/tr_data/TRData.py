@@ -40,10 +40,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -96,10 +93,10 @@ class TRData(URLBase):
 
                 if confirmed is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -107,10 +104,10 @@ class TRData(URLBase):
 
                 if recovered is not None and False:  # A lot of these values are 0(?)
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -118,10 +115,10 @@ class TRData(URLBase):
 
                 if deaths is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL

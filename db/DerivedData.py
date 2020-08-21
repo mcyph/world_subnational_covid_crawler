@@ -1,23 +1,6 @@
 from collections import Counter
 
-from covid_19_au_grab.datatypes.constants import (
-    DT_TOTAL, DT_NEW,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TESTS_TOTAL, DT_TESTS_NEW,
-
-    DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW,
-    DT_STATUS_RECOVERED, DT_STATUS_RECOVERED_NEW,
-    DT_STATUS_ACTIVE, DT_STATUS_ACTIVE_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_HOSPITALIZED_NEW,
-    DT_STATUS_ICU, DT_STATUS_ICU_NEW,
-    DT_STATUS_ICU_VENTILATORS, DT_STATUS_ICU_VENTILATORS_NEW,
-    DT_STATUS_ICU_RUNNINGTOTAL, DT_STATUS_ICU_RUNNINGTOTAL_NEW,
-    DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW,
-    DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW,
-
-    DT_CONFIRMED, DT_CONFIRMED_NEW,
-    DT_PROBABLE, DT_PROBABLE_NEW
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -36,21 +19,21 @@ class DerivedData:
 
     def add_derived_for_source(self, source_id):
         for total_datatype, new_datatype in (
-            (DT_TOTAL, DT_NEW),
-            (DT_TESTS_TOTAL, DT_TESTS_NEW),
+            (DataTypes.TOTAL, DataTypes.NEW),
+            (DataTypes.TESTS_TOTAL, DataTypes.TESTS_NEW),
 
-            (DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW),
-            (DT_STATUS_RECOVERED, DT_STATUS_RECOVERED_NEW),
-            (DT_STATUS_ACTIVE, DT_STATUS_ACTIVE_NEW),
-            (DT_STATUS_HOSPITALIZED, DT_STATUS_HOSPITALIZED_NEW),
-            (DT_STATUS_ICU, DT_STATUS_ICU_NEW),
-            (DT_STATUS_ICU_VENTILATORS, DT_STATUS_ICU_VENTILATORS_NEW),
-            (DT_STATUS_ICU_RUNNINGTOTAL, DT_STATUS_ICU_RUNNINGTOTAL_NEW),
-            (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW),
-            (DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DT_STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW),
+            (DataTypes.STATUS_DEATHS, DataTypes.STATUS_DEATHS_NEW),
+            (DataTypes.STATUS_RECOVERED, DataTypes.STATUS_RECOVERED_NEW),
+            (DataTypes.STATUS_ACTIVE, DataTypes.STATUS_ACTIVE_NEW),
+            (DataTypes.STATUS_HOSPITALIZED, DataTypes.STATUS_HOSPITALIZED_NEW),
+            (DataTypes.STATUS_ICU, DataTypes.STATUS_ICU_NEW),
+            (DataTypes.STATUS_ICU_VENTILATORS, DataTypes.STATUS_ICU_VENTILATORS_NEW),
+            (DataTypes.STATUS_ICU_RUNNINGTOTAL, DataTypes.STATUS_ICU_RUNNINGTOTAL_NEW),
+            (DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL, DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW),
+            (DataTypes.STATUS_ICU_VENTILATORS_RUNNINGTOTAL, DataTypes.STATUS_ICU_VENTILATORS_RUNNINGTOTAL_NEW),
 
-            (DT_CONFIRMED, DT_CONFIRMED_NEW),
-            (DT_PROBABLE, DT_PROBABLE_NEW),
+            (DataTypes.CONFIRMED, DataTypes.CONFIRMED_NEW),
+            (DataTypes.PROBABLE, DataTypes.PROBABLE_NEW),
         ):
             self.add_new_datapoints_from_total(
                 source_id, new_datatype, total_datatype
@@ -128,7 +111,7 @@ class DerivedData:
         print("Adding gender balance from breakdown:", source_id)
         append_datapoints = []
 
-        for datatype in (DT_TOTAL_MALE, DT_TOTAL_FEMALE):
+        for datatype in (DataTypes.TOTAL_MALE, DataTypes.TOTAL_FEMALE):
             has_total = {}
             age_breakdowns = Counter()
 

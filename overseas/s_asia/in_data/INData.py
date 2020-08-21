@@ -6,11 +6,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_IN_DISTRICT,
-    DT_TOTAL, DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -158,8 +154,8 @@ class INData(URLBase):
 
                     r.append(DataPoint(
                         region_parent=parent_region,
-                        region_schema=SCHEMA_IN_DISTRICT,
-                        datatype=DT_TOTAL,
+                        region_schema=Schemas.IN_DISTRICT,
+                        datatype=DataTypes.TOTAL,
                         region_child=district,
                         value=int(status_dict['confirmed']),
                         date_updated=date,
@@ -167,8 +163,8 @@ class INData(URLBase):
                     ))
                     r.append(DataPoint(
                         region_parent=parent_region,
-                        region_schema=SCHEMA_IN_DISTRICT,
-                        datatype=DT_STATUS_ACTIVE,
+                        region_schema=Schemas.IN_DISTRICT,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         region_child=district,
                         value=int(status_dict['active']),
                         date_updated=date,
@@ -176,8 +172,8 @@ class INData(URLBase):
                     ))
                     r.append(DataPoint(
                         region_parent=parent_region,
-                        region_schema=SCHEMA_IN_DISTRICT,
-                        datatype=DT_STATUS_DEATHS,
+                        region_schema=Schemas.IN_DISTRICT,
+                        datatype=DataTypes.STATUS_DEATHS,
                         region_child=district,
                         value=int(status_dict['deceased']),
                         date_updated=date,
@@ -185,8 +181,8 @@ class INData(URLBase):
                     ))
                     r.append(DataPoint(
                         region_parent=parent_region,
-                        region_schema=SCHEMA_IN_DISTRICT,
-                        datatype=DT_STATUS_RECOVERED,
+                        region_schema=Schemas.IN_DISTRICT,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         region_child=district,
                         value=int(status_dict['recovered']),
                         date_updated=date,
@@ -249,10 +245,10 @@ class INData(URLBase):
                 #print(status_dict['date'])
                 date = self.convert_date(status_dict['date'])
                 datatype = {
-                    'Confirmed': DT_TOTAL,
-                    'Recovered': DT_STATUS_RECOVERED,
-                    'Deceased': DT_STATUS_DEATHS,
-                    'Active': DT_STATUS_ACTIVE
+                    'Confirmed': DataTypes.TOTAL,
+                    'Recovered': DataTypes.STATUS_RECOVERED,
+                    'Deceased': DataTypes.STATUS_DEATHS,
+                    'Active': DataTypes.STATUS_ACTIVE
                 }[status_dict['status']]
 
                 del status_dict['date']
@@ -269,7 +265,7 @@ class INData(URLBase):
                         region_child = 'IN-' + district_code.upper()
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='IN',
                         region_child=region_child,
                         datatype=datatype,

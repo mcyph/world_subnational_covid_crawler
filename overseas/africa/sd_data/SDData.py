@@ -9,10 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -111,10 +108,10 @@ class SDData(URLBase):
                 total = int(pq(total).text().strip())
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='SD',
                     region_child=region_map[region],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=total,
                     date_updated=date,
                     source_url=self.SOURCE_URL

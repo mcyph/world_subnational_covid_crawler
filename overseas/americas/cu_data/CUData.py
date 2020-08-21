@@ -5,15 +5,7 @@ from collections import Counter
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_CU_MUNICIPALITY,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_CONFIRMED,
-    DT_SOURCE_OVERSEAS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -67,8 +59,8 @@ class CUData(GithubRepo):
         r = []
 
         genders = {
-            'hombre': DT_TOTAL_MALE,
-            'mujer': DT_TOTAL_FEMALE
+            'hombre': DataTypes.TOTAL_MALE,
+            'mujer': DataTypes.TOTAL_FEMALE
         }
 
         #infection_sources = {
@@ -109,10 +101,10 @@ class CUData(GithubRepo):
                 cumulative += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     date_updated=date,
                     value=cumulative,
                     source_url=self.SOURCE_URL
@@ -123,7 +115,7 @@ class CUData(GithubRepo):
                 cumulative[gender] += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
                     datatype=gender,
@@ -137,10 +129,10 @@ class CUData(GithubRepo):
                 cumulative[age] += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     agerange=age,
                     date_updated=date,
                     value=cumulative[age],
@@ -152,10 +144,10 @@ class CUData(GithubRepo):
                 cumulative[municipality, province] += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_CU_MUNICIPALITY,
+                    region_schema=Schemas.CU_MUNICIPALITY,
                     region_parent=province,
                     region_child=municipality,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     date_updated=date,
                     value=cumulative[municipality, province],
                     source_url=self.SOURCE_URL
@@ -166,10 +158,10 @@ class CUData(GithubRepo):
                 cumulative[province] += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='CU',
                     region_child=province,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     date_updated=date,
                     value=cumulative[province],
                     source_url=self.SOURCE_URL

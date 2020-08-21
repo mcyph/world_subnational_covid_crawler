@@ -6,10 +6,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -87,10 +84,10 @@ class IDGoogleDocsData(URLBase):
                     province = 'Unknown'
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Indonesia',
                     region_child=province,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(value),
                     date_updated=date,
                     source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'

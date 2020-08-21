@@ -13,16 +13,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_UK_AREA,
-    DT_TOTAL, DT_NEW,
-    DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW,
-    DT_TESTS_TOTAL, DT_TESTS_NEW,
-    DT_STATUS_HOSPITALIZED,
-    DT_STATUS_HOSPITALIZED_RUNNINGTOTAL,
-    DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW,
-    DT_STATUS_ICU_VENTILATORS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -106,16 +97,16 @@ class UKGovData(URLBase):
                     area = normalize_locality_name(item['name'])
 
                 for datatype, value in (
-                    (DT_TOTAL, item['cumulative']),
-                    (DT_NEW, item['daily']),
-                    (DT_STATUS_DEATHS, item['deathsCumulative']),
-                    (DT_STATUS_DEATHS_NEW, item['deathsDaily']),
-                    (DT_TESTS_TOTAL, item['cumTestsByPublishDate']),
-                    (DT_TESTS_NEW, item['newTestsByPublishDate']),
-                    (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, item['cumAdmissions']),
-                    (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW, item['newAdmissions']),
-                    (DT_STATUS_HOSPITALIZED, item['hospitalCases']),
-                    (DT_STATUS_ICU_VENTILATORS, item['covidOccupiedMVBeds']),
+                    (DataTypes.TOTAL, item['cumulative']),
+                    (DataTypes.NEW, item['daily']),
+                    (DataTypes.STATUS_DEATHS, item['deathsCumulative']),
+                    (DataTypes.STATUS_DEATHS_NEW, item['deathsDaily']),
+                    (DataTypes.TESTS_TOTAL, item['cumTestsByPublishDate']),
+                    (DataTypes.TESTS_NEW, item['newTestsByPublishDate']),
+                    (DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL, item['cumAdmissions']),
+                    (DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW, item['newAdmissions']),
+                    (DataTypes.STATUS_HOSPITALIZED, item['hospitalCases']),
+                    (DataTypes.STATUS_ICU_VENTILATORS, item['covidOccupiedMVBeds']),
 
                     # TODO: Support these separately!!!
                     # (item['cumAdmissionsByAge']),
@@ -127,7 +118,7 @@ class UKGovData(URLBase):
 
                     try:
                         r.append(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='GB',
                             region_child=area,
                             datatype=datatype,
@@ -156,16 +147,16 @@ class UKGovData(URLBase):
                 area = normalize_locality_name(item['name'])
 
                 for datatype, value in (
-                    (DT_TOTAL, item['cumulative']),
-                    (DT_NEW, item['daily']),
-                    (DT_STATUS_DEATHS, item['deathsCumulative']),
-                    (DT_STATUS_DEATHS_NEW, item['deathsDaily']),
-                    (DT_TESTS_TOTAL, item['cumTestsByPublishDate']),
-                    (DT_TESTS_NEW, item['newTestsByPublishDate']),
-                    (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL, item['cumAdmissions']),
-                    (DT_STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW, item['newAdmissions']),
-                    (DT_STATUS_HOSPITALIZED, item['hospitalCases']),
-                    (DT_STATUS_ICU_VENTILATORS, item['covidOccupiedMVBeds']),
+                    (DataTypes.TOTAL, item['cumulative']),
+                    (DataTypes.NEW, item['daily']),
+                    (DataTypes.STATUS_DEATHS, item['deathsCumulative']),
+                    (DataTypes.STATUS_DEATHS_NEW, item['deathsDaily']),
+                    (DataTypes.TESTS_TOTAL, item['cumTestsByPublishDate']),
+                    (DataTypes.TESTS_NEW, item['newTestsByPublishDate']),
+                    (DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL, item['cumAdmissions']),
+                    (DataTypes.STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW, item['newAdmissions']),
+                    (DataTypes.STATUS_HOSPITALIZED, item['hospitalCases']),
+                    (DataTypes.STATUS_ICU_VENTILATORS, item['covidOccupiedMVBeds']),
 
                     # TODO: Support these separately!!!
                     # (item['cumAdmissionsByAge']),
@@ -177,7 +168,7 @@ class UKGovData(URLBase):
 
                     try:
                         r.append(
-                            region_schema=SCHEMA_UK_AREA,
+                            region_schema=Schemas.UK_AREA,
                             region_parent='GB',
                             region_child=area,
                             datatype=datatype,

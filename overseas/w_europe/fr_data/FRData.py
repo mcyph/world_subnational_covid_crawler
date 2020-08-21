@@ -3,13 +3,7 @@ import csv
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_FR_OVERSEAS_COLLECTIVITY,
-    #SCHEMA_FR_DEPARTMENT,
-    DT_TOTAL, DT_STATUS_ACTIVE,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -82,21 +76,21 @@ class FRData(GithubRepo):
                 source_url = item['source_url'] or source_name or self.github_url
 
                 if item['granularite'] == 'pays':
-                    region_schema = SCHEMA_ADMIN_0
+                    region_schema = Schemas.ADMIN_0
                     region_parent = None
                 elif item['granularite'] == 'departement':
-                    region_schema = SCHEMA_ADMIN_1 #SCHEMA_FR_DEPARTMENT
+                    region_schema = Schemas.ADMIN_1 #Schemas.FR_DEPARTMENT
                     region_parent = 'FR'  # CHECK ME for overseas territories!!!! ==================================================
                     try:
                         region_child = fr_departments[region_child]
                     except KeyError:
                         region_child = place_map[region_child]
                 elif item['granularite'] == 'region':
-                    region_schema = SCHEMA_ADMIN_1
+                    region_schema = Schemas.ADMIN_1
                     region_parent = 'France'
                     continue  # HACK: It seems the natural earth geojson files use departments rather than regions!!!
                 elif item['granularite'] == 'collectivite-outremer':
-                    region_schema = SCHEMA_FR_OVERSEAS_COLLECTIVITY
+                    region_schema = Schemas.FR_OVERSEAS_COLLECTIVITY
                     region_parent = None
                     continue  # HACK: Won't support these in this data for now, as most of this info is in the JHU data!! ============================
                 elif item['granularite'] == 'monde':
@@ -110,7 +104,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url
@@ -121,7 +115,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(deaths),
                         date_updated=date,
                         source_url=source_url
@@ -132,7 +126,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_ICU,
+                        datatype=DataTypes.STATUS_ICU,
                         value=int(icu),
                         date_updated=date,
                         source_url=source_url
@@ -143,7 +137,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_HOSPITALIZED,
+                        datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(hospitalized),
                         date_updated=date,
                         source_url=source_url
@@ -154,7 +148,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(recovered),
                         date_updated=date,
                         source_url=source_url
@@ -165,7 +159,7 @@ class FRData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_ACTIVE,
+                            datatype=DataTypes.STATUS_ACTIVE,
                             value=int(recovered)-int(confirmed),
                             date_updated=date,
                             source_url=source_url
@@ -176,7 +170,7 @@ class FRData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url

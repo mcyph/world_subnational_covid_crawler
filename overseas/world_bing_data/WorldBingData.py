@@ -10,12 +10,7 @@ from covid_19_au_grab.datatypes.StrictDataPointsFactory import (
 from covid_19_au_grab.overseas.world_bing_data.world_bing_mappings import (
     world_bing_mappings
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_US_COUNTY, SCHEMA_IN_DISTRICT, SCHEMA_CR_CANTON,
-    SCHEMA_ADMIN_1, SCHEMA_ADMIN_0,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_STATUS_ACTIVE, DT_NEW,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -67,11 +62,11 @@ class WorldBingData(GithubRepo):
 
                 if item['AdminRegion2'] and item['ISO2'] != 'US':
                     if item['Country_Region'] == 'India':
-                        region_schema = SCHEMA_IN_DISTRICT
+                        region_schema = Schemas.IN_DISTRICT
                         region_parent = item['AdminRegion1']
                         region_child = item['AdminRegion2']
                     elif item['Country_Region'] == 'Costa Rica':
-                        region_schema = SCHEMA_CR_CANTON
+                        region_schema = Schemas.CR_CANTON
                         region_parent = item['AdminRegion1']
                         region_child = item['AdminRegion2']
                     else:
@@ -85,11 +80,11 @@ class WorldBingData(GithubRepo):
                     continue
 
                 elif item['AdminRegion1']:
-                    region_schema = SCHEMA_ADMIN_1
+                    region_schema = Schemas.ADMIN_1
                     region_parent = item['ISO2']
                     region_child = item['AdminRegion1']
                 else:
-                    region_schema = SCHEMA_ADMIN_0
+                    region_schema = Schemas.ADMIN_0
                     region_parent = None
                     region_child = item['Country_Region']
 
@@ -97,12 +92,12 @@ class WorldBingData(GithubRepo):
                     region_schema=region_schema,
                     region_parent=region_parent,
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['Confirmed']),
                     date_updated=date,
                     source_url='Bing'
                 )
-                #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                #if region_schema == Schemas.ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
                 #    print(r[-1])
 
                 if item['ConfirmedChange']:
@@ -110,7 +105,7 @@ class WorldBingData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_NEW,
+                        datatype=DataTypes.NEW,
                         value=int(item['ConfirmedChange']),
                         date_updated=date,
                         source_url='Bing'
@@ -121,7 +116,7 @@ class WorldBingData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['Deaths']),
                         date_updated=date,
                         source_url='Bing'
@@ -132,7 +127,7 @@ class WorldBingData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(item['Recovered']),
                         date_updated=date,
                         source_url='Bing'
@@ -141,7 +136,7 @@ class WorldBingData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(item['Confirmed']) -
                               int(item['Deaths'] or '0') -
                               int(item['Recovered']),

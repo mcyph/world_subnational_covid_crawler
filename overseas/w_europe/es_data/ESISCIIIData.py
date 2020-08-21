@@ -9,13 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_ES_PROVINCE,
-    DT_TESTS_TOTAL,
-    DT_TOTAL, DT_NEW, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -145,19 +139,19 @@ class ESISCIIIData(URLBase):
                 running_total += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ES_PROVINCE,
+                    region_schema=Schemas.ES_PROVINCE,
                     region_parent='ES',
                     region_child=region,
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ES_PROVINCE,
+                    region_schema=Schemas.ES_PROVINCE,
                     region_parent='ES',
                     region_child=region,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(running_total),
                     date_updated=date,
                     source_url=self.SOURCE_URL

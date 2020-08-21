@@ -6,10 +6,13 @@ from covid_19_au_grab.get_package_dir import get_package_dir
 
 
 class OutputSchemaTypes:
-    def __init__(self, listings=None, time_format=None, revision_id=None):
+    def __init__(self, listings=None, time_format=None, revision_id=None,
+                 case_data_datatypes=None):
+
         self.listings = listings
         self.time_format = time_format
         self.revision_id = revision_id
+        self.case_data_datatypes = case_data_datatypes
 
     def get_schema_types(self):
         """
@@ -24,6 +27,7 @@ class OutputSchemaTypes:
             schema_types['underlays'] = self.__get_underlay_key()
             schema_types['boundaries'] = self.__get_boundaries()
             schema_types['listings'] = self.__get_listings()
+            schema_types['case_data_datatypes'] = self.case_data_datatypes
 
             for schema, schema_dict in schema_types['schemas'].items():
                 if schema_dict['iso_3166']:

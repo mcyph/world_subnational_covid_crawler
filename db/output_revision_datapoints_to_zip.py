@@ -9,9 +9,7 @@ from covid_19_au_grab.db.SQLiteDataRevision import \
     SQLiteDataRevision
 from covid_19_au_grab.datatypes.TimeSeriesDataPoints import \
     TimeSeriesDataPoints
-from covid_19_au_grab.datatypes.constants import (
-    schema_to_name,
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes.schema_types import schema_types
 from covid_19_au_grab.datatypes.OutputSchemaTypes import OutputSchemaTypes
@@ -47,6 +45,13 @@ class _TimeSeriesDataZipper:
                     for i in r.keys()
                     if 'geo_data/' in i
                 ]
+            },
+            # Add listing so can know which datatypes
+            # are supplied in which case data files
+            case_data_datatypes={
+                k.split('/')[-1]: v['sub_headers']
+                for k, v in r.items()
+                if 'case_data/' in k
             },
             time_format=rev_date,
             revision_id=rev_subid
@@ -112,16 +117,17 @@ class _TimeSeriesDataZipper:
                             poly[:] = [out_long, out_lat]
 
                     # Remove everything but English to save space (for now)
-                    region_child_dict['label'] = {
-                        'en': region_child_dict['label'].get('en')
-                    }
+                    #region_child_dict['label'] = {
+                    #    'en': region_child_dict['label'].get('en')
+                    #}
 
     def _get_revision_datapoints(self, rev_date, rev_subid):
         r = {}
         inst = SQLiteDataRevision(rev_date, rev_subid)
 
         for region_schema in inst.get_region_schemas():
-            region_schema_str = schema_to_name(region_schema)
+            print("Getting revision datapoints for zip:", region_schema.value)
+            region_schema_str = region_schema.value
             region_dict = schema_types['schemas'][region_schema_str]
 
             if region_dict['split_by_parent_region']:

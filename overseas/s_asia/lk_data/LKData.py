@@ -13,10 +13,7 @@ from collections import Counter
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -133,10 +130,10 @@ class LKData(GithubRepo):
             #for province, value in sorted(by_province.items()):
             #    cumulative[province] += value
             #    r.append(DataPoint(
-            #        region_schema=SCHEMA_ADMIN_1,
+            #        region_schema=Schemas.ADMIN_1,
             #        region_parent='LK',
             #        region_child=province,
-            #        datatype=DT_TOTAL,
+            #        datatype=DataTypes.TOTAL,
             #        value=cumulative[province],
             #        date_updated=date,
             #        source_url=self.SOURCE_URL
@@ -146,11 +143,11 @@ class LKData(GithubRepo):
             for (province, district), value in sorted(by_district.items()):
                 cumulative[province, district] += value
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
-                    #region_schema=SCHEMA_LK_DISTRICT,
+                    region_schema=Schemas.ADMIN_1,
+                    #region_schema=Schemas.LK_DISTRICT,
                     region_parent='LK',
                     region_child=district,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=cumulative[province, district],
                     date_updated=date,
                     source_url=self.SOURCE_URL

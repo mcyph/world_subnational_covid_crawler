@@ -4,12 +4,7 @@ from os import listdir
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_US_COUNTY,
-    SCHEMA_ADMIN_1, SCHEMA_ADMIN_0,
-    DT_TOTAL, DT_TESTS_TOTAL, DT_STATUS_ACTIVE,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -70,11 +65,11 @@ class WorldJHUData(GithubRepo):
                     date = self.convert_date(item['Last_Update'].split()[0])
 
                     if item['Province_State']:
-                        region_schema = SCHEMA_ADMIN_1
+                        region_schema = Schemas.ADMIN_1
                         region_parent = item['Country_Region']
                         region_child = item['Province_State']
                     else:
-                        region_schema = SCHEMA_ADMIN_0
+                        region_schema = Schemas.ADMIN_0
                         region_parent = None
                         region_child = item['Country_Region']
 
@@ -82,19 +77,19 @@ class WorldJHUData(GithubRepo):
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(float(item['Confirmed'])),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
-                    #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                    #if region_schema == Schemas.ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
                     #    print(r[-1])
 
                     r.append(DataPoint(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(float(item['Deaths'])),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -105,7 +100,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_RECOVERED,
+                            datatype=DataTypes.STATUS_RECOVERED,
                             value=int(float(item['Recovered'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -116,7 +111,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_ACTIVE,
+                            datatype=DataTypes.STATUS_ACTIVE,
                             value=int(float(item['Active'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -127,7 +122,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_TESTS_TOTAL,
+                            datatype=DataTypes.TESTS_TOTAL,
                             value=int(float(item['People_Tested'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -138,7 +133,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_HOSPITALIZED,
+                            datatype=DataTypes.STATUS_HOSPITALIZED,
                             value=int(float(item['People_Hospitalized'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -198,30 +193,30 @@ class WorldJHUData(GithubRepo):
 
                     if item.get('Admin2'):
                         assert item['Country_Region'] == 'US', item['Country_Region']
-                        region_schema = SCHEMA_US_COUNTY
+                        region_schema = Schemas.US_COUNTY
                         region_parent = province_state
                         region_child = item['Admin2']
                     elif province_state:
                         assert not item.get('FIPS'), item['FIPS']
-                        region_schema = SCHEMA_ADMIN_1
+                        region_schema = Schemas.ADMIN_1
                         region_parent = country_region
                         region_child = province_state
 
                         if ', ' in region_child:
                             # e.g. 'Sonoma County, CA' in earlier versions
                             county, state_code = region_child.split(', ')
-                            region_schema = SCHEMA_US_COUNTY
+                            region_schema = Schemas.US_COUNTY
                             region_parent = 'US-'+state_code  # FIXME!! =====================================================
                             region_child = county
                     else:
-                        region_schema = SCHEMA_ADMIN_0
+                        region_schema = Schemas.ADMIN_0
                         region_parent = None
                         region_child = country_region
 
                     if region_parent:
                         region_parent = region_parent.strip('*').strip().replace('Mainland China', 'China')
 
-                    if region_schema == SCHEMA_US_COUNTY:
+                    if region_schema == Schemas.US_COUNTY:
                         # Convert US counties to FIPS codes
                         from covid_19_au_grab.datatypes.SchemaTypeInfo import get_schema_type_info
                         region_parent, region_child = get_schema_type_info(
@@ -253,12 +248,12 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(float(item['Confirmed'])),
                             date_updated=date,
                             source_url='JHU'  # HACK: JHU is larger than any of the other sources, so makes sense to reduce the source just for this file!
                         ))
-                        #if region_schema == SCHEMA_ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
+                        #if region_schema == Schemas.ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
                         #    print(r[-1])
                         #    print(item)
 
@@ -267,7 +262,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             value=int(float(item['Deaths'])),
                             date_updated=date,
                             source_url='JHU'
@@ -278,7 +273,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_RECOVERED,
+                            datatype=DataTypes.STATUS_RECOVERED,
                             value=int(float(item['Recovered'])),
                             date_updated=date,
                             source_url='JHU'
@@ -289,7 +284,7 @@ class WorldJHUData(GithubRepo):
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
-                            datatype=DT_STATUS_ACTIVE,
+                            datatype=DataTypes.STATUS_ACTIVE,
                             value=int(float(item['Active'])),
                             date_updated=date,
                             source_url='JHU'
@@ -307,7 +302,7 @@ class WorldJHUDataAdmin0(WorldJHUData):
     def get_datapoints(self):
         r = []
         for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema == SCHEMA_ADMIN_0:
+            if i.region_schema == Schemas.ADMIN_0:
                 r.append(i)
         return r
 
@@ -321,7 +316,7 @@ class WorldJHUDataAdmin1(WorldJHUData):
     def get_datapoints(self):
         r = []
         for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema == SCHEMA_ADMIN_1:
+            if i.region_schema == Schemas.ADMIN_1:
                 r.append(i)
         return r
 
@@ -335,7 +330,7 @@ class WorldJHUDataAdmin2(WorldJHUData):
     def get_datapoints(self):
         r = []
         for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema in (SCHEMA_US_COUNTY,):
+            if i.region_schema in (Schemas.US_COUNTY,):
                 r.append(i)
         return r
 

@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
-from covid_19_au_grab.datatypes.constants import DT_NEW, DT_SOURCE_COMMUNITY, \
-    DT_SOURCE_INTERSTATE, DT_SOURCE_CRUISE_SHIP, DT_SOURCE_DOMESTIC, \
-    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 def datapoints_thinned_out(datapoints):
@@ -20,14 +18,14 @@ def datapoints_thinned_out(datapoints):
 
     def extend(item, unique_key):
         if unique_key[1] or unique_key[0] in (
-            DT_NEW,
-            DT_SOURCE_OVERSEAS,
-            DT_SOURCE_UNDER_INVESTIGATION,
-            DT_SOURCE_CONFIRMED,
-            DT_SOURCE_DOMESTIC,
-            DT_SOURCE_CRUISE_SHIP,
-            DT_SOURCE_INTERSTATE,
-            DT_SOURCE_COMMUNITY
+            DataTypes.NEW,
+            DataTypes.SOURCE_OVERSEAS,
+            DataTypes.SOURCE_UNDER_INVESTIGATION,
+            DataTypes.SOURCE_CONFIRMED,
+            DataTypes.SOURCE_DOMESTIC,
+            DataTypes.SOURCE_CRUISE_SHIP,
+            DataTypes.SOURCE_INTERSTATE,
+            DataTypes.SOURCE_COMMUNITY
         ):
             # Don't thin out if there's an agegroup
             # specified or the graphs might be affected

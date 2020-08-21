@@ -6,10 +6,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -75,10 +72,10 @@ class SNData(URLBase):
             
             if item['Cas']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Senegal',
                     region_child=item['District'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['Cas']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -110,9 +107,9 @@ class SNData(URLBase):
 
             date = self.convert_date(item['Date']+'-20')
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Senegal',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=int(item['Cas']),
                 date_updated=date,
                 source_url=self.SOURCE_URL

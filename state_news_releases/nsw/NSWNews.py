@@ -7,18 +7,7 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
 from covid_19_au_grab.state_news_releases.nsw.NSWJSONData import (
     NSWJSONData
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA, SCHEMA_LHD,
-    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_NEW,
-    DT_TESTS_TOTAL,
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_INTERSTATE,
-    DT_SOURCE_OVERSEAS,
-    DT_STATUS_DEATHS, DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ICU_VENTILATORS,
-    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -161,7 +150,7 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html.replace('\n', ' '),
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -172,7 +161,7 @@ class NSWNews(StateNewsBase):
             compile('bringing the total to ([0-9,]+)'),
             html,
             date_updated=self._get_date(href, html),
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             source_url=href
         )
         if total:
@@ -187,7 +176,7 @@ class NSWNews(StateNewsBase):
         tr = tr[0]
 
         return DataPoint(
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             value=int(pq(tr[1]).html().split('<')[0]
                                       .strip()
                                       .replace(',', '')
@@ -208,7 +197,7 @@ class NSWNews(StateNewsBase):
             ),
             html,
             date_updated=self._get_date(href, html),
-            datatype=DT_TESTS_TOTAL,
+            datatype=DataTypes.TESTS_TOTAL,
             source_url=href
         )
         if tests:
@@ -242,7 +231,7 @@ class NSWNews(StateNewsBase):
                 )
             ),
             table.html(),
-            datatype=DT_TESTS_TOTAL,
+            datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -294,9 +283,9 @@ class NSWNews(StateNewsBase):
             total = int(pq(tds[3]).text().replace(' ', '').strip() or 0)
 
             for datatype, value in (
-                (DT_TOTAL_FEMALE, female),
-                (DT_TOTAL_MALE, male),
-                (DT_TOTAL, total)
+                (DataTypes.TOTAL_FEMALE, female),
+                (DataTypes.TOTAL_MALE, male),
+                (DataTypes.TOTAL, total)
             ):
                 if value is None:
                     continue
@@ -339,8 +328,8 @@ class NSWNews(StateNewsBase):
 
         if href == self.NSW_LGA_STATS_URL:
             for datatype, text in (
-                (DT_TOTAL, 'Confirmed cases'),
-                (DT_SOURCE_COMMUNITY, 'Cases locally acquired - Contact not identified')
+                (DataTypes.TOTAL, 'Confirmed cases'),
+                (DataTypes.SOURCE_COMMUNITY, 'Cases locally acquired - Contact not identified')
             ):
                 # Get LGA stats only at the LGA url
                 table = self._pq_contains(html, 'table', text,
@@ -349,7 +338,7 @@ class NSWNews(StateNewsBase):
                 #print(html)
                 r.extend(self.__get_datapoints_from_table(
                     href, html, table,
-                    region_schema=SCHEMA_LGA,
+                    region_schema=Schemas.LGA,
                     datatype=datatype,
                     du=du
                 ))
@@ -369,8 +358,8 @@ class NSWNews(StateNewsBase):
             )
             return self.__get_datapoints_from_table(
                 href, html, table,
-                region_schema=SCHEMA_LHD,
-                datatype=DT_TOTAL,
+                region_schema=Schemas.LHD,
+                datatype=DataTypes.TOTAL,
                 du=du
             ) or None
 
@@ -433,11 +422,11 @@ class NSWNews(StateNewsBase):
 
         # Normalise it with other states
         nsw_norm_map = {
-            'Overseas acquired': DT_SOURCE_OVERSEAS,
-            'Locally acquired – contact of a confirmed case and/or in a known cluster': DT_SOURCE_CONFIRMED,
-            'Locally acquired – contact not identified': DT_SOURCE_COMMUNITY,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
-            'Interstate acquired': DT_SOURCE_INTERSTATE
+            'Overseas acquired': DataTypes.SOURCE_OVERSEAS,
+            'Locally acquired – contact of a confirmed case and/or in a known cluster': DataTypes.SOURCE_CONFIRMED,
+            'Locally acquired – contact not identified': DataTypes.SOURCE_COMMUNITY,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
+            'Interstate acquired': DataTypes.SOURCE_INTERSTATE
         }
 
         # Wording has changed in NSW reports -
@@ -506,9 +495,9 @@ class NSWNews(StateNewsBase):
             # https://www.health.nsw.gov.au/Infectious/covid-19/Pages/stats-nsw.aspx
 
             recovered_map = {
-                'Recovered': DT_STATUS_RECOVERED,
-                'Lives lost': DT_STATUS_DEATHS,
-                'Total cases': DT_TOTAL
+                'Recovered': DataTypes.STATUS_RECOVERED,
+                'Lives lost': DataTypes.STATUS_DEATHS,
+                'Total cases': DataTypes.TOTAL
             }
 
             table_recovered = [
@@ -539,16 +528,16 @@ class NSWNews(StateNewsBase):
                     #print("NSW VALUES:", values_dict)
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LHD,
-                        datatype=DT_STATUS_ACTIVE,
+                        region_schema=Schemas.LHD,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         region_child=lhd,
-                        value=values_dict[DT_TOTAL]-values_dict[DT_STATUS_RECOVERED],
+                        value=values_dict[DataTypes.TOTAL]-values_dict[DataTypes.STATUS_RECOVERED],
                         date_updated=du,
                         source_url=href
                     ))
                     for datatype, value in values_dict.items():
                         r.append(DataPoint(
-                            region_schema=SCHEMA_LHD,
+                            region_schema=Schemas.LHD,
                             datatype=datatype,
                             region_child=lhd,
                             value=value,
@@ -587,13 +576,13 @@ class NSWNews(StateNewsBase):
                     )
 
                     r.append(DataPoint(
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=active,
                         date_updated=du,
                         source_url=href
                     ))
                     r.append(DataPoint(
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=recovered,
                         date_updated=du,
                         source_url=href
@@ -610,7 +599,7 @@ class NSWNews(StateNewsBase):
                     IGNORECASE
                 ),
                 c_html,
-                datatype=DT_STATUS_HOSPITALIZED,
+                datatype=DataTypes.STATUS_HOSPITALIZED,
                 source_url=href,
                 date_updated=du
             )
@@ -633,7 +622,7 @@ class NSWNews(StateNewsBase):
                     )
                 ),
                 c_html,
-                datatype=DT_STATUS_ICU,
+                datatype=DataTypes.STATUS_ICU,
                 source_url=href,
                 date_updated=du
             )
@@ -647,7 +636,7 @@ class NSWNews(StateNewsBase):
                     IGNORECASE
                 ),
                 c_html,
-                datatype=DT_STATUS_ICU_VENTILATORS,
+                datatype=DataTypes.STATUS_ICU_VENTILATORS,
                 source_url=href,
                 date_updated=du
             )
@@ -674,7 +663,7 @@ class NSWNews(StateNewsBase):
                             IGNORECASE),
                 ),
                 c_html,
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 source_url=href,
                 date_updated=du
             )

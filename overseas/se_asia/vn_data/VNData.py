@@ -11,11 +11,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -150,37 +146,37 @@ class VNData(URLBase):
                 total = int(pq(total).text().strip())
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=int(recovery),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(death),
                     date_updated=date,
                     source_url=self.SOURCE_URL

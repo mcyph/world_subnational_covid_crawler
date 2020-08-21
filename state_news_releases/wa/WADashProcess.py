@@ -7,17 +7,7 @@ from os.path import dirname, exists
 from covid_19_au_grab.URLArchiver import (
     URLArchiver
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA,
-    DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_TESTS_TOTAL, DT_TOTAL, DT_NEW,
-    DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
-    DT_STATUS_HOSPITALIZED,
-    DT_STATUS_ACTIVE,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_INTERSTATE,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS,
-    DT_SOURCE_CRUISE_SHIP, DT_SOURCE_UNDER_INVESTIGATION
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -139,8 +129,8 @@ class WARegionsProcess:
                             continue  # WARNING!!! ============================================================================
 
             num = DataPoint(
-                region_schema=SCHEMA_LGA,
-                datatype=DT_TOTAL,
+                region_schema=Schemas.LGA,
+                datatype=DataTypes.TOTAL,
                 region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
                 value=int(value),
                 date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
@@ -150,8 +140,8 @@ class WARegionsProcess:
 
             if 'Active_Case' in attributes and attributes['Active_Case'] is not None:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_LGA,
-                    datatype=DT_STATUS_ACTIVE,
+                    region_schema=Schemas.LGA,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
                     value=int(attributes['Active_Case']),
                     date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
@@ -171,7 +161,7 @@ class WARegionsProcess:
 
             if attribute['Total_Confirmed'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=attribute['Total_Confirmed'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -180,7 +170,7 @@ class WARegionsProcess:
             if attribute['Oversea_Travel'] is not None and attribute['Cruise_Ships'] is not None:
                 # WARNING: Cruise ships isn't included in overseas here!
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_OVERSEAS,
+                    datatype=DataTypes.SOURCE_OVERSEAS,
                     value=attribute['Oversea_Travel']+
                           attribute['Cruise_Ships'],
                     date_updated=dt,
@@ -189,7 +179,7 @@ class WARegionsProcess:
 
             if attribute['Cruise_Ships'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_CRUISE_SHIP,
+                    datatype=DataTypes.SOURCE_CRUISE_SHIP,
                     value=attribute['Cruise_Ships'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -197,7 +187,7 @@ class WARegionsProcess:
 
             if attribute['Close_Contact'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_CONFIRMED,
+                    datatype=DataTypes.SOURCE_CONFIRMED,
                     value=attribute['Close_Contact'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -205,7 +195,7 @@ class WARegionsProcess:
 
             if attribute['Unknown'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_COMMUNITY,
+                    datatype=DataTypes.SOURCE_COMMUNITY,
                     value=attribute['Unknown'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -213,7 +203,7 @@ class WARegionsProcess:
 
             if attribute['Interstate'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_INTERSTATE,
+                    datatype=DataTypes.SOURCE_INTERSTATE,
                     value=attribute['Interstate'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -221,7 +211,7 @@ class WARegionsProcess:
 
             if attribute['Pending'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_SOURCE_UNDER_INVESTIGATION,
+                    datatype=DataTypes.SOURCE_UNDER_INVESTIGATION,
                     value=attribute['Pending'],
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -229,7 +219,7 @@ class WARegionsProcess:
 
             if attribute['Negative_results'] is not None and attribute['Total_Confirmed'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_TESTS_TOTAL,
+                    datatype=DataTypes.TESTS_TOTAL,
                     value=attribute['Total_Confirmed']+
                           attribute['Negative_results'],
                     date_updated=dt,
@@ -248,13 +238,13 @@ class WARegionsProcess:
                 self.max_date = dt
 
             r.append(DataPoint(
-                datatype=DT_NEW,
+                datatype=DataTypes.NEW,
                 value=int(attribute['new_cases']),
                 date_updated=dt,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=int(attribute['total_cases']),
                 date_updated=dt,
                 source_url=SOURCE_URL
@@ -262,7 +252,7 @@ class WARegionsProcess:
 
             if attribute['total_recovered'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=int(attribute['total_recovered']),
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -270,7 +260,7 @@ class WARegionsProcess:
 
             if attribute['total_death'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(attribute['total_death']),
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -278,14 +268,14 @@ class WARegionsProcess:
 
             if attribute['existing_cases'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=int(attribute['existing_cases']),
                     date_updated=dt,
                     source_url=SOURCE_URL
                 ))
 
             #r.append(DataPoint(
-            #    datatype=DT_TESTS_TOTAL,
+            #    datatype=DataTypes.TESTS_TOTAL,
             #    value=int(attribute['total_ruledout']),
             #    date_updated=dt,
             #    source_url=SOURCE_URL
@@ -293,7 +283,7 @@ class WARegionsProcess:
 
             if attribute['total_hospitalised'] is not None:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_HOSPITALIZED,
+                    datatype=DataTypes.STATUS_HOSPITALIZED,
                     value=int(attribute['total_hospitalised'] or 0),
                     date_updated=dt,
                     source_url=SOURCE_URL
@@ -305,13 +295,13 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             r.append(DataPoint(
-                datatype=DT_TOTAL_MALE,
+                datatype=DataTypes.TOTAL_MALE,
                 value=int(attribute['Male']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL_FEMALE,
+                datatype=DataTypes.TOTAL_FEMALE,
                 value=int(attribute['Female']),
                 date_updated=period,
                 source_url=SOURCE_URL
@@ -323,21 +313,21 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Total']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL_MALE,
+                datatype=DataTypes.TOTAL_MALE,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Male']),
                 date_updated=period,
                 source_url=SOURCE_URL
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL_FEMALE,
+                datatype=DataTypes.TOTAL_FEMALE,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Female']),
                 date_updated=period,

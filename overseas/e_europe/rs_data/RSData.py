@@ -11,10 +11,7 @@ from covid_19_au_grab.get_package_dir import get_overseas_dir
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 # TODO: Also scrape from https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Serbia  !! =================================================
@@ -353,10 +350,10 @@ class RSData(GlobalBase):
                 by_region[date, region_child] += value
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='RS',
                     region_child=region_child,
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=value,
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -367,10 +364,10 @@ class RSData(GlobalBase):
             cumulative[region_child] += value
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='RS',
                 region_child=region_child,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[region_child],
                 source_url=self.SOURCE_URL,
                 date_updated=date

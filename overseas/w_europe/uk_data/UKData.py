@@ -3,11 +3,7 @@ import csv
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_UK_AREA, SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL, DT_TESTS_TOTAL,
-    DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -65,10 +61,10 @@ class UKData(GithubRepo):
                     area = item['Area']
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_UK_AREA,
+                    region_schema=Schemas.UK_AREA,
                     region_parent='GB', #item['Country'],
                     region_child=area,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['TotalCases']),
                     date_updated=date,
                     source_url='https://github.com/tomwhite/covid-19-uk-data'
@@ -93,16 +89,16 @@ class UKData(GithubRepo):
                 date = self.convert_date(item['Date'])
 
                 datatype_map = {
-                    'ConfirmedCases': DT_TOTAL,
-                    'Tests': DT_TESTS_TOTAL,
-                    'Deaths': DT_STATUS_DEATHS
+                    'ConfirmedCases': DataTypes.TOTAL,
+                    'Tests': DataTypes.TESTS_TOTAL,
+                    'Deaths': DataTypes.STATUS_DEATHS
                 }
                 schema, parent, country = {
-                    'UK': (SCHEMA_ADMIN_0, None, 'GB'),
-                    'England': (SCHEMA_ADMIN_1, 'GB', 'GB-ENG'),
-                    'Wales': (SCHEMA_ADMIN_1, 'GB', 'GB-WLS'),
-                    'Scotland': (SCHEMA_ADMIN_1, 'GB', 'GB-SCT'),
-                    'Northern Ireland': (SCHEMA_ADMIN_1, 'GB', 'GB-NIR'),
+                    'UK': (Schemas.ADMIN_0, None, 'GB'),
+                    'England': (Schemas.ADMIN_1, 'GB', 'GB-ENG'),
+                    'Wales': (Schemas.ADMIN_1, 'GB', 'GB-WLS'),
+                    'Scotland': (Schemas.ADMIN_1, 'GB', 'GB-SCT'),
+                    'Northern Ireland': (Schemas.ADMIN_1, 'GB', 'GB-NIR'),
                 }[item['Country']]
 
                 r.append(DataPoint(

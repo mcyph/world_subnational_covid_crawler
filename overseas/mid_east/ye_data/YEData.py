@@ -39,12 +39,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL, DT_TOTAL, DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_NEW, DT_STATUS_RECOVERED_NEW, DT_STATUS_DEATHS_NEW
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -106,65 +101,65 @@ class YEData(URLBase):
                 active = confirmed - recovered - deaths
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=confirmed,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=deaths,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=recovered,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=active,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=new_confirmed,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_STATUS_DEATHS_NEW,
+                    datatype=DataTypes.STATUS_DEATHS_NEW,
                     value=new_death,
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
-                    datatype=DT_STATUS_RECOVERED_NEW,
+                    datatype=DataTypes.STATUS_RECOVERED_NEW,
                     value=new_recovered,
                     date_updated=date,
                     source_url=self.SOURCE_URL

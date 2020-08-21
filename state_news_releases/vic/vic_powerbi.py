@@ -1,13 +1,7 @@
 from datetime import datetime
 from os.path import exists
 
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA, SCHEMA_POSTCODE,
-    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED,
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_COMMUNITY,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_OVERSEAS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
     PowerBIDataReader
 )
@@ -140,10 +134,10 @@ class _VicPowerBI(PowerBIDataReader):
 
             region_string = value[0].split('(')[0].strip().strip('s')
             output.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
+                region_schema=Schemas.POSTCODE,
                 region_parent='au-vic',
                 region_child=region_string,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -178,10 +172,10 @@ class _VicPowerBI(PowerBIDataReader):
             currently_active_regions.add(region_string)
 
             output.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
+                region_schema=Schemas.POSTCODE,
                 region_parent='au-vic',
                 region_child=region_string,
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -190,10 +184,10 @@ class _VicPowerBI(PowerBIDataReader):
             if region_string in self.totals_dict_postcode:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='au-vic',
                     region_child=region_string,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_string] - value[1],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -206,10 +200,10 @@ class _VicPowerBI(PowerBIDataReader):
             # Make sure previous "active" values which are
             # no longer being reported are reset to 0!
             output.append(DataPoint(
-                region_schema=SCHEMA_POSTCODE,
+                region_schema=Schemas.POSTCODE,
                 region_parent='au-vic',
                 region_child=region_child,
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -218,10 +212,10 @@ class _VicPowerBI(PowerBIDataReader):
             if region_child in self.totals_dict_postcode:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='au-vic',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_child],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -245,9 +239,9 @@ class _VicPowerBI(PowerBIDataReader):
 
             region_string = value[0].split('(')[0].strip()
             output.append(DataPoint(
-                region_schema=SCHEMA_LGA,
+                region_schema=Schemas.LGA,
                 region_child=region_string,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -282,9 +276,9 @@ class _VicPowerBI(PowerBIDataReader):
             currently_active_regions.add(region_string)
 
             output.append(DataPoint(
-                region_schema=SCHEMA_LGA,
+                region_schema=Schemas.LGA,
                 region_child=region_string,
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -293,9 +287,9 @@ class _VicPowerBI(PowerBIDataReader):
             if region_string in self.totals_dict:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    region_schema=SCHEMA_LGA,
+                    region_schema=Schemas.LGA,
                     region_child=region_string,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_string]-value[1],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -308,9 +302,9 @@ class _VicPowerBI(PowerBIDataReader):
             # Make sure previous "active" values which are
             # no longer being reported are reset to 0!
             output.append(DataPoint(
-                region_schema=SCHEMA_LGA,
+                region_schema=Schemas.LGA,
                 region_child=region_child,
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
                 source_url=SOURCE_URL
@@ -319,9 +313,9 @@ class _VicPowerBI(PowerBIDataReader):
             if region_child in self.totals_dict:
                 # Add recovered info if total available
                 output.append(DataPoint(
-                    region_schema=SCHEMA_LGA,
+                    region_schema=Schemas.LGA,
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_child],
                     date_updated=updated_date,
                     source_url=SOURCE_URL
@@ -335,7 +329,7 @@ class _VicPowerBI(PowerBIDataReader):
 
     def _get_age_data(self, updated_date, response_dict):
         output = []
-        DT_TOTAL_NOTSTATED = 999999999 # HACK!
+        DataTypes.TOTAL_NOTSTATED = 999999999 # HACK!
         data = response_dict['age_data'][1]
 
         cols = data['result']['data']['dsr']['DS'][0]['SH'][0]['DM1']
@@ -343,11 +337,11 @@ class _VicPowerBI(PowerBIDataReader):
         #print("COLS:", cols)
 
         gender_mapping = {
-            '': DT_TOTAL_NOTSTATED,
-            'Female': DT_TOTAL_FEMALE,
-            'Male': DT_TOTAL_MALE,
-            'Not stated': DT_TOTAL_NOTSTATED,
-            'Other': DT_TOTAL_NOTSTATED
+            '': DataTypes.TOTAL_NOTSTATED,
+            'Female': DataTypes.TOTAL_FEMALE,
+            'Male': DataTypes.TOTAL_MALE,
+            'Not stated': DataTypes.TOTAL_NOTSTATED,
+            'Other': DataTypes.TOTAL_NOTSTATED
         }
         age_mapping = {
             'Other': 'Unknown',
@@ -377,8 +371,8 @@ class _VicPowerBI(PowerBIDataReader):
             col_mapping.append(gender_mapping[col])
         #print(col_mapping)
 
-        assert DT_TOTAL_MALE in col_mapping
-        assert DT_TOTAL_FEMALE in col_mapping
+        assert DataTypes.TOTAL_MALE in col_mapping
+        assert DataTypes.TOTAL_FEMALE in col_mapping
 
         totals = {}
         female = {}
@@ -421,27 +415,27 @@ class _VicPowerBI(PowerBIDataReader):
             # Convert from e.g. "10-14" or "15-19" to "10-19"
             agerange = age_mapping[age['G0'].replace('–', '-')]
 
-            if DT_TOTAL_MALE in vals_dict:
+            if DataTypes.TOTAL_MALE in vals_dict:
                 male.setdefault(agerange, 0)
-                male[agerange] += vals_dict[DT_TOTAL_MALE]
+                male[agerange] += vals_dict[DataTypes.TOTAL_MALE]
 
-            if DT_TOTAL_FEMALE in vals_dict:
+            if DataTypes.TOTAL_FEMALE in vals_dict:
                 female.setdefault(agerange, 0)
-                female[agerange] += vals_dict[DT_TOTAL_FEMALE]
+                female[agerange] += vals_dict[DataTypes.TOTAL_FEMALE]
 
             # TODO: support "not stated" separately!!! ====================================================
             general_age = (
-                vals_dict.get(DT_TOTAL_MALE, 0) +
-                vals_dict.get(DT_TOTAL_FEMALE, 0) +
-                vals_dict.get(DT_TOTAL_NOTSTATED, 0)
+                vals_dict.get(DataTypes.TOTAL_MALE, 0) +
+                vals_dict.get(DataTypes.TOTAL_FEMALE, 0) +
+                vals_dict.get(DataTypes.TOTAL_NOTSTATED, 0)
             )
             totals.setdefault(agerange, 0)
             totals[agerange] += general_age
 
         for datatype, values in (
-            (DT_TOTAL_MALE, male),
-            (DT_TOTAL_FEMALE, female),
-            (DT_TOTAL, totals)
+            (DataTypes.TOTAL_MALE, male),
+            (DataTypes.TOTAL_FEMALE, female),
+            (DataTypes.TOTAL, totals)
         ):
             for agerange, value in values.items():
                 output.append(DataPoint(
@@ -468,10 +462,10 @@ class _VicPowerBI(PowerBIDataReader):
 
         # Normalise it with other states
         vic_norm_map = {
-            'Travel overseas': DT_SOURCE_OVERSEAS,
-            'Contact with a confirmed case': DT_SOURCE_CONFIRMED,
-            'Acquired in Australia, unknown source': DT_SOURCE_COMMUNITY,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION
+            'Travel overseas': DataTypes.SOURCE_OVERSEAS,
+            'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED,
+            'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION
         }
 
         output = []
@@ -515,6 +509,6 @@ if __name__ == '__main__':
     from pprint import pprint
     __r = get_powerbi_data()
     for i in __r:
-        #if i.datatype in (DT_SOURCE_COMMUNITY, DT_SOURCE_UNDER_INVESTIGATION):
-        print(i)
+        if i.datatype in (DataTypes.SOURCE_OVERSEAS,):
+            print(i)
     #pprint(__r)

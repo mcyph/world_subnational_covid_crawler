@@ -10,13 +10,7 @@ from covid_19_au_grab.overseas.PressReleaseBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -67,19 +61,19 @@ class ZAData(PressReleaseBase):
                     continue
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=self._elm_to_int(cases),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=self._elm_to_int(new),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -98,10 +92,10 @@ class ZAData(PressReleaseBase):
                     continue
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=self._elm_to_int(cases),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -124,19 +118,19 @@ class ZAData(PressReleaseBase):
                 continue
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='ZA',
                 region_child=pq(province).text().strip(),
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 value=self._elm_to_int(deaths),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='ZA',
                 region_child=pq(province).text().strip(),
-                datatype=DT_STATUS_RECOVERED,
+                datatype=DataTypes.STATUS_RECOVERED,
                 value=self._elm_to_int(recoveries),
                 date_updated=date,
                 source_url=self.SOURCE_URL

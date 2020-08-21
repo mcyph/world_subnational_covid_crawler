@@ -12,14 +12,7 @@ from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_JP_CITY,
-    DT_NEW, DT_TOTAL,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_OVERSEAS,
-    DT_STATUS_ICU, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -180,33 +173,33 @@ class UNKNOWN_GENDER:
 
 
 stats_map = {
-    '総数': (DT_NEW, None),
-    '濃厚接触者※１': (DT_SOURCE_CONFIRMED, None),
-    '海外渡航歴': (DT_SOURCE_OVERSEAS, None),
-    '調査中': (DT_SOURCE_UNDER_INVESTIGATION, None),
-    #'うち重症者': (DT_STATUS_ICU, None),  # CHECK ME! =========================
+    '総数': (DataTypes.NEW, None),
+    '濃厚接触者※１': (DataTypes.SOURCE_CONFIRMED, None),
+    '海外渡航歴': (DataTypes.SOURCE_OVERSEAS, None),
+    '調査中': (DataTypes.SOURCE_UNDER_INVESTIGATION, None),
+    #'うち重症者': (DataTypes.STATUS_ICU, None),  # CHECK ME! =========================
 
-    '10歳未満': (DT_TOTAL, '0-9'),
-    '10代': (DT_TOTAL, '10-19'),
-    '20代': (DT_TOTAL, '20-29'),
-    '30代': (DT_TOTAL, '30-39'),
-    '40代': (DT_TOTAL, '40-49'),
-    '50代': (DT_TOTAL, '50-59'),
-    '60代': (DT_TOTAL, '60-69'),
-    '70代': (DT_TOTAL, '70-79'),
-    '80代': (DT_TOTAL, '80-89'),
-    '90代': (DT_TOTAL, '90-99'),
-    '100歳以上': (DT_TOTAL, '100+'),
-    '不明_1': (DT_TOTAL, 'Unknown'),  # FIXME!!! ===============================================
+    '10歳未満': (DataTypes.TOTAL, '0-9'),
+    '10代': (DataTypes.TOTAL, '10-19'),
+    '20代': (DataTypes.TOTAL, '20-29'),
+    '30代': (DataTypes.TOTAL, '30-39'),
+    '40代': (DataTypes.TOTAL, '40-49'),
+    '50代': (DataTypes.TOTAL, '50-59'),
+    '60代': (DataTypes.TOTAL, '60-69'),
+    '70代': (DataTypes.TOTAL, '70-79'),
+    '80代': (DataTypes.TOTAL, '80-89'),
+    '90代': (DataTypes.TOTAL, '90-99'),
+    '100歳以上': (DataTypes.TOTAL, '100+'),
+    '不明_1': (DataTypes.TOTAL, 'Unknown'),  # FIXME!!! ===============================================
 
-    '男性': (DT_TOTAL_MALE, None),
-    '女性': (DT_TOTAL_FEMALE, None),
+    '男性': (DataTypes.TOTAL_MALE, None),
+    '女性': (DataTypes.TOTAL_FEMALE, None),
     '不明_2': UNKNOWN_GENDER,  # FIXME!!! ===============================================
 
-    '総数（累計）': (DT_TOTAL, None),
-    '重症者': (DT_STATUS_ICU, None),
-    '死亡（累計）': (DT_STATUS_DEATHS, None),
-    #'退院（累計）': (DT_STATUS_RELEASED),
+    '総数（累計）': (DataTypes.TOTAL, None),
+    '重症者': (DataTypes.STATUS_ICU, None),
+    '死亡（累計）': (DataTypes.STATUS_DEATHS, None),
+    #'退院（累計）': (DataTypes.STATUS_RELEASED),
 
     '千代田': CITY,
     '中央': CITY,
@@ -393,10 +386,10 @@ class ExtractFromTokyoPDF:
                 region_child = text_item.text #_tokyo_cities_to_en[text_item.text]
 
             return DataPoint(
-                region_schema=SCHEMA_JP_CITY,
+                region_schema=Schemas.JP_CITY,
                 region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
                 region_child=region_child,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=num_below,
                 source_url='https://www.metro.tokyo.lg.jp', # FIXME!
                 date_updated=date_updated
@@ -405,7 +398,7 @@ class ExtractFromTokyoPDF:
             print(i)
             datatype, agerange = i
             return DataPoint(
-                region_schema=SCHEMA_JP_CITY,
+                region_schema=Schemas.JP_CITY,
                 region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
                 agerange=agerange,
                 datatype=datatype,

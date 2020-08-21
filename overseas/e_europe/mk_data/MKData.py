@@ -11,11 +11,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_STATUS_ACTIVE,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -152,20 +148,20 @@ class MKData(URLBase):
                 active = int(match['active'].replace(',', ''))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='MK',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=total,
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='MK',
                     region_child=region_child,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=active,
                     source_url=self.SOURCE_URL,
                     date_updated=date

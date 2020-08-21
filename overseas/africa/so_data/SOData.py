@@ -6,12 +6,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -68,40 +63,40 @@ class SOData(URLBase):
 
             if item['Confirmed ']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Somalia',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['Confirmed ']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
             if item['Dead']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Somalia',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Dead']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
             if item['Recovered']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Somalia',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recovered']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
             if item['Active']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Somalia',
                     region_child=region_child,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active']),
                     source_url=self.SOURCE_URL,
                     date_updated=date

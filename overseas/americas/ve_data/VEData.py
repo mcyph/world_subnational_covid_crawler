@@ -12,12 +12,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_STATUS_HOSPITALIZED,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -70,55 +65,55 @@ class VEData(URLBase):
                 case_dict = json.loads(f.read())
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=int(case_dict['Confirmed']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 value=int(case_dict['Deaths']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_STATUS_ACTIVE,
+                datatype=DataTypes.STATUS_ACTIVE,
                 value=int(case_dict['Active']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_STATUS_RECOVERED,
+                datatype=DataTypes.STATUS_RECOVERED,
                 value=int(case_dict['Recovered']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_TOTAL_MALE,
+                datatype=DataTypes.TOTAL_MALE,
                 value=int(case_dict['Confirmed']['ByGender']['male']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
-                datatype=DT_TOTAL_FEMALE,
+                datatype=DataTypes.TOTAL_FEMALE,
                 value=int(case_dict['Confirmed']['ByGender']['female']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -126,10 +121,10 @@ class VEData(URLBase):
 
             for state_name, value in case_dict['Confirmed']['ByState'].items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='VE',
                     region_child=state_name,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -137,11 +132,11 @@ class VEData(URLBase):
 
             for agerange, value in case_dict['Confirmed']['ByAgeRange'].items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='VE',
                     agerange=agerange,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL

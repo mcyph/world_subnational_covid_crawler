@@ -12,11 +12,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL, DT_NEW,
-    DT_STATUS_DEATHS_NEW, DT_STATUS_RECOVERED_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -95,46 +91,46 @@ class KHData(URLBase):
                 region_child = place_map[data['location']['name_km']]
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(data['total_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=int(data['new_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=int(data['recovered_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS_NEW,
+                    datatype=DataTypes.STATUS_DEATHS_NEW,
                     value=int(data['new_death_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED_NEW,
+                    datatype=DataTypes.STATUS_RECOVERED_NEW,
                     value=int(data['new_recovered_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,

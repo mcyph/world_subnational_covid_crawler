@@ -1,14 +1,13 @@
 from collections import Counter
 from covid_19_au_grab.datatypes.datapoints_thinned_out import \
     datapoints_thinned_out
-from covid_19_au_grab.datatypes.constants import \
-    schema_to_name, datatype_to_name
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 class TimeSeriesDataPoints:
     def __init__(self, region_schema):
         self.region_schema = region_schema
-        self.region_schema_str = schema_to_name(region_schema)
+        self.region_schema_str = Schemas(region_schema)
 
         self.by_region = {}
         self.datatype_counter = Counter()
@@ -108,7 +107,7 @@ class TimeSeriesDataPoints:
             'date_ids': self.__get_to_from_ids(self.date_counter),
             'updated_dates': updated_dates,
             'sub_headers': [
-                datatype_to_name(datatype) for id, datatype in
+                datatype.value for id, datatype in
                 sorted(self.__get_to_from_ids(self.datatype_counter).items())
             ],
         }

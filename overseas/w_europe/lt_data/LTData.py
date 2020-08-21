@@ -13,11 +13,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LT_MUNICIPALITY, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE, DT_CONFIRMED
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -89,10 +85,10 @@ class LTData(URLBase):
 
                 if confirmed is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -100,10 +96,10 @@ class LTData(URLBase):
 
                 if positive is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_CONFIRMED,
+                        datatype=DataTypes.CONFIRMED,
                         value=int(positive),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -111,10 +107,10 @@ class LTData(URLBase):
 
                 if women is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL_FEMALE,
+                        datatype=DataTypes.TOTAL_FEMALE,
                         value=int(women),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -122,10 +118,10 @@ class LTData(URLBase):
 
                 if men is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_TOTAL_MALE,
+                        datatype=DataTypes.TOTAL_MALE,
                         value=int(men),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -133,10 +129,10 @@ class LTData(URLBase):
 
                 if deaths is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -144,10 +140,10 @@ class LTData(URLBase):
 
                 if recovered is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -155,10 +151,10 @@ class LTData(URLBase):
 
                 if recovered is not None and confirmed is not None and deaths is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_LT_MUNICIPALITY,
+                        region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(confirmed)-int(recovered)-int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL

@@ -4,11 +4,7 @@ import json
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, #SCHEMA_DE_AGS,
-    DT_TOTAL,
-    DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -80,38 +76,38 @@ class DEData(GithubRepo):
                 for key, value in item.items():
                     if key == 'sum_cases':
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_0,
+                            region_schema=Schemas.ADMIN_0,
                             region_child='Germany',
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(value),
                             date_updated=date,
                             source_url=source
                         ))
                     elif key == 'sum_deaths':
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_0,
+                            region_schema=Schemas.ADMIN_0,
                             region_child='Germany',
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             value=int(value),
                             date_updated=date,
                             source_url=source
                         ))
                     elif key.endswith('_cases'):
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='Germany',
                             region_child=state_to_name[key.split('_')[0]],
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(value),
                             date_updated=date,
                             source_url=source
                         ))
                     elif key.endswith('_deaths'):
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='Germany',
                             region_child=state_to_name[key.split('_')[0]],
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             value=int(value),
                             date_updated=date,
                             source_url=source
@@ -144,10 +140,10 @@ class DEData(GithubRepo):
                         ags_dict = ags_id_to_name[ags_id]
 
                         r.append(DataPoint(
-                            region_schema=SCHEMA_DE_AGS,
+                            region_schema=Schemas.DE_AGS,
                             region_parent=ags_dict['state'],
                             region_child=ags_dict['name'],
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -172,10 +168,10 @@ class DEData(GithubRepo):
                         state = state_to_name[region_child]
 
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='Germany',
                             region_child=state,
-                            datatype=DT_TOTAL,
+                            datatype=DataTypes.TOTAL,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -201,10 +197,10 @@ class DEData(GithubRepo):
                         ags_dict = ags_id_to_name[ags_id]
 
                         r.append(DataPoint(
-                            region_schema=SCHEMA_DE_AGS,
+                            region_schema=Schemas.DE_AGS,
                             region_parent=ags_dict['state'],
                             region_child=ags_dict['name'],
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
@@ -229,10 +225,10 @@ class DEData(GithubRepo):
                         state = state_to_name[region_child]
 
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='Germany',
                             region_child=state,
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL

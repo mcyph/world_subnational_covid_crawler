@@ -9,12 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_BD_DISTRICT, SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -177,10 +172,10 @@ class BDData(URLBase):
                 admin_1 = division_map[attributes['division']]
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_BD_DISTRICT,
+                    region_schema=Schemas.BD_DISTRICT,
                     region_parent=admin_1,
                     region_child=district,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(attributes['cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -189,19 +184,19 @@ class BDData(URLBase):
 
                 if attributes['recovered'] is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_BD_DISTRICT,
+                        region_schema=Schemas.BD_DISTRICT,
                         region_parent=admin_1,
                         region_child=district,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(attributes['recovered']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     ))
                     r.append(DataPoint(
-                        region_schema=SCHEMA_BD_DISTRICT,
+                        region_schema=Schemas.BD_DISTRICT,
                         region_parent=admin_1,
                         region_child=district,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(attributes['cases']) -
                               int(attributes['death'] or 0) -
                               int(attributes['recovered']),
@@ -213,10 +208,10 @@ class BDData(URLBase):
 
                 if attributes['death'] is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_BD_DISTRICT,
+                        region_schema=Schemas.BD_DISTRICT,
                         region_parent=admin_1,
                         region_child=district,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(attributes['death']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -225,10 +220,10 @@ class BDData(URLBase):
 
             for (date, admin_1), value in by_total.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='BD',
                     region_child=admin_1,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -236,10 +231,10 @@ class BDData(URLBase):
 
             for (date, admin_1), value in by_death.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='BD',
                     region_child=admin_1,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -247,10 +242,10 @@ class BDData(URLBase):
 
             for (date, admin_1), value in by_recovered.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='BD',
                     region_child=admin_1,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -258,10 +253,10 @@ class BDData(URLBase):
 
             for (date, admin_1), value in by_active.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='BD',
                     region_child=admin_1,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL

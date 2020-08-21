@@ -9,13 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_NP_DISTRICT,
-    DT_TESTS_TOTAL, SCHEMA_ADMIN_0,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_SOURCE_DOMESTIC, DT_SOURCE_OVERSEAS,
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -33,7 +27,7 @@ def _get_district(province, district):
     district = district.replace('dhanusa', 'dhanusha')
     district = district.replace('kavrepalanchok', 'kabhrepalanchok')
     district = district.replace('chitwan', 'chitawan')
-    return ltrc.get_by_label(SCHEMA_NP_DISTRICT, province, district)
+    return ltrc.get_by_label(Schemas.NP_DISTRICT, province, district)
 
 
 class NPData(URLBase):
@@ -122,12 +116,12 @@ class NPData(URLBase):
         by_deceased = Counter()
 
         infection_sources = {
-            'local_transmission': DT_SOURCE_DOMESTIC,
-            'imported': DT_SOURCE_OVERSEAS,
+            'local_transmission': DataTypes.SOURCE_DOMESTIC,
+            'imported': DataTypes.SOURCE_OVERSEAS,
         }
         genders = {
-            'male': DT_TOTAL_MALE,
-            'female': DT_TOTAL_FEMALE
+            'male': DataTypes.TOTAL_MALE,
+            'female': DataTypes.TOTAL_FEMALE
         }
 
         def age_to_range(age):
@@ -168,10 +162,10 @@ class NPData(URLBase):
         for date, value in sorted(by_total.items()):
             cumulative += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -181,7 +175,7 @@ class NPData(URLBase):
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
                 datatype=gender,
@@ -194,7 +188,7 @@ class NPData(URLBase):
         for (date, infection_source), value in sorted(by_infection_source.items()):
             cumulative[infection_source] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
                 datatype=infection_source,
@@ -207,11 +201,11 @@ class NPData(URLBase):
         for (date, agerange), value in sorted(by_age.items()):
             cumulative[agerange] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
                 agerange=agerange,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -221,10 +215,10 @@ class NPData(URLBase):
         for (date, province), value in sorted(by_province.items()):
             cumulative[province] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='NP',
                 region_child=province,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[province],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -234,10 +228,10 @@ class NPData(URLBase):
         for (date, province, district), value in sorted(by_district.items()):
             cumulative[province, district] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_NP_DISTRICT,
+                region_schema=Schemas.NP_DISTRICT,
                 region_parent=province,
                 region_child=district,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[province, district],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -294,10 +288,10 @@ class NPData(URLBase):
             self._province_map[result['province']] = (result['provinceName'], result['provinceNameNe'])
 
             r.append(DataPoint(
-                region_schema=SCHEMA_NP_DISTRICT,
+                region_schema=Schemas.NP_DISTRICT,
                 region_parent=province,
                 region_child=_get_district(province, result['districtName']),
-                datatype=DT_TESTS_TOTAL,
+                datatype=DataTypes.TESTS_TOTAL,
                 value=result['testedCount'],
                 date_updated=date,
                 source_url=self.SOURCE_URL

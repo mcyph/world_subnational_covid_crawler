@@ -8,10 +8,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_HK_DISTRICT,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -100,8 +97,8 @@ class HKData(URLBase):
         by_source_of_infection = Counter()
 
         gender_map = {
-            'M': DT_TOTAL_MALE,
-            'F': DT_TOTAL_FEMALE
+            'M': DataTypes.TOTAL_MALE,
+            'F': DataTypes.TOTAL_FEMALE
         }
 
         for feature in json.loads(f.read())['features']:
@@ -118,10 +115,10 @@ class HKData(URLBase):
         for date, value in sorted(by_total.items()):
             cumulative += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -131,10 +128,10 @@ class HKData(URLBase):
         for (date, agerange), value in sorted(by_age.items()):
             cumulative[agerange] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -144,7 +141,7 @@ class HKData(URLBase):
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
                 datatype=gender,
@@ -158,10 +155,10 @@ class HKData(URLBase):
             cumulative[district] += value
 
             r.append(DataPoint(
-                region_schema=SCHEMA_HK_DISTRICT,
+                region_schema=Schemas.HK_DISTRICT,
                 region_parent='HK',
                 region_child=district,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[district],
                 date_updated=date,
                 source_url=self.SOURCE_URL

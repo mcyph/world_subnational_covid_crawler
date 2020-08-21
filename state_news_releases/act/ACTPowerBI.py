@@ -4485,6 +4485,73 @@ regions_exact_5_req = {
     "QueryId": ""
 }
 
+updated_date_5_req = {
+        "ApplicationContext": {
+          "DatasetId": "ace8bcd7-3aeb-4cca-bc0c-138cbf4f5eb9",
+          "Sources": [
+            {
+              "ReportId": "9cf681f8-d6fa-4d68-941c-8a97f0bea34f"
+            }
+          ]
+        },
+        "CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Date Last Refreshed\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"LocalTime\"}},\"Function\":3},\"Name\":\"Min(Date Last Refreshed.LocalTime)\"}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0]}]},\"DataReduction\":{\"DataVolume\":3,\"Primary\":{\"Top\":{}}},\"Version\":1}}}]}",
+        "Query": {
+          "Commands": [
+            {
+              "SemanticQueryDataShapeCommand": {
+                "Binding": {
+                  "DataReduction": {
+                    "DataVolume": 3,
+                    "Primary": {
+                      "Top": {}
+                    }
+                  },
+                  "Primary": {
+                    "Groupings": [
+                      {
+                        "Projections": [
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Version": 1
+                },
+                "Query": {
+                  "From": [
+                    {
+                      "Entity": "Date Last Refreshed",
+                      "Name": "d",
+                      "Type": 0
+                    }
+                  ],
+                  "Select": [
+                    {
+                      "Aggregation": {
+                        "Expression": {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "LocalTime"
+                          }
+                        },
+                        "Function": 3
+                      },
+                      "Name": "Min(Date Last Refreshed.LocalTime)"
+                    }
+                  ],
+                  "Version": 2
+                }
+              }
+            }
+          ]
+        },
+        "QueryId": ""
+      }
+
 
 if __name__ == '__main__':
     apb = ACTPowerBI()

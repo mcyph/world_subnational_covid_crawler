@@ -11,11 +11,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -90,10 +86,10 @@ class NAData(URLBase):
 
                 if positive is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(positive),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -101,10 +97,10 @@ class NAData(URLBase):
 
                 if num_tests is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
-                        datatype=DT_TESTS_TOTAL,
+                        datatype=DataTypes.TESTS_TOTAL,
                         value=int(num_tests),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -112,10 +108,10 @@ class NAData(URLBase):
 
                 if recovered is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -123,10 +119,10 @@ class NAData(URLBase):
 
                 if active is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(active),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -134,10 +130,10 @@ class NAData(URLBase):
 
                 if outcome_dead is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(outcome_dead),
                         date_updated=date,
                         source_url=self.SOURCE_URL

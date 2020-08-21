@@ -7,9 +7,7 @@ from covid_19_au_grab.normalize_locality_name import (
 from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
     LabelsToRegionChild
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 ltrc = LabelsToRegionChild()
 
 
@@ -18,7 +16,7 @@ class ProcessCRCanton(ProcessGeoJSONBase):
         ProcessGeoJSONBase.__init__(self, 'cr_canton')
 
     def get_region_parent(self, fnam, feature):
-        return ltrc.get_by_label(SCHEMA_ADMIN_1, 'CR', feature['NAME_1'])
+        return ltrc.get_by_label(Schemas.ADMIN_1, 'CR', feature['NAME_1'])
 
     def get_region_child(self, fnam, feature):
         return normalize_locality_name(feature['NAME_2'])

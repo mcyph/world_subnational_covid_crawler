@@ -1,9 +1,7 @@
 from covid_19_au_grab.geojson_data.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 iso639_map = {
     'sme': 'se',

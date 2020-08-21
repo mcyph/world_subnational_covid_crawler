@@ -1,9 +1,5 @@
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.datatypes.constants import (
-    DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 def gaps_filled_in(datapoints):
@@ -31,7 +27,7 @@ def gaps_filled_in(datapoints):
             # Really should add separate logic, but until I figure
             # out exactly how this will work, would rather disallow
             # active values entirely!
-            assert datapoint.datatype != DT_STATUS_ACTIVE
+            assert datapoint.datatype != DataTypes.STATUS_ACTIVE
 
             out.append(DataPoint(
                 region_parent=datapoint.region_parent,

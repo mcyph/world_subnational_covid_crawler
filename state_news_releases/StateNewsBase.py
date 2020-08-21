@@ -7,8 +7,7 @@ from covid_19_au_grab.datatypes.DataPoint import \
     DataPoint, _DataPoint
 from covid_19_au_grab.URLArchiver import \
     URLArchiver
-from covid_19_au_grab.datatypes.constants import \
-    SCHEMA_ADMIN_1
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 ALWAYS_DOWNLOAD_LISTING = True
@@ -355,7 +354,7 @@ class StateNewsBase(ABC):
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
                                     date_updated, agerange=None, region_child=None,
-                                    region_schema=SCHEMA_ADMIN_1):
+                                    region_schema=Schemas.ADMIN_1):
         """
         Convenience function for removing numeral grouping X,XXX
         and returning a number based on a match from re.compile()

@@ -11,12 +11,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -74,8 +69,8 @@ class MMData(URLBase):
 
             if item['sex'] != 'n/a':
                 gender = {
-                    'm': DT_TOTAL_MALE,
-                    'f': DT_TOTAL_FEMALE
+                    'm': DataTypes.TOTAL_MALE,
+                    'f': DataTypes.TOTAL_FEMALE
                 }[item['sex'].strip()]
                 by_gender[date, gender] += 1
 
@@ -99,10 +94,10 @@ class MMData(URLBase):
         for date, value in sorted(by_total.items()):
             cumulative += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MM',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -112,10 +107,10 @@ class MMData(URLBase):
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += 1
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MM',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -125,11 +120,11 @@ class MMData(URLBase):
         for (date, agerange), value in sorted(by_age.items()):
             cumulative[agerange] += 1
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MM',
                 agerange=agerange,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -139,10 +134,10 @@ class MMData(URLBase):
         for (date, region_child), value in sorted(by_province.items()):
             cumulative[region_child] += 1
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='MM',
                 region_child=region_child,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[region_child],
                 date_updated=date,
                 source_url=self.SOURCE_URL

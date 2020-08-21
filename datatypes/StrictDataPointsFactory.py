@@ -1,6 +1,6 @@
 from pprint import pprint
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, schema_to_name, name_to_schema
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 
@@ -63,7 +63,7 @@ class _StrictDataPoints(list):
         self.__merged = set()
 
     def append(self,
-               region_schema=SCHEMA_ADMIN_1,
+               region_schema=Schemas.ADMIN_1,
                region_parent=None,
                region_child=None,
 
@@ -80,7 +80,7 @@ class _StrictDataPoints(list):
 
         # Use any previously-defined mappings (if they exist)
         mapping_key = (
-            schema_to_name(region_schema),
+            region_schema,
             (region_parent or '').lower(),
             (region_child or '').lower()
         )
@@ -95,7 +95,6 @@ class _StrictDataPoints(list):
             elif mapping[0] == 'MERGE':
                 # Merge with an existing datapoint (if it exists)
                 region_schema, region_parent, region_child = mapping[1:]
-                region_schema = name_to_schema(region_schema)
                 region_parent = region_parent.lower()
                 region_child = region_child.lower()
 
@@ -126,7 +125,6 @@ class _StrictDataPoints(list):
 
             elif len(mapping) == 3:
                 region_schema, region_parent, region_child = mapping
-                region_schema = name_to_schema(region_schema)
                 region_parent = region_parent.lower()
                 region_child = region_child.lower()
 
@@ -168,7 +166,7 @@ class _StrictDataPoints(list):
             ):
                 raise Exception("Region child not found in GeoJSON: %s %s %s %s" % (
                     r,
-                    schema_to_name(region_schema),
+                    region_schema,
                     region_parent,
                     region_child
                 ))
@@ -182,7 +180,7 @@ class _StrictDataPoints(list):
                 raise Exception("Datapoint already provided for this date: %s %s %s %s %s" % (
                     r,
                     self.__datapoints_added[unique_key],
-                    schema_to_name(region_schema),
+                    region_schema,
                     region_parent.lower() if region_parent else '',
                     region_child.lower()
                 ))
@@ -190,11 +188,11 @@ class _StrictDataPoints(list):
 
         else:
             self.__sdpf.register_mapping(
-                schema_to_name(region_schema),
+                region_schema,
                 region_parent.lower() if region_parent else '',
                 region_child.lower(),
 
-                schema_to_name(r.region_schema),
+                r.region_schema,
                 r.region_parent.lower() if r.region_parent else '',
                 r.region_child.lower()
             )

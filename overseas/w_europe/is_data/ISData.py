@@ -10,11 +10,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -88,10 +84,10 @@ class ISData(URLBase):
                 region = place_map[region]
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='IS',
                     region_child=region,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     # This changed to be an int from a dict on 9 Jun
                     value=int(infections_dict['value']) if isinstance(infections_dict, dict) else int(infections_dict),
                     date_updated=date,

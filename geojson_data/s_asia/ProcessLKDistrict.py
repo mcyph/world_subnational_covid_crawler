@@ -7,9 +7,7 @@ from covid_19_au_grab.normalize_locality_name import (
 from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
     LabelsToRegionChild
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 ltrc = LabelsToRegionChild()
 

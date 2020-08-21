@@ -1,13 +1,7 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_SA3,
-    DT_TOTAL, DT_TOTAL_FEMALE, DT_TOTAL_MALE,
-    DT_SOURCE_COMMUNITY, DT_SOURCE_CONFIRMED, DT_SOURCE_CRUISE_SHIP,
-    DT_SOURCE_INTERSTATE, DT_SOURCE_OVERSEAS, DT_SOURCE_UNDER_INVESTIGATION,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
     ACTPowerBI, get_globals
 )
@@ -108,21 +102,21 @@ class _ACTPowerBI(PowerBIDataReader):
             male = self._to_int(male)
 
             r.append(DataPoint(
-                datatype=DT_TOTAL_MALE,
+                datatype=DataTypes.TOTAL_MALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=male,
                 date_updated=updated_date,
                 source_url=self.source_url
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL_FEMALE,
+                datatype=DataTypes.TOTAL_FEMALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=female,
                 date_updated=updated_date,
                 source_url=self.source_url
             ))
             r.append(DataPoint(
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=age['G0'].replace('–', '-'),
                 value=female + male,
                 date_updated=updated_date,
@@ -137,7 +131,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            datatype=DT_STATUS_DEATHS,
+            datatype=DataTypes.STATUS_DEATHS,
             value=int(value),
             date_updated=updated_date,
             source_url=self.source_url
@@ -150,7 +144,7 @@ class _ACTPowerBI(PowerBIDataReader):
         data = response_dict['confirmed_cases'][1]
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             value=int(value),
             date_updated=updated_date,
             source_url=self.source_url
@@ -184,13 +178,13 @@ class _ACTPowerBI(PowerBIDataReader):
             female = male
 
         r.append(DataPoint(
-            datatype=DT_TOTAL_MALE,
+            datatype=DataTypes.TOTAL_MALE,
             value=self._to_int(male),
             date_updated=updated_date,
             source_url=self.source_url
         ))
         r.append(DataPoint(
-            datatype=DT_TOTAL_FEMALE,
+            datatype=DataTypes.TOTAL_FEMALE,
             value=self._to_int(female),
             date_updated=updated_date,
             source_url=self.source_url
@@ -202,13 +196,13 @@ class _ACTPowerBI(PowerBIDataReader):
         data = response_dict['infection_source_time_series']
 
         act_norm_map = {
-            'Overseas acquired': DT_SOURCE_OVERSEAS,
-            'Cruise ship acquired': DT_SOURCE_CRUISE_SHIP,
-            'Locally acquired - interstate': DT_SOURCE_INTERSTATE,
-            'Locally acquired - contact of a confirmed ACT case': DT_SOURCE_CONFIRMED,
-            'Unknown or local transmission': DT_SOURCE_COMMUNITY,
-            'Locally acquired unknown source': DT_SOURCE_COMMUNITY,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION
+            'Overseas acquired': DataTypes.SOURCE_OVERSEAS,
+            'Cruise ship acquired': DataTypes.SOURCE_CRUISE_SHIP,
+            'Locally acquired - interstate': DataTypes.SOURCE_INTERSTATE,
+            'Locally acquired - contact of a confirmed ACT case': DataTypes.SOURCE_CONFIRMED,
+            'Unknown or local transmission': DataTypes.SOURCE_COMMUNITY,
+            'Locally acquired unknown source': DataTypes.SOURCE_COMMUNITY,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION
         }
 
         # "Locally acquired - contact of a confirmed ACT case"
@@ -270,7 +264,7 @@ class _ACTPowerBI(PowerBIDataReader):
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DataTypes.STATUS_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
             source_url=self.source_url
@@ -302,8 +296,8 @@ class _ACTPowerBI(PowerBIDataReader):
                 name = 'Urriarra - Namadgi'
 
             r.append(DataPoint(
-                region_schema=SCHEMA_SA3,
-                datatype=DT_TOTAL,
+                region_schema=Schemas.SA3,
+                datatype=DataTypes.TOTAL,
                 region_child=name,
                 value=self._to_int(value),
                 date_updated=updated_date,

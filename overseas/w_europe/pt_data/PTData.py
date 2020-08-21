@@ -16,10 +16,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_PT_MUNICIPALITY, DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -90,10 +87,10 @@ class PTData(URLBase):
 
                 if confirmed is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_PT_MUNICIPALITY,
+                        region_schema=Schemas.PT_MUNICIPALITY,
                         region_parent='PT', # 'Distrito' -> district??
                         region_child=attributes['Concelho'],
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL

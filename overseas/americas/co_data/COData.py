@@ -10,15 +10,7 @@ from covid_19_au_grab.get_package_dir import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_CO_MUNICIPALITY,
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_STATUS_DEATHS, DT_STATUS_RECOVERED,
-    DT_SOURCE_OVERSEAS, DT_SOURCE_CONFIRMED,
-    DT_SOURCE_UNDER_INVESTIGATION,
-    DT_SOURCE_COMMUNITY
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 class COData(URLBase):
@@ -110,14 +102,14 @@ class COData(URLBase):
             attention = item['atención']
             age = self._age_to_range(item['Edad'])
             gender = {
-                'M': DT_TOTAL_MALE,
-                'F': DT_TOTAL_FEMALE
+                'M': DataTypes.TOTAL_MALE,
+                'F': DataTypes.TOTAL_FEMALE
             }[item['Sexo'].upper()]
             source_of_infection = {
-                'importado': DT_SOURCE_OVERSEAS,
-                'relacionado': DT_SOURCE_CONFIRMED,
-                'en estudio': DT_SOURCE_UNDER_INVESTIGATION,
-                'desconocido': DT_SOURCE_COMMUNITY
+                'importado': DataTypes.SOURCE_OVERSEAS,
+                'relacionado': DataTypes.SOURCE_CONFIRMED,
+                'en estudio': DataTypes.SOURCE_UNDER_INVESTIGATION,
+                'desconocido': DataTypes.SOURCE_COMMUNITY
             }[item['Tipo'].lower()]
             state = item['Estado']
             country_of_origin = item['País de procedencia']  # TODO: Add support for this!! ============================
@@ -131,15 +123,15 @@ class COData(URLBase):
 
             if item['Fecha de muerte'].strip('-/NA').strip():
                 date_death = self.convert_date(item['Fecha de muerte'].split('T')[0])
-                by_status[date_death, DT_STATUS_DEATHS] += 1
-                by_admin1_status[date_death, admin1, DT_STATUS_DEATHS] += 1
-                by_municipality_status[date_death, admin1, municipality, DT_STATUS_DEATHS] += 1
+                by_status[date_death, DataTypes.STATUS_DEATHS] += 1
+                by_admin1_status[date_death, admin1, DataTypes.STATUS_DEATHS] += 1
+                by_municipality_status[date_death, admin1, municipality, DataTypes.STATUS_DEATHS] += 1
 
             if item['Fecha recuperado'].strip('-/NA').strip():
                 date_recovered = self.convert_date(item['Fecha recuperado'].split('T')[0])
-                by_status[date_recovered, DT_STATUS_RECOVERED] += 1
-                by_admin1_status[date_recovered, admin1, DT_STATUS_RECOVERED] += 1
-                by_municipality_status[date_recovered, admin1, municipality, DT_STATUS_RECOVERED] += 1
+                by_status[date_recovered, DataTypes.STATUS_RECOVERED] += 1
+                by_admin1_status[date_recovered, admin1, DataTypes.STATUS_RECOVERED] += 1
+                by_municipality_status[date_recovered, admin1, municipality, DataTypes.STATUS_RECOVERED] += 1
 
             by_status[notification_date, source_of_infection] += 1
             by_admin1_status[notification_date, admin1, source_of_infection] += 1
@@ -149,9 +141,9 @@ class COData(URLBase):
             by_admin1_status[notification_date, admin1, gender] += 1
             by_municipality_status[notification_date, admin1, municipality, gender] += 1
 
-            by_status[notification_date, DT_TOTAL] += 1
-            by_admin1_status[notification_date, admin1, DT_TOTAL] += 1
-            by_municipality_status[notification_date, admin1, municipality, DT_TOTAL] += 1
+            by_status[notification_date, DataTypes.TOTAL] += 1
+            by_admin1_status[notification_date, admin1, DataTypes.TOTAL] += 1
+            by_municipality_status[notification_date, admin1, municipality, DataTypes.TOTAL] += 1
 
             by_age[notification_date, age] += 1
             by_admin1_age[notification_date, admin1, age] += 1
@@ -161,10 +153,10 @@ class COData(URLBase):
         for (notification_date, admin1), value in sorted(by_admin1.items()):
             cumulative[admin1] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[admin1],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
@@ -174,10 +166,10 @@ class COData(URLBase):
         for (notification_date, admin1, municipality), value in sorted(by_municipality.items()):
             cumulative[admin1, municipality] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_CO_MUNICIPALITY,
+                region_schema=Schemas.CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[admin1, municipality],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
@@ -187,9 +179,9 @@ class COData(URLBase):
         for (notification_date, age), value in sorted(by_age.items()):
             cumulative[age] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Colombia',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 agerange=age,
                 value=cumulative[age],
                 date_updated=notification_date,
@@ -200,7 +192,7 @@ class COData(URLBase):
         for (notification_date, status), value in sorted(by_status.items()):
             cumulative[status] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_child='Colombia',
                 datatype=status,
                 value=cumulative[status],
@@ -212,11 +204,11 @@ class COData(URLBase):
         for (notification_date, admin1, age), value in sorted(by_admin1_age.items()):
             cumulative[admin1, age] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
                 agerange=age,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[admin1, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
@@ -226,7 +218,7 @@ class COData(URLBase):
         for (notification_date, admin1, status), value in sorted(by_admin1_status.items()):
             cumulative[admin1, status] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='Colombia',
                 region_child=admin1,
                 datatype=status,
@@ -239,11 +231,11 @@ class COData(URLBase):
         for (notification_date, admin1, municipality, age), value in sorted(by_municipality_age.items()):
             cumulative[admin1, municipality, age] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_CO_MUNICIPALITY,
+                region_schema=Schemas.CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
                 agerange=age,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[admin1, municipality, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
@@ -253,7 +245,7 @@ class COData(URLBase):
         for (notification_date, admin1, municipality, status), value in sorted(by_municipality_status.items()):
             cumulative[admin1, municipality, status] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_CO_MUNICIPALITY,
+                region_schema=Schemas.CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
                 datatype=status,

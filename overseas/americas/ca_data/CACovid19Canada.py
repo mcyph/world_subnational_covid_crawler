@@ -5,11 +5,7 @@ import csv
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_CA_HEALTH_REGION,
-    DT_TOTAL, DT_NEW,
-    DT_STATUS_DEATHS, DT_STATUS_DEATHS_NEW
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -60,19 +56,19 @@ class CACovid19Canada(GithubRepo):
                 province = province_to_iso_3166_2(item['province'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_CA_HEALTH_REGION,
+                    region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
-                    datatype=DT_NEW,
+                    datatype=DataTypes.NEW,
                     value=int(item['cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_CA_HEALTH_REGION,
+                    region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['cumulative_cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -95,19 +91,19 @@ class CACovid19Canada(GithubRepo):
                 province = province_to_iso_3166_2(item['province'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_CA_HEALTH_REGION,
+                    region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
-                    datatype=DT_STATUS_DEATHS_NEW,
+                    datatype=DataTypes.STATUS_DEATHS_NEW,
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_CA_HEALTH_REGION,
+                    region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['cumulative_deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL

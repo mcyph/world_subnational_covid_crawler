@@ -8,12 +8,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1, SCHEMA_MY_DISTRICT,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -104,10 +99,10 @@ class MYESRIDashData(URLBase):
 
                 if confirmed is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -115,10 +110,10 @@ class MYESRIDashData(URLBase):
 
                 if recovered is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -126,10 +121,10 @@ class MYESRIDashData(URLBase):
 
                 if deaths is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -138,10 +133,10 @@ class MYESRIDashData(URLBase):
                 if confirmed is not None and recovered is not None:
                     active = confirmed - recovered - (deaths or 0)
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(active),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -193,10 +188,10 @@ class MYESRIDashData(URLBase):
 
                 if total is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_MY_DISTRICT,
+                        region_schema=Schemas.MY_DISTRICT,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(total),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -204,10 +199,10 @@ class MYESRIDashData(URLBase):
 
                 if active is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_MY_DISTRICT,
+                        region_schema=Schemas.MY_DISTRICT,
                         region_parent='MY',
                         region_child=region_child,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(active),
                         date_updated=date,
                         source_url=self.SOURCE_URL

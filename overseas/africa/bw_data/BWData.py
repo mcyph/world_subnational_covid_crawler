@@ -14,13 +14,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -142,17 +136,17 @@ class BWData(URLBase):
                             age[age_keys[k]][region_child] += attributes[k]
 
             for counter, datatype in (
-                (confirmed, DT_TOTAL),
-                (death, DT_STATUS_DEATHS),
-                (recoveries, DT_STATUS_RECOVERED),
-                (active, DT_STATUS_ACTIVE),
-                (male, DT_TOTAL_MALE),
-                (female, DT_TOTAL_FEMALE),
-                (tests, DT_TESTS_TOTAL),
+                (confirmed, DataTypes.TOTAL),
+                (death, DataTypes.STATUS_DEATHS),
+                (recoveries, DataTypes.STATUS_RECOVERED),
+                (active, DataTypes.STATUS_ACTIVE),
+                (male, DataTypes.TOTAL_MALE),
+                (female, DataTypes.TOTAL_FEMALE),
+                (tests, DataTypes.TESTS_TOTAL),
             ):
                 for region_child, value in counter.items():
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='BW',
                         region_child=region_child,
                         datatype=datatype,
@@ -164,10 +158,10 @@ class BWData(URLBase):
             for agerange, counter in age.items():
                 for region_child, value in counter.items():
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='BW',
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         agerange=agerange,
                         value=value,
                         date_updated=date,

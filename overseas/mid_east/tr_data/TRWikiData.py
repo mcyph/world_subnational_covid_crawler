@@ -15,13 +15,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_TR_NUTS1,
-    DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -81,10 +75,10 @@ class TRWikiData(URLBase):
                         continue
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_TR_NUTS1,
+                        region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -108,10 +102,10 @@ class TRWikiData(URLBase):
                     value = int(pq(value).text().replace('.', ''))
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_TR_NUTS1,
+                        region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -145,10 +139,10 @@ class TRWikiData(URLBase):
                         continue
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_TR_NUTS1,
+                        region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -172,10 +166,10 @@ class TRWikiData(URLBase):
                     value = int(pq(value).text().replace('.', ''))
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_TR_NUTS1,
+                        region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL

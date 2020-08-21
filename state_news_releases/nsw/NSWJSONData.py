@@ -12,17 +12,7 @@ from covid_19_au_grab.get_package_dir import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1, SCHEMA_LGA, SCHEMA_POSTCODE, SCHEMA_LHD,
-    DT_SOURCE_UNDER_INVESTIGATION, DT_SOURCE_INTERSTATE,
-    DT_SOURCE_CONFIRMED, DT_SOURCE_COMMUNITY,
-    DT_SOURCE_OVERSEAS,
-
-    DT_TESTS_TOTAL,
-    DT_STATUS_ACTIVE, DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_TOTAL, DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TESTS_POSITIVE, DT_TESTS_NEGATIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 class NSWJSONData:
@@ -80,13 +70,13 @@ class NSWJSONData:
         mapping = Counter()
 
         for datapoint in sorted(r, key=lambda i: i.date_updated):
-            if datapoint.region_schema == SCHEMA_LGA:
+            if datapoint.region_schema == Schemas.LGA:
                 added_to_lga.add((
                     datapoint.region_child,
                     datapoint.datatype
                 ))
                 continue
-            elif datapoint.region_schema != SCHEMA_POSTCODE:
+            elif datapoint.region_schema != Schemas.POSTCODE:
                 continue
             elif datapoint.region_child in self.postcode_to_lga:
                 lga = self.postcode_to_lga[datapoint.region_child]
@@ -118,7 +108,7 @@ class NSWJSONData:
                 continue
 
             new_r.append(DataPoint(
-                region_schema=SCHEMA_LGA,
+                region_schema=Schemas.LGA,
                 region_parent='AU-NSW',
                 region_child=lga,
                 datatype=datatype,
@@ -177,7 +167,7 @@ class NSWJSONData:
 
             for age_dict in agedata['data']:
                 r.append(DataPoint(
-                    datatype=DT_TOTAL_MALE,
+                    datatype=DataTypes.TOTAL_MALE,
                     value=age_dict['Males'] or 0,
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
@@ -185,7 +175,7 @@ class NSWJSONData:
                     text_match=None
                 ))
                 r.append(DataPoint(
-                    datatype=DT_TOTAL_FEMALE,
+                    datatype=DataTypes.TOTAL_FEMALE,
                     value=age_dict['Females'] or 0,
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
@@ -193,7 +183,7 @@ class NSWJSONData:
                     text_match=None
                 ))
                 r.append(DataPoint(
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=(age_dict['Females'] or 0) + (age_dict['Males'] or 0),
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
@@ -207,7 +197,7 @@ class NSWJSONData:
 
             for age_dict in agedata['data']:
                 r.append(DataPoint(
-                    datatype=DT_STATUS_DEATHS_MALE,
+                    datatype=DataTypes.STATUS_DEATHS_MALE,
                     value=age_dict['Males'] or 0,
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
@@ -215,7 +205,7 @@ class NSWJSONData:
                     text_match=None
                 ))
                 r.append(DataPoint(
-                    datatype=DT_STATUS_DEATHS_FEMALE,
+                    datatype=DataTypes.STATUS_DEATHS_FEMALE,
                     value=age_dict['Females'] or 0,
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
@@ -249,13 +239,13 @@ class NSWJSONData:
         by_admin_1_soi = {}  # Statewide
 
         soi_map = {
-            'Overseas': DT_SOURCE_OVERSEAS,
-            'Locally acquired - contact not identified': DT_SOURCE_COMMUNITY,
-            'Locally acquired - contact not yet identified': DT_SOURCE_COMMUNITY,
-            'Locally acquired - source not identified': DT_SOURCE_COMMUNITY,
-            'Locally acquired - contact of a confirmed case and/or in a known cluster': DT_SOURCE_CONFIRMED,
-            'Under investigation': DT_SOURCE_UNDER_INVESTIGATION,
-            'Interstate': DT_SOURCE_INTERSTATE
+            'Overseas': DataTypes.SOURCE_OVERSEAS,
+            'Locally acquired - contact not identified': DataTypes.SOURCE_COMMUNITY,
+            'Locally acquired - contact not yet identified': DataTypes.SOURCE_COMMUNITY,
+            'Locally acquired - source not identified': DataTypes.SOURCE_COMMUNITY,
+            'Locally acquired - contact of a confirmed case and/or in a known cluster': DataTypes.SOURCE_CONFIRMED,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
+            'Interstate': DataTypes.SOURCE_INTERSTATE
         }
 
         # Make dates from 8:30pm!
@@ -317,9 +307,9 @@ class NSWJSONData:
         # Add general totals
         # Probably best to use the JSON file for this+not mix sources!
         for region_schema, cases_dict in (
-            #(SCHEMA_POSTCODE, by_postcode),
-            #(SCHEMA_LGA, by_lga),
-            #(SCHEMA_LHD, by_lhd)
+            #(Schemas.POSTCODE, by_postcode),
+            #(Schemas.LGA, by_lga),
+            #(Schemas.LHD, by_lhd)
         ):
             current_counts = {}
 
@@ -332,7 +322,7 @@ class NSWJSONData:
                         region_schema=region_schema,
                         region_parent='AU-NSW',
                         region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=current_counts[region_child],
                         date_updated=date,
                         source_url=SOURCE_URL,
@@ -341,10 +331,10 @@ class NSWJSONData:
 
         # Add by source of infection
         for region_schema, cases_dict in (
-            (SCHEMA_POSTCODE, by_postcode_soi),
-            (SCHEMA_LGA, by_lga_soi),
-            (SCHEMA_LHD, by_lhd_soi),
-            (SCHEMA_ADMIN_1, by_admin_1_soi)
+            (Schemas.POSTCODE, by_postcode_soi),
+            (Schemas.LGA, by_lga_soi),
+            (Schemas.LHD, by_lhd_soi),
+            (Schemas.ADMIN_1, by_admin_1_soi)
         ):
             current_counts = {}
 
@@ -358,7 +348,7 @@ class NSWJSONData:
                             region_schema=region_schema,
                             region_parent=(
                                  'AU-NSW'
-                                 if region_schema == SCHEMA_ADMIN_1
+                                 if region_schema == Schemas.ADMIN_1
                                  else 'AU'
                             ),
                             region_child=(
@@ -451,10 +441,10 @@ class NSWJSONData:
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='AU-NSW',
                     region_child=postcode,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=cases,
                     date_updated=date,
                     source_url=SOURCE_URL
@@ -464,49 +454,49 @@ class NSWJSONData:
                     num_active = active_data[postcode].pop()
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_POSTCODE,
+                        region_schema=Schemas.POSTCODE,
                         region_parent='AU-NSW',
                         region_child=postcode,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=num_active, # CHECK ME!!!!! =====================================
                         date_updated=date,
                         source_url=SOURCE_URL
                     ))
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_POSTCODE,
+                        region_schema=Schemas.POSTCODE,
                         region_parent='AU-NSW',
                         region_child=postcode,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=cases-num_active-deaths,  # CHECK ME!!!!! =====================================
                         date_updated=date,
                         source_url=SOURCE_URL
                     ))
                 elif date <= '2020_06_12':
                     r.append(DataPoint(
-                        region_schema=SCHEMA_POSTCODE,
+                        region_schema=Schemas.POSTCODE,
                         region_parent='AU-NSW',
                         region_child=postcode,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=active,
                         date_updated=date,
                         source_url=SOURCE_URL
                     ))
 
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_POSTCODE,
+                #    region_schema=Schemas.POSTCODE,
                 #    region_parent='AU-NSW',
                 #    region_child=postcode,
-                #    datatype=DT_STATUS_RECOVERED,
+                #    datatype=DataTypes.STATUS_RECOVERED,
                 #    value=recovered,
                 #    date_updated=date,
                 #    source_url=SOURCE_URL
                 #))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='AU-NSW',
                     region_child=postcode,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=deaths,
                     date_updated=date,
                     source_url=SOURCE_URL
@@ -525,10 +515,10 @@ class NSWJSONData:
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='AU-NSW',
                     region_child=postcode,
-                    datatype=DT_TESTS_TOTAL,
+                    datatype=DataTypes.TESTS_TOTAL,
                     value=number,
                     date_updated=date,
                     source_url=SOURCE_URL
@@ -548,10 +538,10 @@ class NSWJSONData:
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_POSTCODE,
+                    region_schema=Schemas.POSTCODE,
                     region_parent='AU-NSW',
                     region_child=postcode,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=number,
                     date_updated=date,
                     source_url=SOURCE_URL
@@ -592,8 +582,8 @@ class NSWJSONData:
             return []
 
         posneg_map = {
-            'Tested & excluded': DT_TESTS_NEGATIVE,
-            'Case - Confirmed': DT_TESTS_POSITIVE
+            'Tested & excluded': DataTypes.TESTS_NEGATIVE,
+            'Case - Confirmed': DataTypes.TESTS_POSITIVE
         }
 
         with open(path, 'r', encoding='utf-8') as f:
@@ -644,9 +634,9 @@ class NSWJSONData:
         for region_schema, cases_dict in (
             # I'm really not sure there's much reason to get tests data
             # by postcode/LHD? It'll take too much space by postcode!
-            (SCHEMA_POSTCODE, by_postcode),
-            (SCHEMA_LGA, by_lga),
-            (SCHEMA_LHD, by_lhd)
+            (Schemas.POSTCODE, by_postcode),
+            (Schemas.LGA, by_lga),
+            (Schemas.LHD, by_lhd)
         ):
             current_counts = {}
 
@@ -659,7 +649,7 @@ class NSWJSONData:
                         region_schema=region_schema,
                         region_parent='AU-NSW',
                         region_child=region_child.split('(')[0].strip() or DEFAULT_REGION,
-                        datatype=DT_TESTS_TOTAL,
+                        datatype=DataTypes.TESTS_TOTAL,
                         value=current_counts[region_child],
                         date_updated=date,
                         source_url=SOURCE_URL,
@@ -668,9 +658,9 @@ class NSWJSONData:
 
         # Add general totals
         for region_schema, cases_dict in (
-            #(SCHEMA_POSTCODE, by_postcode_posneg),
-            #(SCHEMA_LGA, by_lga_posneg),
-            #(SCHEMA_LHD, by_lhd_posneg)
+            #(Schemas.POSTCODE, by_postcode_posneg),
+            #(Schemas.LGA, by_lga_posneg),
+            #(Schemas.LHD, by_lhd_posneg)
         ):
             current_counts = {}
 
@@ -700,7 +690,7 @@ if __name__ == '__main__':
     #pprint(inst.get_datapoints())
 
     for datapoint in inst.get_datapoints():
-        #if datapoint.datatype == DT_STATUS_ACTIVE and datapoint.region_schema == SCHEMA_LGA:
+        #if datapoint.datatype == DataTypes.STATUS_ACTIVE and datapoint.region_schema == Schemas.LGA:
         #    print(datapoint)
 
         if datapoint.agerange:

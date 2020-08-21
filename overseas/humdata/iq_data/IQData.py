@@ -6,12 +6,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -60,10 +55,10 @@ class IQData(URLBase):
 
             if item['Cases']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Iraq',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['Cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -71,10 +66,10 @@ class IQData(URLBase):
 
             if item['Deaths']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Iraq',
                     region_child=region_child,
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -82,10 +77,10 @@ class IQData(URLBase):
 
             if item['Recoveries']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Iraq',
                     region_child=region_child,
-                    datatype=DT_STATUS_RECOVERED,
+                    datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recoveries']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -93,10 +88,10 @@ class IQData(URLBase):
 
             if item['Active Cases']:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Iraq',
                     region_child=region_child,
-                    datatype=DT_STATUS_ACTIVE,
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active Cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date

@@ -1,14 +1,7 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL,
-    DT_STATUS_HOSPITALIZED,
-    DT_STATUS_DEATHS,
-    DT_STATUS_RECOVERED
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.africa.west_africa_data.WestAfricaPowerBI import (
     WestAfricaPowerBI, get_globals
 )
@@ -75,16 +68,16 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         mappings = {
             #'admin0Name',
             #'admin1Name',
-            'cas_confirm': DT_TOTAL,
-            'd\u00e9c\u00e8s': DT_STATUS_DEATHS,
-            'en_traitement': DT_STATUS_HOSPITALIZED,
-            'Gueris': DT_STATUS_RECOVERED,
-            'Femmes': DT_TOTAL_FEMALE,
-            'Hommes': DT_TOTAL_MALE,
+            'cas_confirm': DataTypes.TOTAL,
+            'd\u00e9c\u00e8s': DataTypes.STATUS_DEATHS,
+            'en_traitement': DataTypes.STATUS_HOSPITALIZED,
+            'Gueris': DataTypes.STATUS_RECOVERED,
+            'Femmes': DataTypes.TOTAL_FEMALE,
+            'Hommes': DataTypes.TOTAL_MALE,
 
             #'Contacts_suivis': ,
-            'Tests_effectues': DT_TESTS_TOTAL,
-            'cas_confirm\u00e9s': DT_TOTAL,
+            'Tests_effectues': DataTypes.TESTS_TOTAL,
+            'cas_confirm\u00e9s': DataTypes.TOTAL,
         }
 
         mappings = {
@@ -116,7 +109,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
 
                 if cases is not None:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent=admin_0,
                         region_child=admin_1,
                         datatype=datatype,

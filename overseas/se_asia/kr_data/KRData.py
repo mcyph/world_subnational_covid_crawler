@@ -6,12 +6,7 @@ from covid_19_au_grab.overseas.KaggleDataset import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL,
-    DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -70,30 +65,30 @@ class KRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='South Korea',
                     region_child=item['province'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=item['confirmed'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
 
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_ADMIN_1,
+                #    region_schema=Schemas.ADMIN_1,
                 #    region_parent='South Korea',
                 #    region_child=item['province'],
-                #    datatype=DT_RELEASED,
+                #    datatype=DataTypes.RELEASED,
                 #    value=item['released'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
                 #))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='South Korea',
                     region_child=item['province'],
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -118,9 +113,9 @@ class KRData(KaggleDataset):
                 agerange = f'{agerange}-{agerange+9}'
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='South Korea',
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     agerange=agerange,
                     value=item['confirmed'],
                     date_updated=date,
@@ -128,9 +123,9 @@ class KRData(KaggleDataset):
                 ))
 
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_ADMIN_0,
+                #    region_schema=Schemas.ADMIN_0,
                 #    region_child='South Korea',
-                #    datatype=DT_STATUS_DEATHS_XXXX,
+                #    datatype=DataTypes.STATUS_DEATHS_XXXX,
                 #    agerange=agerange,
                 #    value=item['confirmed'],
                 #    date_updated=date,
@@ -154,14 +149,14 @@ class KRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 if item['sex'] == 'male':
-                    datatype = DT_TOTAL_MALE
+                    datatype = DataTypes.TOTAL_MALE
                 elif item['sex'] == 'female':
-                    datatype = DT_TOTAL_FEMALE
+                    datatype = DataTypes.TOTAL_FEMALE
                 else:
                     raise Exception(datatype)
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='South Korea',
                     datatype=datatype,
                     value=item['confirmed'],
@@ -169,9 +164,9 @@ class KRData(KaggleDataset):
                     source_url=self.SOURCE_URL
                 ))
                 #r.append(DataPoint(
-                #    region_schema=SCHEMA_ADMIN_0,
+                #    region_schema=Schemas.ADMIN_0,
                 #    region_child='South Korea',
-                #    datatype=DT_STATUS_DEATHS_XXXX,
+                #    datatype=DataTypes.STATUS_DEATHS_XXXX,
                 #    value=item['deceased'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
@@ -194,25 +189,25 @@ class KRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='South Korea',
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='South Korea',
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='South Korea',
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL

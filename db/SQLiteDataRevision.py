@@ -5,8 +5,7 @@ from io import StringIO
 from pytz import timezone
 from os.path import getctime
 from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
-from covid_19_au_grab.datatypes.constants import \
-    schema_to_name, datatype_to_name
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
 from covid_19_au_grab.datatypes.datapoints_thinned_out import \
     datapoints_thinned_out
@@ -72,9 +71,7 @@ class SQLiteDataRevision:
                         region_parent,
                         region_child):
 
-        datatypes = [
-            datatype_to_name(i) for i in datatypes
-        ]
+        datatypes = [i.value for i in datatypes]
         datapoints = self._datapoints_db.select_many(
             region_schema=['= ?', [region_schema]],
             region_parent=['= ?', [region_parent]] if region_parent else None,
@@ -194,9 +191,9 @@ class SQLiteDataRevision:
             row = []
             for key, value in zip(datapoint._fields, datapoint):
                 if key == 'region_schema':
-                    row.append(schema_to_name(value))
+                    row.append(value.value)
                 elif key == 'datatype':
-                    row.append(datatype_to_name(value))
+                    row.append(value.value)
                 else:
                     row.append(value)
             writer.writerow(row)
@@ -214,19 +211,16 @@ class SQLiteDataRevision:
         """
         Returns as a combined dict,
         e.g. if datatypes a list of ((datatype, name/None), ...) is (
-            "DT_AGE",
-            "DT_AGE_FEMALE",
+            "DataTypes.AGE",
+            "DataTypes.AGE_FEMALE",
         )
         it will output as [{
             'name': (e.g.) '70+',
             'date_updated': ...,
-            'DT_AGE': ...,
-            'DT_AGE_FEMALE': ...
+            'DataTypes.AGE': ...,
+            'DataTypes.AGE_FEMALE': ...
         }, ...]
         """
-        if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)
-
         if region_parent:
             region_parent = region_parent.lower()
         if region_child:
@@ -234,10 +228,6 @@ class SQLiteDataRevision:
 
         combined = {}
         for datatype in datatypes:
-            if isinstance(datatype, int):
-                datatype = datatype_to_name(datatype)
-            datatype = datatype.lower()
-
             for datapoint in self.get_combined_value(region_schema, datatype,
                                                      from_date=from_date,
                                                      region_parent=region_parent,
@@ -267,10 +257,10 @@ class SQLiteDataRevision:
                 i_combined['region_parent'] = datapoint.region_parent
                 i_combined['region_schema'] = datapoint.region_schema
 
-                if not datatype in i_combined:
-                    i_combined[datatype] = datapoint.value
-                    i_combined[f'{datatype} date_updated'] = datapoint.date_updated
-                    i_combined[f'{datatype} source_url'] = datapoint.source_url
+                if not datatype.value in i_combined:
+                    i_combined[datatype.value] = datapoint.value
+                    i_combined[f'{datatype.value} date_updated'] = datapoint.date_updated
+                    i_combined[f'{datatype.value} source_url'] = datapoint.source_url
 
         out = []
         for i_combined in combined.values():
@@ -282,28 +272,20 @@ class SQLiteDataRevision:
         """
         Returns as a combined dict,
         e.g. if filters (a list of ((region_schema, datatype, region_parent/None), ...) is (
-            (DT_PATIENT_STATUS, "Recovered"),
-            (DT_PATIENT_STATUS, "ICU")
+            (DataTypes.PATIENT_STATUS, "Recovered"),
+            (DataTypes.PATIENT_STATUS, "ICU")
         )
         it will output as [{
             'date_updated': ...,
-            'DT_PATIENT_STATUS (Recovered)': ...,
-            'DT_PATIENT_STATUS (ICU)': ...
+            'DataTypes.PATIENT_STATUS (Recovered)': ...,
+            'DataTypes.PATIENT_STATUS (ICU)': ...
         }, ...]
         """
 
         combined = {}
         for region_schema, datatype, region_parent in filters:
-            if isinstance(region_schema, int):
-                region_schema = schema_to_name(region_schema)
-            if isinstance(datatype, int):
-                datatype = datatype_to_name(datatype)
-
             if region_parent:
                 region_parent = region_parent.lower()
-
-            region_schema = region_schema.lower()
-            datatype = datatype.lower()
 
             for datapoint in self.get_combined_value(region_schema,
                                                      datatype,
@@ -350,21 +332,14 @@ class SQLiteDataRevision:
                            region_parent=None, region_child=None,
                            from_date=None):
         """
-        Filter `datapoints` to have only `datatype` (e.g. "DT_PATIENT_STATUS"),
+        Filter `datapoints` to have only `datatype` (e.g. "DataTypes.PATIENT_STATUS"),
         and optionally only have `name` (e.g. "Recovered" or "None" as a string)
 
         Returns only the most recent value (optionally from `from_date`)
         """
 
-        if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)
-        if isinstance(datatype, int):
-            datatype = datatype_to_name(datatype)
-
-        region_schema = region_schema.lower()
         if region_child: region_child = region_child.lower()
         if region_parent: region_parent = region_parent.lower()
-        datatype = datatype.lower()
 
         datapoints = self._datapoints_db.select_many(
             region_schema=['= ?', [region_schema]] if region_schema is not None else None,

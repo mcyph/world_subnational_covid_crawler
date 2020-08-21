@@ -6,13 +6,7 @@ from covid_19_au_grab.overseas.KaggleDataset import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_BR_CITY,
-    DT_TOTAL,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -52,20 +46,20 @@ class BRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Brazil',
                     region_child=item['state'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='Brazil',
                     region_child=item['state'],
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -88,20 +82,20 @@ class BRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_BR_CITY,
+                    region_schema=Schemas.BR_CITY,
                     region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_BR_CITY,
+                    region_schema=Schemas.BR_CITY,
                     region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
-                    datatype=DT_STATUS_DEATHS,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -124,9 +118,9 @@ class BRData(KaggleDataset):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_child='Brazil',
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(float(item['cases'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
@@ -134,9 +128,9 @@ class BRData(KaggleDataset):
 
                 if item['deaths']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(float(item['deaths'])),
                         source_url=self.SOURCE_URL,
                         date_updated=date
@@ -144,9 +138,9 @@ class BRData(KaggleDataset):
 
                 if item['recovered']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(float(item['recovered'])),
                         source_url=self.SOURCE_URL,
                         date_updated=date
@@ -154,9 +148,9 @@ class BRData(KaggleDataset):
 
                 if item['recovered'] and item['deaths']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(float(item['cases'])) -
                               int(float(item['recovered'])) -
                               int(float(item['deaths'])),

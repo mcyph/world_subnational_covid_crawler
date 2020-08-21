@@ -4,14 +4,7 @@ from re import compile, IGNORECASE
 from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_LGA, SCHEMA_ADMIN_1,
-    DT_NEW, DT_TOTAL, DT_TESTS_TOTAL,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
@@ -136,7 +129,7 @@ class VicNews(StateNewsBase):
         if 'same total number as yesterday' in html:
             # https://www.dhhs.vic.gov.au/coronavirus-update-victoria-27-april-2020
             return DataPoint(
-                datatype=DT_NEW,
+                datatype=DataTypes.NEW,
                 value=0,
                 date_updated=self._get_date(href, html),
                 source_url=href,
@@ -146,13 +139,13 @@ class VicNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('increase of ([0-9,]+)'),
             c_html,
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         ) or self._extract_number_using_regex(
             compile('([0-9,]+) new cases'),
             c_html,
-            datatype=DT_NEW,
+            datatype=DataTypes.NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -166,7 +159,7 @@ class VicNews(StateNewsBase):
                 '([0-9,]+)'
             ),
             html,
-            datatype=DT_TOTAL,
+            datatype=DataTypes.TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -191,7 +184,7 @@ class VicNews(StateNewsBase):
                 IGNORECASE
             ),
             html,
-            datatype=DT_TESTS_TOTAL,
+            datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
         )
@@ -200,7 +193,7 @@ class VicNews(StateNewsBase):
             return vic_test
         elif 'thousand casual contacts have been tested' in html:
             return DataPoint(
-                datatype=DT_TESTS_TOTAL,
+                datatype=DataTypes.TESTS_TOTAL,
                 value=1000,
                 date_updated=self._get_date(href, html),
                 source_url=href,
@@ -233,14 +226,14 @@ class VicNews(StateNewsBase):
             compile('total[^0-9.]+([0-9,]+) men'),
             html,
             source_url=url,
-            datatype=DT_TOTAL_MALE,
+            datatype=DataTypes.TOTAL_MALE,
             date_updated=du
         )
         women = self._extract_number_using_regex(
             compile('total[^0-9.]+([0-9,]+) women'),
             html,
             source_url=url,
-            datatype=DT_TOTAL_FEMALE,
+            datatype=DataTypes.TOTAL_FEMALE,
             date_updated=du
         )
         if men is not None and women is not None:
@@ -275,11 +268,11 @@ class VicNews(StateNewsBase):
 
         if regional_table and len(regional_table):
             datatype_map = {
-                'confirmed cases': DT_TOTAL,
-                'confirmed cases (ever)': DT_TOTAL,
-                'total confirmed cases (ever)': DT_TOTAL,
-                'active cases (current)': DT_STATUS_ACTIVE,
-                'currently active cases': DT_STATUS_ACTIVE,
+                'confirmed cases': DataTypes.TOTAL,
+                'confirmed cases (ever)': DataTypes.TOTAL,
+                'total confirmed cases (ever)': DataTypes.TOTAL,
+                'active cases (current)': DataTypes.STATUS_ACTIVE,
+                'currently active cases': DataTypes.STATUS_ACTIVE,
             }
             datatypes = [
                 datatype_map[pq(th).text().strip().lower()]
@@ -299,7 +292,7 @@ class VicNews(StateNewsBase):
                         if value:
                             value = int(value)
                             regions.append(DataPoint(
-                                region_schema=SCHEMA_ADMIN_1,
+                                region_schema=Schemas.ADMIN_1,
                                 region_parent='AU',
                                 region_child='AU-VIC',
                                 datatype=datatype,
@@ -313,7 +306,7 @@ class VicNews(StateNewsBase):
                         if value:
                             value = int(value)
                             regions.append(DataPoint(
-                                region_schema=SCHEMA_LGA,
+                                region_schema=Schemas.LGA,
                                 region_parent='AU-VIC',
                                 region_child=region,
                                 datatype=datatype,
@@ -341,8 +334,8 @@ class VicNews(StateNewsBase):
                     continue
 
                 regions.append(DataPoint(
-                    region_schema=SCHEMA_LGA,
-                    datatype=DT_TOTAL,
+                    region_schema=Schemas.LGA,
+                    datatype=DataTypes.TOTAL,
                     region_child=region_name.replace('have all recorded one case', '').strip(),
                     value=int(num_cases),
                     date_updated=self._get_date(href, html),
@@ -359,8 +352,8 @@ class VicNews(StateNewsBase):
                     continue
 
                 regions.append(DataPoint(
-                    region_schema=SCHEMA_LGA,
-                    datatype=DT_TOTAL,
+                    region_schema=Schemas.LGA,
+                    datatype=DataTypes.TOTAL,
                     region_child=region_name,
                     value=1,
                     date_updated=self._get_date(href, html),
@@ -385,7 +378,7 @@ class VicNews(StateNewsBase):
                     'through community transmission'),
             html,
             source_url=url,
-            datatype=DT_SOURCE_OF_INFECTION,
+            datatype=DataTypes.SOURCE_OF_INFECTION,
             date_updated=self._get_date(url, html)
         )
         total_cases = self._get_total_cases(url, html)
@@ -424,7 +417,7 @@ class VicNews(StateNewsBase):
                 ),
             ),
             c_html,
-            datatype=DT_STATUS_DEATHS,
+            datatype=DataTypes.STATUS_DEATHS,
             source_url=href,
             date_updated=du
         )
@@ -434,7 +427,7 @@ class VicNews(StateNewsBase):
         in_hospital = self._extract_number_using_regex(
             compile('([0-9,]+) people are in hospital'),
             c_html,
-            datatype=DT_STATUS_HOSPITALIZED,
+            datatype=DataTypes.STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=du
         )
@@ -444,7 +437,7 @@ class VicNews(StateNewsBase):
         in_icu = self._extract_number_using_regex(
             compile('([0-9,]+) (?:patients?|person|people) in intensive care'),
             c_html,
-            datatype=DT_STATUS_ICU,
+            datatype=DataTypes.STATUS_ICU,
             source_url=href,
             date_updated=du
         )
@@ -454,7 +447,7 @@ class VicNews(StateNewsBase):
         active = self._extract_number_using_regex(
             compile('([0-9,]+) active cases'),
             c_html,
-            datatype=DT_STATUS_ACTIVE,
+            datatype=DataTypes.STATUS_ACTIVE,
             source_url=href,
             date_updated=du
         )
@@ -464,7 +457,7 @@ class VicNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people have recovered'),
             c_html,
-            datatype=DT_STATUS_RECOVERED,
+            datatype=DataTypes.STATUS_RECOVERED,
             source_url=href,
             date_updated=du
         )

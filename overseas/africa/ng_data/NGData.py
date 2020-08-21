@@ -12,14 +12,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_CONFIRMED, DT_PROBABLE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -49,10 +42,10 @@ class NGData(URLBase):
         base_dir = self.get_path_in_dir('')
 
         datatype_map = {
-            'No. of Cases (Lab Confirmed)': DT_CONFIRMED,
-            'No. of Cases (on admission)': DT_PROBABLE,
+            'No. of Cases (Lab Confirmed)': DataTypes.CONFIRMED,
+            'No. of Cases (on admission)': DataTypes.PROBABLE,
             'No. Discharged': None,
-            'No. of Deaths': DT_STATUS_DEATHS
+            'No. of Deaths': DataTypes.STATUS_DEATHS
         }
 
         for date in sorted(listdir(base_dir)):
@@ -79,7 +72,7 @@ class NGData(URLBase):
                     vals[datatype] = value
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='NG',
                         region_child=region,
                         datatype=datatype,
@@ -89,11 +82,11 @@ class NGData(URLBase):
                     ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='NG',
                     region_child=region,
-                    datatype=DT_TOTAL,
-                    value=vals[DT_CONFIRMED]+vals[DT_PROBABLE],
+                    datatype=DataTypes.TOTAL,
+                    value=vals[DataTypes.CONFIRMED]+vals[DataTypes.PROBABLE],
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 ))

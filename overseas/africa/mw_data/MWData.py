@@ -12,12 +12,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL, DT_PROBABLE, DT_CONFIRMED,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -128,14 +123,14 @@ class MWData(URLBase):
                 suspected[region_child] += district['numberOfSuspectedCases']
 
             for counter, datatype in (
-                (confirmed, DT_CONFIRMED),
-                (deaths, DT_STATUS_DEATHS),
-                (recovered, DT_STATUS_RECOVERED),
-                (suspected, DT_PROBABLE)
+                (confirmed, DataTypes.CONFIRMED),
+                (deaths, DataTypes.STATUS_DEATHS),
+                (recovered, DataTypes.STATUS_RECOVERED),
+                (suspected, DataTypes.PROBABLE)
             ):
                 for region_child, value in counter.items():
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='MW',
                         region_child=region_child,
                         datatype=datatype,
@@ -146,10 +141,10 @@ class MWData(URLBase):
 
             for region_child, value in confirmed.items():
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='MW',
                     region_child=region_child,
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=value+suspected[region_child],
                     date_updated=date,
                     source_url=self.SOURCE_URL
@@ -174,57 +169,57 @@ class MWData(URLBase):
                 data = json.loads(f.read())
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=data['numberOfConfirmedCases']+data['numberOfSuspectedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
-                datatype=DT_CONFIRMED,
+                datatype=DataTypes.CONFIRMED,
                 value=data['numberOfConfirmedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
-                datatype=DT_PROBABLE,
+                datatype=DataTypes.PROBABLE,
                 value=data['numberOfSuspectedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 value=data['numberOfConfirmedDeaths'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
-                datatype=DT_STATUS_RECOVERED,
+                datatype=DataTypes.STATUS_RECOVERED,
                 value=data['numberOfRecoveredPatients'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
 
             #r.append(DataPoint(
-            #    region_schema=SCHEMA_ADMIN_0,
+            #    region_schema=Schemas.ADMIN_0,
             #    region_parent=None,
             #    region_child='MW',
-            #    datatype=DT_TESTS_TOTAL,
+            #    datatype=DataTypes.TESTS_TOTAL,
             #    value=data['numberOfReceivedSamples'],
             #    date_updated=date,
             #    source_url=self.SOURCE_URL
@@ -232,10 +227,10 @@ class MWData(URLBase):
 
             if 'numberOfTestedSamples' in data:
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_0,
+                    region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='MW',
-                    datatype=DT_TESTS_TOTAL,
+                    datatype=DataTypes.TESTS_TOTAL,
                     value=data['numberOfTestedSamples'],
                     date_updated=date,
                     source_url=self.SOURCE_URL

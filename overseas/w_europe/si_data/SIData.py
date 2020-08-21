@@ -13,14 +13,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_TH_DISTRICT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_STATUS_HOSPITALIZED,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -288,10 +281,10 @@ class SIData(URLBase):
 
                         if sub_region_dict['activeCases'] is not None:
                             r.append(DataPoint(
-                                region_schema=SCHEMA_ADMIN_1,
+                                region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
-                                datatype=DT_STATUS_ACTIVE,
+                                datatype=DataTypes.STATUS_ACTIVE,
                                 value=sub_region_dict['activeCases'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
@@ -299,10 +292,10 @@ class SIData(URLBase):
 
                         if sub_region_dict['confirmedToDate'] is not None:
                             r.append(DataPoint(
-                                region_schema=SCHEMA_ADMIN_1,
+                                region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
-                                datatype=DT_TOTAL,
+                                datatype=DataTypes.TOTAL,
                                 value=sub_region_dict['confirmedToDate'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
@@ -310,10 +303,10 @@ class SIData(URLBase):
 
                         if sub_region_dict['deceasedToDate'] is not None:
                             r.append(DataPoint(
-                                region_schema=SCHEMA_ADMIN_1,
+                                region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
-                                datatype=DT_STATUS_DEATHS,
+                                datatype=DataTypes.STATUS_DEATHS,
                                 value=sub_region_dict['deceasedToDate'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date

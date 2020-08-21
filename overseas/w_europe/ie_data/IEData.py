@@ -12,14 +12,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_TH_DISTRICT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_STATUS_HOSPITALIZED,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS,
-    DT_STATUS_ACTIVE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -68,15 +61,15 @@ class IEData(URLBase):
                     )
 
                     for datatype, value in (
-                        (DT_TOTAL, int(item['ConfirmedCovidCases'])),
-                        (DT_STATUS_DEATHS, int(item['ConfirmedCovidDeaths'] or 0)),
-                        (DT_STATUS_RECOVERED, int(item['ConfirmedCovidRecovered'] or 0)),
-                        (DT_STATUS_ACTIVE, int(item['ConfirmedCovidCases'] or 0) -
+                        (DataTypes.TOTAL, int(item['ConfirmedCovidCases'])),
+                        (DataTypes.STATUS_DEATHS, int(item['ConfirmedCovidDeaths'] or 0)),
+                        (DataTypes.STATUS_RECOVERED, int(item['ConfirmedCovidRecovered'] or 0)),
+                        (DataTypes.STATUS_ACTIVE, int(item['ConfirmedCovidCases'] or 0) -
                                            int(item['ConfirmedCovidDeaths'] or 0) -
                                            int(item['ConfirmedCovidRecovered'] or 0))
                     ):
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_1,
+                            region_schema=Schemas.ADMIN_1,
                             region_parent='IE',
                             region_child=item['CountyName'],
                             datatype=datatype,

@@ -8,14 +8,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_FI_HEALTH_DISTRICT,
-    DT_TOTAL,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_ACTIVE,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir
 )
@@ -183,21 +176,21 @@ class EUSubNationalData(URLBase):
 
                 # Get the name of the country/schema
                 if country == 'Finland':
-                    schema = SCHEMA_FI_HEALTH_DISTRICT
+                    schema = Schemas.FI_HEALTH_DISTRICT
                     country = 'FI'
                 elif region_child == country:
                     region_child = country
                     country = None
-                    schema = SCHEMA_ADMIN_0
+                    schema = Schemas.ADMIN_0
                 else:
-                    schema = SCHEMA_ADMIN_1
+                    schema = Schemas.ADMIN_1
 
                 if item['CumulativePositive']:
                     r.append(DataPoint(
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(item['CumulativePositive']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -208,7 +201,7 @@ class EUSubNationalData(URLBase):
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['CumulativeDeceased']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -219,7 +212,7 @@ class EUSubNationalData(URLBase):
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(item['CumulativeRecovered']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -230,7 +223,7 @@ class EUSubNationalData(URLBase):
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_STATUS_ACTIVE,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=int(item['CurrentlyPositive']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -241,7 +234,7 @@ class EUSubNationalData(URLBase):
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_STATUS_HOSPITALIZED,
+                        datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(item['Hospitalized']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -252,7 +245,7 @@ class EUSubNationalData(URLBase):
                         region_schema=schema,
                         region_parent=country,
                         region_child=region_child,
-                        datatype=DT_STATUS_ICU,
+                        datatype=DataTypes.STATUS_ICU,
                         value=int(item['IntensiveCare']),
                         date_updated=date,
                         source_url=self.SOURCE_URL

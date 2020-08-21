@@ -8,13 +8,7 @@ import csv
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_TESTS_TOTAL,
-    DT_STATUS_HOSPITALIZED, DT_STATUS_ICU,
-    DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -104,10 +98,10 @@ class ESData(GithubRepo):
 
                 if item['Casos']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(item['Casos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -115,10 +109,10 @@ class ESData(GithubRepo):
 
                 if item['PCR+'] or item['TestAc+']:   # NOTE ME: I'm combining PCR and other tests!!
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
-                        datatype=DT_TESTS_TOTAL,
+                        datatype=DataTypes.TESTS_TOTAL,
                         value=int(item['PCR+'] or 0) +
                               int(item['TestAc+'] or 0),
                         date_updated=date,
@@ -127,10 +121,10 @@ class ESData(GithubRepo):
 
                 if item['Hospitalizados']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
-                        datatype=DT_STATUS_HOSPITALIZED,
+                        datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(item['Hospitalizados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -138,10 +132,10 @@ class ESData(GithubRepo):
 
                 if item['Fallecidos']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['Fallecidos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -149,10 +143,10 @@ class ESData(GithubRepo):
 
                 if item.get('Recuperados'):
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(item['Recuperados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -179,10 +173,10 @@ class ESData(GithubRepo):
 
                 if item['casos_confirmados_totales']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ES_MADRID_MUNICIPALITY,
+                        region_schema=Schemas.ES_MADRID_MUNICIPALITY,
                         region_parent='ES-M',
                         region_child=item['municipio_distrito'],
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(item['casos_confirmados_totales']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -211,13 +205,13 @@ class ESData(GithubRepo):
 
                 if item['rango_edad'] == 'Total':
                     datatype = {
-                        'ambos': DT_TOTAL,
-                        'mujeres': DT_TOTAL_FEMALE,
-                        'hombres': DT_TOTAL_MALE
+                        'ambos': DataTypes.TOTAL,
+                        'mujeres': DataTypes.TOTAL_FEMALE,
+                        'hombres': DataTypes.TOTAL_MALE
                     }[item['sexo']]
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=datatype,
                         value=int(item['casos_confirmados']),
@@ -228,13 +222,13 @@ class ESData(GithubRepo):
 
                 if item['casos_confirmados']:
                     datatype = {
-                        'ambos': DT_TOTAL,
-                        'mujeres': DT_TOTAL_FEMALE,
-                        'hombres': DT_TOTAL_MALE
+                        'ambos': DataTypes.TOTAL,
+                        'mujeres': DataTypes.TOTAL_FEMALE,
+                        'hombres': DataTypes.TOTAL_MALE
                     }[item['sexo']]
 
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=datatype,
                         agerange=item['rango_edad'],
@@ -246,9 +240,9 @@ class ESData(GithubRepo):
                 if item['sexo'] == 'ambos':
                     if item['hospitalizados']:   # NOTE ME: I'm combining PCR and other tests!!
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_0,
+                            region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
-                            datatype=DT_STATUS_HOSPITALIZED,
+                            datatype=DataTypes.STATUS_HOSPITALIZED,
                             agerange=item['rango_edad'],
                             value=int(item['hospitalizados']),
                             date_updated=date,
@@ -257,9 +251,9 @@ class ESData(GithubRepo):
     
                     if item['ingresos_uci']:   # WARNING: This is **accumulated** cases!!! ========================================================
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_0,
+                            region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
-                            datatype=DT_STATUS_ICU,
+                            datatype=DataTypes.STATUS_ICU,
                             agerange=item['rango_edad'],
                             value=int(item['ingresos_uci']),
                             date_updated=date,
@@ -268,9 +262,9 @@ class ESData(GithubRepo):
     
                     if item['fallecidos']:
                         r.append(DataPoint(
-                            region_schema=SCHEMA_ADMIN_0,
+                            region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
-                            datatype=DT_STATUS_DEATHS,
+                            datatype=DataTypes.STATUS_DEATHS,
                             agerange=item['rango_edad'],
                             value=int(item['fallecidos']),
                             date_updated=date,
@@ -297,9 +291,9 @@ class ESData(GithubRepo):
 
                 if item['casos_total']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_TOTAL,
+                        datatype=DataTypes.TOTAL,
                         value=int(item['casos_total']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -307,9 +301,9 @@ class ESData(GithubRepo):
 
                 if item['casos_pcr'] or item['casos_test_ac']:   # NOTE ME: I'm combining PCR and other tests!!
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_TESTS_TOTAL,
+                        datatype=DataTypes.TESTS_TOTAL,
                         value=int(item['casos_pcr'] or 0) +
                               int(item['casos_test_ac'] or 0),
                         date_updated=date,
@@ -318,9 +312,9 @@ class ESData(GithubRepo):
 
                 if item['hospitalizados']:   # WARNING: This is **accumulated** cases!!! ========================================================
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_STATUS_HOSPITALIZED,
+                        datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(item['hospitalizados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -328,9 +322,9 @@ class ESData(GithubRepo):
 
                 if item['ingresos_uci']:   # WARNING: This is **accumulated** cases!!! ========================================================
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_STATUS_ICU,
+                        datatype=DataTypes.STATUS_ICU,
                         value=int(item['ingresos_uci']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -338,9 +332,9 @@ class ESData(GithubRepo):
 
                 if item['fallecimientos']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_STATUS_DEATHS,
+                        datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['fallecimientos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
@@ -348,9 +342,9 @@ class ESData(GithubRepo):
 
                 if item['altas']:
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_0,
+                        region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
-                        datatype=DT_STATUS_RECOVERED,
+                        datatype=DataTypes.STATUS_RECOVERED,
                         value=int(item['altas']),
                         date_updated=date,
                         source_url=self.SOURCE_URL

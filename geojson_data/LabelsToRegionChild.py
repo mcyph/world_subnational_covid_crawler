@@ -1,7 +1,7 @@
 import json
 from os import listdir
 from covid_19_au_grab.get_package_dir import get_package_dir
-from covid_19_au_grab.datatypes.constants import name_to_schema, schema_to_name, SCHEMA_ADMIN_1, SCHEMA_JP_CITY, SCHEMA_ADMIN_0
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 
 
@@ -68,7 +68,7 @@ class __LabelsToRegionChild:
             for region_schema, schema_dict in data.items():
                 if region_schema.upper() in ('FR_DEPARTMENT', 'LK_DISTRICT', 'ES_MADRID_MUNICIPALITY'):
                     continue  # HACK!
-                region_schema = name_to_schema(region_schema)
+                region_schema = Schemas(region_schema)
 
                 for region_parent, region_parent_dict in schema_dict.items():
                     for region_child, region_child_item in region_parent_dict.items():
@@ -87,7 +87,7 @@ class __LabelsToRegionChild:
                             ] = region_child
 
                         all_possible.add((
-                            int(region_schema),
+                            region_schema,
                             region_parent.lower(),
                             region_child.lower()
                         ))
@@ -121,9 +121,9 @@ class __LabelsToRegionChild:
 
 if __name__ == '__main__':
     ltrc = LabelsToRegionChild()
-    print(ltrc.get_by_label(SCHEMA_ADMIN_1, 'au', 'Victoria'))
-    print(ltrc.get_by_label(SCHEMA_JP_CITY, 'JP-13', '武蔵野'))
-    print(ltrc.get_by_label(SCHEMA_ADMIN_1, 'cn', 'guangdong'))
-    print(ltrc.get_by_label(SCHEMA_ADMIN_0, '', 'China'))
-    print(ltrc.get_by_label(SCHEMA_ADMIN_0, '', 'Japan'))
-    print(ltrc.region_child_in_geojson(SCHEMA_ADMIN_0, '', 'jp'))
+    print(ltrc.get_by_label(Schemas.ADMIN_1, 'au', 'Victoria'))
+    print(ltrc.get_by_label(Schemas.JP_CITY, 'JP-13', '武蔵野'))
+    print(ltrc.get_by_label(Schemas.ADMIN_1, 'cn', 'guangdong'))
+    print(ltrc.get_by_label(Schemas.ADMIN_0, '', 'China'))
+    print(ltrc.get_by_label(Schemas.ADMIN_0, '', 'Japan'))
+    print(ltrc.region_child_in_geojson(Schemas.ADMIN_0, '', 'jp'))

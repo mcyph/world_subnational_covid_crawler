@@ -5,11 +5,7 @@ import csv
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    SCHEMA_US_COUNTY,
-    DT_TOTAL, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import (
     GithubRepo
 )
@@ -51,8 +47,8 @@ class USNYTData(GithubRepo):
 
                 r.append(DataPoint(
                     region_parent=item['state'],
-                    region_schema=SCHEMA_US_COUNTY,
-                    datatype=DT_TOTAL,
+                    region_schema=Schemas.US_COUNTY,
+                    datatype=DataTypes.TOTAL,
                     region_child=item['county'],
                     value=int(item['cases']),
                     date_updated=date,
@@ -61,8 +57,8 @@ class USNYTData(GithubRepo):
 
                 r.append(DataPoint(
                     region_parent=item['state'],
-                    region_schema=SCHEMA_US_COUNTY,
-                    datatype=DT_STATUS_DEATHS,
+                    region_schema=Schemas.US_COUNTY,
+                    datatype=DataTypes.STATUS_DEATHS,
                     region_child=item['county'],
                     value=int(item['cases']),
                     date_updated=date,
@@ -86,20 +82,20 @@ class USNYTData(GithubRepo):
                 date = self.convert_date(item['date'])
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='United States of America',
                     region_child=item['state'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['cases']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'
                 ))
 
                 r.append(DataPoint(
-                    region_schema=SCHEMA_ADMIN_1,
+                    region_schema=Schemas.ADMIN_1,
                     region_parent='United States of America',
                     region_child=item['state'],
-                    datatype=DT_TOTAL,
+                    datatype=DataTypes.TOTAL,
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'

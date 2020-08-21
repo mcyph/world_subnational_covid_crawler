@@ -10,13 +10,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_1,
-    DT_TESTS_TOTAL, DT_NEW,
-    DT_TOTAL, DT_STATUS_RECOVERED,
-    DT_STATUS_DEATHS, DT_STATUS_ACTIVE,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -50,10 +44,10 @@ class IQWikiData(URLBase):
                 html = f.read()
 
             datatype_mappings = {
-                'المجموع': DT_TOTAL,
-                'الحالات المؤكدة': DT_TOTAL,
-                'حالات الوفاة': DT_STATUS_DEATHS,
-                'الحالات المعافاة': DT_STATUS_RECOVERED,
+                'المجموع': DataTypes.TOTAL,
+                'الحالات المؤكدة': DataTypes.TOTAL,
+                'حالات الوفاة': DataTypes.STATUS_DEATHS,
+                'الحالات المعافاة': DataTypes.STATUS_RECOVERED,
             }
 
             table = pq(html)('table:contains("المحافظة")')[0]
@@ -86,7 +80,7 @@ class IQWikiData(URLBase):
 
                     value = int(pq(value).text().replace(',', ''))
                     r.append(DataPoint(
-                        region_schema=SCHEMA_ADMIN_1,
+                        region_schema=Schemas.ADMIN_1,
                         region_parent='IQ',
                         region_child=region_map.get(region, region),
                         datatype=datatype,

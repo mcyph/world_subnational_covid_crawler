@@ -19,9 +19,9 @@
             <tr>
                 {% for key, value in zip(datapoint._fields, datapoint) %}
                     {% if key == 'region_schema' %}
-                        <td>{{ schema_to_name(value)|e }}</td>
+                        <td>{{ value.value|e }}</td>
                     {% elif key == 'datatype' %}
-                        <td>{{ datatype_to_name(value)|e }}</td>
+                        <td>{{ value.value|e }}</td>
                     {% else %}
                         <td>{{ value|e }}</td>
                     {% endif %}

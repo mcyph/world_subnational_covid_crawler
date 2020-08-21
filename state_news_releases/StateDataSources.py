@@ -8,7 +8,7 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.datatypes.constants import SCHEMA_ADMIN_1, datatype_to_name, schema_to_name
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import DataPoint, _DataPoint
 
 
@@ -92,12 +92,12 @@ def _get_datapoints(classes, send_q):
                     region_schema=dp.region_schema,
                     region_parent=(
                         inst.SOURCE_ISO_3166_2
-                        if dp.region_schema != SCHEMA_ADMIN_1
+                        if dp.region_schema != Schemas.ADMIN_1
                         else 'AU'
                     ),
                     region_child=(
                         dp.region_child
-                        if dp.region_schema != SCHEMA_ADMIN_1
+                        if dp.region_schema != Schemas.ADMIN_1
                         else inst.SOURCE_ISO_3166_2
                     ),
                     date_updated=dp.date_updated,

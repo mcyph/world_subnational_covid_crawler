@@ -9,12 +9,7 @@ from covid_19_au_grab.overseas.URLBase import (
 from covid_19_au_grab.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.datatypes.constants import (
-    SCHEMA_ADMIN_0, SCHEMA_ADMIN_1,
-    SCHEMA_TH_DISTRICT,
-    DT_TOTAL_MALE, DT_TOTAL_FEMALE,
-    DT_TOTAL, DT_STATUS_HOSPITALIZED, DT_STATUS_RECOVERED, DT_STATUS_DEATHS
-)
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
@@ -114,15 +109,15 @@ class THData(URLBase):
             date = self.convert_date(case_dict['ConfirmDate'].split()[0])
             agerange = age_to_range(case_dict['Age'])
             gender = {
-                'Male': DT_TOTAL_MALE,
-                'Female': DT_TOTAL_FEMALE
+                'Male': DataTypes.TOTAL_MALE,
+                'Female': DataTypes.TOTAL_FEMALE
             }[case_dict['GenderEn']]
 
             if case_dict['ProvinceEn'].lower() == 'unknown':
                 province = 'unknown'
             else:
                 province = ltrc.get_by_label(
-                    SCHEMA_ADMIN_1, 'TH', case_dict['ProvinceEn']
+                    Schemas.ADMIN_1, 'TH', case_dict['ProvinceEn']
                 )
 
             by_total[date] += 1
@@ -137,7 +132,7 @@ class THData(URLBase):
             ):
                 try:
                     district = ltrc.get_by_label(
-                        SCHEMA_TH_DISTRICT, province, case_dict['District']
+                        Schemas.TH_DISTRICT, province, case_dict['District']
                     )
                     by_district[date, province, district] += 1
                     #print('FOUND:', district)
@@ -157,10 +152,10 @@ class THData(URLBase):
         for date, value in sorted(by_total.items()):
             cumulative += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -170,11 +165,11 @@ class THData(URLBase):
         for (date, age), value in sorted(by_age.items()):
             cumulative[age] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
                 agerange=age,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[age],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -184,7 +179,7 @@ class THData(URLBase):
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
                 datatype=gender,
@@ -197,10 +192,10 @@ class THData(URLBase):
         for (date, province), value in sorted(by_province.items()):
             cumulative[province] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_1,
+                region_schema=Schemas.ADMIN_1,
                 region_parent='TH',
                 region_child=province,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[province],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -210,10 +205,10 @@ class THData(URLBase):
         for (date, province, district), value in sorted(by_district.items()):
             cumulative[province, district] += value
             r.append(DataPoint(
-                region_schema=SCHEMA_TH_DISTRICT,
+                region_schema=Schemas.TH_DISTRICT,
                 region_parent=province,
                 region_child=district,
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=cumulative[province, district],
                 date_updated=date,
                 source_url=self.SOURCE_URL
@@ -249,37 +244,37 @@ class THData(URLBase):
             date = self.convert_date(item['Date'], formats=('%m/%d/%Y',))
 
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
-                datatype=DT_TOTAL,
+                datatype=DataTypes.TOTAL,
                 value=int(item['Confirmed']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
-                datatype=DT_STATUS_RECOVERED,
+                datatype=DataTypes.STATUS_RECOVERED,
                 value=int(item['Recovered']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
-                datatype=DT_STATUS_HOSPITALIZED,
+                datatype=DataTypes.STATUS_HOSPITALIZED,
                 value=int(item['Hospitalized']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
-                region_schema=SCHEMA_ADMIN_0,
+                region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='TH',
-                datatype=DT_STATUS_DEATHS,
+                datatype=DataTypes.STATUS_DEATHS,
                 value=int(item['Deaths']),
                 date_updated=date,
                 source_url=self.SOURCE_URL

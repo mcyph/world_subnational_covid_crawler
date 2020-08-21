@@ -29,7 +29,7 @@
                     {{- datapoint['region_parent'].split('-')[-1]|upper -}}
                 </td>
                 <td>
-                    {{- schema_to_name(datapoint['region_schema']) -}}
+                    {{- datapoint['region_schema'].value -}}
                 </td>
                 <td>
                     {{- datapoint['region_child'] -}}

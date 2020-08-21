@@ -3,9 +3,7 @@ from os.path import exists
 
 from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.datatypes.constants import \
-    schema_to_name, datatype_to_name, \
-    name_to_schema, name_to_datatype
+from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
 class DataPointsDB:
@@ -88,7 +86,7 @@ class DataPointsDB:
         cur.execute('SELECT MIN(region_schema) FROM datapoints;')
         value = cur.fetchone()[0]
         if value:
-            r.append(name_to_schema(value))
+            r.append(Schemas(value))
 
         while value:
             cur.execute("""
@@ -100,37 +98,29 @@ class DataPointsDB:
             """, [value])
             value = cur.fetchone()[0]
             if value:
-                r.append(name_to_schema(value))
+                r.append(Schemas(value))
 
         cur.close()
         return sorted(set(r))
 
     def get_datatypes_by_region_schema(self, region_schema):
-        if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)
-        region_schema = region_schema.lower()
-
         cur = self.conn.cursor()
         cur.execute("""
             SELECT DISTINCT datatype 
             FROM datapoints 
             WHERE region_schema = ?;
-        """, [region_schema])
-        r = [name_to_datatype(i[0]) for i in cur.fetchall()]
+        """, [region_schema.value])
+        r = [DataTypes(i[0]) for i in cur.fetchall()]
         cur.close()
         return sorted(set(r))
 
     def get_region_parents(self, region_schema):
-        if isinstance(region_schema, int):
-            region_schema = schema_to_name(region_schema)
-        region_schema = region_schema.lower()
-
         cur = self.conn.cursor()
         cur.execute("""
             SELECT DISTINCT region_parent 
             FROM datapoints 
             WHERE region_schema = ?;
-        """, [region_schema])
+        """, [region_schema.value])
         r = [i[0] for i in cur.fetchall()]
         cur.close()
         return sorted(set(r))
@@ -152,9 +142,13 @@ class DataPointsDB:
                 where.append('%s %s' % (col, i[0]))
 
                 if col == 'region_schema':
-                    values.extend([self.__convert_region_schema(x) for x in i[1]])
+                    values.extend([x.value
+                                   if isinstance(x, Schemas)
+                                   else str(x) for x in i[1]])
                 elif col == 'datatype':
-                    values.extend([self.__convert_datatype(x) for x in i[1]])
+                    values.extend([x.value
+                                   if isinstance(x, DataTypes)
+                                   else str(x) for x in i[1]])
                 else:
                     values.extend(i[1])
             else:
@@ -228,8 +222,8 @@ class DataPointsDB:
         """
         cur.execute(query, [
             datapoint.date_updated,
-            schema_to_name(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
-            datapoint.agerange, datatype_to_name(datapoint.datatype), datapoint.value,
+            datapoint.region_schema.value, datapoint.region_parent, datapoint.region_child,
+            datapoint.agerange, datapoint.datatype.value, datapoint.value,
             source_url_map[datapoint.source_url], datapoint.text_match,
 
             int(is_derived),
@@ -292,8 +286,8 @@ class DataPointsDB:
         for datapoint in datapoints:
             insert.append([
                 datapoint.date_updated,
-                schema_to_name(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
-                datapoint.agerange, datatype_to_name(datapoint.datatype), datapoint.value,
+                Schemas(datapoint.region_schema), datapoint.region_parent, datapoint.region_child,
+                datapoint.agerange, DataTypes(datapoint.datatype), datapoint.value,
                 source_url_map[datapoint.source_url], datapoint.text_match,
 
                 int(is_derived),
@@ -322,9 +316,13 @@ class DataPointsDB:
                 where.append('%s %s' % (col, i[0]))
 
                 if col == 'region_schema':
-                    values.extend([self.__convert_region_schema(x) for x in i[1]])
+                    values.extend([x.value
+                                   if isinstance(x, Schemas)
+                                   else str(x) for x in i[1]])
                 elif col == 'datatype':
-                    values.extend([self.__convert_datatype(x) for x in i[1]])
+                    values.extend([x.value
+                                   if isinstance(x, DataTypes)
+                                   else str(x) for x in i[1]])
                 else:
                     values.extend(i[1])
             else:
@@ -406,11 +404,11 @@ class DataPointsDB:
 
             r.append(DataPoint(
                 date_updated=date_updated,
-                region_schema=name_to_schema(region_schema),
+                region_schema=Schemas(region_schema),
                 region_parent=region_parent,
                 region_child=region_child,
                 agerange=agerange,
-                datatype=name_to_datatype(datatype),
+                datatype=DataTypes(datatype),
                 value=value,
                 source_url=str(source_url)
             ))
@@ -419,18 +417,6 @@ class DataPointsDB:
             return r[0]
         else:
             return r
-
-    def __convert_region_schema(self, s):
-        if isinstance(s, str):
-            return s
-        else:
-            return schema_to_name(s)
-
-    def __convert_datatype(self, s):
-        if isinstance(s, str):
-            return s
-        else:
-            return datatype_to_name(s)
 
     def select_many(self, source_id=None, date_updated=None,
                    region_schema=None, region_parent=None, region_child=None,
@@ -498,11 +484,11 @@ class DataPointsDB:
 
             r.append(DataPoint(
                 date_updated=date_updated,
-                region_schema=name_to_schema(region_schema),
+                region_schema=Schemas(region_schema),
                 region_parent=region_parent,
                 region_child=region_child,
                 agerange=agerange,
-                datatype=name_to_datatype(datatype),
+                datatype=DataTypes(datatype),
                 value=value,
                 source_url=str(source_url)
             ))
@@ -524,10 +510,10 @@ if __name__ == '__main__':
     for i in dr:
         dd, mm, yyyy = i['date_updated'].split('/')
         i = DataPoint(
-            region_schema=name_to_schema(i['region_schema']),
+            region_schema=Schemas(i['region_schema']),
             region_parent=i['region_parent'],
             region_child=i['region_child'],
-            datatype=name_to_datatype(i['datatype']),
+            datatype=DataTypes(i['datatype']),
             agerange=i['agerange'],
             value=int(i['value']),
             date_updated=f'{yyyy}_{mm}_{dd}',
