@@ -1,7 +1,7 @@
 import threading
 import multiprocessing
 
-from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
+from covid_19_au_grab.datatypes.enums import Schemas
 from covid_19_au_grab.datatypes.DataPoint import _DataPoint
 
 #from covid_19_au_grab.overseas.ml_data.MLData import MLData
@@ -86,7 +86,7 @@ ASIA_SOURCES = (
 # Europe
 #==================================================================#
 
-from covid_19_au_grab.overseas.eu_subnational_data.EUSubNationalData import EUSubNationalData
+from covid_19_au_grab.overseas.world.eu_subnational_data.EUSubNationalData import EUSubNationalData
 
 from covid_19_au_grab.overseas.e_europe.kg_data.KGData import KGData
 from covid_19_au_grab.overseas.e_europe.kz_data.KZData import KZData
@@ -149,10 +149,13 @@ MIDDLE_EAST_DATA = (
 # World
 #==================================================================#
 
-from covid_19_au_grab.overseas.world_bing_data.WorldBingData import WorldBingData
-from covid_19_au_grab.overseas.world_jhu_data.WorldJHUData import \
+from covid_19_au_grab.overseas.world.world_bing_data.WorldBingData import WorldBingData
+from covid_19_au_grab.overseas.world.world_jhu_data.WorldJHUData import \
     WorldJHUDataAdmin0, WorldJHUDataAdmin1, WorldJHUDataAdmin2
-from covid_19_au_grab.overseas.world_um_data.WorldUMData import WorldUMData
+from covid_19_au_grab.overseas.world.world_um_data.WorldUMData import WorldUMData
+from covid_19_au_grab.overseas.world.world_google_mobility.WorldGoogleMobility import WorldGoogleMobility
+from covid_19_au_grab.overseas.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
+from covid_19_au_grab.overseas.world.world_owid_data.WorldOWIDData import WorldOWIDData
 
 WORLD_DATA = (
     WorldUMData,
@@ -160,6 +163,9 @@ WORLD_DATA = (
     WorldJHUDataAdmin1,
     WorldJHUDataAdmin2,
     WorldBingData,
+    WorldGoogleMobility,
+    WorldEUCDCData,
+    WorldOWIDData
 )
 
 

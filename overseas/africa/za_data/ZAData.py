@@ -105,36 +105,77 @@ class ZAData(PressReleaseBase):
 
     def _get_recovered_death_datapoints(self, date, html):
         r = []
-        TRs = pq(html)('table.NormalTable:contains("Deaths"):contains("Recoveries") '
+
+        TRsDeathsRecoveries = pq(html)('table.NormalTable:contains("Deaths"):contains("Recoveries") '
                        'tbody '
                        'tr')
+        TRsDeathsRecoveriesActive = pq(html)('table.NormalTable:contains("Deaths"):contains("Recoveries"):contains("Active") '
+                                       'tbody '
+                                       'tr')
 
-        for province, deaths, recoveries in TRs[1:]:
-            #print(pq(province).text(),
-            #      pq(deaths).text(),
-            #      pq(recoveries).text())
-            province = self._elm_to_province(province)
-            if province == 'total':
-                continue
+        if TRsDeathsRecoveriesActive:
+            for province, deaths, recoveries, active in TRsDeathsRecoveries[1:]:
+                # print(pq(province).text(),
+                #      pq(deaths).text(),
+                #      pq(recoveries).text())
+                province = self._elm_to_province(province)
+                if province == 'total':
+                    continue
 
-            r.append(DataPoint(
-                region_schema=Schemas.ADMIN_1,
-                region_parent='ZA',
-                region_child=pq(province).text().strip(),
-                datatype=DataTypes.STATUS_DEATHS,
-                value=self._elm_to_int(deaths),
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
-                region_schema=Schemas.ADMIN_1,
-                region_parent='ZA',
-                region_child=pq(province).text().strip(),
-                datatype=DataTypes.STATUS_RECOVERED,
-                value=self._elm_to_int(recoveries),
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            ))
+                r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='ZA',
+                    region_child=pq(province).text().strip(),
+                    datatype=DataTypes.STATUS_DEATHS,
+                    value=self._elm_to_int(deaths),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
+                r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='ZA',
+                    region_child=pq(province).text().strip(),
+                    datatype=DataTypes.STATUS_RECOVERED,
+                    value=self._elm_to_int(recoveries),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
+                r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='ZA',
+                    region_child=pq(province).text().strip(),
+                    datatype=DataTypes.STATUS_ACTIVE,
+                    value=self._elm_to_int(active),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
+        else:
+            for province, deaths, recoveries in TRsDeathsRecoveries[1:]:
+                #print(pq(province).text(),
+                #      pq(deaths).text(),
+                #      pq(recoveries).text())
+                province = self._elm_to_province(province)
+                if province == 'total':
+                    continue
+
+                r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='ZA',
+                    region_child=pq(province).text().strip(),
+                    datatype=DataTypes.STATUS_DEATHS,
+                    value=self._elm_to_int(deaths),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
+                r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='ZA',
+                    region_child=pq(province).text().strip(),
+                    datatype=DataTypes.STATUS_RECOVERED,
+                    value=self._elm_to_int(recoveries),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                ))
 
         return r
 

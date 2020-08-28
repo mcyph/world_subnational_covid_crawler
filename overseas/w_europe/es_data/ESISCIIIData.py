@@ -90,7 +90,7 @@ def _get_provinces_map():
 
 _provinces_map = _get_provinces_map()
 
-START = '<script type="application/json" data-for="htmlwidget-2c02031ec6d3ef9698bb">'
+START = '<h3>Curva epidémica</h3>'
 END = '</script>'
 
 
@@ -117,7 +117,10 @@ class ESISCIIIData(URLBase):
     def _get_datapoints(self):
         r = []
         text = self.get_text('index.html', include_revision=True)
-        text = text.split(START)[1].split(END)[0]
+        text = text.split(START)[-1]
+        text = text.split('<script type="application/json"')[1]
+        text = text.split('">')[1]
+        text = text.split(END)[0]
         data = json.loads(text)
 
         for label_item, data_item in zip(data['x']['layout']['updatemenus'][0]['buttons'], data['x']['data']):

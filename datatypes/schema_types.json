@@ -37,6 +37,14 @@
         ["Facebook Symptoms Survey", [
             ["Number per 100k w/COVID symptoms", "facebook_covid_symptoms"],
             ["Number per 100k w/flu symptoms", "facebook_flu_symptoms"]
+        ]],
+        ["Google Mobility Report", [
+            ["Retail/Recreation % Change", "google_mobility_retail_recreation"],
+            ["Supermarket/Pharmacy % Change", "google_mobility_supermarket_pharmacy"],
+            ["Parks % Change", "google_mobility_parks"],
+            ["Public Transport % Change", "google_mobility_public_transport"],
+            ["Workplaces % Change", "google_mobility_workplaces"],
+            ["Residential % Change", "google_mobility_residential"]
         ]]
     ],
     "constants": {
@@ -192,6 +200,49 @@
             "dayssince": false,
             "roc": true,
             "percapita": false
+        },
+
+        "google_mobility_retail_recreation": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "google_mobility_supermarket_pharmacy": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "google_mobility_parks": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "google_mobility_public_transport": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "google_mobility_workplaces": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "google_mobility_residential": {
+            "percentile": true,
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
         }
     },
     "schemas": {

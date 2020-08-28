@@ -271,20 +271,20 @@ def output_graphs():
     output_graph('new', 'lga', state_filter='wa')
 
     # TODO: Add source of infection
-    #output_graph('DT_SOURCE_OF_INFECTION')
-    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='sa')
-    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='vic')
-    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='nsw')
-    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='act')
-    #output_graph('DT_SOURCE_OF_INFECTION', state_filter='qld')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION', state_filter='sa')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION', state_filter='vic')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION', state_filter='nsw')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION', state_filter='act')
+    #output_graph('DataTypes.SOURCE_OF_INFECTION', state_filter='qld')
 
     # TODO: Add patient status
-    #output_graph('DT_PATIENT_STATUS', state_filter='sa')
-    #output_graph('DT_PATIENT_STATUS', state_filter='vic')
-    #output_graph('DT_PATIENT_STATUS', state_filter='act')
-    #output_graph('DT_PATIENT_STATUS', state_filter='nsw')
-    #output_graph('DT_PATIENT_STATUS', state_filter='wa')
-    #output_graph('DT_PATIENT_STATUS', state_filter='qld')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='sa')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='vic')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='act')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='nsw')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='wa')
+    #output_graph('DataTypes.PATIENT_STATUS', state_filter='qld')
 
 
 if __name__ == '__main__':

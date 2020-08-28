@@ -114,6 +114,17 @@ class DataPointsDB:
         cur.close()
         return sorted(set(r))
 
+    def get_datatypes_by_source_id(self, source_id):
+        cur = self.conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT datatype 
+            FROM datapoints 
+            WHERE source_id = ?;
+        """, [source_id])
+        r = [DataTypes(i[0]) for i in cur.fetchall()]
+        cur.close()
+        return sorted(set(r))
+
     def get_region_parents(self, region_schema):
         cur = self.conn.cursor()
         cur.execute("""
@@ -439,7 +450,14 @@ class DataPointsDB:
             _fetch_one=False
         )
 
-    def get_datapoints_by_source_id(self, source_id):
+    def get_datapoints_by_source_id(self, source_id, datatype=None, add_source_urls=True):
+        if datatype is not None:
+            datatype_query = 'AND datatype = ?'
+            datatype_params = [datatype]
+        else:
+            datatype_query = ''
+            datatype_params = []
+
         query = f"""
             SELECT 
                 date_updated, 
@@ -448,30 +466,35 @@ class DataPointsDB:
                 source_url_id
             FROM
                 datapoints
+                
             WHERE
                 source_id = ?
+                {datatype_query}
             ORDER BY 
                 date_updated ASC
             ;
         """
         cur = self.conn.cursor()
-        cur.execute(query, [source_id])
+        cur.execute(query, [source_id]+datatype_params)
         results = cur.fetchall()
 
-        source_url_ids = set([i[-1] for i in results])
-        source_url_ids = set(str(source_url_id)
-                         for source_url_id in source_url_ids)
+        if add_source_urls:
+            source_url_ids = set([i[-1] for i in results])
+            source_url_ids = set(str(source_url_id)
+                             for source_url_id in source_url_ids)
 
-        cur.execute(f"""
-            SELECT
-                source_url_id, source_url
-            FROM
-                sourceurls
-            WHERE
-                source_url_id IN ({','.join(source_url_ids)})
-            ;
-        """)
-        source_url_map = dict(cur.fetchall())
+            cur.execute(f"""
+                SELECT
+                    source_url_id, source_url
+                FROM
+                    sourceurls
+                WHERE
+                    source_url_id IN ({','.join(source_url_ids)})
+                ;
+            """)
+            source_url_map = dict(cur.fetchall())
+        else:
+            source_url_map = {}
 
         r = []
         for (
@@ -480,7 +503,7 @@ class DataPointsDB:
             agerange, datatype, value,
             source_url_id
         ) in results:
-            source_url = source_url_map[source_url_id]
+            source_url = source_url_map.get(source_url_id, '')
 
             r.append(DataPoint(
                 date_updated=date_updated,

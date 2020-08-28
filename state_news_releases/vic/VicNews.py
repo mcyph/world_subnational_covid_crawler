@@ -27,8 +27,7 @@ class VicNews(StateNewsBase):
     SOURCE_DESCRIPTION = ''
 
     LISTING_URL = (
-        'https://www.dhhs.vic.gov.au/' 
-            'media-hub-coronavirus-disease-covid-19',
+        'https://www.dhhs.vic.gov.au/media-hub-coronavirus-disease-covid-19',
         'https://www.dhhs.vic.gov.au/coronavirus'
     )
     LISTING_HREF_SELECTOR = (
@@ -39,6 +38,8 @@ class VicNews(StateNewsBase):
         '.field--name-field-more-updates .field--item a'
     )
     STATS_BY_REGION_URL = (
+        # https://www.dhhs.vic.gov.au/coronavirus-testing-data-local-government-area
+        # https://www.dhhs.vic.gov.au/case-locations-and-outbreaks
         'https://www.dhhs.vic.gov.au/coronavirus-covid-19-daily-update'
     )
 

@@ -114,9 +114,24 @@ class DataTypes(str, Enum):
     TESTS_NEGATIVE = 'tests_negative'
     TESTS_POSITIVE = 'tests_positive'  # (Is this necessary?)
     TESTS_NEW = 'tests_new'
+
+    AGE_CARE_TOTAL = 'age_care_total'
+    AGE_CARE_MALE = 'age_care_male'
+    AGE_CARE_FEMALE = 'age_care_female'
+
+    AGE_CARE_NEW = 'age_care_new'
+    AGE_CARE_MALE_NEW = 'age_care_male_new'
+    AGE_CARE_FEMALE_NEW = 'age_care_female_new'
     
     FACEBOOK_COVID_SYMPTOMS = 'facebook_covid_symptoms'
     FACEBOOK_FLU_SYMPTOMS = 'facebook_flu_symptoms'
+
+    GOOGLE_MOBILITY_RETAIL_RECREATION = 'google_mobility_retail_recreation'
+    GOOGLE_MOBILITY_SUPERMARKET_PHARMACY = 'google_mobility_supermarket_pharmacy'
+    GOOGLE_MOBILITY_PARKS = 'google_mobility_parks'
+    GOOGLE_MOBILITY_PUBLIC_TRANSPORT = 'google_mobility_public_transport'
+    GOOGLE_MOBILITY_WORKPLACES = 'google_mobility_workplaces'
+    GOOGLE_MOBILITY_RESIDENTIAL = 'google_mobility_residential'
 
 
 if __name__ == '__main__':

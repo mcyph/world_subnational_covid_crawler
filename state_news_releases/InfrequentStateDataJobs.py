@@ -5,26 +5,27 @@ class InfrequentStateDataJobs:
     def run_all(self):
         self.update_act_powerbi()
         self.update_sa_regions()
-        self.update_vic_powerbi()
+        # Note Vic PowerBI has been retired
+        self.update_vic_tableau()
         self.update_wa_regions()
 
     def get_status(self):
         return self._status
 
-    def update_vic_powerbi(self):
-        from covid_19_au_grab.state_news_releases.vic.VicPowerBI import \
-            VicPowerBI
+    def update_vic_tableau(self):
+        from covid_19_au_grab.state_news_releases.vic.VicTableau import \
+            run_vic_tableau
         try:
-            VicPowerBI().run_powerbi_grabber()
-            self._status['vic_powerbi'] = {
+            run_vic_tableau()
+            self._status['vic_tableau'] = {
                 'status': 'OK',
                 'message': None
             }
         except:
-            print("Error occurred using VicPowerBI!")
+            print("Error occurred using VicTableau!")
             import traceback
             traceback.print_exc()
-            self._status['vic_powerbi'] = {
+            self._status['vic_tableau'] = {
                 'status': 'ERROR',
                 'message': traceback.format_exc()
             }

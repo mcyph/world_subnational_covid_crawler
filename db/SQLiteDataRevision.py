@@ -95,8 +95,10 @@ class SQLiteDataRevision:
         return self._datapoints_db.get_source_ids()
 
     @needsdatapoints
-    def get_datapoints_by_source_id(self, source_id):
-        return self._datapoints_db.get_datapoints_by_source_id(source_id)
+    def get_datapoints_by_source_id(self, source_id, datatype=None, add_source_urls=True):
+        return self._datapoints_db.get_datapoints_by_source_id(
+            source_id, datatype=datatype, add_source_urls=add_source_urls
+        )
 
     @needsdatapoints
     def get_region_schemas(self):
@@ -162,40 +164,47 @@ class SQLiteDataRevision:
             x.region_child
         )
 
-    def get_tsv_data(self, source_id, thin_out=True):
-        datapoints = self.get_datapoints_by_source_id(source_id)
+    def get_datatypes_by_source_id(self, source_id):
+        return self._datapoints_db.get_datatypes_by_source_id(source_id)
 
-        datapoints.sort(
-            key=lambda i: i.date_updated,
-            reverse=True
+    def get_tsv_data(self, source_id, datatype, thin_out=True):
+        datapoints = self.get_datapoints_by_source_id(
+            source_id, datatype, add_source_urls=False
         )
-
-        assert datapoints
-
         if thin_out:
             datapoints = datapoints_thinned_out(datapoints)
 
-        datapoints.sort(key=lambda i: (
-            i.date_updated,
-            i.region_schema,
-            i.region_parent,
-            i.region_child,
-            i.agerange
-        ))
+        dates = set()
+        [dates.add(i.date_updated.replace('_', '-')) for i in datapoints]
+
+        by_unique_key = {}
+        for datapoint in datapoints:
+            unique_key = (
+                datapoint.region_schema,
+                datapoint.region_parent,
+                datapoint.region_child,
+                datapoint.agerange
+            )
+            by_unique_key.setdefault(unique_key, {})[
+                datapoint.date_updated.replace('_', '-')
+            ] = datapoint.value
 
         csvfile = StringIO()
-        writer = csv.writer(csvfile, delimiter='\t')
-        writer.writerow([i for i in datapoints[0]._fields])
+        writer = csv.DictWriter(
+            csvfile,
+            ['region_schema', 'region_parent', 'region_child', 'agerange'] +
+                [i for i in sorted(dates)]
+        )
+        writer.writeheader()
 
-        for datapoint in datapoints:
-            row = []
-            for key, value in zip(datapoint._fields, datapoint):
-                if key == 'region_schema':
-                    row.append(value.value)
-                elif key == 'datatype':
-                    row.append(value.value)
-                else:
-                    row.append(value)
+        for (region_schema, region_parent, region_child, agerange), values in sorted(by_unique_key.items()):
+            row = {
+                'region_schema': region_schema,
+                'region_parent': region_parent,
+                'region_child': region_child,
+                'agerange': agerange
+            }
+            row.update(values)
             writer.writerow(row)
 
         csvfile.seek(0)

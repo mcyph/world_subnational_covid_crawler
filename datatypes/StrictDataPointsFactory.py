@@ -95,6 +95,7 @@ class _StrictDataPoints(list):
             elif mapping[0] == 'MERGE':
                 # Merge with an existing datapoint (if it exists)
                 region_schema, region_parent, region_child = mapping[1:]
+                region_schema = Schemas(region_schema)
                 region_parent = region_parent.lower()
                 region_child = region_child.lower()
 
@@ -125,6 +126,7 @@ class _StrictDataPoints(list):
 
             elif len(mapping) == 3:
                 region_schema, region_parent, region_child = mapping
+                region_schema = Schemas(region_schema)
                 region_parent = region_parent.lower()
                 region_child = region_child.lower()
 

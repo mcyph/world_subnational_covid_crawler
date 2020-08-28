@@ -1,23 +1,11 @@
 import ssl
-import urllib
+import requests
 import certifi
 from os import makedirs
 from os.path import exists, dirname
 from collections import namedtuple
 from urllib.request import urlretrieve
-
-#ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
-ssl._create_default_https_context = ssl._create_unverified_context
-
-proxy = urllib.request.ProxyHandler({})
-opener = urllib.request.build_opener(proxy)
-opener.addheaders = [('User-Agent',
-                      'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0')]
-urllib.request.install_opener(opener)
-
-
-from covid_19_au_grab.overseas.GlobalBase import \
-    GlobalBase
+from covid_19_au_grab.overseas.GlobalBase import GlobalBase
 
 
 URL = namedtuple('URL', [
@@ -45,3 +33,6 @@ class URLBase(GlobalBase):
 
             if not exists(path) or force:
                 urlretrieve(url.url, path)
+                r = requests.get(url.url)
+                with open(path, 'wb') as f:
+                    f.write(r.content)

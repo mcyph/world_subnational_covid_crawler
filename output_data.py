@@ -20,6 +20,8 @@ from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
 from covid_19_au_grab.db.output_revision_datapoints_to_zip import \
     output_revision_datapoints_to_zip
 from covid_19_au_grab.db.delete_old_dbs import delete_old_dbs
+from covid_19_au_grab.output_tsv_data import \
+    output_tsv_data, output_source_info, push_to_github, output_geojson
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
@@ -36,7 +38,7 @@ def run_infrequent_jobs():
     """
     isdj = InfrequentStateDataJobs()
     isdj.update_wa_regions()
-    isdj.update_vic_powerbi()
+    isdj.update_vic_tableau()
     isdj.update_sa_regions()
     isdj.update_act_powerbi()
     return isdj.get_status()
@@ -167,50 +169,20 @@ if __name__ == '__main__':
 
     # Update the csv output
     print("Outputting TSV files:")
-    sqlite_data_revision = SQLiteDataRevision(TIME_FORMAT, LATEST_REVISION_ID)
-    for source_id in sqlite_data_revision.get_source_ids():
-        print(f"* {source_id}")
-        with open(get_global_subnational_covid_data_dir() / f'covid_{source_id}.tsv',
-                  'w', encoding='utf-8') as f:
-            # NOTE: I'm using "thin_datapoints" to reduce the amount of data output on the git repo!
-            f.write(sqlite_data_revision.get_tsv_data(source_id,
-                                                      thin_out=True))
+    output_tsv_data(TIME_FORMAT, LATEST_REVISION_ID)
     print('TSV write done')
 
-    # Output the source info into a .tsv (tab-separated) file
-    with open(get_global_subnational_covid_data_dir() / 'source_info_table.tsv', 'w', encoding='utf-8') as f:
-        f.write('source_id\tsource_url\tsource_desc\n')
-        for source_id, source_url, source_desc in sorted(SOURCE_INFO):
-            f.write(f'{source_id}\t{source_url}\t{source_desc}\n')
+    # Output information about the sources to a markdown table/csv file
+    print("Outputting source info...")
+    output_source_info(SOURCE_INFO)
 
-    # Output the source info into a .md (markdown) file
-    with open(get_global_subnational_covid_data_dir() / 'source_info_table.md', 'w', encoding='utf-8') as f:
-        f.write('| source_id | source_url | source_desc |\n')
-        f.write('| --- | --- | --- |\n')
-        for source_id, source_url, source_desc in sorted(SOURCE_INFO):
-            f.write(f'| {source_id} | {source_url} | {source_desc} |\n')
+    # Output GeoJSON
+    print("Outputting geojson...")
+    output_geojson()
 
     # Commit to GitHub
-    if False:
-        print("Committing+pushing to GitHub...")
-        if False:
-            repo = Repo(str(get_global_subnational_covid_data_dir()))
-            repo.git.add(update=True)
-            repo.index.commit('update data')
-            origin = repo.remote(name='origin')
-            origin.push()
-        else:
-            repo_dir = str(get_global_subnational_covid_data_dir()).rstrip('/')
-            system('git --git-dir=%s/.git add %s' % (
-                repo_dir,
-                ' '.join([
-                    i.replace(' ', '\\ ') for i
-                    in listdir(repo_dir)
-                    if not i.startswith('.')
-                ])
-            ))
-            system('git --git-dir=%s/.git commit -m "update data"' % repo_dir)
-            system('git --git-dir=%s/.git push' % repo_dir)
-        print("Push to GitHub done!")
+    print("Pushing to GitHub...")
+    push_to_github()
+    print("Push to GitHub done!")
 
     print("[end of script]")
