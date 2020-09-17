@@ -6,15 +6,10 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     ALWAYS_DOWNLOAD_LISTING
 )
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
-from covid_19_au_grab.URLArchiver import (
-    URLArchiver
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.URLArchiver import URLArchiver
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class QLDNews(StateNewsBase):
@@ -45,7 +40,7 @@ class QLDNews(StateNewsBase):
                             'current-status/statistics'
 
     def get_data(self):
-        r = []
+        r = DataPointMerger()
         ua = URLArchiver(f'{self.STATE_NAME}/current_statistics')
         ua.get_url_data(
             self.STATS_BY_REGION_URL_2,

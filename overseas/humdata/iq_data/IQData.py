@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class IQData(URLBase):
@@ -29,10 +23,31 @@ class IQData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'iq', 'anbar'): ('admin_1', 'iq', 'IQ-AN'),
+                ('admin_1', 'iq', 'babylon'): ('admin_1', 'iq', 'IQ-BB'),
+                ('admin_1', 'iq', 'baghdad-karkh'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
+                ('admin_1', 'iq', 'baghdad-rusafa and medical city'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
+                ('admin_1', 'iq', 'baghdad-resafa and midical city'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
+                ('admin_1', 'iq', 'basrah'): ('admin_1', 'iq', 'IQ-BA'),
+                ('admin_1', 'iq', 'diwaniya'): ('admin_1', 'iq', 'IQ-QA'),
+                ('admin_1', 'iq', 'kerbala'): ('admin_1', 'iq', 'IQ-KA'),
+                ('admin_1', 'iq', 'iq-ki'): None, # FIXME!
+                ('admin_1', 'iq', 'kirkuk'): None, # FIXME!
+                ('admin_1', 'iq', 'missan'): ('admin_1', 'iq', 'IQ-MA'),
+                ('admin_1', 'iq', 'muthanna'): ('admin_1', 'iq', 'IQ-MU'),
+                ('admin_1', 'iq', 'ninewa'): ('admin_1', 'iq', 'IQ-NI'),
+                ('admin_1', 'iq', 'salah al-din'): ('admin_1', 'iq', 'IQ-SD'),
+                ('admin_1', 'iq', 'thi-qar'): ('admin_1', 'iq', 'IQ-DQ'),
+                ('admin_1', 'iq', 'wassit'): ('admin_1', 'iq', 'IQ-WA'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Governorate,Cases,Deaths,Recoveries,Active Cases,Date
         #
@@ -50,52 +65,54 @@ class IQData(URLBase):
             if first_item:
                 first_item = False
                 continue
+
+            print(item)
             date = self.convert_date(item['Date'])
             region_child = item['Governorate'].title()
 
             if item['Cases']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Iraq',
+                    region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(item['Cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Deaths']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Iraq',
+                    region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Recoveries']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Iraq',
+                    region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recoveries']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Active Cases']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Iraq',
+                    region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active Cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 

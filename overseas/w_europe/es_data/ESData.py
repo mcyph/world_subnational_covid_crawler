@@ -5,16 +5,10 @@
 
 import csv
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 #         "es_madrid_municipality": {
@@ -49,9 +43,6 @@ region_map = {
 }
 
 
-
-
-
 # This PDF has a lot of info that might not be in other places
 # https://www.ciencia.gob.es/stfls/MICINN/Ministerio/FICHEROS/ENECOVID_Informe_preliminar_cierre_primera_ronda_13Mayo2020.pdf
 # https://www.mscbs.gob.es/gabinetePrensa/notaPrensa/pdf/13.05130520204528614.pdf
@@ -66,6 +57,12 @@ class ESData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'es' / 'datasets',
                             github_url='https://github.com/datadista/datasets/')
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'es', 'es-cn'): None,
+            },
+            mode=MODE_DEV
+        )
         self.update()
 
     def get_datapoints(self):
@@ -77,7 +74,7 @@ class ESData(GithubRepo):
         return r
 
     def _get_by_datos_isciii(self):
-        r = []
+        r = self.sdpf()
 
         # Fecha,cod_ine,CCAA,Casos,PCR+,TestAc+,Hospitalizados,UCI,Fallecidos,Recuperados
         # 2020-02-20,01,Andalucía,0,0,,,,,
@@ -97,7 +94,7 @@ class ESData(GithubRepo):
                 ac_code = region_map[item['CCAA']]
 
                 if item['Casos']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
@@ -105,10 +102,10 @@ class ESData(GithubRepo):
                         value=int(item['Casos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['PCR+'] or item['TestAc+']:   # NOTE ME: I'm combining PCR and other tests!!
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
@@ -117,10 +114,10 @@ class ESData(GithubRepo):
                               int(item['TestAc+'] or 0),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['Hospitalizados']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
@@ -128,10 +125,10 @@ class ESData(GithubRepo):
                         value=int(item['Hospitalizados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['Fallecidos']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
@@ -139,10 +136,10 @@ class ESData(GithubRepo):
                         value=int(item['Fallecidos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item.get('Recuperados'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='ES',
                         region_child=ac_code,
@@ -150,12 +147,12 @@ class ESData(GithubRepo):
                         value=int(item['Recuperados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 
     def _get_by_distritos_madrid(self):
-        r = []
+        r = self.sdpf()
 
         # fecha,cod_ine,municipio_distrito,casos_confirmados_ultimos_14dias,tasa_incidencia_acumulada_ultimos_14dias,casos_confirmados_totales,tasa_incidencia_acumulada_total
         # 2020-05-13,07903,Madrid-Retiro,77,"64,53",1447,"1212,74"
@@ -172,7 +169,7 @@ class ESData(GithubRepo):
                 date = self.convert_date(item['fecha'])
 
                 if item['casos_confirmados_totales']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ES_MADRID_MUNICIPALITY,
                         region_parent='ES-M',
                         region_child=item['municipio_distrito'],
@@ -180,12 +177,12 @@ class ESData(GithubRepo):
                         value=int(item['casos_confirmados_totales']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
     
     def _get_by_age_national(self):
-        r = []
+        r = self.sdpf()
 
         # fecha,rango_edad,sexo,casos_confirmados,hospitalizados,ingresos_uci,fallecidos
         # 2020-03-23,0-9,ambos,129,34,1,0
@@ -210,14 +207,14 @@ class ESData(GithubRepo):
                         'hombres': DataTypes.TOTAL_MALE
                     }[item['sexo']]
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=datatype,
                         value=int(item['casos_confirmados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
                     continue
 
                 if item['casos_confirmados']:
@@ -227,7 +224,7 @@ class ESData(GithubRepo):
                         'hombres': DataTypes.TOTAL_MALE
                     }[item['sexo']]
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=datatype,
@@ -235,11 +232,11 @@ class ESData(GithubRepo):
                         value=int(item['casos_confirmados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
                 
                 if item['sexo'] == 'ambos':
                     if item['hospitalizados']:   # NOTE ME: I'm combining PCR and other tests!!
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
                             datatype=DataTypes.STATUS_HOSPITALIZED,
@@ -247,10 +244,10 @@ class ESData(GithubRepo):
                             value=int(item['hospitalizados']),
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
     
                     if item['ingresos_uci']:   # WARNING: This is **accumulated** cases!!! ========================================================
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
                             datatype=DataTypes.STATUS_ICU,
@@ -258,10 +255,10 @@ class ESData(GithubRepo):
                             value=int(item['ingresos_uci']),
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
     
                     if item['fallecidos']:
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.ADMIN_0,
                             region_child='Spain',
                             datatype=DataTypes.STATUS_DEATHS,
@@ -269,11 +266,11 @@ class ESData(GithubRepo):
                             value=int(item['fallecidos']),
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
         return r
     
     def _get_national_data(self):
-        r = []
+        r = self.sdpf()
 
         # fecha,casos_total,casos_pcr,casos_test_ac,altas,fallecimientos,ingresos_uci,hospitalizados
         # 2020-02-21,3,3,,,,,
@@ -290,17 +287,17 @@ class ESData(GithubRepo):
                 date = self.convert_date(item['fecha'])
 
                 if item['casos_total']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.TOTAL,
                         value=int(item['casos_total']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['casos_pcr'] or item['casos_test_ac']:   # NOTE ME: I'm combining PCR and other tests!!
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.TESTS_TOTAL,
@@ -308,51 +305,54 @@ class ESData(GithubRepo):
                               int(item['casos_test_ac'] or 0),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['hospitalizados']:   # WARNING: This is **accumulated** cases!!! ========================================================
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(item['hospitalizados']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['ingresos_uci']:   # WARNING: This is **accumulated** cases!!! ========================================================
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.STATUS_ICU,
                         value=int(item['ingresos_uci']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['fallecimientos']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['fallecimientos']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if item['altas']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Spain',
                         datatype=DataTypes.STATUS_RECOVERED,
                         value=int(item['altas']),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(ESData().get_datapoints())
+    inst = ESData()
+    datapoints = inst.get_datapoints()
+    inst.sdpf.print_mappings()
+    #pprint(datapoints)

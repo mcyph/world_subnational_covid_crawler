@@ -2,15 +2,10 @@ from os.path import exists
 from datetime import datetime
 
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.africa.west_africa_data.WestAfricaPowerBI import (
-    WestAfricaPowerBI, get_globals
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
-    PowerBIDataReader
-)
+from covid_19_au_grab.overseas.africa.west_africa_data.WestAfricaPowerBI import WestAfricaPowerBI, get_globals
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.state_news_releases.PowerBIDataReader import PowerBIDataReader
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 
 class _WestAfricaPowerBI(PowerBIDataReader):
@@ -18,6 +13,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         self.base_path = base_path
         self.source_url = source_url
         PowerBIDataReader.__init__(self, base_path, get_globals())
+        self.ltrc = LabelsToRegionChild()
 
     def get_powerbi_data(self):
         r = []
@@ -104,13 +100,21 @@ class _WestAfricaPowerBI(PowerBIDataReader):
             
             admin_0, admin_1 = value[:2]
 
+            admin_0 = {
+                'democratic republic of congo': 'cd',
+                'republic of congo': 'cg',
+                'guinea bissau': 'gw',
+            }.get(admin_0.lower(), admin_0)
+
+            print(admin_0)
+
             for _, (datatype, index) in mappings.items():
                 cases = value[index]
 
                 if cases is not None:
                     r.append(DataPoint(
-                        region_schema=Schemas.ADMIN_1,
-                        region_parent=admin_0,
+                        region_schema=Schemas.OCHA_ADMIN_1,
+                        region_parent=self.ltrc.get_by_label(Schemas.ADMIN_0, '', admin_0, admin_0),
                         region_child=admin_1,
                         datatype=datatype,
                         value=int(cases),

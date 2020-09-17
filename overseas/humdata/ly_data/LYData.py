@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class LYData(URLBase):
@@ -32,10 +26,57 @@ class LYData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'ly', 'اجدابيا'): None,
+                ('admin_1', 'ly', 'البريقة'): None,
+                ('admin_1', 'ly', 'البيضاء'): None,
+                ('admin_1', 'ly', 'الجفارة'): None,
+                ('admin_1', 'ly', 'الجميل'): None,
+                ('admin_1', 'ly', 'الخمس'): None,
+                ('admin_1', 'ly', 'الرجبان'): None,
+                ('admin_1', 'ly', 'الرحيبات'): None,
+                ('admin_1', 'ly', 'الرياينة'): None,
+                ('admin_1', 'ly', 'الزاوية'): None,
+                ('admin_1', 'ly', 'الزنتان'): None,
+                ('admin_1', 'ly', 'العجيلات'): None,
+                ('admin_1', 'ly', 'العزيزية'): None,
+                ('admin_1', 'ly', 'القلعة'): None,
+                ('admin_1', 'ly', 'الكفرة'): None,
+                ('admin_1', 'ly', 'المحروقة'): None,
+                ('admin_1', 'ly', 'المرج'): None,
+                ('admin_1', 'ly', 'بني وليد'): None,
+                ('admin_1', 'ly', 'جادو'): None,
+                ('admin_1', 'ly', 'جنزور'): None,
+                ('admin_1', 'ly', 'درنة'): None,
+                ('admin_1', 'ly', 'رقدالين'): None,
+                ('admin_1', 'ly', 'زلطن'): None,
+                ('admin_1', 'ly', 'زليتن'): None,
+                ('admin_1', 'ly', 'زوارة'): None,
+                ('admin_1', 'ly', 'سبها'): None,
+                ('admin_1', 'ly', 'سرت'): None,
+                ('admin_1', 'ly', 'صبراتة'): None,
+                ('admin_1', 'ly', 'صرمان'): None,
+                ('admin_1', 'ly', 'طبرق'): None,
+                ('admin_1', 'ly', 'طرابلس'): None,
+                ('admin_1', 'ly', 'غدامس'): None,
+                ('admin_1', 'ly', 'غريان'): None,
+                ('admin_1', 'ly', 'قصر الاخيار'): None,
+                ('admin_1', 'ly', 'قصر بن غشير'): None,
+                ('admin_1', 'ly', 'مزدة'): None,
+                ('admin_1', 'ly', 'مسلاتة'): None,
+                ('admin_1', 'ly', 'مصراتة'): None,
+                ('admin_1', 'ly', 'نالوت'): None,
+                ('admin_1', 'ly', 'هراوة'): None,
+                ('admin_1', 'ly', 'وادي الشاطيء'): None,
+                ('admin_1', 'ly', 'يفرن'): None
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Governorate,Confirmed Cases,Recoveries,Deaths,Active,Date
         #
@@ -61,63 +102,65 @@ class LYData(URLBase):
             region_child = item['Location'].title() # Location was Governorate
 
             if item['Confirmed']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Libya',
+                    region_parent='LY',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(item['Confirmed'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Deaths']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Libya',
+                    region_parent='LY',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Deaths'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Recoveries']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Libya',
+                    region_parent='LY',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recoveries'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Active']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Libya',
+                    region_parent='LY',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Test Samples']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Libya',
+                    region_parent='LY',
                     region_child=region_child,
                     datatype=DataTypes.TESTS_TOTAL,
                     value=int(item['Test Samples'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(LYData().get_datapoints())
+    inst = LYData()
+    inst.sdpf.print_mappings()
+    #pprint(inst.get_datapoints())

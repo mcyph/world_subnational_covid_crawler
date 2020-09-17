@@ -8,18 +8,11 @@ from covid_19_au_grab.state_news_releases.StateNewsBase import (
     StateNewsBase, bothlistingandstat, singledaystat
 )
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
-from covid_19_au_grab.get_package_dir import (
-    get_package_dir, get_data_dir
-)
-from covid_19_au_grab.URLArchiver import (
-    URLArchiver
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.get_package_dir import get_package_dir, get_data_dir
+from covid_19_au_grab.URLArchiver import URLArchiver
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
@@ -92,7 +85,7 @@ class SANews(StateNewsBase):
             return self._extract_date_using_format(date.partition(' ')[-1])
 
     def get_data(self):
-        r = []
+        r = DataPointMerger()
 
         SA_DASH_JSON_URL = 'https://www.covid-19.sa.gov.au/__data/assets/' \
                       'file/0004/145849/covid_19_daily.json'
@@ -109,7 +102,7 @@ class SANews(StateNewsBase):
                     data = json.loads(f.read())
                 r.extend(self._get_from_json(SA_DASH_URL, data))
         
-        for sub_dir in listdir(SA_MAP_DIR):
+        for sub_dir in sorted(listdir(SA_MAP_DIR)):
             # OPEN ISSUE: only add the most recent?? ==========================================================================
             joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
             for fnam in listdir(joined_dir):

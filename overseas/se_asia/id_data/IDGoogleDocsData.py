@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 # These provide histories:
 # https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit#gid=2052139453
@@ -56,6 +50,17 @@ class IDGoogleDocsData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'id', 'babel'): ('admin_1', 'id', 'ID-BB'),
+                ('admin_1', 'id', 'diy'): ('admin_1', 'id', 'ID-YO'),
+                ('admin_1', 'id', 'kaltara'): None, #('admin_1', 'id', 'ID-KU'),
+                ('admin_1', 'id', 'kep riau'): ('admin_1', 'id', 'ID-KR'),
+                ('admin_1', 'id', 'papbar'): ('admin_1', 'id', 'ID-PB'),
+                ('admin_1', 'id', 'sulbar'): ('admin_1', 'id', 'ID-SR'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -65,7 +70,7 @@ class IDGoogleDocsData(URLBase):
         return r
 
     def _get_provinces_1(self):
-        r = []
+        r = self.sdpf()
 
         f = self.get_file('provinces_1.csv',
                           include_revision=True)
@@ -83,15 +88,15 @@ class IDGoogleDocsData(URLBase):
                 elif province == '?':
                     province = 'Unknown'
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Indonesia',
+                    region_parent='ID',
                     region_child=province,
                     datatype=DataTypes.TOTAL,
                     value=int(value),
                     date_updated=date,
                     source_url='https://docs.google.com/spreadsheets/d/1ma1T9hWbec1pXlwZ89WakRk-OfVUQZsOCFl4FwZxzVw/edit'
-                ))
+                )
         return r
 
     def _get_provinces_2(self):

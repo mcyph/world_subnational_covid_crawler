@@ -6,16 +6,10 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class IEData(URLBase):
@@ -35,6 +29,7 @@ class IEData(URLBase):
                                           static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -47,7 +42,7 @@ class IEData(URLBase):
         # 	Carlow	56932	278661	163444	52.7168	-6.8367	http://data.geohive.ie/resource/county/2ae19629-143d-13a3-e055-000000000001	175	307.384247874657			-6.8367	52.7168	194903	2020/07/01 00:00:00+00
         # 	Cavan	76176	246380	304501	53.9878	-7.2937	http://data.geohive.ie/resource/county/2ae19629-1448-13a3-e055-000000000001	862	1131.5900021004			-7.2937	53.9878	194904	2020/07/01 00:00:00+00
         # 	Clare	118817	133493	182732	52.8917	-8.9889	http://data.geohive.ie/resource/county/2ae19629-1450-13a3-e055-000000000001	368	309.719989563783			-8.9889	52.8917	194905	2020/07/01 00:00:00+00
-        r = []
+        r = self.sdpf()
 
         base_dir = self.get_path_in_dir('')
 
@@ -68,7 +63,7 @@ class IEData(URLBase):
                                            int(item['ConfirmedCovidDeaths'] or 0) -
                                            int(item['ConfirmedCovidRecovered'] or 0))
                     ):
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.ADMIN_1,
                             region_parent='IE',
                             region_child=item['CountyName'],
@@ -76,7 +71,7 @@ class IEData(URLBase):
                             value=value,
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
 
         return r
 

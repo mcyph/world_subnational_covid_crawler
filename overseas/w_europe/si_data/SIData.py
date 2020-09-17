@@ -7,16 +7,10 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 region_map = dict([i.split('\t')[::-1] for i in """
 SI-001	Ajdovščina
@@ -251,6 +245,26 @@ class SIData(URLBase):
                                             static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'si', 'si-010'): None,
+                ('admin_1', 'si', 'si-142'): None,
+                ('admin_1', 'si', 'si-207'): None,
+                ('admin_1', 'si', 'si-199'): None,
+                ('admin_1', 'si', 'si-206'): None,
+                ('admin_1', 'si', 'si-212'): None,
+                ('admin_1', 'si', 'si-211'): None,
+                ('admin_1', 'si', 'si-208'): None,
+                ('admin_1', 'si', 'si-201'): None,
+                ('admin_1', 'si', 'si-196'): None,
+                ('admin_1', 'si', 'si-197'): None,
+                ('admin_1', 'si', 'si-209'): None,
+                ('admin_1', 'si', 'si-204'): None,
+                ('admin_1', 'si', 'si-213'): None,
+                ('admin_1', 'si', 'si-200'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -259,12 +273,13 @@ class SIData(URLBase):
         return r
 
     def _get_municipalities_data(self):
-        r = []
+        r = self.sdpf()
         # [{"year":2020,"month":3,"day":4,"regions":{"mb":{"benedikt":{"activeCases":null,"confirmedToDate":null,"deceasedToDate":0},
 
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            print(date)
             path = f'{base_dir}/{date}/municipalities.json'
 
             with open(path, 'r', encoding='utf-8') as f:
@@ -280,7 +295,7 @@ class SIData(URLBase):
                         )
 
                         if sub_region_dict['activeCases'] is not None:
-                            r.append(DataPoint(
+                            r.append(
                                 region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
@@ -288,10 +303,10 @@ class SIData(URLBase):
                                 value=sub_region_dict['activeCases'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
-                            ))
+                            )
 
                         if sub_region_dict['confirmedToDate'] is not None:
-                            r.append(DataPoint(
+                            r.append(
                                 region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
@@ -299,10 +314,10 @@ class SIData(URLBase):
                                 value=sub_region_dict['confirmedToDate'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
-                            ))
+                            )
 
                         if sub_region_dict['deceasedToDate'] is not None:
-                            r.append(DataPoint(
+                            r.append(
                                 region_schema=Schemas.ADMIN_1,
                                 region_parent='SI',
                                 region_child=region_child,
@@ -310,7 +325,7 @@ class SIData(URLBase):
                                 value=sub_region_dict['deceasedToDate'],
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
-                            ))
+                            )
         return r
 
 

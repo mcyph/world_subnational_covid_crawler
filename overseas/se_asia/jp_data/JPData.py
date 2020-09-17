@@ -2,16 +2,10 @@
 import csv
 import json
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 _prefectures = {
@@ -81,6 +75,7 @@ class JPData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'jp' / 'covid19' / 'data',
                             github_url='https://github.com/kaz-ogiwara/covid19')
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -101,7 +96,7 @@ class JPData(GithubRepo):
         return r
 
     def _get_prefectures_data(self):
-        r = []
+        r = self.sdpf()
         with open(self.get_path_in_dir('prefectures.csv'),
                   'r', encoding='utf-8') as f:
 
@@ -110,7 +105,7 @@ class JPData(GithubRepo):
                 date = f'{item["year"]}_{pad(item["month"])}_{pad(item["date"])}'
                 prefecture = get_prefecture(item['prefectureNameJ'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Japan',
                     region_child=prefecture,
@@ -118,10 +113,10 @@ class JPData(GithubRepo):
                     value=int(item["testedPositive"]),
                     date_updated=date,
                     source_url=self.github_url
-                ))
+                )
 
                 if item['peopleTested']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='Japan',
                         region_child=prefecture,
@@ -129,9 +124,9 @@ class JPData(GithubRepo):
                         value=int(item['peopleTested']),
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
 
-                #r.append(DataPoint(
+                #r.append(
                 #    region_schema=Schemas.ADMIN_1,
                 #    region_parent='Japan',
                 #    region_child=prefecture,
@@ -139,10 +134,10 @@ class JPData(GithubRepo):
                 #    value=int(item["患者数（2020年3月28日からは感染者数）"]),
                 #    date_updated=date,
                 #    source_url=self.github_url
-                #))
+                #)
 
-                if item["discharged"]:
-                    r.append(DataPoint(
+                if item["discharged"].strip('-'):
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='Japan',
                         region_child=prefecture,
@@ -150,10 +145,10 @@ class JPData(GithubRepo):
                         value=int(item["discharged"]),
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
 
-                if item['deaths']:
-                    r.append(DataPoint(
+                if item['deaths'].strip('-'):
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='Japan',
                         region_child=prefecture,
@@ -161,12 +156,12 @@ class JPData(GithubRepo):
                         value=int(item["deaths"]),
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
 
         return r
 
     def _get_prefectures_2_data(self):
-        r = []
+        r = self.sdpf()
         with open(self.get_path_in_dir('prefectures-2.csv'),
                   'r', encoding='utf-8') as f:
 
@@ -177,7 +172,7 @@ class JPData(GithubRepo):
 
                 # Not sure why PCR検査陽性者数 slightly differs
                 # from the total 患者数 in "prefectures.csv"
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Japan',
                     region_child=prefecture,
@@ -185,10 +180,10 @@ class JPData(GithubRepo):
                     value=int(item["PCR検査陽性者数"]),
                     date_updated=date,
                     source_url=self.github_url
-                ))
+                )
 
-                if item["PCR検査人数"]:
-                    r.append(DataPoint(
+                if item["PCR検査人数"].strip('-'):
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='Japan',
                         region_child=prefecture,
@@ -196,7 +191,7 @@ class JPData(GithubRepo):
                         value=int(item["PCR検査人数"]),
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
         return r
 
     def _get_summary_data(self):
@@ -209,12 +204,12 @@ class JPData(GithubRepo):
                 pass  # TODO!
                 #r.append(DataPoint(
 
-                #))
+                #)
 
         return r
 
     def _get_demography_data(self):
-        r = []
+        r = self.sdpf()
         age_map = {
             '10歳未満': '0-9',
             '10代': '10-19',
@@ -242,7 +237,7 @@ class JPData(GithubRepo):
             for item in csv.DictReader(f):
                 print(item)
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Japan',
                     agerange=age_map[item['age_group']],
@@ -250,10 +245,10 @@ class JPData(GithubRepo):
                     value=int(item["tested_positive"]),
                     date_updated=date,
                     source_url=self.github_url
-                ))
+                )
 
                 if item.get("death"):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Japan',
                         agerange=age_map[item['age_group']],
@@ -261,10 +256,10 @@ class JPData(GithubRepo):
                         value=int(item["death"]),
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
 
                 if item.get("重症"):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Japan',
                         agerange=age_map[item['age_group']],
@@ -272,7 +267,7 @@ class JPData(GithubRepo):
                         value=int(item["重症"]),  # WARNING: NOT REALLY ICU - but likely mostly is!! =====================
                         date_updated=date,
                         source_url=self.github_url
-                    ))
+                    )
 
         return r
 

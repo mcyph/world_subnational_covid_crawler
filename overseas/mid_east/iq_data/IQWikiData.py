@@ -4,16 +4,10 @@ from os import listdir
 from pyquery import PyQuery as pq
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URLBase, URL
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URLBase, URL
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 from covid_19_au_grab.set_locale import set_locale
 
 
@@ -29,6 +23,7 @@ class IQWikiData(URLBase):
                 'covid19_in_iraq.html': URL(self.SOURCE_URL, static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -37,7 +32,7 @@ class IQWikiData(URLBase):
         return r
 
     def _get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         for dir_ in listdir(self.output_dir):
             with open(self.output_dir / dir_ / 'covid19_in_iraq.html', 'r', encoding='utf-8') as f:
@@ -79,7 +74,7 @@ class IQWikiData(URLBase):
                     }
 
                     value = int(pq(value).text().replace(',', ''))
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='IQ',
                         region_child=region_map.get(region, region),
@@ -87,7 +82,7 @@ class IQWikiData(URLBase):
                         value=value,
                         date_updated=dir_, # FIXME!!!
                         source_url=self.SOURCE_URL
-                    ))
+                    )
                     vals[datatype] = value
 
         return r

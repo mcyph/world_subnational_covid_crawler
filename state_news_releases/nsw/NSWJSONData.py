@@ -6,13 +6,10 @@ from urllib.request import urlretrieve
 from os import makedirs, listdir
 from os.path import exists, dirname
 
-from covid_19_au_grab.get_package_dir import (
-    get_data_dir
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.get_package_dir import get_data_dir
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class NSWJSONData:
@@ -24,7 +21,7 @@ class NSWJSONData:
             datetime.now() - timedelta(hours=20, minutes=30)
         ).strftime('%Y_%m_%d')
 
-        r = []
+        r = DataPointMerger()
         added = set()
         dates = sorted(listdir(get_data_dir() / 'nsw' / 'open_data'))
         if not date in dates:
@@ -64,7 +61,7 @@ class NSWJSONData:
 
     def __postcode_datapoints_to_lga(self, SOURCE_URL, r):
         # Convert postcode to LGA where possible
-        new_r = []
+        new_r = DataPointMerger()
         added_to_lga = set()
         processed_postcode = set()
         mapping = Counter()
@@ -124,7 +121,7 @@ class NSWJSONData:
     #=============================================================================#
 
     def get_nsw_age_data(self, dir_, date, download=True):
-        r = []
+        r = DataPointMerger()
 
         path_fatalitiesdata = dir_ / 'fatalitiesdata.json'
         path_agedata = dir_ / 'agedata.json'
@@ -427,7 +424,7 @@ class NSWJSONData:
         return r
 
     def __get_active_deaths_datapoints(self, SOURCE_URL, path_active_deaths, active_data):
-        r = []
+        r = DataPointMerger()
 
         with open(path_active_deaths, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
@@ -505,7 +502,7 @@ class NSWJSONData:
         return r
 
     def __get_tests_datapoints(self, SOURCE_URL, path_tests):
-        r = []
+        r = DataPointMerger()
 
         with open(path_tests, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
@@ -529,7 +526,7 @@ class NSWJSONData:
     def __get_totals_datapoints(self, SOURCE_URL, path_totals):
         # Pretty sure this is dupe data (for now)
         # Don't uncomment this without making sure this won't double the result(!)
-        r = []
+        r = DataPointMerger()
 
         with open(path_totals, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:

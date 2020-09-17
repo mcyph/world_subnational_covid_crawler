@@ -9,16 +9,12 @@ import csv
 import json
 from os import listdir
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+
 
 place_map = dict([i.split('\t')[::-1] for i in '''
 GH-AF	Ahafo
@@ -57,10 +53,15 @@ class GHDataDash(URLBase):
                 'confirmed.json': URL(confirmed_url, static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -72,7 +73,7 @@ class GHDataDash(URLBase):
                 attributes = feature['attributes']
                 #print(attributes)
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='GH',
                     region_child=place_map[attributes['REGION'].replace(' Region', '')],
@@ -80,7 +81,7 @@ class GHDataDash(URLBase):
                     value=int(attributes['Number_of_Cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

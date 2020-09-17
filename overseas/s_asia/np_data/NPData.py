@@ -3,19 +3,11 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
-    LabelsToRegionChild
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 ltrc = LabelsToRegionChild()
 
@@ -51,6 +43,7 @@ class NPData(URLBase):
                                   static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
         self._district_map = {}  # {id: (en, np), ...}
@@ -103,7 +96,7 @@ class NPData(URLBase):
         #
         # https://bipad.gov.np/api/v1/covid19-case/
 
-        r = []
+        r = self.sdpf()
         data = json.loads(self.get_text('cases.json',
                                         include_revision=True))
 
@@ -131,11 +124,11 @@ class NPData(URLBase):
             raise Exception(age)
 
         for result in data['results']:
-            print(result)
+            #print(result)
             date = self.convert_date(result['reportedOn'])
             province = f'NP-P{result["province"]}'
             if isinstance(result['district'], dict):
-                district = result['district']['titleEn']
+                district = _get_district(province, result['district']['titleEn'])
             else:
                 district = _get_district(province, self._district_map[result['district']][0])
 
@@ -161,7 +154,7 @@ class NPData(URLBase):
         cumulative = 0
         for date, value in sorted(by_total.items()):
             cumulative += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
@@ -169,12 +162,12 @@ class NPData(URLBase):
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
@@ -182,12 +175,12 @@ class NPData(URLBase):
                 value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, infection_source), value in sorted(by_infection_source.items()):
             cumulative[infection_source] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
@@ -195,12 +188,12 @@ class NPData(URLBase):
                 value=cumulative[infection_source],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, agerange), value in sorted(by_age.items()):
             cumulative[agerange] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='NP',
@@ -209,12 +202,12 @@ class NPData(URLBase):
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, province), value in sorted(by_province.items()):
             cumulative[province] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='NP',
                 region_child=province,
@@ -222,12 +215,12 @@ class NPData(URLBase):
                 value=cumulative[province],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, province, district), value in sorted(by_district.items()):
             cumulative[province, district] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.NP_DISTRICT,
                 region_parent=province,
                 region_child=district,
@@ -235,7 +228,7 @@ class NPData(URLBase):
                 value=cumulative[province, district],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 
@@ -275,7 +268,7 @@ class NPData(URLBase):
         #    "district":2},
         # https://bipad.gov.np/api/v1/covid19-quarantineinfo/?distinct=district
 
-        r = []
+        r = self.sdpf()
         data = json.loads(self.get_text('quarantine_district_data.json',
                                         include_revision=True))
 
@@ -287,7 +280,7 @@ class NPData(URLBase):
             self._district_map[result['district']] = (result['districtName'], result['districtNameNe'])
             self._province_map[result['province']] = (result['provinceName'], result['provinceNameNe'])
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.NP_DISTRICT,
                 region_parent=province,
                 region_child=_get_district(province, result['districtName']),
@@ -295,7 +288,7 @@ class NPData(URLBase):
                 value=result['testedCount'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 

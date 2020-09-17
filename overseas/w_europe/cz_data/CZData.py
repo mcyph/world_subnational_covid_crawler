@@ -31,16 +31,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class CZData(URLBase):
@@ -62,6 +56,12 @@ class CZData(URLBase):
                 'regional_deaths.json': URL(DEATHS, static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -75,7 +75,7 @@ class CZData(URLBase):
         # 2020-03-01	CZ020	CZ0201	0	0	0
         # 2020-03-01	CZ020	CZ0202	0	0	0
 
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -96,7 +96,7 @@ class CZData(URLBase):
                         (DataTypes.STATUS_DEATHS, death),
                         (DataTypes.STATUS_ACTIVE, active)
                     ):
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.CZ_OKRES,
                             region_parent='CZ',  # FIXME!
                             region_child=region_child,
@@ -104,7 +104,7 @@ class CZData(URLBase):
                             value=value,
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
 
         return r
 

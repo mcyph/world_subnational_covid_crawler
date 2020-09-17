@@ -3,16 +3,11 @@
 import json
 from os import listdir
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class MAData(URLBase):
@@ -28,6 +23,7 @@ class MAData(URLBase):
                                   static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -36,7 +32,7 @@ class MAData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -55,7 +51,7 @@ class MAData(URLBase):
                 else:
                     continue  # TODO: Add support for these admin2-level values! =======================================
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='MA',
                     region_child=region,
@@ -63,7 +59,7 @@ class MAData(URLBase):
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

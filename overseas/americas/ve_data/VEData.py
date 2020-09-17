@@ -6,16 +6,11 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 
 
 class VEData(URLBase):
@@ -33,6 +28,13 @@ class VEData(URLBase):
                                      static_file=False)
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 've', 'la guaira'): ('MERGE', 'admin_1', 've', 've-x'),
+                ('admin_1', 've', 'los roques'): ('MERGE', 'admin_1', 've', 've-w'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -41,7 +43,7 @@ class VEData(URLBase):
         return r
 
     def _get_cases(self):
-        r = []
+        r = self.sdpf()
 
         # {"Confirmed":
         # {"Count":6273,
@@ -64,7 +66,7 @@ class VEData(URLBase):
             with open(path, 'rb') as f:
                 case_dict = json.loads(f.read())
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -72,8 +74,8 @@ class VEData(URLBase):
                 value=int(case_dict['Confirmed']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -81,8 +83,8 @@ class VEData(URLBase):
                 value=int(case_dict['Deaths']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -90,8 +92,8 @@ class VEData(URLBase):
                 value=int(case_dict['Active']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -99,8 +101,8 @@ class VEData(URLBase):
                 value=int(case_dict['Recovered']['Count']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -108,8 +110,8 @@ class VEData(URLBase):
                 value=int(case_dict['Confirmed']['ByGender']['male']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='VE',
@@ -117,10 +119,10 @@ class VEData(URLBase):
                 value=int(case_dict['Confirmed']['ByGender']['female']),
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
             for state_name, value in case_dict['Confirmed']['ByState'].items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='VE',
                     region_child=state_name,
@@ -128,10 +130,10 @@ class VEData(URLBase):
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             for agerange, value in case_dict['Confirmed']['ByAgeRange'].items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='VE',
@@ -140,7 +142,7 @@ class VEData(URLBase):
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

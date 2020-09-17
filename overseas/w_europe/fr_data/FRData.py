@@ -1,18 +1,10 @@
 import csv
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.overseas.w_europe.fr_data.fr_region_maps import (
-    fr_departments, place_map
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.overseas.w_europe.fr_data.fr_region_maps import fr_departments, place_map
 
 
 # date,granularite,maille_code,maille_nom,cas_confirmes,cas_ehpad,
@@ -52,10 +44,11 @@ class FRData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'fr' / 'data',
                             github_url='https://github.com/opencovid19-fr/data')
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         with open(self.get_path_in_dir('dist/chiffres-cles.csv'),
                   'r', encoding='utf-8') as f:
@@ -100,7 +93,7 @@ class FRData(GithubRepo):
                     raise Exception(item['granularite'])
 
                 if confirmed.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -108,10 +101,10 @@ class FRData(GithubRepo):
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
                 if deaths.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -119,10 +112,10 @@ class FRData(GithubRepo):
                         value=int(deaths),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
                 if icu.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -130,10 +123,10 @@ class FRData(GithubRepo):
                         value=int(icu),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
                 if hospitalized.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -141,10 +134,10 @@ class FRData(GithubRepo):
                         value=int(hospitalized),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
                 if recovered.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -152,10 +145,10 @@ class FRData(GithubRepo):
                         value=int(recovered),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
                     if confirmed.strip('NaN'):
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
@@ -163,10 +156,10 @@ class FRData(GithubRepo):
                             value=int(recovered)-int(confirmed),
                             date_updated=date,
                             source_url=source_url
-                        ))
+                        )
 
                 if confirmed.strip('NaN'):
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -174,7 +167,7 @@ class FRData(GithubRepo):
                         value=int(confirmed),
                         date_updated=date,
                         source_url=source_url
-                    ))
+                    )
 
         return r
 

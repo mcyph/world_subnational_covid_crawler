@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 canton_to_name = dict([i.split('\t') for i in """
@@ -52,10 +46,18 @@ class CHData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'ch' / 'covid_19',
                             github_url='https://github.com/openZH/covid_19')
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'ch', 'geneva'): None,
+                ('admin_1', 'ch', 'graubünden; grisons'): None,
+                ('admin_1', 'ch', 'principality of liechtenstein'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Switzerland
 
@@ -77,70 +79,70 @@ class CHData(GithubRepo):
                 source = item['source'] or self.SOURCE_URL
 
                 if item['ncumul_conf']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.TOTAL,
                         value=int(item['ncumul_conf']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
                 if item['ncumul_tested']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.TESTS_TOTAL,
                         value=int(item['ncumul_tested']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
                 if item['current_hosp']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.STATUS_HOSPITALIZED,
                         value=int(item['current_hosp']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
                 if item['current_icu']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.STATUS_ICU,
                         value=int(item['current_icu']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
                 if item['current_vent']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.STATUS_ICU_VENTILATORS,
                         value=int(item['current_vent']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
                 if item['ncumul_deceased']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
-                        region_parent='Switzerland',
+                        region_parent='CH',
                         region_child=canton,
                         datatype=DataTypes.STATUS_DEATHS,
                         value=int(item['ncumul_deceased']),
                         source_url=source,
                         date_updated=date
-                    ))
+                    )
 
         return r
 

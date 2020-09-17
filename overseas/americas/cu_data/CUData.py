@@ -2,16 +2,12 @@
 import csv
 from collections import Counter
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 
 region_map = dict([i.split('\t')[::-1] for i in '''
@@ -43,6 +39,14 @@ class CUData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'cu' / 'covid19cubadata.github.io',
                             github_url='https://github.com/covid19cubadata/covid19cubadata.github.io/tree/master/data')
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'cu', 'trinidad'): ('MERGE', 'admin_1', 'cu', 'cu-07'),
+                ('cu_municipality', 'cu', 'trinidad'): ('MERGE', 'cu_municipality', 'cu-07', 'trinidad'),
+            },
+            mode=MODE_STRICT
+        )
+        self.ltrc = LabelsToRegionChild()
         self.update()
 
     def get_datapoints(self):
@@ -56,7 +60,7 @@ class CUData(GithubRepo):
         # ,hombre,61,it,Trinidad,Sancti Spíritus,2020/03/11,2020/03/10,primario
         # ,mujer,57,it,Trinidad,Sancti Spíritus,2020/03/11,2020/03/10,primario
 
-        r = []
+        r = self.sdpf()
 
         genders = {
             'hombre': DataTypes.TOTAL_MALE,
@@ -86,7 +90,7 @@ class CUData(GithubRepo):
             by_source_of_infection = Counter()
 
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
                 date = self.convert_date(item['fecha_confirmacion'])
 
                 by_totals[date] += 1
@@ -105,7 +109,7 @@ class CUData(GithubRepo):
             for date, value in sorted(by_totals.items()):
                 cumulative += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
@@ -113,13 +117,13 @@ class CUData(GithubRepo):
                     date_updated=date,
                     value=cumulative,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             cumulative = Counter()
             for (date, gender), value in sorted(by_gender.items()):
                 cumulative[gender] += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
@@ -127,13 +131,13 @@ class CUData(GithubRepo):
                     date_updated=date,
                     value=cumulative[gender],
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             cumulative = Counter()
             for (date, age), value in sorted(by_age.items()):
                 cumulative[age] += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='CU',
@@ -142,13 +146,13 @@ class CUData(GithubRepo):
                     date_updated=date,
                     value=cumulative[age],
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             cumulative = Counter()
-            for (date, municipality, province), value in sorted(by_municipality.items()):
-                cumulative[municipality, province] += value
+            for (date, province, municipality), value in sorted(by_municipality.items()):
+                cumulative[province, municipality] += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.CU_MUNICIPALITY,
                     region_parent=province,
                     region_child=municipality,
@@ -156,13 +160,13 @@ class CUData(GithubRepo):
                     date_updated=date,
                     value=cumulative[municipality, province],
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             cumulative = Counter()
             for (date, province), value in sorted(by_province.items()):
                 cumulative[province] += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='CU',
                     region_child=province,
@@ -170,7 +174,7 @@ class CUData(GithubRepo):
                     date_updated=date,
                     value=cumulative[province],
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

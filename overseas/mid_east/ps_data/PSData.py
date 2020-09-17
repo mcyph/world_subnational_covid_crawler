@@ -3,16 +3,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = {
@@ -46,6 +40,7 @@ class PSData(URLBase):
                                       static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -54,13 +49,20 @@ class PSData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/ps_corona.html'
-            with open(path, 'r', encoding='utf-8') as f:
-                html = pq(f.read(), parser='html')
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    html = f.read()
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = brotli.decompress(f.read()).decode('utf-8')
+
+            html = pq(html, parser='html')
 
             # There are quite a few more stats e.g. lower than governorate level etc =====================================
 
@@ -82,7 +84,7 @@ class PSData(URLBase):
                     continue
 
                 if new is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.PS_PROVINCE,
                         region_parent='PS',
                         region_child=governorate,
@@ -90,9 +92,9 @@ class PSData(URLBase):
                         value=int(new),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
@@ -100,8 +102,8 @@ class PSData(URLBase):
                     value=int(total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
@@ -109,8 +111,8 @@ class PSData(URLBase):
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
@@ -118,8 +120,8 @@ class PSData(URLBase):
                     value=int(recovery),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.PS_PROVINCE,
                     region_parent='PS',
                     region_child=governorate,
@@ -127,7 +129,7 @@ class PSData(URLBase):
                     value=int(death),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

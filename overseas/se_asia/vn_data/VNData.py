@@ -5,16 +5,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = dict([i.split('\t')[::-1] for i in """
@@ -96,6 +90,12 @@ class VNData(URLBase):
         # Disable ssl, only for this crawler!
         old_create = ssl._create_default_https_context
         ssl._create_default_https_context = ssl._create_unverified_context
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'vn', 'vn-62'): None,
+            },
+            mode=MODE_STRICT
+        )
 
         try:
             URLBase.__init__(self,
@@ -115,7 +115,7 @@ class VNData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -145,7 +145,7 @@ class VNData(URLBase):
                 active = int(pq(active).text().strip())
                 total = int(pq(total).text().strip())
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
@@ -153,8 +153,8 @@ class VNData(URLBase):
                     value=int(total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
@@ -162,8 +162,8 @@ class VNData(URLBase):
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
@@ -171,8 +171,8 @@ class VNData(URLBase):
                     value=int(recovery),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='VN',
                     region_child=region,
@@ -180,7 +180,7 @@ class VNData(URLBase):
                     value=int(death),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

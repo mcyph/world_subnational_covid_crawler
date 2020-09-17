@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.overseas.KaggleDataset import (
-    KaggleDataset
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.KaggleDataset import KaggleDataset
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 # https://www.kaggle.com/kimjihoo/coronavirusdataset
 # https://github.com/jihoo-kim/Data-Science-for-COVID-19
@@ -26,6 +20,7 @@ class KRData(KaggleDataset):
              output_dir=get_overseas_dir() / 'ko' / 'data',
              dataset='kimjihoo/coronavirusdataset'
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -51,7 +46,7 @@ class KRData(KaggleDataset):
         return r
 
     def _get_time_province(self):
-        r = []
+        r = self.sdpf()
 
         # TimeProvince.csv
         # date,time,province,confirmed,released,deceased
@@ -64,40 +59,40 @@ class KRData(KaggleDataset):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='South Korea',
+                    region_parent='KR',
                     region_child=item['province'],
                     datatype=DataTypes.TOTAL,
                     value=item['confirmed'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                #r.append(DataPoint(
+                #r.append(
                 #    region_schema=Schemas.ADMIN_1,
-                #    region_parent='South Korea',
+                #    region_parent='KR',
                 #    region_child=item['province'],
                 #    datatype=DataTypes.RELEASED,
                 #    value=item['released'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
-                #))
+                #)
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='South Korea',
+                    region_parent='KR',
                     region_child=item['province'],
                     datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_time_age(self):
-        r = []
+        r = self.sdpf()
 
         # TimeAge.csv
         # date,time,age,confirmed,deceased
@@ -112,17 +107,17 @@ class KRData(KaggleDataset):
                 agerange = int(item['age'].rstrip('s'))
                 agerange = f'{agerange}-{agerange+9}'
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='South Korea',
+                    region_child='KR',
                     datatype=DataTypes.TOTAL,
                     agerange=agerange,
                     value=item['confirmed'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                #r.append(DataPoint(
+                #r.append(
                 #    region_schema=Schemas.ADMIN_0,
                 #    region_child='South Korea',
                 #    datatype=DataTypes.STATUS_DEATHS_XXXX,
@@ -130,12 +125,12 @@ class KRData(KaggleDataset):
                 #    value=item['confirmed'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
-                #))
+                #)
 
         return r
 
     def _get_time_gender(self):
-        r = []
+        r = self.sdpf()
 
         # TimeGender.csv
         # date,time,sex,confirmed,deceased
@@ -155,14 +150,14 @@ class KRData(KaggleDataset):
                 else:
                     raise Exception(datatype)
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='South Korea',
+                    region_child='KR',
                     datatype=datatype,
                     value=item['confirmed'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
                 #r.append(DataPoint(
                 #    region_schema=Schemas.ADMIN_0,
                 #    region_child='South Korea',
@@ -170,12 +165,12 @@ class KRData(KaggleDataset):
                 #    value=item['deceased'],
                 #    date_updated=date,
                 #    source_url=self.SOURCE_URL
-                #))
+                #)
 
         return r
 
     def _get_time(self):
-        r = []
+        r = self.sdpf()
 
         # Time.csv
         # date,time,test,negative,confirmed,released,deceased
@@ -188,30 +183,30 @@ class KRData(KaggleDataset):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='South Korea',
+                    region_child='KR',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='South Korea',
+                    region_child='KR',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='South Korea',
+                    region_child='KR',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=item['deceased'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

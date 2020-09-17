@@ -5,16 +5,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = dict([i.split('\t')[::-1] for i in """
@@ -41,6 +35,7 @@ class OMData(URLBase):
         # Disable ssl, only for this crawler!
         old_create = ssl._create_default_https_context
         ssl._create_default_https_context = ssl._create_unverified_context
+        self.sdpf = StrictDataPointsFactory()
 
         try:
             URLBase.__init__(self,
@@ -61,7 +56,7 @@ class OMData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -96,7 +91,7 @@ class OMData(URLBase):
                     region_dict['publishedTimeEpoch']/1000.0
                 ).strftime('%Y_%m_%d')
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='OM',
                     region_child=region,
@@ -104,9 +99,9 @@ class OMData(URLBase):
                     value=int(region_dict['infected']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='OM',
                     region_child=region,
@@ -114,9 +109,9 @@ class OMData(URLBase):
                     value=int(region_dict['death']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='OM',
                     region_child=region,
@@ -124,9 +119,9 @@ class OMData(URLBase):
                     value=int(region_dict['recovered']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='OM',
                     region_child=region,
@@ -134,7 +129,7 @@ class OMData(URLBase):
                     value=int(region_dict['currentlySick']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
                 for walayat_dict in region_dict['walayat']:
                     # Provinces

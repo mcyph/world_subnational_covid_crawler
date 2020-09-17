@@ -4,16 +4,11 @@ from os import listdir
 from pyquery import PyQuery as pq
 from collections import Counter
 
-from covid_19_au_grab.overseas.PressReleaseBase import (
-    PressReleaseBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.PressReleaseBase import PressReleaseBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class ZAData(PressReleaseBase):
@@ -32,6 +27,12 @@ class ZAData(PressReleaseBase):
             },
             url_selector='h2 a:contains("Update on Covid-19")'
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def _get_date(self, href, html):
@@ -49,7 +50,7 @@ class ZAData(PressReleaseBase):
         return r
 
     def _get_total_datapoints(self, date, html):
-        r = []
+        r = self.sdpf()
         TRs = pq(html)('.NormalTable:contains("Total cases"):contains("New cases") tbody tr')
 
         if TRs:
@@ -60,7 +61,7 @@ class ZAData(PressReleaseBase):
                 if province == 'total':
                     continue
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -68,8 +69,8 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(cases),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -77,7 +78,7 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(new),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
         else:
             TRs = pq(html)('.NormalTable:contains("Total cases") tbody tr')
 
@@ -91,7 +92,7 @@ class ZAData(PressReleaseBase):
                 if province == 'total':
                     continue
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -99,12 +100,12 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(cases),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_recovered_death_datapoints(self, date, html):
-        r = []
+        r = self.sdpf()
 
         TRsDeathsRecoveries = pq(html)('table.NormalTable:contains("Deaths"):contains("Recoveries") '
                        'tbody '
@@ -122,7 +123,7 @@ class ZAData(PressReleaseBase):
                 if province == 'total':
                     continue
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -130,8 +131,8 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(deaths),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -139,8 +140,8 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(recoveries),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -148,7 +149,7 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
         else:
             for province, deaths, recoveries in TRsDeathsRecoveries[1:]:
                 #print(pq(province).text(),
@@ -158,7 +159,7 @@ class ZAData(PressReleaseBase):
                 if province == 'total':
                     continue
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -166,8 +167,8 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(deaths),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
                     region_child=pq(province).text().strip(),
@@ -175,7 +176,7 @@ class ZAData(PressReleaseBase):
                     value=self._elm_to_int(recoveries),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

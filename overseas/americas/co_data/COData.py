@@ -1,16 +1,10 @@
 import csv
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 
 
 class COData(URLBase):
@@ -45,6 +39,45 @@ class COData(URLBase):
                  ),
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'co', 'co-dc'): ('MERGE', 'admin_1', 'co', 'co-cun'),
+                ('admin_1', 'co', 'co-cun'): ('MERGE', 'admin_1', 'co', 'co-cun'),
+                ('admin_1', 'co', 'cartagena d.t. y c.'): ('MERGE', 'admin_1', 'co', 'co-bol'),
+                ('admin_1', 'co', 'barranquilla d.e.'): ('MERGE', 'admin_1', 'co', 'co-atl'),
+                ('admin_1', 'co', 'santa marta d.t. y c.'): ('MERGE', 'admin_1', 'co', 'co-atl'),
+                ('admin_1', 'co', 'archipiélago de san andrés providencia y santa catalina'): ('MERGE', 'admin_1', 'co', 'co-atl'),
+                ('admin_1', 'co', 'buenaventura d.e.'): ('MERGE', 'admin_1', 'co', 'co-vac'),
+
+                ('co_municipality', 'cartagena d.t. y c.', 'cartagena de indias'): ('co_municipality', 'co-bol', 'cartagena de indias'),
+                ('co_municipality', 'norte de santander', 'cúcuta'): None,
+                ('co_municipality', 'barranquilla d.e.', 'barranquilla'): ('co_municipality', 'co-atl', 'barranquilla'),
+                ('co_municipality', 'santa marta d.t. y c.', 'santa marta'): None,
+                ('co_municipality', 'archipiélago de san andrés providencia y santa catalina', 'san andrés'): None,
+                ('co_municipality', 'archipiélago de san andrés providencia y santa catalina', 'providencia'): None,
+                ('co_municipality', 'buenaventura d.e.', 'buenaventura'): ('co_municipality', 'co-vac', 'buenaventura'),
+                ('co_municipality', 'co-dc', 'bogotá d.c.'): None, # FIXME!!!!
+                ('co_municipality', 'cundinamarca', 'villa de de ubaté'): None,
+                ('co_municipality', 'nariño', 'cuaspúd'): None,
+                ('co_municipality', 'nariño', 'ancuyá'): None,
+                ('co_municipality', 'cauca', 'piendamó'): None,
+                ('co_municipality', 'cauca', 'guapí'): None,
+                ('co_municipality', 'cauca', 'sotara'): None,
+                ('co_municipality', 'vaupés', 'mitú'): None,
+                ('co_municipality', 'vaupés', 'yavaraté'): None,
+                ('co_municipality', 'vaupés', 'taraira'): None,
+                ('co_municipality', 'chocó', 'el cantón san pablo'): None,
+                ('co_municipality', 'chocó', 'el litoral san juan'): None,
+                ('co_municipality', 'sucre', 'tolú viejo'): None,
+                ('co_municipality', 'sucre', 'coloso'): None,
+                ('co_municipality', 'antioquia', 'san pedro los milagros'): None,
+                ('co_municipality', 'antioquia', 'san josé la montaña'): None,
+                ('co_municipality', 'meta', 'san luis de cubarral'): None,
+                ('co_municipality', 'santander', 'el carmen de chucurí'): None,
+                ('co_municipality', 'vaupés', 'carurú'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -53,7 +86,7 @@ class COData(URLBase):
         return r
 
     def _get_co_data(self):
-        r = []
+        r = self.sdpf()
         
         # # https://proxy.hxlstandard.org/data.csv?dest=data_edit&tagger-match-all=on&tagger-01-header=id+de+caso&tagger-01-tag=%23meta+%2Bid&tagger-02-header=fecha+de+notificacion&tagger-02-tag=%23date+%2Bnotification&tagger-03-header=codigo+divipola&tagger-03-tag=%23code&tagger-04-header=ciudad+de+ubicacion&tagger-04-tag=%23adm3+%2Bname&tagger-05-header=departamento+o+distrito&tagger-05-tag=%23adm2+%2Bname&tagger-06-header=atencion&tagger-06-tag=%23indicator+%2Binfected+%2Btype&tagger-07-header=edad&tagger-07-tag=%23indicator+%2Binfected+%2Bage&tagger-08-header=sexo&tagger-08-tag=%23indicator+%2Binfected+%2Bsex&tagger-10-header=estado&tagger-10-tag=%23indicator+%2Binfected+%2Bstatus&tagger-11-header=pais+de+procedencia&tagger-11-tag=%23indicator+%2Binfected+%2Borigin&tagger-13-header=fecha+de+muerte&tagger-13-tag=%23date+%2Breported+%2Bdeath&tagger-14-header=fecha+diagnostico&tagger-14-tag=%23date+%2Breported+%2Bnotification&tagger-15-header=fecha+recuperado&tagger-15-tag=%23date+%2Breported+%2Brecovered&tagger-16-header=fecha+reporte+web&tagger-16-tag=%23date+%2Breported&header-row=1&url=https%3A%2F%2Fwww.datos.gov.co%2Fapi%2Fviews%2Fgt2j-8ykr%2Frows.csv%3FaccessType%3DDOWNLOAD
         # #
@@ -70,9 +103,6 @@ class COData(URLBase):
         # # 2,2020-03-06T00:00:00.000,76111,Guadalajara de Buga,Valle del Cauca,Recuperado,34,M,Importado,Recuperado,España,2020-03-04T00:00:00.000,-   -,2020-03-09T00:00:00.000,2020-03-19T00:00:00.000,2020-03-09T00:00:00.000
         # # 3,2020-03-07T00:00:00.000,5001,Medellín,Antioquia,Recuperado,50,F,Importado,Recuperado,España,2020-02-29T00:00:00.000,-   -,2020-03-09T00:00:00.000,2020-03-15T00:00:00.000,2020-03-09T00:00:00.000
         # # 4,2020-03-09T00:00:00.000,5001,Medellín,Antioquia,Recuperado,55,M,Relacionado,Recuperado,Colombia,2020-03-06T00:00:00.000,-   -,2020-03-11T00:00:00.000,2020-03-26T00:00:00.000,2020-03-11T00:00:00.000
-
-        by_admin1 = Counter()
-        by_municipality = Counter()
 
         by_age = Counter()
         by_status = Counter()  # And source of infection
@@ -97,8 +127,8 @@ class COData(URLBase):
             #divipola = item['Codigo DIVIPOLA']
             municipality = item['Ciudad de ubicación']
             admin1 = {
-                'Bogotá D.C.': 'Distrito Capital de Bogota',
-            }.get(item['Departamento o Distrito '], item['Departamento o Distrito '])
+                'bogotá d.c.': 'co-dc', #'Distrito Capital de Bogota',
+            }.get(item['Departamento o Distrito '].lower(), item['Departamento o Distrito '])
             attention = item['atención']
             age = self._age_to_range(item['Edad'])
             gender = {
@@ -117,9 +147,6 @@ class COData(URLBase):
             #date_reported = self.convert_date(item['FIS'])
             #date_diagnosed = self.convert_date(item['Fecha diagnostico'])
             #date_web_report = self.convert_date(item['fecha reporte web'])
-
-            by_admin1[notification_date, admin1] += 1
-            by_municipality[notification_date, admin1, municipality] += 1
 
             if item['Fecha de muerte'].strip('-/NA').strip():
                 date_death = self.convert_date(item['Fecha de muerte'].split('T')[0])
@@ -150,87 +177,62 @@ class COData(URLBase):
             by_municipality_age[notification_date, admin1, municipality, age] += 1
 
         cumulative = Counter()
-        for (notification_date, admin1), value in sorted(by_admin1.items()):
-            cumulative[admin1] += value
-            r.append(DataPoint(
-                region_schema=Schemas.ADMIN_1,
-                region_parent='Colombia',
-                region_child=admin1,
-                datatype=DataTypes.TOTAL,
-                value=cumulative[admin1],
-                date_updated=notification_date,
-                source_url=self.SOURCE_URL
-            ))
-
-        cumulative = Counter()
-        for (notification_date, admin1, municipality), value in sorted(by_municipality.items()):
-            cumulative[admin1, municipality] += value
-            r.append(DataPoint(
-                region_schema=Schemas.CO_MUNICIPALITY,
-                region_parent=admin1,
-                region_child=municipality,
-                datatype=DataTypes.TOTAL,
-                value=cumulative[admin1, municipality],
-                date_updated=notification_date,
-                source_url=self.SOURCE_URL
-            ))
-
-        cumulative = Counter()
         for (notification_date, age), value in sorted(by_age.items()):
             cumulative[age] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
-                region_child='Colombia',
+                region_child='co',
                 datatype=DataTypes.TOTAL,
                 agerange=age,
                 value=cumulative[age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (notification_date, status), value in sorted(by_status.items()):
             cumulative[status] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
-                region_child='Colombia',
+                region_child='co',
                 datatype=status,
                 value=cumulative[status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (notification_date, admin1, age), value in sorted(by_admin1_age.items()):
             cumulative[admin1, age] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_1,
-                region_parent='Colombia',
+                region_parent='co',
                 region_child=admin1,
                 agerange=age,
                 datatype=DataTypes.TOTAL,
                 value=cumulative[admin1, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (notification_date, admin1, status), value in sorted(by_admin1_status.items()):
             cumulative[admin1, status] += value
-            r.append(DataPoint(
+            print(admin1, status)
+            r.append(
                 region_schema=Schemas.ADMIN_1,
-                region_parent='Colombia',
+                region_parent='co',
                 region_child=admin1,
                 datatype=status,
                 value=cumulative[admin1, status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (notification_date, admin1, municipality, age), value in sorted(by_municipality_age.items()):
             cumulative[admin1, municipality, age] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
@@ -239,12 +241,12 @@ class COData(URLBase):
                 value=cumulative[admin1, municipality, age],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (notification_date, admin1, municipality, status), value in sorted(by_municipality_status.items()):
             cumulative[admin1, municipality, status] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.CO_MUNICIPALITY,
                 region_parent=admin1,
                 region_child=municipality,
@@ -252,7 +254,7 @@ class COData(URLBase):
                 value=cumulative[admin1, municipality, status],
                 date_updated=notification_date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 

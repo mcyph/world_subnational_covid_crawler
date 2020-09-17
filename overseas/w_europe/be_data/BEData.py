@@ -3,16 +3,10 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 region_map = dict([i.split('\t')[::-1] for i in """
@@ -50,6 +44,7 @@ class BEData(URLBase):
                 'cases_tests.csv': URL('https://epistat.sciensano.be/Data/COVID19BE_tests.csv', static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -64,7 +59,7 @@ class BEData(URLBase):
         # 2020-03-01	Antwerpen	Flanders	40-49	M	1
         # 2020-03-01	Brussels	Brussels	10-19	M	1
         # 2020-03-01	Brussels	Brussels	10-19	F	1
-        r = []
+        r = self.sdpf()
 
         by_total = Counter()
         by_province = Counter()
@@ -93,7 +88,7 @@ class BEData(URLBase):
         cumulative = 0
         for date, value in sorted(by_total.items()):
             cumulative += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='BE',
@@ -101,12 +96,12 @@ class BEData(URLBase):
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, province), value in sorted(by_province.items()):
             cumulative[province] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='BE',
                 region_child=province,
@@ -114,12 +109,12 @@ class BEData(URLBase):
                 value=cumulative[province],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, agerange), value in sorted(by_agerange.items()):
             cumulative[agerange] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='BE',
@@ -128,12 +123,12 @@ class BEData(URLBase):
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='BE',
@@ -141,7 +136,7 @@ class BEData(URLBase):
                 value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 

@@ -8,9 +8,7 @@ from collections import Counter
 
 from covid_19_au_grab.overseas.GlobalBase import GlobalBase
 from covid_19_au_grab.get_package_dir import get_overseas_dir
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 

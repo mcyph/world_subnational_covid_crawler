@@ -34,16 +34,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class TRData(URLBase):
@@ -61,6 +55,7 @@ class TRData(URLBase):
                                         static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -71,13 +66,18 @@ class TRData(URLBase):
         return r
 
     def _get_regions(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/regions.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             for feature in data['features']:
                 attributes = feature['attributes']
@@ -92,7 +92,7 @@ class TRData(URLBase):
                 deaths = attributes['T_OlenVaka']
 
                 if confirmed is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
@@ -100,10 +100,10 @@ class TRData(URLBase):
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if recovered is not None and False:  # A lot of these values are 0(?)
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
@@ -111,10 +111,10 @@ class TRData(URLBase):
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if deaths is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='TR',
                         region_child=region,
@@ -122,12 +122,12 @@ class TRData(URLBase):
                         value=int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 
     def _get_other_stats(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):

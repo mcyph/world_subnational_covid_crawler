@@ -17,18 +17,12 @@ _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
 env = Environment(loader=FileSystemLoader('./templates'))
 
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.db.SQLiteDataRevision import \
-    SQLiteDataRevision
-from covid_19_au_grab.db.SQLiteDataRevisions import \
-    SQLiteDataRevisions
-from covid_19_au_grab.get_package_dir import \
-    get_package_dir
-from covid_19_au_grab.datatypes import \
-    date_fns
-from covid_19_au_grab.db.output_revision_datapoints_to_zip import \
-    output_revision_datapoints_to_zip
-from covid_19_au_grab.normalize_locality_name import \
-    normalize_locality_name
+from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
+from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
+from covid_19_au_grab.get_package_dir import get_package_dir
+from covid_19_au_grab.datatypes import date_fns
+from covid_19_au_grab.db.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
+from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'

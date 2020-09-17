@@ -86,8 +86,13 @@ class GlobalBase(ABC):
         else:
             path = self.output_dir / path
 
-        with open(path, mode=mode, encoding=encoding, errors=errors) as f:
-            return f.read()
+        try:
+            with open(path, mode=mode, encoding=encoding, errors=errors) as f:
+                return f.read()
+        except UnicodeDecodeError:
+            import brotli
+            with open(path, mode=mode+'b') as f:
+                return brotli.decompress(f.read()).decode(encoding, errors=errors)
 
     def get_file(self, path,
                  include_revision=False,

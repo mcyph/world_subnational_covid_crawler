@@ -10,6 +10,7 @@ class Schemas(str, Enum):
     # Kinds of schemas
     ADMIN_0 = 'admin_0'
     ADMIN_1 = 'admin_1'  # Values for the whole state
+    OCHA_ADMIN_1 = 'ocha_admin_1'
     POSTCODE = 'postcode'
     LGA = 'lga'  # Local Government Area
     HHS = 'hhs'  # Queensland
@@ -20,6 +21,7 @@ class Schemas(str, Enum):
     # https://covid-19-coronavirus.tools/
     BD_DISTRICT = 'bd_district'
     BR_CITY = 'br_city'
+    CN_CITY = 'cn_city'
     CO_MUNICIPALITY = 'co_municipality'
     #DE_AGS = 'de_ags'
     #ES_MADRID_MUNICIPALITY = 'es_madrid_municipality
@@ -99,8 +101,11 @@ class DataTypes(str, Enum):
     STATUS_RECOVERED_NEW = 'status_recovered_new'
     STATUS_ACTIVE_NEW = 'status_active_new'
     STATUS_UNKNOWN_NEW = 'status_unknown_new'
+
+    STATUS_ACTIVE_MALE = 'status_active_male'
+    STATUS_ACTIVE_FEMALE = 'status_active_female'
     
-    # Totals by source of infection
+    # Totals by source of infection (totals)
     SOURCE_OVERSEAS = 'source_overseas'  # Overseas, counted separately
     SOURCE_CRUISE_SHIP = 'source_cruise_ship'  # Overseas, included in SOURCE_OVERSEAS
     SOURCE_INTERSTATE = 'source_interstate'  # Local-transmission from interstate, counted separately
@@ -108,6 +113,15 @@ class DataTypes(str, Enum):
     SOURCE_COMMUNITY = 'source_community'  # Local-unknown community transmission, counted separately
     SOURCE_UNDER_INVESTIGATION = 'source_under_investigation'  # "other"
     SOURCE_DOMESTIC = 'source_domestic'  # For in-country which may or may not be community transmission (New Zealand data)
+
+    # active
+    SOURCE_OVERSEAS_ACTIVE = 'source_overseas_active'
+    SOURCE_CRUISE_SHIP_ACTIVE = 'source_cruise_ship_active'
+    SOURCE_INTERSTATE_ACTIVE = 'source_interstate_active'
+    SOURCE_CONFIRMED_ACTIVE = 'source_confirmed_active'
+    SOURCE_COMMUNITY_ACTIVE = 'source_community_active'
+    SOURCE_UNDER_INVESTIGATION_ACTIVE = 'source_under_investigation_active'
+    SOURCE_DOMESTIC_ACTIVE = 'source_domestic_active'
     
     # Test numbers
     TESTS_TOTAL = 'tests_total'

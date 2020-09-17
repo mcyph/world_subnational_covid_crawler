@@ -7,16 +7,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 DATA_URL = 'https://maps.registrucentras.lt/arcgis/rest/services/covid/savivaldybes/FeatureServer/0/query?f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=%7B%22xmin%22%3A2504688.542843003%2C%22ymin%22%3A5009377.085700966%2C%22xmax%22%3A5009377.08569099%2C%22ymax%22%3A7514065.628548957%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100&resultType=tile&quantizationParameters=%7B%22mode%22%3A%22view%22%2C%22originPosition%22%3A%22upperLeft%22%2C%22tolerance%22%3A4891.96981024998%2C%22extent%22%3A%7B%22xmin%22%3A306507.4031%2C%22ymin%22%3A5973291.0439%2C%22xmax%22%3A680103.2769%2C%22ymax%22%3A6257813.452%2C%22spatialReference%22%3A%7B%22wkid%22%3A2600%2C%22latestWkid%22%3A3346%7D%7D%7D&callback=dojo_request_script_callbacks.dojo_request_script57'
@@ -47,6 +41,7 @@ class LTData(URLBase):
                 'regions_data.json': URL(DATA_URL, static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -55,7 +50,7 @@ class LTData(URLBase):
         return r
 
     def _get_regions_data(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -84,7 +79,7 @@ class LTData(URLBase):
                 unknown = attributes['MIRE']
 
                 if confirmed is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -92,10 +87,10 @@ class LTData(URLBase):
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if positive is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -103,10 +98,10 @@ class LTData(URLBase):
                         value=int(positive),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if women is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -114,10 +109,10 @@ class LTData(URLBase):
                         value=int(women),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if men is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -125,10 +120,10 @@ class LTData(URLBase):
                         value=int(men),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if deaths is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -136,10 +131,10 @@ class LTData(URLBase):
                         value=int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if recovered is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -147,10 +142,10 @@ class LTData(URLBase):
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if recovered is not None and confirmed is not None and deaths is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.LT_MUNICIPALITY,
                         region_parent=region_parent,
                         region_child=region_child,
@@ -158,7 +153,7 @@ class LTData(URLBase):
                         value=int(confirmed)-int(recovered)-int(deaths),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 

@@ -6,16 +6,11 @@ import datetime
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 town_to_iso_3166_2 = {
@@ -25,8 +20,10 @@ town_to_iso_3166_2 = {
     'Mzuzu': 'MW-MZ',
     'Mzimba': 'MW-MZ',
     'Mzimba-North': 'MW-MZ',
+    'Mzimba North': 'MW-MZ',
     'Nkhata Bay': 'MW-NB',
     'Mzimba-South': 'MW-MZ',
+    'Mzimba South': 'MW-MZ',
     'Nkhotakota': 'MW-NK',
     'Kasungu': 'MW-KS',
     'Mchinji': 'MW-MC',
@@ -81,6 +78,13 @@ class MWData(URLBase):
                 )
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'mw', 'mw-kr'): None,
+                ('admin_1', 'mw', ''): ('MERGE', 'admin_1', 'mw', 'unknown'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -97,7 +101,7 @@ class MWData(URLBase):
         #       "numberOfConfirmedDeaths":1,
         #       "numberOfRecoveredPatients":0,
         #       "numberOfSuspectedCases":0},
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -129,7 +133,7 @@ class MWData(URLBase):
                 (suspected, DataTypes.PROBABLE)
             ):
                 for region_child, value in counter.items():
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='MW',
                         region_child=region_child,
@@ -137,10 +141,10 @@ class MWData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
             for region_child, value in confirmed.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='MW',
                     region_child=region_child,
@@ -148,7 +152,7 @@ class MWData(URLBase):
                     value=value+suspected[region_child],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
@@ -160,7 +164,7 @@ class MWData(URLBase):
         # "numberOfReceivedSamples":15544,
         # "numberOfTestedSamples":15177}
 
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -168,7 +172,7 @@ class MWData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
@@ -176,8 +180,8 @@ class MWData(URLBase):
                 value=data['numberOfConfirmedCases']+data['numberOfSuspectedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
@@ -185,8 +189,8 @@ class MWData(URLBase):
                 value=data['numberOfConfirmedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
@@ -194,9 +198,9 @@ class MWData(URLBase):
                 value=data['numberOfSuspectedCases'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
@@ -204,8 +208,8 @@ class MWData(URLBase):
                 value=data['numberOfConfirmedDeaths'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
-            r.append(DataPoint(
+            )
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='MW',
@@ -213,9 +217,9 @@ class MWData(URLBase):
                 value=data['numberOfRecoveredPatients'],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
-            #r.append(DataPoint(
+            #r.append(
             #    region_schema=Schemas.ADMIN_0,
             #    region_parent=None,
             #    region_child='MW',
@@ -223,10 +227,10 @@ class MWData(URLBase):
             #    value=data['numberOfReceivedSamples'],
             #    date_updated=date,
             #    source_url=self.SOURCE_URL
-            #))
+            #)
 
             if 'numberOfTestedSamples' in data:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,
                     region_child='MW',
@@ -234,7 +238,7 @@ class MWData(URLBase):
                     value=data['numberOfTestedSamples'],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

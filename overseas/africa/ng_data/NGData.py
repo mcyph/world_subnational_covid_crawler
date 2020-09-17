@@ -6,16 +6,11 @@ from os import listdir
 from pyquery import PyQuery as pq
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URLBase, URL
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URLBase, URL
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class NGData(URLBase):
@@ -30,6 +25,12 @@ class NGData(URLBase):
                 'index.html': URL('https://covid19.ncdc.gov.ng/', static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'ng', 'fct'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -38,7 +39,7 @@ class NGData(URLBase):
         return r
 
     def _get_total_datapoints(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         datatype_map = {
@@ -49,9 +50,14 @@ class NGData(URLBase):
         }
 
         for date in sorted(listdir(base_dir)):
-            with open(base_dir / date / 'index.html',
-                      'r', encoding='utf-8') as f:
-                html = f.read()
+            path = base_dir / date / 'index.html'
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    html = f.read()
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = brotli.decompress(f.read()).decode('utf-8')
 
             table = pq(html)('table:contains("States Affected")')
             datatypes = [
@@ -71,7 +77,7 @@ class NGData(URLBase):
                     value = int(pq(value).text().replace(',', ''))
                     vals[datatype] = value
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NG',
                         region_child=region,
@@ -79,9 +85,9 @@ class NGData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='NG',
                     region_child=region,
@@ -89,7 +95,7 @@ class NGData(URLBase):
                     value=vals[DataTypes.CONFIRMED]+vals[DataTypes.PROBABLE],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

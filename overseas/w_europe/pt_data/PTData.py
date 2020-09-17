@@ -10,16 +10,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 '''
@@ -59,6 +53,17 @@ class PTData(URLBase):
                 'municipality_data.json': URL(MUNICIPALITY_URL.replace(' ', '%20'), static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('pt_municipality', 'pt', 'guimarães'): None,
+                ('pt_municipality', 'pt', 'tavira'): None,
+                ('pt_municipality', 'pt', 'lagoa (faro)'): None,
+                ('pt_municipality', 'pt', 'vila da praia da vitória'): None,
+                ('pt_municipality', 'pt', 'ponte de sor'): None,
+                ('pt_municipality', 'pt', 'calheta (açores)'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -68,13 +73,18 @@ class PTData(URLBase):
         return r
 
     def _get_municipality_data(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/municipality_data.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             for feature in data['features']:
                 attributes = feature['attributes']
@@ -86,7 +96,7 @@ class PTData(URLBase):
                 confirmed = attributes['ConfirmadosAcumulado_Conc']
 
                 if confirmed is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.PT_MUNICIPALITY,
                         region_parent='PT', # 'Distrito' -> district??
                         region_child=attributes['Concelho'],
@@ -94,7 +104,7 @@ class PTData(URLBase):
                         value=int(confirmed),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 
@@ -104,8 +114,8 @@ class PTData(URLBase):
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/national_data.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            #with open(path, 'r', encoding='utf-8') as f:
+            #    data = json.loads(f.read())
 
         return r
 

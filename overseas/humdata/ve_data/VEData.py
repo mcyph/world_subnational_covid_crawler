@@ -1,15 +1,9 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class VEData(URLBase):
@@ -33,6 +27,7 @@ class VEData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -42,7 +37,7 @@ class VEData(URLBase):
         return r
 
     def get_cases_deaths(self):
-        r = []
+        r = self.sdpf()
 
         # Date,Datets,Confirmed Count,Confirmed New,Recovered Count,Recovered New,Deaths Count,Deaths New,Active Count
         # #date,,#affected +infected +total,#affected +infected +new,#affected +recovered +total,#affected +confirmed +new,#affected +killed +total,#affected +killed +new,#affected +active
@@ -65,54 +60,54 @@ class VEData(URLBase):
             date = self.convert_date(item['Date'])
 
             if item['Confirmed Count']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Venezuela',
                     datatype=DataTypes.TOTAL,
                     value=int(item['Confirmed Count']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
             if item['Confirmed New']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Venezuela',
                     datatype=DataTypes.NEW,
                     value=int(item['Confirmed New']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
             if item['Recovered Count']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Venezuela',
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recovered Count']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
             if item['Deaths Count']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Venezuela',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Deaths Count']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
             if item['Active Count']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Venezuela',
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active Count']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
         return r
 

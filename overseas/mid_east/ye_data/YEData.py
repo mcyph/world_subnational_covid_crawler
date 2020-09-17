@@ -33,16 +33,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = {
@@ -68,10 +62,13 @@ class YEData(URLBase):
         URLBase.__init__(self,
             output_dir=get_overseas_dir() / 'ye' / 'data',
             urls_dict={
-                'totalGovDataForTable.json': URL('http://yemen-corona.com/index.php?route=report/statistics/totalGovDataForTable',
-                                  static_file=False)
+                'totalGovDataForTable.json': URL(
+                    'https://yemen-corona.com/index.php?route=report/statistics/totalGovDataForTable',
+                    static_file=False
+                )
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -80,7 +77,7 @@ class YEData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -100,7 +97,7 @@ class YEData(URLBase):
                 new_recovered = int(data['new_recovered'])
                 active = confirmed - recovered - deaths
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -108,8 +105,8 @@ class YEData(URLBase):
                     value=confirmed,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -117,8 +114,8 @@ class YEData(URLBase):
                     value=deaths,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -126,8 +123,8 @@ class YEData(URLBase):
                     value=recovered,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -135,9 +132,9 @@ class YEData(URLBase):
                     value=active,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -145,8 +142,8 @@ class YEData(URLBase):
                     value=new_confirmed,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -154,8 +151,8 @@ class YEData(URLBase):
                     value=new_death,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='YE',
                     region_child=governorate,
@@ -163,7 +160,7 @@ class YEData(URLBase):
                     value=new_recovered,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

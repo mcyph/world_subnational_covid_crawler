@@ -3,16 +3,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = {
@@ -51,6 +45,13 @@ class KZData(URLBase):
                                       static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'kz', 'kz-shy'): None,
+                ('admin_1', 'kz', 'kz-alm'): None
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -59,7 +60,7 @@ class KZData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -69,46 +70,56 @@ class KZData(URLBase):
                 html = pq(f.read(), parser='html')
 
             def get_num_region(div):
+                print(pq(div).text())
                 region, num = pq(div).text().replace(' - ', '–').split('–')
                 region = place_map[region.strip()]
                 # TODO: Add "new" values!!
                 return int(num.split('(')[0].strip()), region
 
-            for div in html('.last_info_covid_bl .city_cov div'):
+            for div in html('.last_info_covid_bl .city_cov')[0]:
+                if div.tag != 'div':
+                    continue
+
                 value, region = get_num_region(div)
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Kazakhstan',
+                    region_parent='KZ',
                     region_child=region,
                     datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-            for div in html('.red_line_covid_bl .city_cov div'):
+            for div in html('.red_line_covid_bl .city_cov')[0]:
+                if div.tag != 'div':
+                    continue
+
                 value, region = get_num_region(div)
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Kazakhstan',
+                    region_parent='KZ',
                     region_child=region,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-            for div in html('.deaths_bl .city_cov div'):
+            for div in html('.deaths_bl .city_cov')[0]:
+                if div.tag != 'div':
+                    continue
+
                 value, region = get_num_region(div)
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Kazakhstan',
+                    region_parent='KZ',
                     region_child=region,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

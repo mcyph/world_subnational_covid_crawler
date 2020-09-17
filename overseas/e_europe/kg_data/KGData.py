@@ -4,16 +4,10 @@ from os import listdir
 from os.path import exists
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = {
@@ -49,7 +43,14 @@ class KGData(URLBase):
                                           static_file=False)
             }
         )
-        self.update()
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'kg', 'kg-go'): ('MERGE', 'admin_1', 'kg', 'kg-o'),
+                ('admin_1', 'kg', 'kg-o'): ('MERGE', 'admin_1', 'kg', 'kg-o'),
+            },
+            mode=MODE_STRICT
+        )
+        #self.update()
 
     def get_datapoints(self):
         r = []
@@ -57,10 +58,12 @@ class KGData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        out = []
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
+
             path = f'{base_dir}/{date}/kz_corona_map.html'
             if not exists(path):
                 path = f'{base_dir}/{date}/kz_corona.html'
@@ -90,7 +93,7 @@ class KGData(URLBase):
                     if i_data is None:
                         continue
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='KG',
                         region_child=region,
@@ -98,9 +101,11 @@ class KGData(URLBase):
                         value=int(i_data),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
-        return r
+            out.extend(r)
+
+        return out
 
 
 if __name__ == '__main__':

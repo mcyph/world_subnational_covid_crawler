@@ -72,6 +72,18 @@
             "roc": true,
             "percapita": true
         },
+        "status_active_male": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "status_active_female": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
         "new": {
             "averagedata": true,
             "timeperiods": true,
@@ -187,6 +199,37 @@
             "percapita": true
         },
 
+        "source_overseas_active": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "source_community_active": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "source_confirmed_active": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "source_interstate_active": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+        "source_under_investigation_active": {
+            "timeperiods": true,
+            "dayssince": false,
+            "roc": true,
+            "percapita": true
+        },
+
         "facebook_covid_symptoms": {
             "averagedata": true,
             "timeperiods": true,
@@ -263,6 +306,12 @@
             "priority": 1,
             "split_by_parent_region": true
         },
+        "ocha_admin_1": {
+            "iso_3166": null,
+            "min_zoom": 4,
+            "priority": 1.5,
+            "split_by_parent_region": true
+        },
         "lga": {
             "#1": "Replaces states/territories for the entire country,",
             "#2": "provided data is available",
@@ -321,6 +370,13 @@
             "iso_3166": "CA",
             "min_zoom": 4,
             "priority": 5,
+            "split_by_parent_region": false
+        },
+        "cn_city": {
+            "iso_3166": "CN",
+            "min_zoom": 4,
+            "priority": 5,
+            "line_width": 0.5,
             "split_by_parent_region": false
         },
         "co_municipality": {

@@ -1,15 +1,11 @@
 import csv
 
-from covid_19_au_grab.overseas.KaggleDataset import (
-    KaggleDataset
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.KaggleDataset import KaggleDataset
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.overseas.americas.br_data.br_region_mappings import br_region_mappings
 
 
 class BRData(KaggleDataset):
@@ -22,6 +18,10 @@ class BRData(KaggleDataset):
              output_dir=get_overseas_dir() / 'br' / 'data',
              dataset='unanimad/corona-virus-brazil'
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings=br_region_mappings,
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -32,7 +32,7 @@ class BRData(KaggleDataset):
         return r
 
     def _get_covid19(self):
-        r = []
+        r = self.sdpf()
 
         # brazil_covid19.csv
         # date,region_child,state,cases,deaths
@@ -45,30 +45,30 @@ class BRData(KaggleDataset):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Brazil',
-                    region_child=item['state'],
+                    region_child='br-'+item['state'],
                     datatype=DataTypes.TOTAL,
                     value=int(item['cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Brazil',
-                    region_child=item['state'],
+                    region_child='br-'+item['state'],
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 
     def _get_covid19_cities(self):
-        r = []
+        r = self.sdpf()
 
         # brazil_covid19_cities.csv
         # date,state,name,code,cases,deaths
@@ -81,7 +81,7 @@ class BRData(KaggleDataset):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.BR_CITY,
                     region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
@@ -89,9 +89,9 @@ class BRData(KaggleDataset):
                     value=int(item['cases']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.BR_CITY,
                     region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
@@ -99,12 +99,12 @@ class BRData(KaggleDataset):
                     value=int(item['deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 
     def _get_covid19_macro(self):
-        r = []
+        r = self.sdpf()
 
         # brazil_covid19_macro.csv
         # date,country,week,cases,deaths,recovered,monitoring
@@ -117,37 +117,37 @@ class BRData(KaggleDataset):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_child='Brazil',
                     datatype=DataTypes.TOTAL,
                     value=int(float(item['cases'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
                 if item['deaths']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
                         datatype=DataTypes.STATUS_DEATHS,
                         value=int(float(item['deaths'])),
                         source_url=self.SOURCE_URL,
                         date_updated=date
-                    ))
+                    )
 
                 if item['recovered']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
                         datatype=DataTypes.STATUS_RECOVERED,
                         value=int(float(item['recovered'])),
                         source_url=self.SOURCE_URL,
                         date_updated=date
-                    ))
+                    )
 
                 if item['recovered'] and item['deaths']:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_child='Brazil',
                         datatype=DataTypes.STATUS_ACTIVE,
@@ -156,11 +156,14 @@ class BRData(KaggleDataset):
                               int(float(item['deaths'])),
                         source_url=self.SOURCE_URL,
                         date_updated=date
-                    ))
+                    )
 
         return r
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(BRData().get_datapoints())
+    inst = BRData()
+    datapoints = inst.get_datapoints()
+    inst.sdpf.print_mappings()
+    #pprint(datapoints)

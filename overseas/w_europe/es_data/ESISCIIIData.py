@@ -3,16 +3,10 @@ import datetime
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 _provinces = '''
@@ -107,6 +101,7 @@ class ESISCIIIData(URLBase):
                                    static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -115,7 +110,7 @@ class ESISCIIIData(URLBase):
         return r
 
     def _get_datapoints(self):
-        r = []
+        r = self.sdpf()
         text = self.get_text('index.html', include_revision=True)
         text = text.split(START)[-1]
         text = text.split('<script type="application/json"')[1]
@@ -141,7 +136,7 @@ class ESISCIIIData(URLBase):
                 date = self.convert_date(date)
                 running_total += value
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ES_PROVINCE,
                     region_parent='ES',
                     region_child=region,
@@ -149,8 +144,8 @@ class ESISCIIIData(URLBase):
                     value=int(value),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ES_PROVINCE,
                     region_parent='ES',
                     region_child=region,
@@ -158,7 +153,7 @@ class ESISCIIIData(URLBase):
                     value=int(running_total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

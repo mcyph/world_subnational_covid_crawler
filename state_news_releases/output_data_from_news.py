@@ -14,10 +14,8 @@ from covid_19_au_grab.state_news_releases.sa.SANews import SANews
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
-from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
+from covid_19_au_grab.datatypes.enums import Schemas
 from covid_19_au_grab.get_package_dir import get_package_dir
-from covid_19_au_grab.db.DataPointsDB import DataPointsDB
-
 
 UPDATE_VIC_POWERBI = False
 UPDATE_ACT_POWERBI = False
@@ -111,7 +109,7 @@ if __name__ == '__main__':
     # Run the Vic/ACT PowerBi grabbers as needed
 
     if UPDATE_VIC_POWERBI:
-        from covid_19_au_grab.state_news_releases.vic.VicPowerBI import \
+        from covid_19_au_grab.state_news_releases.vic.deprecated.VicPowerBI import \
             VicPowerBI
         try:
             VicPowerBI().run_powerbi_grabber()

@@ -1,15 +1,10 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class ETData(URLBase):
@@ -33,10 +28,11 @@ class ETData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Date	admin1Name_en	admin1Pcode	Number of confirmed COVID-19	Number of reported deaths	Number of reported recoveries
         # #date	#adm1+name	#adm1+code	#affected+infected+confirmed	#affected+infected+dead	#affected+infected+recovered
@@ -63,7 +59,7 @@ class ETData(URLBase):
             }.get(item['admin1Name_en'].strip(), item['admin1Name_en'].strip())
 
             if item['Number of confirmed COVID-19']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Ethiopia',
                     region_child=region_child,
@@ -71,10 +67,10 @@ class ETData(URLBase):
                     value=int(item['Number of confirmed COVID-19']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
                 
             if item['Number of reported deaths']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Ethiopia',
                     region_child=region_child,
@@ -82,10 +78,10 @@ class ETData(URLBase):
                     value=int(item['Number of reported deaths']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
             if item['Number of reported recoveries']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Ethiopia',
                     region_child=region_child,
@@ -93,8 +89,8 @@ class ETData(URLBase):
                     value=int(item['Number of reported recoveries']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='Ethiopia',
                     region_child=region_child,
@@ -103,7 +99,7 @@ class ETData(URLBase):
                           int(item['Number of reported recoveries']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 

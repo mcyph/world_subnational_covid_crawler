@@ -13,7 +13,7 @@ class InfrequentStateDataJobs:
         return self._status
 
     def update_vic_tableau(self):
-        from covid_19_au_grab.state_news_releases.vic.VicTableau import \
+        from covid_19_au_grab.state_news_releases.vic.deprecated.VicTableau import \
             run_vic_tableau
         try:
             run_vic_tableau()

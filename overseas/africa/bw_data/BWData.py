@@ -8,16 +8,12 @@ import datetime
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+
 
 region_map = {
     'Gaborone': 'BW-SE',
@@ -45,6 +41,7 @@ class BWData(URLBase):
                                    static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -53,7 +50,7 @@ class BWData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         # {"date":1589220000000,"division":"Rajshahi","district":"Joypurhat","city":"Joypurhat",
@@ -90,8 +87,13 @@ class BWData(URLBase):
                 f'{base_dir}/{date}/data_1.json',
                 f'{base_dir}/{date}/data_2.json'
             ):
-                with open(path, 'r', encoding='utf-8') as f:
-                    data = json.loads(f.read())
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        data = json.loads(f.read())
+                except UnicodeDecodeError:
+                    import brotli
+                    with open(path, 'rb') as f:
+                        data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
                 for feature in data['features']:
                     #print(feature)
@@ -145,7 +147,7 @@ class BWData(URLBase):
                 (tests, DataTypes.TESTS_TOTAL),
             ):
                 for region_child, value in counter.items():
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='BW',
                         region_child=region_child,
@@ -153,11 +155,11 @@ class BWData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
             for agerange, counter in age.items():
                 for region_child, value in counter.items():
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='BW',
                         region_child=region_child,
@@ -166,7 +168,7 @@ class BWData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 

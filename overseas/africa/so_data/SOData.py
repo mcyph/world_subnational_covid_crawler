@@ -1,15 +1,10 @@
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class SOData(URLBase):
@@ -29,10 +24,27 @@ class SOData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'so', 'banadir'): ('admin_1', 'so', 'so-bn'),
+                ('admin_1', 'so', 'galmudug state'): ('admin_1', 'so', 'so-ga'),
+                ('admin_1', 'so', 'hir-shabelle state'): None, # FIXME!
+                ('admin_1', 'so', 'jubaland state'): None, # FIXME!
+                ('admin_1', 'so', 'puntland'): None, # FIXME!!
+                ('admin_1', 'so', 'somaliland'): None, # FIXME!
+                ('admin_1', 'so', 'south west state'): None, # FIXME!
+                ('admin_1', 'so', 'south west'): None,  # FIXME!
+                ('admin_1', 'so', 'jubaland'): None,
+                ('admin_1', 'so', 'galmmudug'): ('admin_1', 'so', 'so-ga'),
+                ('admin_1', 'so', 'hir-shabelle'): None,
+                ('admin_1', 'so', 'galmudug'): ('admin_1', 'so', 'so-ga'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Date,Region,Confirmed ,Dead,Recovered,Active
         #
@@ -62,45 +74,45 @@ class SOData(URLBase):
             region_child = item['State']
 
             if item['Confirmed ']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Somalia',
+                    region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(item['Confirmed ']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
             if item['Dead']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Somalia',
+                    region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Dead']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
             if item['Recovered']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Somalia',
+                    region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recovered']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
             if item['Active']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Somalia',
+                    region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active']),
                     source_url=self.SOURCE_URL,
                     date_updated=date
-                ))
+                )
 
         return r
 

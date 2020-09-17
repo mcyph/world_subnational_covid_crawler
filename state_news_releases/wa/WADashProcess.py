@@ -4,16 +4,11 @@ import datetime
 from os import listdir
 from os.path import dirname, exists
 
-from covid_19_au_grab.URLArchiver import (
-    URLArchiver
-)
+from covid_19_au_grab.URLArchiver import URLArchiver
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.get_package_dir import (
-    get_data_dir
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.get_package_dir import get_data_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 SOURCE_URL = 'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
@@ -29,7 +24,7 @@ def get_wa_dash_datapoints():
 
 class WARegionsProcess:
     def get_old_datapoints(self):
-        r = []
+        r = DataPointMerger()
         self.max_date = None
         wa_custom_map_ua = URLArchiver(f'wa/custom_map')
 
@@ -52,10 +47,10 @@ class WARegionsProcess:
         return r
 
     def get_new_datapoints(self):
-        r = []
+        r = DataPointMerger()
         dir_ = get_data_dir() / 'wa' / 'custom_dash'
 
-        for subdir in listdir(dir_):
+        for subdir in sorted(listdir(dir_)):
             period = subdir.split('-')[0]
             next_id = int(subdir.split('-')[-1])+1
 

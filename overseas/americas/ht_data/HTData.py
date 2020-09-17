@@ -2,16 +2,11 @@
 # https://docs.google.com/spreadsheets/u/1/d/10YxLT870MwYJ3Tm_a3WvvU2r1zQbT5F20TSXzw03BxQ/export?format=csv&id=10YxLT870MwYJ3Tm_a3WvvU2r1zQbT5F20TSXzw03BxQ
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 
 
 class HTData(URLBase):
@@ -31,10 +26,17 @@ class HTData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'ht', 'grand anse'): ('admin_1', 'ht', 'ht-ga'),
+                ('admin_1', 'ht', 'grandanse'): ('admin_1', 'ht', 'ht-ga')
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
 
         # Date,Département,Cumulative cases,New cases (24h),Cumulative Deaths,New deaths (24h) Rate Of,Case fatality rate,Source
         # #date,#adm1+name,#affected+infected+confirmed+total,#affected+infected+confirmed+new,#affected+infected+dead+total,#affected+infected+dead+new,,
@@ -57,37 +59,37 @@ class HTData(URLBase):
             region_child = item['Département']
 
             if item['Cumulative cases']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Haiti',
+                    region_parent='ht',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(item['Cumulative cases'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
-                ))
+                )
 
             if item['New cases (24h)']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Haiti',
+                    region_parent='ht',
                     region_child=region_child,
                     datatype=DataTypes.NEW,
                     value=int(item['New cases (24h)'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
-                ))
+                )
 
             if item['Cumulative Deaths']:
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Haiti',
+                    region_parent='ht',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Cumulative Deaths'].replace(',', '')),
                     source_url=item['Source'],
                     date_updated=date
-                ))
+                )
 
         return r
 

@@ -3,16 +3,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 place_map = dict([i.split('\t')[::-1] for i in """
@@ -54,6 +48,13 @@ class TWData(URLBase):
                                       static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'tw', 'tw-nwt'): None,
+                ('admin_1', 'tw', 'tw-lie'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -62,13 +63,19 @@ class TWData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/tw_corona.html'
-            with open(path, 'r', encoding='utf-8') as f:
-                html = f.read()
+            print(path)
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    html = f.read()
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = brotli.decompress(f.read()).decode('utf-8')
 
             new_data_template = '.geojson","series":[{'
             if new_data_template in html:
@@ -76,13 +83,11 @@ class TWData(URLBase):
             else:
                 data = html.split('var jdata1 = ')[-1].split('\n')[0].strip().strip(';').replace("'", '"')
 
-            print(date, data)
-
             for item in json.loads(data):
                 # [{'code':'Taipei City', 'value':118}, ...]
                 region = place_map[item['code'].strip().lower()]
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='TW',
                     region_child=region,
@@ -90,7 +95,7 @@ class TWData(URLBase):
                     value=int(item['value']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

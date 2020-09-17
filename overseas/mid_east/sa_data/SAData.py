@@ -3,16 +3,10 @@ import json
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class SAData(URLBase):
@@ -32,6 +26,15 @@ class SAData(URLBase):
                                  static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'sa', 'eastern region'): ('admin_1', 'sa', 'SA-04'),
+                ('admin_1', 'sa', 'al qaseem'): ('admin_1', 'sa', 'SA-05'),
+                ('admin_1', 'sa', 'aseer'): ('admin_1', 'sa', 'SA-14'),
+                ('admin_1', 'sa', 'northern borders'): ('admin_1', 'sa', 'SA-08'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -42,13 +45,18 @@ class SAData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/recovered_sum.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             confirmed = Counter()
             deaths = Counter()
@@ -69,48 +77,53 @@ class SAData(URLBase):
                 recovered[attributes['RegionName_EN']] += int(attributes['Recovered_SUM'])
 
             for region_child, value in confirmed.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             for region_child, value in deaths.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             for region_child, value in recovered.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_tested_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/tested_sum.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             tested = Counter()
 
@@ -128,26 +141,31 @@ class SAData(URLBase):
                 tested[attributes['RegionName_EN']] += int(attributes['Tested_SUM'])
 
             for region_child, value in tested.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.TESTS_TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_confirmed_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/confirmed_sum.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             confirmed = Counter()
             deaths = Counter()
@@ -168,37 +186,37 @@ class SAData(URLBase):
                 recovered[attributes['RegionName_EN']] += int(attributes['Recovered_SUM'])
 
             for region_child, value in confirmed.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             for region_child, value in deaths.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             for region_child, value in recovered.items():
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Saudi Arabia',
+                    region_parent='SA',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=value,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

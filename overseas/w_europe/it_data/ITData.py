@@ -1,15 +1,14 @@
 import json
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
+
+
+ltrc = LabelsToRegionChild()
+
 
 province_map = dict([i.split('\t')[::-1] for i in """
 IT-AL	Alessandria
@@ -139,6 +138,12 @@ class ITData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'it' / 'COVID-19',
                             github_url='https://github.com/pcm-dpc/COVID-19')
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('it_province', 'friuli venezia giulia', 'it-ud')
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -149,7 +154,7 @@ class ITData(GithubRepo):
         return r
 
     def _get_national_data(self):
-        r = []
+        r = self.sdpf()
 
         # dpc-covid19-ita-andamento-nazionale.json
         # [
@@ -191,82 +196,82 @@ class ITData(GithubRepo):
                 tests_total = item['tamponi']
                 #tests_total_people = item['casi_testati']
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.STATUS_HOSPITALIZED,
                     value=int(hospitalized),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.NEW,
                     value=int(new),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=recovered,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=deaths,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.TOTAL,
                     value=total,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.TESTS_TOTAL,
                     value=tests_total,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_0,
-                    region_child='Italy',
+                    region_child='IT',
                     datatype=DataTypes.STATUS_ICU,
                     value=icu,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_province_data(self):
-        r = []
+        r = self.sdpf()
 
         # dpc-covid19-ita-province.json
         # [
@@ -302,20 +307,35 @@ class ITData(GithubRepo):
                 elif item['denominazione_provincia'] == 'Fuori Regione / Provincia Autonoma':
                     continue
 
-                r.append(DataPoint(
+                region_child = province_map[item['denominazione_provincia']]
+                region_parent = item['denominazione_regione'].lower()
+
+                if region_parent == 'friuli venezia giulia':
+                    region_parent = 'it-36'
+                elif region_parent == 'p.a. bolzano':
+                    region_parent = 'it-32'
+                elif region_parent == 'p.a. trento':
+                    region_parent = 'it-32'
+                elif region_parent == 'valle d\'aosta':
+                    region_parent = 'it-23'
+                    region_child = 'it-23'
+                else:
+                    region_parent = ltrc.get_by_label('admin_1', 'it', region_parent)
+
+                r.append(
                     region_schema=Schemas.IT_PROVINCE,
-                    region_parent=item['denominazione_regione'],
-                    region_child=province_map[item['denominazione_provincia']],
+                    region_parent=region_parent,
+                    region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(item['totale_casi']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
     def _get_regions_data(self):
-        r = []
+        r = self.sdpf()
 
         # dpc-covid19-ita-regioni.json
         # [
@@ -359,78 +379,88 @@ class ITData(GithubRepo):
                 tests_total = item['tamponi']
                 # tests_total_people = item['casi_testati']
 
-                r.append(DataPoint(
+                region_child = item['denominazione_regione'].lower()
+                if region_child == 'friuli venezia giulia':
+                    region_child = 'it-36'
+                elif region_child == 'p.a. bolzano':
+                    region_child = 'it-32'
+                elif region_child == 'p.a. trento':
+                    region_child = 'it-32'
+                elif region_child == 'valle d\'aosta':
+                    region_child = 'it-23'
+
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.STATUS_HOSPITALIZED,
                     value=int(hospitalized),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(active),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.NEW,
                     value=int(new),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(recovered),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(deaths),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.TOTAL,
                     value=int(total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.TESTS_TOTAL,
                     value=int(tests_total),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='IT',
-                    region_child=item['denominazione_regione'],
+                    region_child=region_child,
                     datatype=DataTypes.STATUS_ICU,
                     value=int(icu),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

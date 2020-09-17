@@ -10,19 +10,11 @@ import csv
 from io import StringIO
 from collections import Counter
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
-    LabelsToRegionChild
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 _ltrc = LabelsToRegionChild()
 
@@ -80,6 +72,7 @@ class LKData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'lk' / 'covid19-srilankan-data',
                             github_url='https://github.com/arimacdev/covid19-srilankan-data')
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -96,7 +89,7 @@ class LKData(GithubRepo):
             for commit in repo.iter_commits(paths=path)
         )
 
-        r = []
+        r = self.sdpf()
         for commit, file_contents in revlist:
             print(dir(commit))
             print(commit.committed_date)
@@ -142,7 +135,7 @@ class LKData(GithubRepo):
             cumulative = Counter()
             for (province, district), value in sorted(by_district.items()):
                 cumulative[province, district] += value
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     #region_schema=Schemas.LK_DISTRICT,
                     region_parent='LK',
@@ -151,7 +144,7 @@ class LKData(GithubRepo):
                     value=cumulative[province, district],
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

@@ -2,22 +2,13 @@
 
 import csv
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.overseas.americas.ca_data.hr_convert import (
-    health_region_to_uid, province_to_iso_3166_2
-)
-from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
-    LabelsToRegionChild
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.overseas.americas.ca_data.hr_convert import health_region_to_uid, province_to_iso_3166_2
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
 
 _ltrc = LabelsToRegionChild()
 
@@ -31,6 +22,7 @@ class CACovid19Canada(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'ca' / 'Covid19Canada',
                             github_url='https://github.com/ishaberry/Covid19Canada')
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -45,7 +37,7 @@ class CACovid19Canada(GithubRepo):
         # "Alberta","Calgary","26-01-2020",0,0
         # "Alberta","Calgary","27-01-2020",0,0
 
-        r = []
+        r = self.sdpf()
         with open(self.get_path_in_dir('timeseries_hr/cases_timeseries_hr.csv'),
                   'r', encoding='utf-8') as f:
 
@@ -55,7 +47,7 @@ class CACovid19Canada(GithubRepo):
                 date = self.convert_date(item['date_report'])
                 province = province_to_iso_3166_2(item['province'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
@@ -63,8 +55,8 @@ class CACovid19Canada(GithubRepo):
                     value=int(item['cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
@@ -72,7 +64,7 @@ class CACovid19Canada(GithubRepo):
                     value=int(item['cumulative_cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 
@@ -82,7 +74,7 @@ class CACovid19Canada(GithubRepo):
         # "Alberta","Calgary","09-03-2020",0,0
         # "Alberta","Calgary","10-03-2020",0,0
 
-        r = []
+        r = self.sdpf()
         with open(self.get_path_in_dir('timeseries_hr/mortality_timeseries_hr.csv'),
                   'r', encoding='utf-8') as f:
 
@@ -90,7 +82,7 @@ class CACovid19Canada(GithubRepo):
                 date = self.convert_date(item['date_death_report'])
                 province = province_to_iso_3166_2(item['province'])
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
@@ -98,8 +90,8 @@ class CACovid19Canada(GithubRepo):
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.CA_HEALTH_REGION,
                     region_parent=province,
                     region_child=health_region_to_uid(province, item['health_region']),
@@ -107,7 +99,7 @@ class CACovid19Canada(GithubRepo):
                     value=int(item['cumulative_deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

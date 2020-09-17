@@ -9,16 +9,10 @@ from os import listdir
 from pyquery import PyQuery as pq
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URLBase, URL
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URLBase, URL
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 from covid_19_au_grab.set_locale import set_locale
 
 WIKI_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_COVID-19_pandemisi'
@@ -36,6 +30,7 @@ class TRWikiData(URLBase):
                 'covid19_in_turkey.html': URL(WIKI_URL, static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -50,7 +45,7 @@ class TRWikiData(URLBase):
         return r
 
     def _get_total_datapoints(self, html):
-        r = []
+        r = self.sdpf()
 
         if 'TOPLAM VAKA SAYILARI' in html:
             table = pq(html)('.wikitable:contains("TOPLAM VAKA SAYILARI")')
@@ -74,7 +69,7 @@ class TRWikiData(URLBase):
                     if region.lower() == 'toplam':
                         continue
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
@@ -82,7 +77,7 @@ class TRWikiData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
         else:
             table = pq(html)('.wikitable:contains("Toplam vaka sayıları")')
             headers = [
@@ -101,7 +96,7 @@ class TRWikiData(URLBase):
                     date = datetime.datetime.strptime(date_str+' 2020', '%d %B %Y').strftime('%Y_%m_%d')
                     value = int(pq(value).text().replace('.', ''))
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
@@ -109,12 +104,12 @@ class TRWikiData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 
     def _get_recovered_death_datapoints(self, html):
-        r = []
+        r = self.sdpf()
 
         if 'TOPLAM ÖLÜM SAYILARI' in html:
             table = pq(html)('.wikitable:contains("TOPLAM ÖLÜM SAYILARI")')
@@ -138,7 +133,7 @@ class TRWikiData(URLBase):
                     if region.lower() == 'toplam':
                         continue
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
@@ -146,7 +141,7 @@ class TRWikiData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
         else:
             table = pq(html)('.wikitable:contains("Toplam ölüm sayıları")')
             headers = [
@@ -165,7 +160,7 @@ class TRWikiData(URLBase):
                     date = datetime.datetime.strptime(date_str + ' 2020', '%d %B %Y').strftime('%Y_%m_%d')
                     value = int(pq(value).text().replace('.', ''))
 
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.TR_NUTS1,
                         region_parent='TR',
                         region_child=region,
@@ -173,7 +168,7 @@ class TRWikiData(URLBase):
                         value=value,
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 

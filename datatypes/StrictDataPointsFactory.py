@@ -33,9 +33,13 @@ class StrictDataPointsFactory:
     def register_mapping(self,
                          from_schema, from_parent, from_child,
                          to_schema, to_parent, to_child):
-        self.__region_mappings[from_schema, from_parent, from_child] = (
-            to_schema, to_parent, to_child
-        )
+
+        if self.__ltrc.region_child_in_geojson(to_schema, to_parent, to_child):
+            self.__region_mappings[from_schema, from_parent, from_child] = (
+                to_schema, to_parent, to_child
+            )
+        else:
+            self.__region_mappings[from_schema, from_parent, from_child] = None
 
     def get_mappings(self):
         return self.__region_mappings.copy()
@@ -121,7 +125,7 @@ class _StrictDataPoints(list):
                         r.datatype,
                         r.agerange
                     )
-                    assert not merged_key in self.__merged
+                    assert not merged_key in self.__merged, merged_key
                     self.__merged.add(merged_key)
 
             elif len(mapping) == 3:

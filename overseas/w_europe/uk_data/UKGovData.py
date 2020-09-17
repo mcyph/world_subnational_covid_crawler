@@ -7,25 +7,12 @@ from os.path import exists
 from http import HTTPStatus
 from json import loads, dumps
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
-from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import (
-    place_map
-)
-from covid_19_au_grab.datatypes.StrictDataPointsFactory import (
-    StrictDataPointsFactory, MODE_STRICT
-)
-from covid_19_au_grab.normalize_locality_name import (
-    normalize_locality_name
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import place_map
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 
 """
 TODO: Assign some of these codes, of which some have been recently allocated:

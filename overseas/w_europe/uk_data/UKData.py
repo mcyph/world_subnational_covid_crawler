@@ -1,18 +1,10 @@
 import csv
 
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.overseas.GithubRepo import (
-    GithubRepo
-)
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import (
-    place_map
-)
+from covid_19_au_grab.overseas.GithubRepo import GithubRepo
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import place_map
 
 
 class UKData(GithubRepo):
@@ -24,6 +16,7 @@ class UKData(GithubRepo):
         GithubRepo.__init__(self,
                             output_dir=get_overseas_dir() / 'uk' / 'covid-19-uk-data' / 'data',
                             github_url='https://github.com/tomwhite/covid-19-uk-data')
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -33,7 +26,7 @@ class UKData(GithubRepo):
         return r
 
     def _get_cases_uk(self):
-        r = []
+        r = self.sdpf()
 
         # By area
 
@@ -60,7 +53,7 @@ class UKData(GithubRepo):
                 else:
                     area = item['Area']
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.UK_AREA,
                     region_parent='GB', #item['Country'],
                     region_child=area,
@@ -68,12 +61,12 @@ class UKData(GithubRepo):
                     value=int(item['TotalCases']),
                     date_updated=date,
                     source_url='https://github.com/tomwhite/covid-19-uk-data'
-                ))
+                )
 
         return r
 
     def _get_indicators_uk(self):
-        r = []
+        r = self.sdpf()
 
         # By country
 
@@ -101,7 +94,7 @@ class UKData(GithubRepo):
                     'Northern Ireland': (Schemas.ADMIN_1, 'GB', 'GB-NIR'),
                 }[item['Country']]
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=schema,  # TODO: Should this be a separate schema?
                     region_parent=parent,
                     region_child=country,
@@ -109,7 +102,7 @@ class UKData(GithubRepo):
                     value=int(item['Value']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

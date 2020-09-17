@@ -54,6 +54,7 @@ AMERICAS_SOURCES = (
 # Asia/Oceania
 #==================================================================#
 
+from covid_19_au_grab.overseas.se_asia.cn_data.CNData import CNData
 from covid_19_au_grab.overseas.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.overseas.se_asia.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.se_asia.jp_city_data.JPCityData import JPCityData
@@ -77,7 +78,7 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 #INData, # Will use Bing data for India
 
 ASIA_SOURCES = (
-    BDData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
+    BDData, CNData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
     MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData,
     KHData, MYESRIDashData, JPTokyoCityPDFs
 )

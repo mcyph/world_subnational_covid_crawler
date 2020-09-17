@@ -1,21 +1,13 @@
-
-
-
 import json
 from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+
 
 # 'Phnom Penh': '',
 #      'Sihanouk': '',
@@ -30,7 +22,6 @@ from covid_19_au_grab.get_package_dir import (
 #      'Koh Kong': '',
 #      'Kampot': '',
 #      'Temple': ''
-
 
 place_map = {
     'ភ្នំពេញ': 'KH-12',
@@ -63,6 +54,12 @@ class KHData(URLBase):
                                   static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'kh', 'kh-25'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -71,7 +68,7 @@ class KHData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -90,7 +87,7 @@ class KHData(URLBase):
                 )
                 region_child = place_map[data['location']['name_km']]
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
@@ -98,8 +95,8 @@ class KHData(URLBase):
                     value=int(data['total_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
@@ -107,8 +104,8 @@ class KHData(URLBase):
                     value=int(data['new_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
@@ -116,8 +113,8 @@ class KHData(URLBase):
                     value=int(data['recovered_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
@@ -125,8 +122,8 @@ class KHData(URLBase):
                     value=int(data['new_death_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
-                r.append(DataPoint(
+                )
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='KH',
                     region_child=region_child,
@@ -134,7 +131,7 @@ class KHData(URLBase):
                     value=int(data['new_recovered_case']),
                     date_updated=date,
                     source_url=self.SOURCE_URL,
-                ))
+                )
 
         return r
 

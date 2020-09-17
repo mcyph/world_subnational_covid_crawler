@@ -2,16 +2,10 @@
 import json
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 class HKData(URLBase):
@@ -34,6 +28,13 @@ class HKData(URLBase):
                      static_file=False
                  )
              }
+        )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('hk_district', 'hk', '黄大仙'): ('hk_district', 'hk', '黃大仙'),
+                ('hk_district', 'hk', '荃灣區'): ('hk_district', 'hk', '荃灣'),
+            },
+            mode=MODE_STRICT
         )
         self.update()
 
@@ -84,8 +85,15 @@ class HKData(URLBase):
         # * Confirmed
         # * Probable
 
-        r = []
-        f = self.get_file('cases.json', include_revision=True)
+        r = self.sdpf()
+        path = self.get_current_revision_dir() / 'cases.json'
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.loads(f.read())
+        except UnicodeDecodeError:
+            import brotli
+            with open(path, 'rb') as f:
+                data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
         by_total = Counter()
         by_confirmed = Counter()
@@ -101,20 +109,20 @@ class HKData(URLBase):
             'F': DataTypes.TOTAL_FEMALE
         }
 
-        for feature in json.loads(f.read())['features']:
+        for feature in data['features']:
             item = feature['attributes']
             date = self.convert_date(item['Date_of_laboratory_confirmation'])
             agerange = self._age_to_range(item['Age'])
 
             by_total[date] += 1
-            by_district[date, item['地區'].replace(' ', '')] += 1
+            by_district[date, item['地區'].replace(' ', '').strip() or 'unknown'] += 1
             by_age[date, agerange] += 1
             by_gender[date, gender_map[item['Gender']]] += 1
 
         cumulative = 0
         for date, value in sorted(by_total.items()):
             cumulative += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
@@ -122,12 +130,12 @@ class HKData(URLBase):
                 value=cumulative,
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, agerange), value in sorted(by_age.items()):
             cumulative[agerange] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
@@ -135,12 +143,12 @@ class HKData(URLBase):
                 value=cumulative[agerange],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, gender), value in sorted(by_gender.items()):
             cumulative[gender] += value
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_0,
                 region_parent=None,
                 region_child='HK',
@@ -148,13 +156,14 @@ class HKData(URLBase):
                 value=cumulative[gender],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         cumulative = Counter()
         for (date, district), value in sorted(by_district.items()):
             cumulative[district] += value
+            print(district)
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.HK_DISTRICT,
                 region_parent='HK',
                 region_child=district,
@@ -162,7 +171,7 @@ class HKData(URLBase):
                 value=cumulative[district],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 

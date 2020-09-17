@@ -29,16 +29,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class FRGovData(URLBase):
@@ -50,6 +44,28 @@ class FRGovData(URLBase):
         URLBase.__init__(self,
             output_dir=get_overseas_dir() / 'fr' / 'govdata',
             urls_dict=self.__get_urls_dict()
+        )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                # TODO: What are all these codes?
+                ('admin_1', 'fr', 'fr-971'): None,
+                ('admin_1', 'fr', 'fr-972'): None,
+                ('admin_1', 'fr', 'fr-973'): None,
+                ('admin_1', 'fr', 'fr-974'): None,
+                ('admin_1', 'fr', 'fr-975'): None,
+                ('admin_1', 'fr', 'fr-976'): None,
+                ('admin_1', 'fr', 'fr-977'): None,
+                ('admin_1', 'fr', 'fr-978'): None,
+                ('admin_1', 'fr', 'fr-979'): None,
+                ('admin_1', 'fr', 'fr-980'): None,
+                ('admin_1', 'fr', 'fr-981'): None,
+                ('admin_1', 'fr', 'fr-982'): None,
+                ('admin_1', 'fr', 'fr-983'): None,
+                ('admin_1', 'fr', 'fr-984'): None,
+                ('admin_1', 'fr', 'fr-985'): None,
+                ('admin_1', 'fr', 'fr-986'): None,
+            },
+            mode=MODE_STRICT
         )
         self.update()
 
@@ -91,7 +107,7 @@ class FRGovData(URLBase):
         # dep	jour	P	T	cl_age90
         # 1	2020-05-13	0	16	9
         # 1	2020-05-13	1	17	19
-        r = []
+        r = self.sdpf()
         f = self.get_file('daily_positive_by_department.csv',
                           include_revision=True)
 
@@ -111,7 +127,7 @@ class FRGovData(URLBase):
             tests_totals[region_child] += int(item['T'])
             above_90_years_totals[region_child] += int(item['cl_age90'])
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='FR',
                 region_child=region_child,
@@ -119,9 +135,9 @@ class FRGovData(URLBase):
                 value=positive_totals[region_child],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
-            r.append(DataPoint(
+            r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='FR',
                 region_child=region_child,
@@ -129,7 +145,7 @@ class FRGovData(URLBase):
                 value=tests_totals[region_child],
                 date_updated=date,
                 source_url=self.SOURCE_URL
-            ))
+            )
 
         return r
 

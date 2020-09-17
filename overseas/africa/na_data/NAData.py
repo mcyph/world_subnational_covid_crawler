@@ -5,16 +5,11 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 class NAData(URLBase):
@@ -30,6 +25,7 @@ class NAData(URLBase):
                                     static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
         self.update()
 
     def get_datapoints(self):
@@ -59,7 +55,7 @@ class NAData(URLBase):
         # "quarantined":412,
         # "facilities":7}},
 
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -85,7 +81,7 @@ class NAData(URLBase):
                 outcome_dead = attributes['outcome_dead']
 
                 if positive is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
@@ -93,10 +89,10 @@ class NAData(URLBase):
                         value=int(positive),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if num_tests is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
@@ -104,10 +100,10 @@ class NAData(URLBase):
                         value=int(num_tests),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if recovered is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
@@ -115,10 +111,10 @@ class NAData(URLBase):
                         value=int(recovered),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if active is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
@@ -126,10 +122,10 @@ class NAData(URLBase):
                         value=int(active),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
                 if outcome_dead is not None:
-                    r.append(DataPoint(
+                    r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent='NA',
                         region_child=region,
@@ -137,7 +133,7 @@ class NAData(URLBase):
                         value=int(outcome_dead),
                         date_updated=date,
                         source_url=self.SOURCE_URL
-                    ))
+                    )
 
         return r
 

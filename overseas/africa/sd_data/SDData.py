@@ -3,16 +3,11 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 # الخرطوم
 # الجزيرة
@@ -87,6 +82,14 @@ class SDData(URLBase):
                                   static_file=False)
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'sd', 'sd-gk'): None,
+                ('admin_1', 'sd', 'sd-dc'): None,
+                ('admin_1', 'sd', 'sd-dc'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -95,19 +98,24 @@ class SDData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/index.html'
-            with open(path, 'r', encoding='utf-8') as f:
-                html = f.read()
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    html = f.read()
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    html = brotli.decompress(f.read()).decode('utf-8')
 
             for region, total in pq(html)('#DataTables_Table_0 tbody:contains("الخرطوم") tr'):
                 region = pq(region).text().strip()
                 total = int(pq(total).text().strip())
 
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='SD',
                     region_child=region_map[region],
@@ -115,7 +123,7 @@ class SDData(URLBase):
                     value=total,
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

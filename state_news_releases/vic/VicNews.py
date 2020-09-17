@@ -1,22 +1,18 @@
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, bothlistingandstat
-)
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.state_news_releases.vic.vic_powerbi import (
-    get_powerbi_data
-)
-from covid_19_au_grab.state_news_releases.vic.vic_google_sheets import (
-    get_from_google_sheets
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
+
+from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, bothlistingandstat
+
+from covid_19_au_grab.state_news_releases.vic.deprecated.vic_powerbi import get_powerbi_data
+from covid_19_au_grab.state_news_releases.vic.deprecated.vic_google_sheets import get_from_google_sheets
+
+from covid_19_au_grab.state_news_releases.vic.vic_carto import get_vic_carto_datapoints
+from covid_19_au_grab.state_news_releases.vic.VicCSV import VicCSV
+from covid_19_au_grab.state_news_releases.vic.VicTableauNative import VicTableauNative
 
 
 class VicNews(StateNewsBase):
@@ -70,6 +66,17 @@ class VicNews(StateNewsBase):
                 r.append(datapoint)
         
         r.extend(get_from_google_sheets())  # TODO: ADD HISTORICAL VALS!!! ============================================
+
+        if False:
+            r.extend(get_vic_carto_datapoints())
+            VicCSV().get_datapoints()
+        else:
+            # Better to use the CSVs for now
+            # but will still get data from the carto source
+            get_vic_carto_datapoints()
+            r.extend(VicCSV().get_datapoints())
+
+        r.extend(VicTableauNative().get_datapoints())
         return r
 
     def _get_date(self, href, html):
@@ -223,22 +230,50 @@ class VicNews(StateNewsBase):
     @bothlistingandstat
     def _get_total_male_female_breakdown(self, url, html):
         du = self._get_date(url, html)
-        men = self._extract_number_using_regex(
-            compile('total[^0-9.]+([0-9,]+) men'),
-            html,
-            source_url=url,
-            datatype=DataTypes.TOTAL_MALE,
-            date_updated=du
-        )
-        women = self._extract_number_using_regex(
-            compile('total[^0-9.]+([0-9,]+) women'),
-            html,
-            source_url=url,
-            datatype=DataTypes.TOTAL_FEMALE,
-            date_updated=du
-        )
-        if men is not None and women is not None:
-            return (men, women)
+
+        regex = compile(r'Total cases include ([0-9,]+) men and ([0-9,]+) women')
+        match = regex.search(html)
+        if match:
+            men = int(match.group(1).replace(',', ''))
+            women = int(match.group(2).replace(',', ''))
+
+            men = DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='au',
+                region_child='au-vic',
+                date_updated=du,
+                datatype=DataTypes.TOTAL_MALE,
+                value=men,
+                source_url=url
+            )
+            women = DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='au',
+                region_child='au-vic',
+                date_updated=du,
+                datatype=DataTypes.TOTAL_FEMALE,
+                value=women,
+                source_url=url
+            )
+            return men, women
+
+        else:
+            men = self._extract_number_using_regex(
+                compile('total[^0-9.]+?([0-9,]+) men'),
+                html,
+                source_url=url,
+                datatype=DataTypes.TOTAL_MALE,
+                date_updated=du
+            )
+            women = self._extract_number_using_regex(
+                compile('total[^0-9.]+?([0-9,]+) women'),
+                html,
+                source_url=url,
+                datatype=DataTypes.TOTAL_FEMALE,
+                date_updated=du
+            )
+            if men is not None and women is not None:
+                return men, women
         return None
 
     #============================================================#
@@ -271,8 +306,11 @@ class VicNews(StateNewsBase):
             datatype_map = {
                 'confirmed cases': DataTypes.TOTAL,
                 'confirmed cases (ever)': DataTypes.TOTAL,
+                'confirmed cases\n(ever)': DataTypes.TOTAL,
                 'total confirmed cases (ever)': DataTypes.TOTAL,
+                'total confirmed cases\n(ever)': DataTypes.TOTAL,
                 'active cases (current)': DataTypes.STATUS_ACTIVE,
+                'active cases\n(current)': DataTypes.STATUS_ACTIVE,
                 'currently active cases': DataTypes.STATUS_ACTIVE,
             }
             datatypes = [
@@ -414,6 +452,8 @@ class VicNews(StateNewsBase):
                     IGNORECASE
                 ),
                 compile(
+                    '([0-9,]+) (?:people have(?: already)? died)' # deaths| generates a lot of false positives after a certain date!!
+                ) if du >= '2020_07_07' else compile(
                     '([0-9,]+) (?:deaths|people have(?: already)? died)'
                 ),
             ),
@@ -423,6 +463,8 @@ class VicNews(StateNewsBase):
             date_updated=du
         )
         if deaths:
+            if du >= '2020_07_29' and deaths.value < 50:
+                raise Exception((du, href, deaths))
             r.append(deaths)
 
         in_hospital = self._extract_number_using_regex(

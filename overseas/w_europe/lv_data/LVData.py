@@ -5,16 +5,10 @@ from pyquery import PyQuery as pq
 from os import listdir
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 
 
 REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'
@@ -44,6 +38,25 @@ class LVData(URLBase):
                 'regions_data.json': URL(REGIONS_URL, static_file=False),
             }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'lv', 'daugavpils novads'): None,
+                ('admin_1', 'lv', 'jelgavas novads'): None,
+                ('admin_1', 'lv', 'jēkabpils novads'): None,
+                ('admin_1', 'lv', 'kocēnu novads'): None,
+                ('admin_1', 'lv', 'līgatnes novads'): None,
+                ('admin_1', 'lv', 'pārgaujas novads'): None,
+                ('admin_1', 'lv', 'pārgaujas novads'): None,
+                ('admin_1', 'lv', 'priekuļu novads'): None,
+                ('admin_1', 'lv', 'rēzeknes novads'): None,
+                ('admin_1', 'lv', 'rūjienas novads'): None,
+                ('admin_1', 'lv', 'strenču novads'): None,
+                ('admin_1', 'lv', 'varakļānu novads'): None,
+                ('admin_1', 'lv', 'ventspils novads'): None,
+                ('admin_1', 'lv', 'viļānu novads'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -53,7 +66,7 @@ class LVData(URLBase):
 
     def _get_regions_data(self):
         # # {"data":[[["Aglonas novads",0,"0","56.0965 27.114","Aglonas novads"],
-        r = []
+        r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
@@ -63,11 +76,13 @@ class LVData(URLBase):
 
             for i_data in data['data']:
                 for region_name, value, *leftover in i_data:
+                    print(region_name)
+
                     # Only confirmed and deaths are shown in the dashboard
                     date = datetime.datetime.fromtimestamp(1595133942147/1000.0).strftime('%Y_%m_%d')
 
                     if value is not None:
-                        r.append(DataPoint(
+                        r.append(
                             region_schema=Schemas.ADMIN_1,
                             region_parent='LV',
                             region_child=region_name,
@@ -75,7 +90,7 @@ class LVData(URLBase):
                             value=int(value),
                             date_updated=date,
                             source_url=self.SOURCE_URL
-                        ))
+                        )
 
         return r
 

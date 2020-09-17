@@ -4,16 +4,10 @@
 
 import csv
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
 
 
 # Province	Cases	Deaths	Recoveries	Active Cases	Date
@@ -47,10 +41,25 @@ class AFData(URLBase):
                  )
              }
         )
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'af', 'dykundi'): None, #('admin_1', 'af', 'AF-DAY'),
+                ('admin_1', 'af', 'hirat'): ('admin_1', 'af', 'AF-HER'),
+                ('admin_1', 'af', 'jawzjan'): ('admin_1', 'af', 'AF-JOW'),
+                ('admin_1', 'af', 'paktya'): ('admin_1', 'af', 'AF-PIA'),
+                ('admin_1', 'af', 'panjsher'): None, #('admin_1', 'af', 'AF-PAN'),
+                ('admin_1', 'af', 'sar-e-pul'): ('admin_1', 'af', 'AF-SAR'),
+                ('admin_1', 'af', 'daykundi'): None, #('admin_1', 'af', 'AF-DAY'),
+                ('admin_1', 'af', 'panjshir'): None, #('admin_1', 'af', 'AF-PAN'),
+                ('admin_1', 'af', 'panjshir\xa0province'): None, #('admin_1', 'af', 'AF-PAN'),
+                ('admin_1', 'af', 'sar-e\xa0pol\xa0province'): ('admin_1', 'af', 'AF-SAR'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = self.sdpf()
         first_line = True
 
         f = self.get_file('provinces_1.csv',
@@ -67,48 +76,48 @@ class AFData(URLBase):
                 break
 
             if item['Cases'].replace('–', ''):
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Afghanistan',
+                    region_parent='AF',
                     region_child=province,
                     datatype=DataTypes.TOTAL,
                     value=int(item['Cases'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             if item['Deaths'].replace('–', ''):
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Afghanistan',
+                    region_parent='AF',
                     region_child=province,
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['Deaths'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             if item['Recoveries'].replace('–', ''):
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Afghanistan',
+                    region_parent='AF',
                     region_child=province,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(item['Recoveries'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
             if item['Active Cases'].replace('–', ''):
-                r.append(DataPoint(
+                r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Afghanistan',
+                    region_parent='AF',
                     region_child=province,
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(item['Active Cases'].replace(',', '')),
                     date_updated=date,
                     source_url=self.SOURCE_URL
-                ))
+                )
 
         return r
 

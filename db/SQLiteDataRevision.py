@@ -77,8 +77,6 @@ class SQLiteDataRevision:
             region_parent=['= ?', [region_parent]] if region_parent else None,
             region_child=['= ?', [region_child]] if region_child else None,
             datatype=[f"IN ({','.join('?' for _ in datatypes)})", datatypes],
-
-            source_id=['!= ?', ['us_nytimes']],  # HACK!
         )
 
         r = {}
