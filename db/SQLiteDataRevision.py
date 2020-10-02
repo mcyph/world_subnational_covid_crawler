@@ -4,11 +4,10 @@ import datetime
 from io import StringIO
 from pytz import timezone
 from os.path import getctime
-from covid_19_au_grab.get_package_dir import get_output_dir, get_package_dir
-from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
+
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
-from covid_19_au_grab.datatypes.datapoints_thinned_out import \
-    datapoints_thinned_out
+from covid_19_au_grab.get_package_dir import get_output_dir
+from covid_19_au_grab.datatypes.datapoints_thinned_out import datapoints_thinned_out
 
 
 OUTPUT_DIR = get_output_dir() / 'output'

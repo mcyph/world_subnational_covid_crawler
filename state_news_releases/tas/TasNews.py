@@ -4,19 +4,11 @@ from datetime import datetime
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat, bothlistingandstat
-)
+from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, singledaystat, bothlistingandstat
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
-from covid_19_au_grab.get_package_dir import (
-    get_package_dir
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 TAS_BY_LGA = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_lga.json'
 TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv'

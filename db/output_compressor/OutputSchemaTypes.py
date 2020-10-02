@@ -164,7 +164,7 @@ class OutputSchemaTypes:
 
 
 if __name__ == '__main__':
-    with open('schema_types_out.json', 'w', encoding='utf-8') as f:
+    with open('../../datatypes/schema_types_out.json', 'w', encoding='utf-8') as f:
         f.write(json.dumps(
             OutputSchemaTypes().get_schema_types(),
             ensure_ascii=False,

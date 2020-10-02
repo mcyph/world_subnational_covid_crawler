@@ -29,7 +29,7 @@ class ZAData(PressReleaseBase):
         )
         self.sdpf = StrictDataPointsFactory(
             region_mappings={
-
+                ('admin_1', 'za', 'national'): None,
             },
             mode=MODE_STRICT
         )
@@ -115,14 +115,7 @@ class ZAData(PressReleaseBase):
                                        'tr')
 
         if TRsDeathsRecoveriesActive:
-            for province, deaths, recoveries, active in TRsDeathsRecoveries[1:]:
-                # print(pq(province).text(),
-                #      pq(deaths).text(),
-                #      pq(recoveries).text())
-                province = self._elm_to_province(province)
-                if province == 'total':
-                    continue
-
+            def append_me(province, deaths, recoveries, active):
                 r.append(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='ZA',
@@ -150,6 +143,26 @@ class ZAData(PressReleaseBase):
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
+
+            try:
+                for province, deaths, recoveries, active in TRsDeathsRecoveries[1:]:
+                    # print(pq(province).text(),
+                    #      pq(deaths).text(),
+                    #      pq(recoveries).text())
+                    province = self._elm_to_province(province)
+                    if province == 'total':
+                        continue
+                    append_me(province, deaths, recoveries, active)
+            except:
+                for province, deaths, recoveries, recoveries_pc, active in TRsDeathsRecoveries[1:]:
+                    # print(pq(province).text(),
+                    #      pq(deaths).text(),
+                    #      pq(recoveries).text())
+                    province = self._elm_to_province(province)
+                    if province == 'total':
+                        continue
+                    append_me(province, deaths, recoveries, active)
+
         else:
             for province, deaths, recoveries in TRsDeathsRecoveries[1:]:
                 #print(pq(province).text(),

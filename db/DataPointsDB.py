@@ -1,8 +1,8 @@
 import sqlite3
 from os.path import exists
 
-from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.get_package_dir import get_package_dir
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 
@@ -369,7 +369,7 @@ class DataPointsDB:
             SELECT 
                 date_updated, 
                 region_schema, region_parent, region_child,
-                agerange, datatype, `value`,
+                agerange, datatype, `value`, source_id,
                 source_url_id
             FROM
                 datapoints
@@ -405,7 +405,7 @@ class DataPointsDB:
         for (
             date_updated,
             region_schema, region_parent, region_child,
-            agerange, datatype, value,
+            agerange, datatype, value, source_id,
             source_url_id
         ) in results:
             if add_source_url:
@@ -421,7 +421,8 @@ class DataPointsDB:
                 agerange=agerange,
                 datatype=DataTypes(datatype),
                 value=value,
-                source_url=str(source_url)
+                source_url=str(source_url),
+                source_id=source_id,
             ))
 
         if _fetch_one:
@@ -462,7 +463,7 @@ class DataPointsDB:
             SELECT 
                 date_updated, 
                 region_schema, region_parent, region_child,
-                agerange, datatype, `value`,
+                agerange, datatype, `value`, source_id,
                 source_url_id
             FROM
                 datapoints
@@ -500,7 +501,7 @@ class DataPointsDB:
         for (
             date_updated,
             region_schema, region_parent, region_child,
-            agerange, datatype, value,
+            agerange, datatype, value, source_id,
             source_url_id
         ) in results:
             source_url = source_url_map.get(source_url_id, '')
@@ -513,7 +514,8 @@ class DataPointsDB:
                 agerange=agerange,
                 datatype=DataTypes(datatype),
                 value=value,
-                source_url=str(source_url)
+                source_url=str(source_url),
+                source_id=source_id,
             ))
 
         return r

@@ -215,7 +215,7 @@ class JPCityData(URLBase):
                 item[k] = item[k].strip()
 
             for xxx in range(int(item.get('人数', '').strip() or 1)):
-                #print(item)
+                print(item)
                 #item = item['properties']
 
                 if not item:
@@ -230,6 +230,10 @@ class JPCityData(URLBase):
                     agerange = '0-9'
                 elif item.get('年代') in ('不明', '', None):
                     agerange = 'Unknown'
+                elif item.get('年代') in ('90以上',):
+                    agerange = '90+'
+                elif item.get('年代') in ('100歳以上',):
+                    agerange = '100+'
                 else:
                     agerange = (
                         str(int(item['年代'].strip('代'))) +
@@ -245,8 +249,10 @@ class JPCityData(URLBase):
                     '不明': None,
                     '惰性': DataTypes.TOTAL_MALE,  # Pretty sure this is a typo
                     '未満 女性': DataTypes.TOTAL_FEMALE,
+                    '女児': DataTypes.TOTAL_FEMALE,
+                    '男児': DataTypes.TOTAL_MALE,
                     '': None,
-                    None: None
+                    None: None,
                 }[item['性別']]
 
                 #date_of_onset = self.convert_date(item['発症日'], formats=('%m/%d/%Y',))
@@ -315,10 +321,13 @@ class JPCityData(URLBase):
                         '中丹西保健所管内': 'nakatan-kan',
                         '中丹東保健所': 'nakatan-kan',
                         '中丹東保健所管内': 'nakatan-kan',
+                        '中丹西': 'nakatan-kan',
+                        '中丹東': 'nakatan-kan',
 
                         '南丹管内': 'nantan-kan',
                         '南丹保健所': 'nantan-kan',
                         '南丹保健所管内': 'nantan-kan',
+                        '南丹': 'nantan-kan',
 
                         '山城管内': 'yamashiro-kan',
                         '山城北保健所': 'yamashiro-kan',
@@ -330,11 +339,13 @@ class JPCityData(URLBase):
                         '山城南保健所': 'yamashiro-kan',
                         '山城市内': 'yamashiro-kan',
                         '山城北': 'yamashiro-kan',
+                        '山城南': 'yamashiro-kan',
 
                         '乙訓管内': 'otokuni-kan',
                         '乙訓保健所': 'otokuni-kan',
                         '乙訓保健所管内': 'otokuni-kan',
                         '乙訓': 'otokuni-kan',
+                        '乙君': 'otokuni-kan',
 
                         # Okinawa
                         '南部保健所管内': '南部保健所管',
@@ -371,6 +382,8 @@ class JPCityData(URLBase):
                         '諫早市': '諫早市',
                         '三潴郡': '三潴郡',
                         '朝倉郡': '朝倉郡',
+                        '糸島市': '糸島市',
+                        '鞍手郡': '鞍手郡',
 
                         # Kanagawa
                         '鎌倉保健所管内': '鎌倉保健所管',
@@ -392,6 +405,7 @@ class JPCityData(URLBase):
                         'ブラジル': 'other',
                         'ペルー、メキシコ': 'other',
                         'アメリカ合衆国': 'other',
+                        '中原区': '中原区',
 
                         # Aichi
                         '尾張地方': '尾張地方',
@@ -417,6 +431,9 @@ class JPCityData(URLBase):
                         '中央東福祉保健所管内': '中央東福祉保健所管',
                         '中央西福祉保健所管内': '中央西福祉保健所管',
                         '幡多福祉保健所管内': '幡多福祉保健所管',
+                        '須崎福祉保健所管内': '須崎福祉保健所管',
+                        '中央東': '中央東福祉保健所管',
+                        '中央西': '中央西福祉保健所管',
                         'ペルー': 'other',
 
                         # Mie
@@ -446,6 +463,19 @@ class JPCityData(URLBase):
                         '生活圏：富士吉田市、富士河口湖町': '富士吉田市',
                         '生活圏：中北地域、峡南地域': '峡南地域',
                         '生活圏：見延町': '見延町',
+                        '甲府市': '甲府市',
+                        '甲府市、南アルプス市': '甲府市',
+                        '東部地域': '東部地域',
+                        '甲府市外（中北地域）': '中北地域',
+                        '非公表': 'unknown',
+                        '昭和町': '昭和町',
+                        '南アルプス市': '南アルプス市',
+                        '中北地域': '中北地域',
+                        '生活圏：富士北麓地域': '富士北麓地域',
+                        '生活圏：峡東地域': '峡東地域',
+                        '生活圏:山梨市、甲州市': '甲州市',
+                        '生活圏:甲府市、甲斐市': '甲斐市',
+                        '生活圏:富士北麓地域': '富士北麓地域',
 
                         # Nara
                         '郡山保健所管内、本来陽性確定日は９日だが、厚生労働省のとりまとめが10日だったため、便宜上10日にしている': '郡山保健所管',
@@ -471,6 +501,9 @@ class JPCityData(URLBase):
                         '赤穂健康福祉事務所管内': '赤穂健康福祉事務所管',
                         '*': 'unknown',
                         '赤穂': '赤穂',
+                        '加古川健康福祉事務所管内': '加古川健康福祉事務所管',
+                        '龍野健康福祉事務所管内': '龍野健康福祉事務所管',
+                        '豊岡健康福祉事務所管内': '豊岡健康福祉事務所管',
 
                         # Nagano
                         '松本保健所管内': '松本保健所管',
@@ -507,6 +540,7 @@ class JPCityData(URLBase):
                         '3/20アメリカから帰国': 'unknown',
                         '上十三保健所管内': '上十三保健所管',
                         '郡山市保健所管内': '郡山市保健所管',
+                        '五所川原保健所管内': '五所川原保健所管',
 
                         # Shizuoka
                         '3/22イタリア（ロンバルディア州）から帰国': 'unknown',
@@ -526,6 +560,8 @@ class JPCityData(URLBase):
                         '築上郡': '築上郡',
                         'インドネシア': 'other',
                         '県南保健所': '県南保健所管',
+                        '県南': '県南保健所管',
+                        'いわき市': 'いわき市保健所管',
 
                         # Ehime
                         '東予地域': '東予地域',
@@ -533,9 +569,9 @@ class JPCityData(URLBase):
                         # Tokushima
                         'ダイヤモンド・プリンセス号2/20下船': 'unknown',
                         '徳島保健所管内': '徳島保健所管',
-                        '徳島': '徳島',
+                        '徳島': '徳島保健所管',
                         '阿南': '阿南',
-                        '徳島/100歳以上': '徳島',
+                        '徳島/100歳以上': '徳島保健所管',
 
                         # Akita
                         '由利本荘保健所管内/外国籍': '由利本荘保健所管',
@@ -543,6 +579,8 @@ class JPCityData(URLBase):
                         '湯沢保健所管内': '湯沢保健所管',
                         '能代保健所': '能代保健所管',
                         '由利本荘保健所': '由利本荘保健所管',
+                        '大仙保健所管内': '大仙保健所管',
+                        '秋田中央保健所管内': '秋田中央保健所管',
 
                         # Gunma
                         '渋川\n保健所管内': '保健所管',

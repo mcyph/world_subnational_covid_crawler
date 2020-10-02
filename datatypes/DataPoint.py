@@ -37,7 +37,8 @@ def DataPoint(region_schema=Schemas.ADMIN_1,
 
               value=None,
               source_url=None,
-              text_match=None):
+              text_match=None,
+              source_id=None):
     """
     A hackish wrapper around DataPoint,
     adding some validation and default
@@ -101,7 +102,8 @@ def DataPoint(region_schema=Schemas.ADMIN_1,
         value,
 
         source_url,
-        text_match
+        text_match,
+        source_id
     )
 
 
@@ -120,4 +122,6 @@ _DataPoint = namedtuple('DataPoint', [
     'source_url',
     # The text which matched this (the x,y range and text itself)
     'text_match',
+
+    'source_id',
 ])

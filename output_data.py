@@ -1,13 +1,10 @@
 import sys
 import json
 import datetime
-import threading
-from git import Repo
-from os import system, listdir
+from os import system
 
 from covid_19_au_grab.Logger import Logger
-from covid_19_au_grab.get_package_dir import \
-    get_output_dir, get_global_subnational_covid_data_dir, get_package_dir
+from covid_19_au_grab.get_package_dir import get_output_dir
 from covid_19_au_grab.overseas.OverseasDataSources import OverseasDataSources
 from covid_19_au_grab.state_news_releases.StateDataSources import StateDataSources
 from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import InfrequentStateDataJobs
@@ -15,13 +12,10 @@ from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import Infrequ
 from covid_19_au_grab.db.RevisionIDs import RevisionIDs
 from covid_19_au_grab.db.DerivedData import DerivedData
 from covid_19_au_grab.db.DataPointsDB import DataPointsDB
-from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
-from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
-from covid_19_au_grab.db.output_revision_datapoints_to_zip import \
-    output_revision_datapoints_to_zip
 from covid_19_au_grab.db.delete_old_dbs import delete_old_dbs
-from covid_19_au_grab.output_tsv_data import \
-    output_tsv_data, output_source_info, push_to_github, output_geojson
+from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
+from covid_19_au_grab.db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
+from covid_19_au_grab.output_tsv_data import output_tsv_data, output_source_info, push_to_github, output_geojson
 
 
 OUTPUT_DIR = get_output_dir() / 'output'

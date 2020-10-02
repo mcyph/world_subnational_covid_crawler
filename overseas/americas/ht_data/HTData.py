@@ -15,8 +15,6 @@ class HTData(URLBase):
     SOURCE_ID = 'ht_hdx_humdata'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
              output_dir=get_overseas_dir() / '' / 'data',
              urls_dict={
@@ -29,7 +27,8 @@ class HTData(URLBase):
         self.sdpf = StrictDataPointsFactory(
             region_mappings={
                 ('admin_1', 'ht', 'grand anse'): ('admin_1', 'ht', 'ht-ga'),
-                ('admin_1', 'ht', 'grandanse'): ('admin_1', 'ht', 'ht-ga')
+                ('admin_1', 'ht', 'grandanse'): ('admin_1', 'ht', 'ht-ga'),
+                ('admin_1', 'ht', 'grand total'): None,
             },
             mode=MODE_STRICT
         )

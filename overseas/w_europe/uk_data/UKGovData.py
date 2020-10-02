@@ -2,7 +2,7 @@
 
 import datetime
 from requests import get
-from os import makedirs
+from os import makedirs, listdir
 from os.path import exists
 from http import HTTPStatus
 from json import loads, dumps
@@ -13,6 +13,7 @@ from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import place_map
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 """
 TODO: Assign some of these codes, of which some have been recently allocated:
@@ -58,10 +59,19 @@ class UKGovData(URLBase):
         self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
 
     def get_datapoints(self):
-        r = []
-        date = datetime.datetime.now().strftime('%Y_%m_%d')
-        r.extend(self._get_utla_datapoints(date))
-        r.extend(self._get_ltla_datapoints(date))
+        r = DataPointMerger()
+
+        for date in sorted(listdir(get_overseas_dir() / 'uk' / 'gov-api')):
+            try:
+                r.extend(self._get_utla_datapoints(date))
+            except FileNotFoundError:
+                pass
+
+            try:
+                r.extend(self._get_ltla_datapoints(date))
+            except FileNotFoundError:
+                pass
+
         return r
 
     def _get_utla_datapoints(self, date):
@@ -219,7 +229,7 @@ class UKGovData(URLBase):
             # Adding page number to query params
             api_params["page"] = page_number
             print("getting:", endpoint, api_params)
-            response = get(endpoint, params=api_params, timeout=10)
+            response = get(endpoint, params=api_params, timeout=30)
 
             if response.status_code >= HTTPStatus.BAD_REQUEST:
                 raise RuntimeError(f'Request failed: {response.text}')
@@ -229,10 +239,13 @@ class UKGovData(URLBase):
             current_data = response.json()
             page_data = current_data['data']
             data.extend(page_data)
+            print(page_data)
 
             # The "next" attribute in "pagination" will be `None`
             # when we reach the end.
             if current_data["pagination"]["next"] is None:
+                break
+            elif page_number > 100:
                 break
             page_number += 1
 

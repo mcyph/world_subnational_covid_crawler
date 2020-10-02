@@ -103,7 +103,7 @@ class CNData(URLBase):
                 # "updateAt":1599211044000}
 
                 for item in data:
-                    #date = self.convert_date(item['day'])
+                    i_date = self.convert_date(item['day'])
 
                     r.append(
                         region_schema=Schemas.CN_CITY,
@@ -111,7 +111,7 @@ class CNData(URLBase):
                         region_child=item['city'],
                         datatype=DataTypes.TOTAL,
                         value=int(item[f'tconfirm'])+int(item[f'tsuspect']),
-                        date_updated=date,
+                        date_updated=i_date,
                         source_url=self.SOURCE_URL
                     )
                     r.append(
@@ -120,7 +120,7 @@ class CNData(URLBase):
                         region_child=item['city'],
                         datatype=DataTypes.NEW,
                         value=int(item[f'nconfirm'])+int(item[f'nsuspect']),
-                        date_updated=date,
+                        date_updated=i_date,
                         source_url=self.SOURCE_URL
                     )
 
@@ -136,7 +136,7 @@ class CNData(URLBase):
                             region_child=item['city'],
                             datatype=total_datatype,
                             value=int(item[f'n{key_suffix}']),
-                            date_updated=date,
+                            date_updated=i_date,
                             source_url=self.SOURCE_URL
                         )
                         r.append(
@@ -145,7 +145,7 @@ class CNData(URLBase):
                             region_child=item['city'],
                             datatype=new_datatype,
                             value=int(item[f't{key_suffix}']),
-                            date_updated=date,
+                            date_updated=i_date,
                             source_url=self.SOURCE_URL
                         )
 

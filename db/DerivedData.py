@@ -1,12 +1,8 @@
 from collections import Counter
 
-from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.datatypes import (
-    date_fns
-)
+from covid_19_au_grab.datatypes import date_fns
+from covid_19_au_grab.datatypes.enums import DataTypes
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
 
 
 class DerivedData:
@@ -39,7 +35,9 @@ class DerivedData:
                 source_id, new_datatype, total_datatype
             )
 
-        self.add_gender_balance_from_breakdown(source_id)
+        if source_id != 'au_vic':
+            # Vic provides specific nums!
+            self.add_gender_balance_from_breakdown(source_id)
         #self.add_rate_of_change(region_schema)
 
     def add_new_datapoints_from_total(
@@ -140,6 +138,10 @@ class DerivedData:
                  region_schema,
                  region_parent,
                  region_child), value in age_breakdowns.items():
+
+                if (date_updated, region_schema, region_parent, region_child) in has_total:
+                    # Don't add derived if an explicit value given!
+                    continue
 
                 append_datapoints.append(DataPoint(
                     region_schema=region_schema,

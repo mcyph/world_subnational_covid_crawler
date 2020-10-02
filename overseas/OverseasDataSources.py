@@ -42,12 +42,11 @@ from covid_19_au_grab.overseas.americas.ca_data.CACovid19Canada import CACovid19
 from covid_19_au_grab.overseas.americas.cu_data.CUData import CUData
 from covid_19_au_grab.overseas.americas.ve_data.VEData import VEData as VEDataNonHumData
 from covid_19_au_grab.overseas.humdata.ve_data.VEData import VEData
-
-#USNYTData,
+from covid_19_au_grab.overseas.americas.us_nyt_data.USNYTData import USNYTData
 
 AMERICAS_SOURCES = (
     BRData, CACovid19Canada, COData, CUData, HTData, VEData,
-    VEDataNonHumData,
+    VEDataNonHumData, USNYTData
 )
 
 #==================================================================#
@@ -55,6 +54,7 @@ AMERICAS_SOURCES = (
 #==================================================================#
 
 from covid_19_au_grab.overseas.se_asia.cn_data.CNData import CNData
+from covid_19_au_grab.overseas.se_asia.cn_data.CNQQData import CNQQData
 from covid_19_au_grab.overseas.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.overseas.se_asia.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.se_asia.jp_city_data.JPCityData import JPCityData
@@ -78,9 +78,9 @@ from covid_19_au_grab.overseas.oceania.nz_data.NZData import NZData
 #INData, # Will use Bing data for India
 
 ASIA_SOURCES = (
-    BDData, CNData, IDGoogleDocsData, JPData, JPCityData, KRData, LKData,
-    MMData, MYData, NPData, NZData, THData, TWData, VNData, HKData,
-    KHData, MYESRIDashData, JPTokyoCityPDFs
+    BDData, CNQQData, CNData, IDGoogleDocsData, JPData, JPCityData,
+    KRData, LKData, MMData, MYData, NPData, NZData, THData, TWData,
+    VNData, HKData, KHData, MYESRIDashData, JPTokyoCityPDFs
 )
 
 #==================================================================#
@@ -188,8 +188,8 @@ class OverseasDataSources:
             WORLD_DATA
         ):
             all_source_ids.extend([i.SOURCE_ID for i in classes])
-            #process = multiprocessing.Process(target=_get_datapoints, args=(classes, send_q))
-            process = threading.Thread(target=_get_datapoints, args=(classes, send_q))
+            process = multiprocessing.Process(target=_get_datapoints, args=(classes, send_q))
+            #process = threading.Thread(target=_get_datapoints, args=(classes, send_q))
             processes.append(process)
 
         for process in processes:

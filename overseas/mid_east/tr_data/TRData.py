@@ -62,7 +62,7 @@ class TRData(URLBase):
         r = []
         # HACK THIS IS DISABLED AS DOESN'T SEEM TO BE UP-TO-DATE as of 17th July!! ==================================================
         r.extend(self._get_regions())
-        r.extend(self._get_other_stats())
+        #r.extend(self._get_other_stats())
         return r
 
     def _get_regions(self):

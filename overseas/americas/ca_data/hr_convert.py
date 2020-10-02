@@ -17,7 +17,8 @@ _province_map = {
     'PEI': 'CA-PE',
     'Quebec': 'CA-QC',
     'Saskatchewan': 'CA-SK',
-    'Yukon': 'CA-YT'
+    'Yukon': 'CA-YT',
+    'Repatriated': 'other',
 }
 
 

@@ -14,12 +14,13 @@ from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsF
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 from covid_19_au_grab.set_locale import set_locale
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
-WIKI_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_COVID-19_pandemisi'
+WIKI_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_b%C3%B6lgelere_g%C3%B6re_COVID-19_pandemisi'
 
 
 class TRWikiData(URLBase):
-    SOURCE_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_COVID-19_pandemisi'
+    SOURCE_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_b%C3%B6lgelere_g%C3%B6re_COVID-19_pandemisi'
     SOURCE_DESCRIPTION = ''
     SOURCE_ID = 'tr_wikipedia'
 
@@ -34,7 +35,7 @@ class TRWikiData(URLBase):
         self.update()
 
     def get_datapoints(self):
-        r = []
+        r = DataPointMerger()
         with set_locale('tr_TR.utf8'):
             for dir_ in sorted(listdir(self.output_dir)):
                 with open(self.output_dir / dir_ / 'covid19_in_turkey.html', 'r', encoding='utf-8') as f:
@@ -61,9 +62,15 @@ class TRWikiData(URLBase):
 
                 date_str = pq(date_tr[0]).text().strip().split('[')[0].strip()
 
-                for value, region in zip(date_tr[1:], region_headers):
+                if '<b>+ 882</b>' in html:
+                    value_tds = [date_tr[i] for i in range(len(date_tr)-1) if i % 2 == 1]
+                else:
+                    value_tds = date_tr[1:]
+
+                for value, region in zip(value_tds, region_headers):
                     region = pq(region).text().strip()
-                    date = datetime.datetime.strptime(date_str + ' 2020', '%d %B %Y').strftime('%Y_%m_%d')
+                    print(date_str, pq(value).text(), region)
+                    date = datetime.datetime.strptime(date_str + ' 2020' if not ' 2020' in date_str else date_str, '%d %B %Y').strftime('%Y_%m_%d')
                     value = int(pq(value).text().strip().replace('.', ''))
 
                     if region.lower() == 'toplam':
@@ -125,9 +132,14 @@ class TRWikiData(URLBase):
 
                 date_str = pq(date_tr[0]).text().strip().split('[')[0].strip()
 
-                for value, region in zip(date_tr[1:], region_headers):
+                if '<b>+ 882</b>' in html:
+                    value_tds = [date_tr[i] for i in range(len(date_tr)-1) if i % 2 == 1]
+                else:
+                    value_tds = date_tr[1:]
+
+                for value, region in zip(value_tds, region_headers):
                     region = pq(region).text().strip()
-                    date = datetime.datetime.strptime(date_str + ' 2020', '%d %B %Y').strftime('%Y_%m_%d')
+                    date = datetime.datetime.strptime(date_str + ' 2020' if not ' 2020' in date_str else date_str, '%d %B %Y').strftime('%Y_%m_%d')
                     value = int(pq(value).text().strip().replace('.', ''))
 
                     if region.lower() == 'toplam':
