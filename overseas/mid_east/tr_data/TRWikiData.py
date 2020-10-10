@@ -69,7 +69,7 @@ class TRWikiData(URLBase):
 
                 for value, region in zip(value_tds, region_headers):
                     region = pq(region).text().strip()
-                    print(date_str, pq(value).text(), region)
+                    #print(date_str, pq(value).text(), region)
                     date = datetime.datetime.strptime(date_str + ' 2020' if not ' 2020' in date_str else date_str, '%d %B %Y').strftime('%Y_%m_%d')
                     value = int(pq(value).text().strip().replace('.', ''))
 

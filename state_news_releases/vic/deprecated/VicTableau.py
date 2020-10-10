@@ -128,10 +128,10 @@ class _VicTableau:
                 req = ent['request']
 
                 if JSON_URL_INCLUDES in req['url']:
-                    print("USING:", req['url'])
+                    #print("USING:", req['url'])
                     # print(ent)
                     # print(ent.keys())
-                    print(ent['response']['content'])
+                    #print(ent['response']['content'])
 
                     data = ent['response']['content']['text']
                     try:

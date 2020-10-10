@@ -235,7 +235,7 @@ class JPData(GithubRepo):
                   'r', encoding='utf-8') as f:
 
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
 
                 r.append(
                     region_schema=Schemas.ADMIN_0,

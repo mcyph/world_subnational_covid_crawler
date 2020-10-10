@@ -66,7 +66,7 @@ class IQData(URLBase):
                 first_item = False
                 continue
 
-            print(item)
+            #print(item)
             date = self.convert_date(item['Date'])
             region_child = item['Governorate'].title()
 

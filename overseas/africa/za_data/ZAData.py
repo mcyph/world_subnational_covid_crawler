@@ -44,7 +44,7 @@ class ZAData(PressReleaseBase):
     def get_datapoints(self):
         r = []
         for url, date, html in self.iter_press_releases():
-            print(url, date)
+            #print(url, date)
             r.extend(self._get_total_datapoints(date, html))
             r.extend(self._get_recovered_death_datapoints(date, html))
         return r

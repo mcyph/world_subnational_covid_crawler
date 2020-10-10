@@ -8,6 +8,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 place_map = dict([i.split('\t')[::-1] for i in """
@@ -59,10 +60,11 @@ class ISData(URLBase):
         return r
 
     def _get_recovered_sum(self):
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/is_index.html'
             with open(path, 'rb') as f:
                 data = f.read()
@@ -89,7 +91,8 @@ class ISData(URLBase):
                     source_url=self.SOURCE_URL
                 )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

@@ -61,7 +61,7 @@ class NZData(GithubRepo):
                     continue
                 assert status == 'Confirmed', item['Status']
 
-                print(item)
+                #print(item)
 
                 date = self.convert_date(item['Date notified of potential case'].split('T')[0])
                 agerange = item['Age group'].strip().replace(' to ', '-') or 'Unknown'

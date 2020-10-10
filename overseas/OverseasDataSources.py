@@ -103,6 +103,7 @@ from covid_19_au_grab.overseas.w_europe.es_data.ESData import ESData
 from covid_19_au_grab.overseas.w_europe.es_data.ESISCIIIData import ESISCIIIData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRData import FRData
 from covid_19_au_grab.overseas.w_europe.fr_data.FRGovData import FRGovData
+from covid_19_au_grab.overseas.w_europe.fr_data.FRESRIData import FRESRIData
 from covid_19_au_grab.overseas.w_europe.gr_data.GRCovid19Greece import GRCovid19Greece
 from covid_19_au_grab.overseas.w_europe.hr_data.HRData import HRData
 from covid_19_au_grab.overseas.w_europe.ie_data.IEData import IEData
@@ -117,7 +118,7 @@ from covid_19_au_grab.overseas.w_europe.uk_data.UKGovData import UKGovData
 
 EUROPE_DATA = (
     BEData, CHData, CZData, DEData, DERKIData, ESData, ESISCIIIData,
-    EUSubNationalData, FRData, FRGovData, GRCovid19Greece,
+    EUSubNationalData, FRData, FRESRIData, FRGovData, GRCovid19Greece,
     HRData, IEData, ISData, ITData, KGData, KZData,
     MKData, PTData, RSData, SIData, UKData, UKGovData, LVData,
     LTData,
@@ -248,8 +249,8 @@ def _get_datapoints(classes, send_q):
                 # We won't use Australian data from international sources,
                 # as it comes from the dept of Health, which doesn't always
                 # match with state data
-                if datapoint.region_schema == Schemas.ADMIN_1 and datapoint.region_parent == 'au':
-                    continue
+                #if datapoint.region_schema == Schemas.ADMIN_1 and datapoint.region_parent == 'au':
+                #    continue
                 new_datapoints.append(tuple(datapoint))
 
             print("Class done:", i)

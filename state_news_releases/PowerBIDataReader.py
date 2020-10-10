@@ -47,8 +47,9 @@ class PowerBIDataReader:
             if match:
                 r[match.rstrip('_0123456789')] = (request_data, response_data)
             else:
-                print("WARNING - no match:", json.dumps(request_data, indent=4))
-                print(json.dumps(response_data, indent=4))
+                #print("WARNING - no match:", json.dumps(request_data, indent=4))
+                #print(json.dumps(response_data, indent=4))
+                pass
 
         return r
 

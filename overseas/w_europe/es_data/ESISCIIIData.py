@@ -119,8 +119,8 @@ class ESISCIIIData(URLBase):
         data = json.loads(text)
 
         for label_item, data_item in zip(data['x']['layout']['updatemenus'][0]['buttons'], data['x']['data']):
-            print(label_item)
-            print(data_item)
+            #print(label_item)
+            #print(data_item)
 
             region = label_item['label']
             if region in ('España', 'Ceuta', 'Melilla'):
@@ -129,7 +129,7 @@ class ESISCIIIData(URLBase):
             region = _provinces_map[region.lower()][0]
             dates = data_item['x']
             values = data_item['y']
-            print(region, dates, values)
+            #print(region, dates, values)
 
             running_total = 0
             for date, value in zip(dates, values):

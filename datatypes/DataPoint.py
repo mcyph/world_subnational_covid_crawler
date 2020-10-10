@@ -70,8 +70,10 @@ def DataPoint(region_schema=Schemas.ADMIN_1,
     assert date_updated.count('_') == 2, date_updated
     assert len(date_updated) == 10, date_updated
     assert datatype is not None
-    assert source_url is not None, source_url
+    #assert source_url is not None, source_url
     assert value is not None
+
+    source_url = '#'  # HACK: Save space!
 
     # Convert regions to ISO-3166-1/2 if possible
     if (region_schema, region_parent, region_child) in _mappings_to_iso_3166:

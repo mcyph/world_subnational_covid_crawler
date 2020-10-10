@@ -13,6 +13,7 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 # https://dhhs.carto.com/datasets
 # https://dhhs.carto.com:443/api/v2/sql?q=select * from public.covid19_postcodes
 SOURCE_URL = 'https://www.dhhs.vic.gov.au/victorian-coronavirus-covid-19-data'
+SOURCE_ID = 'vic_carto'
 
 
 def get_vic_carto_datapoints():
@@ -67,7 +68,8 @@ def _get_datapoints(date, path):
                         datatype=datatype,
                         value=int(value),
                         date_updated=date,
-                        source_url=SOURCE_URL
+                        source_url=SOURCE_URL,
+                        source_id=SOURCE_ID
                     ))
         else:
             for row in data['rows']:
@@ -82,7 +84,8 @@ def _get_datapoints(date, path):
                         datatype=datatype,
                         value=int(value),
                         date_updated=date,
-                        source_url=SOURCE_URL
+                        source_url=SOURCE_URL,
+                        source_id=SOURCE_ID
                     ))
 
     return r

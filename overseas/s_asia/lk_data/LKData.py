@@ -91,9 +91,9 @@ class LKData(GithubRepo):
 
         r = self.sdpf()
         for commit, file_contents in revlist:
-            print(dir(commit))
-            print(commit.committed_date)
-            print(commit.committed_datetime)
+            #print(dir(commit))
+            #print(commit.committed_date)
+            #print(commit.committed_datetime)
 
             date = commit.committed_datetime.strftime('%Y_%m_%d')
             f = StringIO(file_contents.decode('utf-8'))
@@ -102,7 +102,7 @@ class LKData(GithubRepo):
             by_province = Counter()
 
             for i in csv.reader(f):
-                print(i)
+                #print(i)
                 try:
                     district, latitude, longitude, cases = i
                 except ValueError:

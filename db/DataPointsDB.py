@@ -238,7 +238,7 @@ class DataPointsDB:
             source_url_map[datapoint.source_url], datapoint.text_match,
 
             int(is_derived),
-            source_id
+            datapoint.source_id or source_id
         ])
 
         if commit:
@@ -302,7 +302,7 @@ class DataPointsDB:
                 source_url_map[datapoint.source_url], datapoint.text_match,
 
                 int(is_derived),
-                source_id
+                datapoint.source_id or source_id
             ])
         cur.executemany(query, insert)
         self.conn.commit()

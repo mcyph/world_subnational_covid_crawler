@@ -224,7 +224,9 @@ class MYESRIDashData(URLBase):
                 ('my_district', 'my', 'tuaran'): ('my_district', 'my', 'tuaran'),
                 ('my_district', 'my', 'tumpat'): ('my_district', 'my', 'tumpat'),
                 ('my_district', 'my', 'wangsa maju'): None,
-                ('my_district', 'my', 'yan'): ('my_district', 'my', 'yan')
+                ('my_district', 'my', 'yan'): ('my_district', 'my', 'yan'),
+                ('my_district', 'my', 'kuala nerus'): None,
+                ('my_district', 'my', 'telupid'): None,
             },
             mode=MODE_STRICT
         )

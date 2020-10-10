@@ -74,6 +74,9 @@ class ProcessGeoJSONBase(ABC):
                 #print(feature)
 
                 for coords in feature['geometry']['coordinates']:
+                    # HACK: Remove z extent!!
+                    coords[:] = [i[:2] for i in coords]
+
                     for lng, lat in coords:
                         # Make sure coords using correct ranges!
                         assert -180 <= lng <= 180, lng

@@ -53,7 +53,7 @@ class MMData(URLBase):
             raise Exception()
 
         for item in csv.DictReader(f):
-            print(item)
+            #print(item)
 
             if item['lab tested date'].count('/') == 1:
                 item['lab tested date'] += '/2020'

@@ -135,7 +135,7 @@ class SAData(URLBase):
                 # "DataSource":"GCS","GlobalID":"296ee29a-b190-4064-a3c5-cdd778046ab2",
                 # "Place_Code":"C531G10R01","Join_Count":80,"Confirmed_SUM":20039,
                 # "Deaths_SUM":30,"Recovered_SUM":13468,"Tested_SUM":6541,"ObjectId":46}}
-                print(feature)
+                #print(feature)
 
                 attributes = feature['attributes']
                 tested[attributes['RegionName_EN']] += int(attributes['Tested_SUM'])

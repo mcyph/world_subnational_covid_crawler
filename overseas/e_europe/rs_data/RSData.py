@@ -333,7 +333,7 @@ class RSData(GlobalBase):
             # "shortName":"COVID19 stat","sourceUrl":"file:///tmp/covid19stat.txt",
             # "resourceUrl":null,"dataSetGroup":{"id":1,"name":"Default","pos":1,
             # "icon_resource":null},"pos":1,"isComparable":null,"delimiter":";"},
-            print(region_data)
+            #print(region_data)
 
             for point_dict in region_data['points']:
                 # {"abscissa":{"id":45862,"year":2020,"month":3,"day":10,

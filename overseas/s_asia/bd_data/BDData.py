@@ -154,8 +154,13 @@ class BDData(URLBase):
 
         for date in sorted(listdir(base_dir)):
             path = f'{base_dir}/{date}/data.json'
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             by_total = Counter()
             by_recovered = Counter()
@@ -163,7 +168,7 @@ class BDData(URLBase):
             by_death = Counter()
 
             for feature in data['features']:
-                print(feature)
+                #print(feature)
                 attributes = feature['attributes']
                 date = datetime.datetime \
                     .fromtimestamp(attributes['date']/1000.0) \

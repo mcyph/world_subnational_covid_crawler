@@ -9,6 +9,7 @@ from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsF
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.overseas.GithubRepo import GithubRepo
 from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 #         "es_madrid_municipality": {
@@ -74,7 +75,7 @@ class ESData(GithubRepo):
         return r
 
     def _get_by_datos_isciii(self):
-        r = self.sdpf()
+        out = DataPointMerger()
 
         # Fecha,cod_ine,CCAA,Casos,PCR+,TestAc+,Hospitalizados,UCI,Fallecidos,Recuperados
         # 2020-02-20,01,Andalucía,0,0,,,,,
@@ -88,8 +89,10 @@ class ESData(GithubRepo):
 
         with open(self.get_path_in_dir('COVID 19/ccaa_covid19_datos_isciii.csv'),
                   'r', encoding='utf-8') as f:
+            r = self.sdpf()
+
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
                 date = self.convert_date(item['Fecha'])
                 ac_code = region_map[item['CCAA']]
 
@@ -149,7 +152,8 @@ class ESData(GithubRepo):
                         source_url=self.SOURCE_URL
                     )
 
-        return r
+            out.extend(r)
+        return out
 
     def _get_by_distritos_madrid(self):
         r = self.sdpf()

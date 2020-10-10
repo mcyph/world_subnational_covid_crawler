@@ -46,6 +46,7 @@ class TimeSeriesDataPoints:
         """
         r = {}
         updated_dates = {}
+        updated_dates_by_datatype = {}
 
         # Get a map from date -> number of datapoints
         date_ids_map = self.__get_from_to_ids(self.date_counter)
@@ -93,6 +94,10 @@ class TimeSeriesDataPoints:
                                                                 .setdefault(region_parent)
                                 if not cur_updated_date or datapoint.date_updated > cur_updated_date:
                                     updated_dates[self.region_schema_str][region_parent] = datapoint.date_updated
+
+                                cur_updated_date_by_datatype = updated_dates_by_datatype.setdefault(datapoint.datatype.value)
+                                if not cur_updated_date_by_datatype or datapoint.date_updated > cur_updated_date_by_datatype:
+                                    updated_dates_by_datatype[datapoint.datatype.value] = datapoint.date_updated
 
                                 all_dates[source_id].add(datapoint.date_updated)
 
@@ -147,6 +152,7 @@ class TimeSeriesDataPoints:
             'time_series_data': r,
             'date_ids': self.__get_to_from_ids(self.date_counter),
             'updated_dates': updated_dates,
+            'updated_dates_by_datatype': updated_dates_by_datatype,
             'source_ids': self.source_ids,
             'sub_headers': [
                 datatype.value for id, datatype in

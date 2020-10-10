@@ -1,3 +1,4 @@
+import csv
 import json
 import gzip
 import msgpack
@@ -18,11 +19,22 @@ def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None)
     )
 
 
+def _get_population_map():
+    r = {}
+    with open(get_package_dir() / 'geojson_data' / 'geojson_pop.tsv', 'r', encoding='utf-8') as f:
+        for item in csv.DictReader(f, delimiter='\t'):
+            r[item['region_schema'], item['region_parent'], item['region_child']] = int(item['pop_2020'])
+    return r
+
+
 USE_MSGPACK = False
 GEOJSON_DIR = get_package_dir() / 'geojson_data' / 'output'
 
 
 class _TimeSeriesDataZipper:
+    def __init__(self):
+        self._population_map = _get_population_map()
+
     def output_revision_datapoints_to_zip(self, zip_buffer, rev_date=None, rev_subid=None):
         r = {}
         r.update(self._get_revision_datapoints(rev_date, rev_subid))
@@ -45,8 +57,8 @@ class _TimeSeriesDataZipper:
             },
             # Add listing so can know which datatypes
             # are supplied in which case data files
-            case_data_datatypes={
-                k.split('/')[-1]: v['sub_headers']
+            updated_dates_by_datatype={ # case_data_datatypes
+                k.split('/')[-1]: v['updated_dates_by_datatype']
                 for k, v in r.items()
                 if 'case_data/' in k
             },
@@ -117,6 +129,10 @@ class _TimeSeriesDataZipper:
                     #region_child_dict['label'] = {
                     #    'en': region_child_dict['label'].get('en')
                     #}
+
+                    # Add population info
+                    region_child_dict['population'] = \
+                        self._population_map.get((region_schema, region_parent, region_child))
 
     def _get_revision_datapoints(self, rev_date, rev_subid):
         r = {}

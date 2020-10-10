@@ -81,7 +81,7 @@ class KHData(URLBase):
                        .replace('&quot;', '"')
 
             for data in json.loads(data):
-                print(data)
+                #print(data)
                 date = self.convert_date(
                     data['created_at'].split('T')[0]
                 )

@@ -10,6 +10,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class IEData(URLBase):
@@ -42,11 +43,12 @@ class IEData(URLBase):
         # 	Carlow	56932	278661	163444	52.7168	-6.8367	http://data.geohive.ie/resource/county/2ae19629-143d-13a3-e055-000000000001	175	307.384247874657			-6.8367	52.7168	194903	2020/07/01 00:00:00+00
         # 	Cavan	76176	246380	304501	53.9878	-7.2937	http://data.geohive.ie/resource/county/2ae19629-1448-13a3-e055-000000000001	862	1131.5900021004			-7.2937	53.9878	194904	2020/07/01 00:00:00+00
         # 	Clare	118817	133493	182732	52.8917	-8.9889	http://data.geohive.ie/resource/county/2ae19629-1450-13a3-e055-000000000001	368	309.719989563783			-8.9889	52.8917	194905	2020/07/01 00:00:00+00
-        r = self.sdpf()
 
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/county_data.csv'
 
             with open(path, 'r', encoding='utf-8') as f:
@@ -73,7 +75,8 @@ class IEData(URLBase):
                             source_url=self.SOURCE_URL
                         )
 
-        return r
+            out.extend(r)
+        return out
 
     def _get_country_data(self):
         r = []

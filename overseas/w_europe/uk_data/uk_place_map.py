@@ -70,6 +70,7 @@ GB-ERW	East Renfrewshire
 GB-ERY	East Riding of Yorkshire
 GB-ESX	East Sussex
 GB-EDH	Edinburgh, City of
+GB-EDH	City of Edinburgh
 GB-ELS	Eilean Siar
 GB-ENF	Enfield
 GB-ESS	Essex
@@ -165,6 +166,8 @@ GB-RDB	Redbridge
 GB-RCC	Redcar and Cleveland
 GB-RFW	Renfrewshire
 GB-RCT	Rhondda, Cynon, Taff
+GB-RCT	Rhondda Cynon Taff
+GB-RCT	Rhondda Cynon Taf
 GB-RIC	Richmond upon Thames
 GB-RCH	Rochdale
 GB-ROT	Rotherham
@@ -172,6 +175,7 @@ GB-RUT	Rutland
 GB-SLF	Salford
 GB-SAW	Sandwell
 GB-SCB	Scottish Borders, The
+GB-SCB	Scottish Borders
 GB-SCB	Borders
 GB-SFT	Sefton
 GB-SHF	Sheffield
@@ -228,7 +232,7 @@ GB-WLV	Wolverhampton
 GB-WOR	Worcestershire
 GB-WRX	Wrexham
 GB-YOR	York
-GB-ELS	na h-eileanan siar
+GB-ELS	Na h-Eileanan Siar
 Aneurin Bevan	Aneurin Bevan
 Betsi Cadwaladr	Betsi Cadwaladr
 Cwm Taf	Cwm Taf
@@ -238,7 +242,7 @@ Other	Outside Wales
 Swansea Bay	Swansea Bay
 Unknown	Unknown
 Not Known	Not Known
-Bournemouth, Christchurch and Poole	Bournemouth, Christchurch and Poole
+GB-BMH	Bournemouth, Christchurch and Poole
 Lothian	Lothian
 Grampian	Grampian
 Greater Glasgow and Clyde	Greater Glasgow and Clyde
@@ -247,4 +251,31 @@ Lanarkshire	Lanarkshire
 Ayrshire and Arran	Ayrshire and Arran
 Tayside	Tayside
 Western Isles	Western Isles
+GB-ANN	Antrim and Newtownabbey
+GB-AND	Ards and North Down
+GB-ABC	Armagh City, Banbridge and Craigavon
+GB-BFS	Belfast
+GB-CCG	Causeway Coast and Glens
+GB-DRS	Derry City and Strabane
+GB-FMO	Fermanagh and Omagh
+GB-LBC	Lisburn and Castlereagh
+GB-MEA	Mid and East Antrim
+GB-MUL	Mid Ulster
+GB-NMD	Newry, Mourne and Down
 """.strip().split('\n')])
+
+
+ni_mappings = {
+    "Antrim and Newtownabbey": "GB-ANN",
+    "Ards and North Down": "GB-AND",
+    "Armagh City, Banbridge and Craigavon": "GB-ABC",
+    "Armagh Banbridge and Craigavon": "GB-ABC",
+    "Belfast": "GB-BFS",
+    "Causeway Coast and Glens": "GB-CCG",
+    "Derry City and Strabane": "GB-DRS",
+    "Fermanagh and Omagh": "GB-FMO",
+    "Lisburn and Castlereagh": "GB-LBC",
+    "Mid and East Antrim": "GB-MEA",
+    "Mid Ulster": "GB-MUL",
+    "Newry, Mourne and Down": "GB-NMD",
+}

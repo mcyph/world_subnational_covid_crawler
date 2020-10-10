@@ -58,7 +58,7 @@ class WorldJHUData(GithubRepo):
                     if not item['Last_Update']:
                         continue # WARNING!!
 
-                    print(item)
+                    #print(item)
                     try:
                         date = self.convert_date(item['Last_Update'].split()[0])
                     except:
@@ -242,6 +242,16 @@ class WorldJHUData(GithubRepo):
                     if '(From' in region_child:
                         # HACK: Ignore e.g. 'Omaha, NE (From Diamond Princess)'
                         continue
+
+                    # Normally it's ok to remove "oblast" in normalizations
+                    # but "Kiev" and "Kiev Oblast" refer to different things here
+                    if region_parent:
+                        if region_parent.lower() == 'ukraine' and region_child.lower() == 'kiev':
+                            region_parent = 'UA'
+                            region_child = 'UA-30'
+                        elif region_parent.lower() == 'ukraine' and region_child.lower() == 'kiev oblast':
+                            region_parent = 'UA'
+                            region_child = 'UA-32'
 
                     if item['Confirmed']:
                         r.append(

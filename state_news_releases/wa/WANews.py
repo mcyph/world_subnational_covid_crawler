@@ -19,7 +19,7 @@ from covid_19_au_grab.state_news_releases.wa.WADashProcess import (
 class WANews(StateNewsBase):
     STATE_NAME = 'wa'
     SOURCE_ISO_3166_2 = 'AU-WA'
-    SOURCE_ID = 'au_wa'
+    SOURCE_ID = 'au_wa_press_releases'
     SOURCE_URL = 'https://ww2.health.wa.gov.au/en/Articles/A_E/Coronavirus'
     SOURCE_DESCRIPTION = ''
 
@@ -72,10 +72,10 @@ class WANews(StateNewsBase):
             except IndexError:
                 date = pq(pq(html)('#contentArea h3')[0]).text().strip()
 
-        print(date)
+        #print(date)
         if ', ' in date:
             date = date.split(', ')[-1]
-        print(date)
+        #print(date)
 
         try:
             return self._extract_date_using_format(date)
@@ -243,7 +243,7 @@ class WANews(StateNewsBase):
         # To date, 9,948 Western Australians have tested negative
         # for COVID-19 – 1,283 of these are from regional WA.
         grab_from = word_to_number(grab_from)
-        print("GRAB FROM:", grab_from)
+        #print("GRAB FROM:", grab_from)
 
         def get_num(i):
             if i: return i.value

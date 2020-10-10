@@ -57,6 +57,7 @@ world_eu_mappings = {
     ('admin_1', 'romania', 'costanza'): None,
 
 ('admin_1', 'bulgaria', 'sofia region'): ('admin_1', 'bg', 'bg-23'),
+('admin_1', 'bulgaria', 'sofia city'): ('admin_1', 'bg', 'bg-22'),
 
 ('admin_0', '', 'afghanistan'): ('admin_0', '', 'af'),
  ('admin_0', '', 'albania'): ('admin_0', '', 'al'),

@@ -1,28 +1,18 @@
 from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL, IGNORECASE
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
-)
-from covid_19_au_grab.state_news_releases.nsw.NSWJSONData import (
-    NSWJSONData
-)
+from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
+from covid_19_au_grab.state_news_releases.nsw.NSWJSONData import NSWJSONData
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
-from covid_19_au_grab.URLArchiver import (
-    URLArchiver
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.word_to_number import word_to_number
+from covid_19_au_grab.URLArchiver import URLArchiver
 
 
 class NSWNews(StateNewsBase):
     STATE_NAME = 'nsw'
     SOURCE_ISO_3166_2 = 'AU-NSW'
-    SOURCE_ID = 'au_nsw'
+    SOURCE_ID = 'au_nsw_press_releases'
     SOURCE_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/default.aspx'
     SOURCE_DESCRIPTION = ''
 
@@ -84,51 +74,7 @@ class NSWNews(StateNewsBase):
                         r.extend(cbr)
 
         r.extend(StateNewsBase.get_data(self))
-
-        unique_keys = set()
-        for datapoint in r:
-            k = (
-                datapoint.region_schema,
-                datapoint.region_parent,
-                datapoint.region_child,
-                datapoint.agerange,
-                datapoint.datatype,
-                datapoint.date_updated
-            )
-            unique_keys.add(k)
-
-        for datapoint in NSWJSONData().get_datapoints():
-            # Prefer website over csv data
-            import datetime
-            yyyy, mm, dd = datapoint.date_updated.split('_')
-            date = datetime.datetime(year=int(yyyy),
-                                     month=int(mm),
-                                     day=int(dd))
-
-            found = False
-            for i_delta in (
-                datetime.timedelta(days=-1),
-                datetime.timedelta(days=0),
-                datetime.timedelta(days=1),
-            ):
-                # Only add if haven't got data for some
-                # time (as last resort) to reduce anomalies!
-                k = (
-                    datapoint.region_schema,
-                    datapoint.region_parent,
-                    datapoint.region_child,
-                    datapoint.agerange,
-                    datapoint.datatype,
-                    (date+i_delta).strftime('%Y_%m_%d')
-                )
-
-                if k in unique_keys:
-                    found = True
-                    break
-
-            if not found:
-                r.append(datapoint)
-
+        r.extend(NSWJSONData().get_datapoints())
         return r
 
     #============================================================#
@@ -378,9 +324,9 @@ class NSWNews(StateNewsBase):
             lhd = pq(tr[0]).text().strip().split('(')[0].strip()
 
             if not pq(tr) or not pq(lhd) or 'total' in lhd.lower().split():
-                print("NOT TR:", pq(tr).html())
+                #print("NOT TR:", pq(tr).html())
                 continue
-            print("FOUND TR:", lhd)
+            #print("FOUND TR:", lhd)
 
             c_icu = pq(tr[1]).text().replace(',', '').strip()
 

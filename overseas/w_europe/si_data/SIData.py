@@ -1,7 +1,5 @@
 # https://api.sledilnik.org/api/municipalities
 # https://covid-19.sledilnik.org/sl/stats
-
-
 import csv
 import json
 from os import listdir
@@ -11,6 +9,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 region_map = dict([i.split('\t')[::-1] for i in """
 SI-001	Ajdovščina
@@ -262,6 +261,10 @@ class SIData(URLBase):
                 ('admin_1', 'si', 'si-204'): None,
                 ('admin_1', 'si', 'si-213'): None,
                 ('admin_1', 'si', 'si-200'): None,
+                ('admin_1', 'si', 'si-205'): None,
+                ('admin_1', 'si', 'si-203'): None,
+                ('admin_1', 'si', 'si-198'): None,
+                ('admin_1', 'si', 'si-202'): None,
             },
             mode=MODE_STRICT
         )
@@ -273,17 +276,23 @@ class SIData(URLBase):
         return r
 
     def _get_municipalities_data(self):
-        r = self.sdpf()
+        out = DataPointMerger()
         # [{"year":2020,"month":3,"day":4,"regions":{"mb":{"benedikt":{"activeCases":null,"confirmedToDate":null,"deceasedToDate":0},
 
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             print(date)
             path = f'{base_dir}/{date}/municipalities.json'
 
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    data = json.loads(f.read())
+            except UnicodeDecodeError:
+                import brotli
+                with open(path, 'rb') as f:
+                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
             for i_data in data:
                 for region, region_dict in i_data['regions'].items():
@@ -326,7 +335,9 @@ class SIData(URLBase):
                                 source_url=self.SOURCE_URL,
                                 date_updated=date
                             )
-        return r
+
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

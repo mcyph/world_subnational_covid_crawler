@@ -81,10 +81,10 @@ class TRData(URLBase):
 
             for feature in data['features']:
                 attributes = feature['attributes']
-                print(feature)
+                #print(feature)
 
                 # Only confirmed and deaths are shown in the dashboard
-                #date = datetime.datetime.fromtimestamp(attributes['Tarih']/1000.0).strftime('%Y_%m_%d') -> 2020_04_14??
+                date = datetime.datetime.fromtimestamp(attributes['Tarih']/1000.0).strftime('%Y_%m_%d') # -> 2020_04_14??
                 region = attributes['İL_ADı']
                 total = attributes['toplam']  # I don't know what this value is(?) perhaps it's the total population of the region
                 confirmed = attributes['T_KesinVaka']

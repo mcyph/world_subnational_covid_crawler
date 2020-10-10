@@ -9,6 +9,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 region_map = {
@@ -68,10 +69,11 @@ class HRData(URLBase):
         # <circle class='aktivni' data-url='https://www.koronavirus.hr/licko-senjska/156' cx='216' cy='295' r='10' stroke='black' stroke-width='0' fill='rgba(255, 132, 8, 0.8)' />
         # <text class='aktivni' data-url='https://www.koronavirus.hr/licko-senjska/156' x='216' y='295' stroke='transparent' text-anchor='middle' dy='0.35em' style='font-size: 10px;'>2</text>
 
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/index.html'
 
             try:
@@ -112,7 +114,8 @@ class HRData(URLBase):
                     source_url=self.SOURCE_URL
                 )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

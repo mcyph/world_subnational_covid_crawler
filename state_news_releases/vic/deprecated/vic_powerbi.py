@@ -21,6 +21,7 @@ SOURCE_URL = 'https://app.powerbi.com/view?r=' \
              'eyJrIjoiODBmMmE3NWQtZWNlNC00OWRkLTk1NjYtM' \
              'jM2YTY1MjI2NzdjIiwidCI6ImMwZTA2MDFmLTBmYW' \
              'MtNDQ5Yy05Yzg4LWExMDRjNGViOWYyOCJ9'
+SOURCE_ID = 'vic_powerbi'
 
 
 class _VicPowerBI(PowerBIDataReader):
@@ -46,14 +47,14 @@ class _VicPowerBI(PowerBIDataReader):
             next_id = rev_id + 1
             next_subdir = f'{self.base_path}/{updated_date}-{next_id}'
             if exists(next_subdir):
-                print(f"VicPowerBI ignoring {subdir}")
+                #print(f"VicPowerBI ignoring {subdir}")
                 continue
 
             try:
                 updated_date = self._get_updated_date(response_dict)
-                print("Specific date found for:", subdir, updated_date)
+                #print("Specific date found for:", subdir, updated_date)
             except (KeyError, ValueError, AttributeError): # FIXME!!!! ==============================================================================
-                print(f"SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
+                #print(f"SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
 
                 if updated_date > '2020_05_15':
                     raise
@@ -62,13 +63,13 @@ class _VicPowerBI(PowerBIDataReader):
                 active_updated_date = self._get_active_updated_date(response_dict)
             except (KeyError, ValueError, AttributeError):
                 active_updated_date = updated_date
-                print(f"ACTIVE SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
+                #print(f"ACTIVE SPECIFIC DATE NOT AVAILABLE FOR: {updated_date}")
 
                 if updated_date > '2020_06_15':
                     raise
 
-            if active_updated_date != updated_date:
-                print("****ACTIVE != TOTAL DATE:", active_updated_date, updated_date)
+            #if active_updated_date != updated_date:
+            #    print("****ACTIVE != TOTAL DATE:", active_updated_date, updated_date)
 
             # DISABLED, as this data is also in the Tableau data, and doesn't completely align!! ===============================
             #r.extend(self._get_age_data(updated_date, response_dict))
@@ -141,7 +142,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
             previous_value = value
             # print(output[-1])
@@ -179,7 +181,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
 
             if region_string in self.totals_dict_postcode:
@@ -191,7 +194,8 @@ class _VicPowerBI(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_string] - value[1],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=SOURCE_ID
                 ))
 
             previous_value = value
@@ -207,7 +211,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
 
             if region_child in self.totals_dict_postcode:
@@ -219,7 +224,8 @@ class _VicPowerBI(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_child],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=SOURCE_ID
                 ))
 
         return output
@@ -245,7 +251,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
             previous_value = value
             # print(output[-1])
@@ -282,7 +289,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
 
             if region_string in self.totals_dict:
@@ -293,7 +301,8 @@ class _VicPowerBI(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_string]-value[1],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=SOURCE_ID
                 ))
 
             previous_value = value
@@ -308,7 +317,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
 
             if region_child in self.totals_dict:
@@ -319,7 +329,8 @@ class _VicPowerBI(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_child],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=SOURCE_ID
                 ))
 
         return output
@@ -444,7 +455,8 @@ class _VicPowerBI(PowerBIDataReader):
                     agerange=agerange,
                     value=value,
                     date_updated=updated_date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=SOURCE_ID
                 ))
 
         return output
@@ -478,7 +490,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=vic_norm_map[source['C'][0]],
                 value=source['C'][1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
             added.add(vic_norm_map[source['C'][0]])
 
@@ -492,7 +505,8 @@ class _VicPowerBI(PowerBIDataReader):
                 datatype=datatype,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=SOURCE_ID
             ))
 
         return output

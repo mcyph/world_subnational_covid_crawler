@@ -18,7 +18,7 @@ from covid_19_au_grab.state_news_releases.vic.VicTableauNative import VicTableau
 class VicNews(StateNewsBase):
     STATE_NAME = 'vic'
     SOURCE_ISO_3166_2 = 'AU-VIC'
-    SOURCE_ID = 'au_vic'
+    SOURCE_ID = 'au_vic_press_releases'
     SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
     SOURCE_DESCRIPTION = ''
 
@@ -41,31 +41,9 @@ class VicNews(StateNewsBase):
 
     def get_data(self):
         r = []
-        powerbi_datapoints = get_powerbi_data()
-        pr_datapoints = StateNewsBase.get_data(self)
-
-        def get_key(datapoint):
-            return (
-                datapoint.region_schema,
-                datapoint.region_parent,
-                datapoint.region_child,
-                datapoint.agerange,
-                datapoint.date_updated,
-                datapoint.value
-            )
-
-        # Prioritize press release values over powerbi
-        added = set()
-
-        for datapoint in pr_datapoints:
-            added.add(get_key(datapoint))
-            r.append(datapoint)
-
-        for datapoint in powerbi_datapoints:
-            if not get_key(datapoint) in added:
-                r.append(datapoint)
-        
-        r.extend(get_from_google_sheets())  # TODO: ADD HISTORICAL VALS!!! ============================================
+        r.extend(get_powerbi_data())
+        r.extend(StateNewsBase.get_data(self))
+        r.extend(get_from_google_sheets())
 
         if False:
             r.extend(get_vic_carto_datapoints())
@@ -176,7 +154,7 @@ class VicNews(StateNewsBase):
     @bothlistingandstat
     def _get_total_cases_tested(self, href, html):
         # Victoria's seems to follow a formula (for now), so will hardcode
-        print("TT DATE UPDATE:", self._get_date(href, html))
+        #print("TT DATE UPDATE:", self._get_date(href, html))
 
         if 'have been completed with many more samples still being ' \
            'processed as part of Victoria’s testing blitz' in html:
@@ -360,7 +338,7 @@ class VicNews(StateNewsBase):
             )[1].split('.')[0].replace(' and ', ', ').replace(') ', '), ')
 
             for region_child in multi_region_info.split(', '):
-                print(region_child)
+                #print(region_child)
                 if '(' in region_child:
                     region_name, num_cases = region_child.split('(')
                     region_name = region_name.strip()

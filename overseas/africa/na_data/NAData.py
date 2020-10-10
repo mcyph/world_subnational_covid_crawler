@@ -25,7 +25,14 @@ class NAData(URLBase):
                                     static_file=False),
             }
         )
-        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'na', 'na-kw'): None,
+                ('admin_1', 'na', 'na-ke'): None,
+                ('admin_1', 'na', 'kavango east'): None,
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -63,9 +70,12 @@ class NAData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
+            if not 'features' in data:
+                continue
+
             for feature in data['features']:
                 attributes = feature['attributes']
-                #print(attributes)
+                print(attributes)
 
                 region = {
                     'kavango west': 'NA-KW',

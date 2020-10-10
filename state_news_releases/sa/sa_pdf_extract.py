@@ -194,7 +194,7 @@ if __name__ == '__main__':
                     wholesa_match,
                     'wholesa_small_img.png'
                 )
-                print("DIFFERENCE:", spe.get_x_y_difference())
+                #print("DIFFERENCE:", spe.get_x_y_difference())
                 counts_dict = spe.get_counts_dict(
                     as_average=True
                 )

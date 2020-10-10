@@ -75,6 +75,7 @@ class COData(URLBase):
                 ('co_municipality', 'meta', 'san luis de cubarral'): None,
                 ('co_municipality', 'santander', 'el carmen de chucurí'): None,
                 ('co_municipality', 'vaupés', 'carurú'): None,
+                ('co_municipality', 'guainía', 'barranco minas'): None,
             },
             mode=MODE_STRICT
         )
@@ -218,7 +219,7 @@ class COData(URLBase):
         cumulative = Counter()
         for (notification_date, admin1, status), value in sorted(by_admin1_status.items()):
             cumulative[admin1, status] += value
-            print(admin1, status)
+            #print(admin1, status)
             r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='co',

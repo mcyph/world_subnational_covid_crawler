@@ -9,6 +9,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'
@@ -66,10 +67,11 @@ class LVData(URLBase):
 
     def _get_regions_data(self):
         # # {"data":[[["Aglonas novads",0,"0","56.0965 27.114","Aglonas novads"],
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/regions_data.json'
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
@@ -92,7 +94,8 @@ class LVData(URLBase):
                             source_url=self.SOURCE_URL
                         )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

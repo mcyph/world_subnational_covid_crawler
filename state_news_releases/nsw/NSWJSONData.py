@@ -13,6 +13,9 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class NSWJSONData:
+    SOURCE_ID_OPEN_DATA = 'au_nsw_open_data'
+    SOURCE_ID_WEBSITE_DATA = 'au_nsw_website_data'
+
     def __init__(self):
         self.postcode_to_lga = {}
 
@@ -21,45 +24,55 @@ class NSWJSONData:
             datetime.now() - timedelta(hours=20, minutes=30)
         ).strftime('%Y_%m_%d')
 
-        r = DataPointMerger()
-        added = set()
         dates = sorted(listdir(get_data_dir() / 'nsw' / 'open_data'))
         if not date in dates:
             dates.append(date)
 
+        open_data = DataPointMerger()
         for i_date in dates:
             download = i_date == date
+            for datapoint in self.__get_open_datapoints(i_date, download=download):
+                open_data.append(datapoint)
 
-            for datapoint in self.__get_datapoints(i_date, download=download):
-                k = (
-                    datapoint.region_schema,
-                    datapoint.region_parent,
-                    datapoint.region_child,
-                    datapoint.agerange,
-                    datapoint.datatype,
-                    datapoint.date_updated
-                )
-                if k in added:
-                    continue
-                added.add(k)
-                r.append(datapoint)
+        website_data = DataPointMerger()
+        for i_date in dates:
+            download = i_date == date
+            for datapoint in self.__get_website_datapoints(i_date, download=download):
+                website_data.append(datapoint)
 
+        r = []
+        r.extend(open_data)
+        r.extend(website_data)
         return r
 
-    def __get_datapoints(self, date, download=True):
+    def __get_open_datapoints(self, date, download=True):
         dir_ = get_data_dir() / 'nsw' / 'open_data' / date
         if not exists(dir_):
             makedirs(dir_)
 
-        r = []
-        r.extend(self.get_nsw_cases_data(dir_, download=download))  # For infection source only
-        r.extend(self.get_nsw_tests_data(dir_, download=download))
-        r.extend(self.get_nsw_postcode_data(dir_, download=download))  # For totals only
-        r.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', r))
-        r.extend(self.get_nsw_age_data(dir_, date, download=download))  # Age distributions
-        return r
+        # Add open data
+        open_data = []
+        open_data.extend(self.get_nsw_cases_data(dir_, download=download))
+        open_data.extend(self.get_nsw_tests_data(dir_, download=download))
+        open_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', open_data,
+                                                           source_id=self.SOURCE_ID_OPEN_DATA))
+        return open_data
 
-    def __postcode_datapoints_to_lga(self, SOURCE_URL, r):
+    def __get_website_datapoints(self, date, download=True):
+        dir_ = get_data_dir() / 'nsw' / 'open_data' / date
+        if not exists(dir_):
+            makedirs(dir_)
+
+        # Add website data
+        website_data = []
+        website_data.extend(self.get_nsw_postcode_data(dir_, download=download))
+        website_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', website_data,
+                                                              source_id=self.SOURCE_ID_WEBSITE_DATA))
+        # Age distributions
+        website_data.extend(self.get_nsw_age_data(dir_, date, download=download))
+        return website_data
+
+    def __postcode_datapoints_to_lga(self, SOURCE_URL, r, source_id):
         # Convert postcode to LGA where possible
         new_r = DataPointMerger()
         added_to_lga = set()
@@ -88,8 +101,8 @@ class NSWJSONData:
                 continue
             processed_postcode.add((datapoint.region_child, datapoint.datatype, datapoint.date_updated))
 
-            if lga == 'cumberland':
-                print('USING:', datapoint)
+            #if lga == 'cumberland':
+            #    print('USING:', datapoint)
 
             mapping[
                 lga,
@@ -111,7 +124,8 @@ class NSWJSONData:
                 datatype=datatype,
                 value=value,
                 date_updated=date_updated,
-                source_url=SOURCE_URL
+                source_url=SOURCE_URL,
+                source_id=source_id
             ))
 
         return new_r
@@ -169,7 +183,8 @@ class NSWJSONData:
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
                     source_url='https://www.nsw.gov.au/covid-19/find-facts-about-covid-19',
-                    text_match=None
+                    text_match=None,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
                 r.append(DataPoint(
                     datatype=DataTypes.TOTAL_FEMALE,
@@ -177,7 +192,8 @@ class NSWJSONData:
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
                     source_url='https://www.nsw.gov.au/covid-19/find-facts-about-covid-19',
-                    text_match=None
+                    text_match=None,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
                 r.append(DataPoint(
                     datatype=DataTypes.TOTAL,
@@ -185,7 +201,8 @@ class NSWJSONData:
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
                     source_url='https://www.nsw.gov.au/covid-19/find-facts-about-covid-19',
-                    text_match=None
+                    text_match=None,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
 
         """
@@ -199,7 +216,8 @@ class NSWJSONData:
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
                     source_url='https://www.nsw.gov.au/covid-19/find-facts-about-covid-19',
-                    text_match=None
+                    text_match=None,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
                 r.append(DataPoint(
                     datatype=DataTypes.STATUS_DEATHS_FEMALE,
@@ -207,7 +225,8 @@ class NSWJSONData:
                     agerange=age_dict['ageGroup'],
                     date_updated=date,
                     source_url='https://www.nsw.gov.au/covid-19/find-facts-about-covid-19',
-                    text_match=None
+                    text_match=None,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
         """
 
@@ -302,11 +321,10 @@ class NSWJSONData:
         r = []
 
         # Add general totals
-        # Probably best to use the JSON file for this+not mix sources!
         for region_schema, cases_dict in (
-            #(Schemas.POSTCODE, by_postcode),
-            #(Schemas.LGA, by_lga),
-            #(Schemas.LHD, by_lhd)
+            (Schemas.POSTCODE, by_postcode),
+            (Schemas.LGA, by_lga),
+            (Schemas.LHD, by_lhd)
         ):
             current_counts = {}
 
@@ -323,7 +341,8 @@ class NSWJSONData:
                         value=current_counts[region_child],
                         date_updated=date,
                         source_url=SOURCE_URL,
-                        text_match=None
+                        text_match=None,
+                        source_id=self.SOURCE_ID_OPEN_DATA
                     ))
 
         # Add by source of infection
@@ -356,7 +375,8 @@ class NSWJSONData:
                             value=current_counts[region_child, soi],
                             date_updated=date,
                             source_url=SOURCE_URL,
-                            text_match=None
+                            text_match=None,
+                            source_id=self.SOURCE_ID_OPEN_DATA
                         ))
 
         return r
@@ -444,7 +464,8 @@ class NSWJSONData:
                     datatype=DataTypes.TOTAL,
                     value=cases,
                     date_updated=date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
 
                 if postcode in active_data:
@@ -457,7 +478,8 @@ class NSWJSONData:
                         datatype=DataTypes.STATUS_ACTIVE,
                         value=num_active, # CHECK ME!!!!! =====================================
                         date_updated=date,
-                        source_url=SOURCE_URL
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID_WEBSITE_DATA
                     ))
 
                     r.append(DataPoint(
@@ -467,7 +489,8 @@ class NSWJSONData:
                         datatype=DataTypes.STATUS_RECOVERED,
                         value=cases-num_active-deaths,  # CHECK ME!!!!! =====================================
                         date_updated=date,
-                        source_url=SOURCE_URL
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID_WEBSITE_DATA
                     ))
                 elif date <= '2020_06_12':
                     r.append(DataPoint(
@@ -477,7 +500,8 @@ class NSWJSONData:
                         datatype=DataTypes.STATUS_ACTIVE,
                         value=active,
                         date_updated=date,
-                        source_url=SOURCE_URL
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID_WEBSITE_DATA
                     ))
 
                 #r.append(DataPoint(
@@ -496,7 +520,8 @@ class NSWJSONData:
                     datatype=DataTypes.STATUS_DEATHS,
                     value=deaths,
                     date_updated=date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
 
         return r
@@ -518,7 +543,8 @@ class NSWJSONData:
                     datatype=DataTypes.TESTS_TOTAL,
                     value=number,
                     date_updated=date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
 
         return r
@@ -541,7 +567,8 @@ class NSWJSONData:
                     datatype=DataTypes.TOTAL,
                     value=number,
                     date_updated=date,
-                    source_url=SOURCE_URL
+                    source_url=SOURCE_URL,
+                    source_id=self.SOURCE_ID_WEBSITE_DATA
                 ))
 
         return r
@@ -650,7 +677,8 @@ class NSWJSONData:
                         value=current_counts[region_child],
                         date_updated=date,
                         source_url=SOURCE_URL,
-                        text_match=None
+                        text_match=None,
+                        source_id=self.SOURCE_ID_OPEN_DATA
                     ))
 
         # Add general totals
@@ -675,7 +703,8 @@ class NSWJSONData:
                             value=current_counts[region_child, posneg],
                             date_updated=date,
                             source_url=SOURCE_URL,
-                            text_match=None
+                            text_match=None,
+                            source_id=self.SOURCE_ID_OPEN_DATA
                         ))
 
         return r

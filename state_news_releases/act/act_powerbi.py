@@ -14,6 +14,8 @@ from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
 
 
 class _ACTPowerBI(PowerBIDataReader):
+    SOURCE_ID = 'au_act_powerbi'
+
     def __init__(self, base_path, source_url):
         self.base_path = base_path
         self.source_url = source_url
@@ -55,7 +57,7 @@ class _ACTPowerBI(PowerBIDataReader):
         return int(i.rstrip('L'))
 
     def _get_updated_date(self, updated_date, response_dict):
-        print(updated_date)
+        #print(updated_date)
         ts = response_dict['updated_date'][1]
         ts = ts['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
 
@@ -75,7 +77,7 @@ class _ACTPowerBI(PowerBIDataReader):
         assert m_f_column_details[1]['G1'] in ('Male', 'Males')
 
         for age in agd:
-            print(age)
+            #print(age)
 
             X = age['X']
 
@@ -106,21 +108,24 @@ class _ACTPowerBI(PowerBIDataReader):
                 agerange=age['G0'].replace('–', '-'),
                 value=male,
                 date_updated=updated_date,
-                source_url=self.source_url
+                source_url=self.source_url,
+                source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
                 datatype=DataTypes.TOTAL_FEMALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=female,
                 date_updated=updated_date,
-                source_url=self.source_url
+                source_url=self.source_url,
+                source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
                 datatype=DataTypes.TOTAL,
                 agerange=age['G0'].replace('–', '-'),
                 value=female + male,
                 date_updated=updated_date,
-                source_url=self.source_url
+                source_url=self.source_url,
+                source_id=self.SOURCE_ID
             ))
 
         return r
@@ -134,7 +139,8 @@ class _ACTPowerBI(PowerBIDataReader):
             datatype=DataTypes.STATUS_DEATHS,
             value=int(value),
             date_updated=updated_date,
-            source_url=self.source_url
+            source_url=self.source_url,
+            source_id=self.SOURCE_ID
         ))
         return r
 
@@ -147,7 +153,8 @@ class _ACTPowerBI(PowerBIDataReader):
             datatype=DataTypes.TOTAL,
             value=int(value),
             date_updated=updated_date,
-            source_url=self.source_url
+            source_url=self.source_url,
+            source_id=self.SOURCE_ID
         ))
         return r
 
@@ -181,13 +188,15 @@ class _ACTPowerBI(PowerBIDataReader):
             datatype=DataTypes.TOTAL_MALE,
             value=self._to_int(male),
             date_updated=updated_date,
-            source_url=self.source_url
+            source_url=self.source_url,
+            source_id=self.SOURCE_ID
         ))
         r.append(DataPoint(
             datatype=DataTypes.TOTAL_FEMALE,
             value=self._to_int(female),
             date_updated=updated_date,
-            source_url=self.source_url
+            source_url=self.source_url,
+            source_id=self.SOURCE_ID
         ))
         return r
 
@@ -210,7 +219,7 @@ class _ACTPowerBI(PowerBIDataReader):
         # "Overseas acquired"
         # "Under investigation"
 
-        print(data)
+        #print(data)
 
         tally = {}
         keys = [
@@ -250,7 +259,8 @@ class _ACTPowerBI(PowerBIDataReader):
                         datatype=act_norm_map[key],
                         value=value,
                         date_updated=i_date_updated,
-                        source_url=self.source_url
+                        source_url=self.source_url,
+                        source_id=self.SOURCE_ID
                     ))
         return r
 
@@ -267,7 +277,8 @@ class _ACTPowerBI(PowerBIDataReader):
             datatype=DataTypes.STATUS_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
-            source_url=self.source_url
+            source_url=self.source_url,
+            source_id=self.SOURCE_ID
         ))
         return r
 
@@ -301,7 +312,8 @@ class _ACTPowerBI(PowerBIDataReader):
                 region_child=name,
                 value=self._to_int(value),
                 date_updated=updated_date,
-                source_url=self.source_url
+                source_url=self.source_url,
+                source_id=self.SOURCE_ID
             ))
             previous_value = value
         return r

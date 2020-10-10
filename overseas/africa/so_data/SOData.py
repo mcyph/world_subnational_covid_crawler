@@ -67,7 +67,7 @@ class SOData(URLBase):
             if first_item:
                 first_item = False
                 continue
-            print(item)
+            #print(item)
 
             date = self.convert_date(item['Date'],
                                      formats=('%m/%d/%Y',))
@@ -79,7 +79,7 @@ class SOData(URLBase):
                     region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
-                    value=int(item['Confirmed ']),
+                    value=int(item['Confirmed '].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -89,7 +89,7 @@ class SOData(URLBase):
                     region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
-                    value=int(item['Dead']),
+                    value=int(item['Dead'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -99,7 +99,7 @@ class SOData(URLBase):
                     region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
-                    value=int(item['Recovered']),
+                    value=int(item['Recovered'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -109,7 +109,7 @@ class SOData(URLBase):
                     region_parent='SO',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
-                    value=int(item['Active']),
+                    value=int(item['Active'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )

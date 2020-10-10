@@ -147,8 +147,8 @@ class _WADash:
                 else:
                     continue
 
-                print(ent)
-                print(ent.keys())
+                #print(ent)
+                #print(ent.keys())
                 if not 'text' in ent['response']['content']:
                     continue
 

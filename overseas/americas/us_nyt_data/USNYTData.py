@@ -90,7 +90,7 @@ class USNYTData(GithubRepo):
         with open(self.get_path_in_dir('us-counties.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
                 date = self.convert_date(item['date'])
 
                 r.append(
@@ -126,7 +126,7 @@ class USNYTData(GithubRepo):
         with open(self.get_path_in_dir('us-states.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
-                print(item)
+                #print(item)
                 date = self.convert_date(item['date'])
 
                 r.append(
@@ -142,7 +142,7 @@ class USNYTData(GithubRepo):
                     region_schema=Schemas.ADMIN_1,
                     region_parent='US',
                     region_child=item['state'],
-                    datatype=DataTypes.TOTAL,
+                    datatype=DataTypes.STATUS_DEATHS,
                     value=int(item['deaths']),
                     date_updated=date,
                     source_url='https://github.com/nytimes/covid-19-data'

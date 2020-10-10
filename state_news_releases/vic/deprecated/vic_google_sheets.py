@@ -14,6 +14,7 @@ from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 # https://docs.google.com/spreadsheets/d/1oxJt0BBPzk-w2Gn1ImO4zASBCdqeeLJRwHEA4DASBFQ/edit#gid=0
 URL_TEMPLATE = 'https://docs.google.com/spreadsheet/ccc?key=%(long_id)s&gid=%(short_id)s&output=csv'
 URL_SOURCE = 'https://docs.google.com/spreadsheets/d/1oxJt0BBPzk-w2Gn1ImO4zASBCdqeeLJRwHEA4DASBFQ/edit#gid=0'
+SOURCE_ID = 'vic_the_age_google_doc'
 
 
 def get_from_google_sheets():
@@ -63,7 +64,8 @@ def _get_from_path(path_data_page, date):
                 datatype=DataTypes.TOTAL,
                 value=int(item['Confirmed cases (ever)'] or 0),
                 date_updated=date,  # FIXME!!!!!
-                source_url=URL_SOURCE
+                source_url=URL_SOURCE,
+                source_id=SOURCE_ID
             ))
             r.append(DataPoint(
                 region_schema=Schemas.POSTCODE,
@@ -72,7 +74,8 @@ def _get_from_path(path_data_page, date):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=int(item['Active cases (current)'] or 0),
                 date_updated=date,  # FIXME!!!!!
-                source_url=URL_SOURCE
+                source_url=URL_SOURCE,
+                source_id=SOURCE_ID
             ))
 
     return r

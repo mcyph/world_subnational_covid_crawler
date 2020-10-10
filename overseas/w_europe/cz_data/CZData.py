@@ -35,6 +35,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class CZData(URLBase):
@@ -58,7 +59,21 @@ class CZData(URLBase):
         )
         self.sdpf = StrictDataPointsFactory(
             region_mappings={
+                ('cz_okres', 'cz', 'cz010'): None,
+                ('cz_okres', 'cz', 'cz020'): None,
+                ('cz_okres', 'cz', 'cz031'): None,
+                ('cz_okres', 'cz', 'cz032'): None,
+                ('cz_okres', 'cz', 'cz041'): None,
+                ('cz_okres', 'cz', 'cz042'): None,
+                ('cz_okres', 'cz', 'cz051'): None,
+                ('cz_okres', 'cz', 'cz052'): None,
+                ('cz_okres', 'cz', 'cz053'): None,
 
+                ('cz_okres', 'cz', 'cz064'): None,
+                ('cz_okres', 'cz', 'cz071'): None,
+                ('cz_okres', 'cz', 'cz063'): None,
+                ('cz_okres', 'cz', 'cz072'): None,
+                ('cz_okres', 'cz', 'cz080'): None,
             },
             mode=MODE_STRICT
         )
@@ -75,10 +90,11 @@ class CZData(URLBase):
         # 2020-03-01	CZ020	CZ0201	0	0	0
         # 2020-03-01	CZ020	CZ0202	0	0	0
 
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/regional_totals.json'
 
             with open(path, 'r', encoding='utf-8-sig') as f:
@@ -106,9 +122,11 @@ class CZData(URLBase):
                             source_url=self.SOURCE_URL
                         )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(CZData().get_datapoints())
+    datapoints = CZData().get_datapoints()
+    pprint(datapoints)

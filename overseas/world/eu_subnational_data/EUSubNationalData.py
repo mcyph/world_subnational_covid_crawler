@@ -203,6 +203,8 @@ class EUSubNationalData(URLBase):
                     continue
                     # schema = Schemas.SI_STATISTICAL_REGION
                     # country = 'SI'
+                elif country == 'Portugal':
+                    continue
                 elif region_child == country:
                     region_child = country
                     country = None

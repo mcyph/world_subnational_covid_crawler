@@ -65,7 +65,7 @@ class WorldUMData(URLBase):
 
             for country, country_data_dict in data['covid'].items():
                 for country_dict in country_data_dict['countries']:
-                    print(country_dict)
+                    #print(country_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_parent='',

@@ -144,7 +144,7 @@ class SNData(URLBase):
                 first_item = False
                 continue
 
-            print(item)
+            #print(item)
             date = self.convert_date(item['Date']+'-20')
             
             if item['Cas']:

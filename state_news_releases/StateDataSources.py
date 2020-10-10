@@ -25,10 +25,8 @@ class StateDataSources:
         news_insts = [
             # We'll make it so crawlers with dashboards run
             # together with ones which don't when possible
-            (NSWNews, ACTNews),
-            (QLDNews, SANews),
-            (VicNews, TasNews),
-            (NTNews, WANews),
+            (NSWNews, ACTNews, QLDNews, NTNews),
+            (SANews, WANews, TasNews, VicNews),
         ]
 
         for klass_set in news_insts:
@@ -105,8 +103,32 @@ def _get_datapoints(classes, send_q):
                     agerange=dp.agerange,
                     value=dp.value,
                     source_url=dp.source_url,
+                    source_id=dp.source_id or i.SOURCE_ID,
                     text_match=dp.text_match
                 ) for dp in datapoints
+
+                #if not (
+                #    dp.datatype in (
+                #        DataTypes.NEW,
+                #        DataTypes.TOTAL,
+
+                #        DataTypes.STATUS_ACTIVE,
+                #        DataTypes.STATUS_DEATHS,
+                #        DataTypes.STATUS_ICU,
+                #        DataTypes.STATUS_RECOVERED,
+                #        DataTypes.STATUS_HOSPITALIZED,
+                #        DataTypes.STATUS_ICU_VENTILATORS,
+
+                #        DataTypes.STATUS_ACTIVE_NEW,
+                #        DataTypes.STATUS_DEATHS_NEW,
+                #        DataTypes.STATUS_ICU_NEW,
+                #        DataTypes.STATUS_RECOVERED_NEW,
+                #        DataTypes.STATUS_HOSPITALIZED_NEW,
+                #        DataTypes.STATUS_ICU_VENTILATORS_NEW
+                #    ) and
+                #    dp.region_schema == Schemas.ADMIN_1 and
+                #    not dp.agerange
+                #)   # NOTE ME: The admin 1 totals data is currently really broken!!! =============================
             ]
 
             print("Class done:", i)

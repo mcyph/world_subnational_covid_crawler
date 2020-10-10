@@ -15,7 +15,7 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 class VicCSV(URLBase):
     SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
     SOURCE_DESCRIPTION = ''
-    SOURCE_ID = 'vic_csv'
+    SOURCE_ID = 'vic_dhhs_csv'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,
@@ -68,7 +68,8 @@ class VicCSV(URLBase):
                             datatype=datatype,
                             value=int(value),
                             date_updated=date_updated,
-                            source_url=self.SOURCE_URL
+                            source_url=self.SOURCE_URL,
+                            source_id=self.SOURCE_ID
                         ))
 
         return r
@@ -102,7 +103,8 @@ class VicCSV(URLBase):
                             datatype=datatype,
                             value=int(value),
                             date_updated=date_updated,
-                            source_url=self.SOURCE_URL
+                            source_url=self.SOURCE_URL,
+                            source_id=self.SOURCE_ID
                         ))
 
         return r

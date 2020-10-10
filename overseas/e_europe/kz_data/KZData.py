@@ -64,13 +64,13 @@ class KZData(URLBase):
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
-            print(date)
+            #print(date)
             path = f'{base_dir}/{date}/kz_corona.html'
             with open(path, 'r', encoding='utf-8') as f:
                 html = pq(f.read(), parser='html')
 
             def get_num_region(div):
-                print(pq(div).text())
+                #print(pq(div).text())
                 region, num = pq(div).text().replace(' - ', '–').split('–')
                 region = place_map[region.strip()]
                 # TODO: Add "new" values!!

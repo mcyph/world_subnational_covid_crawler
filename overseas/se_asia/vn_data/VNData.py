@@ -80,6 +80,76 @@ VN-14	Hoà Bình
 VN-62	Hải Phòng
 """.strip().split('\n')])
 
+highcharts_vn_ids = {
+    '01': 'VN-HN',
+    '02': 'VN-03',
+    '04': 'VN-04',
+    '08': 'VN-07',
+    '10': 'VN-02',
+    '11': 'VN-71',
+    '12': 'VN-01',
+    '14': 'VN-05',
+    '15': 'VN-06',
+    '17': 'VN-14',
+    '19': 'VN-69',
+    '20': 'VN-09',
+    '22': 'VN-13',
+    '24': 'VN-54',
+    '25': 'VN-68',
+    '26': 'VN-70',
+    '27': 'VN-56',
+    '30': 'VN-61',
+    '31': 'VN-HP',
+    '33': 'VN-',
+    '34': 'VN-20',
+    '35': 'VN-63',
+    '36': 'VN-67',
+    '37': 'VN-18',
+    '38': 'VN-21',
+    '40': 'VN-22',
+    '42': 'VN-23',
+    '44': 'VN-24',
+    '45': 'VN-25',
+    '46': 'VN-26',
+    '48': 'VN-DN',
+    '49': 'VN-27',
+    '51': 'VN-29',
+    '52': 'VN-31',
+    '54': 'VN-32',
+    '56': 'VN-34',
+    '58': 'VN-36',
+    '60': 'VN-40',
+    '62': 'VN-28',
+    '64': 'VN-30',
+    '66': 'VN-33',
+    '67': 'VN-72',
+    '68': 'VN-35',
+    '70': 'VN-58',
+    '72': 'VN-37',
+    '74': 'VN-57',
+    '77': 'VN-43',
+    '79': 'VN-SG',
+    '80': 'VN-41',
+    '82': 'VN-46',
+    '83': 'VN-50',
+    '84': 'VN-51',
+    '86': 'VN-49',
+    '87': 'VN-45',
+    '89': 'VN-44',
+    '91': 'VN-47',
+    '92': 'VN-CT',
+    '93': 'VN-73',
+    '94': 'VN-52',
+    '95': 'VN-55',
+    '96': 'VN-59',
+    'hs01': 'VN-57',
+    'truongsa': 'VN-57',
+    'vn-307': 'VN-',
+    'vn-331': 'VN-',
+    'vn-3655': 'VN-'
+}
+
+
 
 class VNData(URLBase):
     SOURCE_URL = 'https://ncov.moh.gov.vn/'
@@ -133,54 +203,57 @@ class VNData(URLBase):
                 data = data.decode('utf-8')
                 html = pq(data, parser='html')
 
-            # There are quite a few more stats e.g. lower than governorate level etc =====================================
+            if 'var data = [' in data:
+                for item in json.loads('[%s]' % data.split('var data = [')[1].split('];')[0]):
+                    if not item['hc-key'] in highcharts_vn_ids:
+                        print("VN WARNING - HC-KEY NOT FOUND:", item)
+                        continue
 
-            for region, total, active, recovery, death in pq(html('#sailorTable')[0])('tbody tr'):
-                region = pq(region).text().strip()
-                if not region:
-                    continue  # FIXME!
-                region = place_map[region]
-                death = int(pq(death).text().strip())
-                recovery = int(pq(recovery).text().strip())
-                active = int(pq(active).text().strip())
-                total = int(pq(total).text().strip())
+                    region_child = highcharts_vn_ids[item['hc-key']]
+                    if region_child == 'VN-':
+                        continue  # ???
 
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='VN',
-                    region_child=region,
-                    datatype=DataTypes.TOTAL,
-                    value=int(total),
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='VN',
-                    region_child=region,
-                    datatype=DataTypes.STATUS_ACTIVE,
-                    value=int(active),
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='VN',
-                    region_child=region,
-                    datatype=DataTypes.STATUS_RECOVERED,
-                    value=int(recovery),
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='VN',
-                    region_child=region,
-                    datatype=DataTypes.STATUS_DEATHS,
-                    value=int(death),
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
+                    for datatype, value in (
+                        (DataTypes.TOTAL, item['socakhoi']),
+                        (DataTypes.STATUS_ACTIVE, item['socadangdieutri']),
+                        (DataTypes.STATUS_RECOVERED, item['socakhoi']-item['socadangdieutri']),
+                        (DataTypes.STATUS_DEATHS, item['socatuvong'])
+                    ):
+                        r.append(
+                            region_schema=Schemas.ADMIN_1,
+                            region_parent='VN',
+                            region_child=region_child,
+                            datatype=datatype,
+                            value=int(value),
+                            date_updated=date,
+                            source_url=self.SOURCE_URL
+                        )
+            else:
+                for region, total, active, recovery, death in pq(html('#sailorTable')[0])('tbody tr'):
+                    region = pq(region).text().strip()
+                    if not region:
+                        continue  # FIXME!
+                    region = place_map[region]
+                    death = int(pq(death).text().strip())
+                    recovery = int(pq(recovery).text().strip())
+                    active = int(pq(active).text().strip())
+                    total = int(pq(total).text().strip())
+
+                    for datatype, value in (
+                        (DataTypes.TOTAL, total),
+                        (DataTypes.STATUS_ACTIVE, active),
+                        (DataTypes.STATUS_RECOVERED, recovery),
+                        (DataTypes.STATUS_DEATHS, death)
+                    ):
+                        r.append(
+                            region_schema=Schemas.ADMIN_1,
+                            region_parent='VN',
+                            region_child=region,
+                            datatype=datatype,
+                            value=int(value),
+                            date_updated=date,
+                            source_url=self.SOURCE_URL
+                        )
 
         return r
 

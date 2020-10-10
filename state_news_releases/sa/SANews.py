@@ -23,7 +23,8 @@ SA_MAP_DIR = get_data_dir() / 'sa' / 'custom_map'
 class SANews(StateNewsBase):
     STATE_NAME = 'sa'
     SOURCE_ISO_3166_2 = 'AU-SA'
-    SOURCE_ID = 'au_sa'
+    SOURCE_ID = 'au_sa_press_releases'
+    SOURCE_ID_DASH = 'au_sa_dash'
     SOURCE_URL = 'https://www.covid-19.sa.gov.au'
     SOURCE_DESCRIPTION = ''
 
@@ -46,7 +47,7 @@ class SANews(StateNewsBase):
 
     # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia
     def _get_date(self, href, html):
-        print("HREF:", href)
+        #print("HREF:", href)
         try:
             # New format of updated SA website as of 23/4/2020
             date = pq(html)('.main-content p')[0]
@@ -85,7 +86,7 @@ class SANews(StateNewsBase):
             return self._extract_date_using_format(date.partition(' ')[-1])
 
     def get_data(self):
-        r = DataPointMerger()
+        r = []
 
         SA_DASH_JSON_URL = 'https://www.covid-19.sa.gov.au/__data/assets/' \
                       'file/0004/145849/covid_19_daily.json'
@@ -95,13 +96,16 @@ class SANews(StateNewsBase):
         ua = URLArchiver(f'sa/dashboard')
         ua.get_url_data(SA_DASH_JSON_URL, cache=False)
 
+        i_r = DataPointMerger()
         for period in ua.iter_periods():
             for subperiod_id, subdir in ua.iter_paths_for_period(period):
                 path = ua.get_path(subdir)
                 with open(path, 'r', encoding='utf-8') as f:
                     data = json.loads(f.read())
-                r.extend(self._get_from_json(SA_DASH_URL, data))
-        
+                i_r.extend(self._get_from_json(SA_DASH_URL, data))
+        r.extend(i_r)
+
+        i_r = DataPointMerger()
         for sub_dir in sorted(listdir(SA_MAP_DIR)):
             # OPEN ISSUE: only add the most recent?? ==========================================================================
             joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
@@ -110,6 +114,7 @@ class SANews(StateNewsBase):
                     r.extend(self._get_total_cases_by_region(
                         self.SA_CUSTOM_MAP_URL, f.read()
                     ))
+        r.extend(i_r)
 
         r.extend(StateNewsBase.get_data(self))
         return r
@@ -132,31 +137,36 @@ class SANews(StateNewsBase):
             datatype=DataTypes.NEW,
             value=int(data['newcase_sa']),
             date_updated=base_data_date,
-            source_url=url
+            source_url=url,
+            source_id=self.SOURCE_ID_DASH
         ))
         r.append(DataPoint(
             datatype=DataTypes.TOTAL,
             value=int(data['todaycase_sa']),
             date_updated=base_data_date,
-            source_url=url
+            source_url=url,
+            source_id=self.SOURCE_ID_DASH
         ))
         r.append(DataPoint(
             datatype=DataTypes.STATUS_ICU,
             value=int(data['icu_sa']),
             date_updated=base_data_date,
-            source_url=url
+            source_url=url,
+            source_id=self.SOURCE_ID_DASH
         ))
         r.append(DataPoint(
             datatype=DataTypes.STATUS_DEATHS,
             value=int(data['deaths_sa']),
             date_updated=base_data_date,
-            source_url=url
+            source_url=url,
+            source_id=self.SOURCE_ID_DASH
         ))
         r.append(DataPoint(
             datatype=DataTypes.STATUS_RECOVERED,
             value=int(data['recovered_sa']),
             date_updated=base_data_date,
-            source_url=url
+            source_url=url,
+            source_id=self.SOURCE_ID_DASH
         ))
 
         for agerange, value in zip(
@@ -169,7 +179,8 @@ class SANews(StateNewsBase):
                 agerange=agerange,
                 value=int(value),
                 date_updated=parse_date(data['age_char']['datetime']),
-                source_url=url
+                source_url=url,
+                source_id=self.SOURCE_ID_DASH
             ))
 
         for gender, value in zip(
@@ -185,7 +196,8 @@ class SANews(StateNewsBase):
                 datatype=datatype,
                 value=int(value),
                 date_updated=parse_date(data['gender_char']['datetime']),
-                source_url=url
+                source_url=url,
+                source_id=self.SOURCE_ID_DASH
             ))
 
         for source, value in zip(
@@ -204,7 +216,8 @@ class SANews(StateNewsBase):
                 datatype=datatype,
                 value=int(value),
                 date_updated=parse_date(data['infection_char']['datetime']),
-                source_url=url
+                source_url=url,
+                source_id=self.SOURCE_ID_DASH
             ))
         return r
 
@@ -232,7 +245,7 @@ class SANews(StateNewsBase):
     @bothlistingandstat
     def _get_total_cases(self, href, html):
         if href == self.STATS_BY_REGION_URL:
-            print(href, html)
+            #print(href, html)
             tr = self._pq_contains(html, 'tr', 'Confirmed cases',
                                    ignore_case=True)
             if not tr:
@@ -302,7 +315,7 @@ class SANews(StateNewsBase):
         """
 
         r = []
-        print("URL:", href)
+        #print("URL:", href)
         #print(html)
         table = self._pq_contains(
             html, 'table', 'Age Group',
@@ -441,7 +454,8 @@ class SANews(StateNewsBase):
                         region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
-                        source_url=href
+                        source_url=href,
+                        source_id=self.SOURCE_ID_DASH
                     )
                     r.append(num)
                 elif k.startswith('active'):
@@ -463,7 +477,8 @@ class SANews(StateNewsBase):
                         region_child=attributes['lga_name'].split('(')[0].strip(),
                         value=int(v),
                         date_updated=du,
-                        source_url=href
+                        source_url=href,
+                        source_id=self.SOURCE_ID_DASH
                     )
                     r.append(num)
 
@@ -536,7 +551,7 @@ class SANews(StateNewsBase):
 
         if href == self.STATS_BY_REGION_URL:
             r = []
-            print(href)
+            #print(href)
             tr = self._pq_contains(html, 'tr', 'Cases in ICU',
                                    ignore_case=True)
             if not tr:
@@ -546,7 +561,7 @@ class SANews(StateNewsBase):
             du = self._get_date(href, html)
 
             c_icu = int(pq(tr[1]).text().strip())
-            print(c_icu)
+            #print(c_icu)
 
             if c_icu is not None:
                 r.append(DataPoint(

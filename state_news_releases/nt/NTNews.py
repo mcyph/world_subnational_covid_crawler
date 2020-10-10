@@ -9,7 +9,7 @@ from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 class NTNews(StateNewsBase):
     STATE_NAME = 'nt'
     SOURCE_ISO_3166_2 = 'AU-NT'
-    SOURCE_ID = 'au_nt'
+    SOURCE_ID = 'au_nt_press_releases'
     SOURCE_URL = 'https://coronavirus.nt.gov.au'
     SOURCE_DESCRIPTION = ''
 
@@ -21,7 +21,7 @@ class NTNews(StateNewsBase):
         date = pq(self._pq_contains(
             html, 'p', 'Data last updated'
         )[0]).text()
-        print(date)
+        #print(date)
 
         date = ' '.join([
             # Remove 6:00pm/6:00PM times,

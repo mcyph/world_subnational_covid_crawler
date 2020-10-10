@@ -15,7 +15,7 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 class QLDNews(StateNewsBase):
     STATE_NAME = 'qld'
     SOURCE_ISO_3166_2 = 'AU-QLD'
-    SOURCE_ID = 'au_qld'
+    SOURCE_ID = 'au_qld_press_releases'
     SOURCE_URL = 'https://www.qld.gov.au/health/conditions/health-alerts/coronavirus-covid-19'
     SOURCE_DESCRIPTION = ''
 

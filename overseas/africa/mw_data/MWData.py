@@ -172,52 +172,60 @@ class MWData(URLBase):
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 
-            r.append(
-                region_schema=Schemas.ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DataTypes.TOTAL,
-                value=data['numberOfConfirmedCases']+data['numberOfSuspectedCases'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            )
-            r.append(
-                region_schema=Schemas.ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DataTypes.CONFIRMED,
-                value=data['numberOfConfirmedCases'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            )
-            r.append(
-                region_schema=Schemas.ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DataTypes.PROBABLE,
-                value=data['numberOfSuspectedCases'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            )
+            if data['numberOfConfirmedCases'] is not None and data['numberOfSuspectedCases'] is not None:
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DataTypes.TOTAL,
+                    value=data['numberOfConfirmedCases']+data['numberOfSuspectedCases'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
 
-            r.append(
-                region_schema=Schemas.ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DataTypes.STATUS_DEATHS,
-                value=data['numberOfConfirmedDeaths'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            )
-            r.append(
-                region_schema=Schemas.ADMIN_0,
-                region_parent=None,
-                region_child='MW',
-                datatype=DataTypes.STATUS_RECOVERED,
-                value=data['numberOfRecoveredPatients'],
-                date_updated=date,
-                source_url=self.SOURCE_URL
-            )
+            if data['numberOfConfirmedCases'] is not None:
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DataTypes.CONFIRMED,
+                    value=data['numberOfConfirmedCases'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
+
+            if data['numberOfSuspectedCases'] is not None:
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DataTypes.PROBABLE,
+                    value=data['numberOfSuspectedCases'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
+
+            if data['numberOfConfirmedDeaths'] is not None:
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DataTypes.STATUS_DEATHS,
+                    value=data['numberOfConfirmedDeaths'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
+
+            if data['numberOfRecoveredPatients'] is not None:
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent=None,
+                    region_child='MW',
+                    datatype=DataTypes.STATUS_RECOVERED,
+                    value=data['numberOfRecoveredPatients'],
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
 
             #r.append(
             #    region_schema=Schemas.ADMIN_0,
@@ -229,7 +237,7 @@ class MWData(URLBase):
             #    source_url=self.SOURCE_URL
             #)
 
-            if 'numberOfTestedSamples' in data:
+            if 'numberOfTestedSamples' in data and data['numberOfTestedSamples'] is not None:
                 r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent=None,

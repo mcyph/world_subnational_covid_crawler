@@ -77,7 +77,8 @@ class _StrictDataPoints(list):
 
                value=None,
                source_url=None,
-               text_match=None):
+               text_match=None,
+               source_id=None):
 
         region_parent = (region_parent or '').lower()
         region_child = (region_child or '').lower()
@@ -114,7 +115,8 @@ class _StrictDataPoints(list):
 
                     value=value,
                     source_url=source_url,
-                    text_match=text_match
+                    text_match=text_match,
+                    source_id=source_id
                 ))
 
                 if replace_index is not None:
@@ -145,7 +147,8 @@ class _StrictDataPoints(list):
 
                     value=value,
                     source_url=source_url,
-                    text_match=text_match
+                    text_match=text_match,
+                    source_id=source_id
                 )
             else:
                 raise Exception(mapping)
@@ -162,7 +165,8 @@ class _StrictDataPoints(list):
 
                 value=value,
                 source_url=source_url,
-                text_match=text_match
+                text_match=text_match,
+                source_id=source_id
             )
 
         if self.__mode == MODE_STRICT:
@@ -235,7 +239,8 @@ class _StrictDataPoints(list):
 
                 value=datapoint.value + i.value,
                 source_url=datapoint.source_url or i.source_url,
-                text_match=datapoint.text_match or i.text_match
+                text_match=datapoint.text_match or i.text_match,
+                source_id=datapoint.source_id
             )
         else:
             replace_index = None
@@ -250,7 +255,8 @@ class _StrictDataPoints(list):
             datapoint.region_child,
             datapoint.date_updated,
             datapoint.datatype,
-            datapoint.agerange
+            datapoint.agerange,
+            datapoint.source_id  # NOTE ME!!!!
         )
 
     def extend(self, datapoints):

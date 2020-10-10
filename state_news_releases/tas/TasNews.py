@@ -17,7 +17,7 @@ TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
     SOURCE_ISO_3166_2 = 'AU-TAS'
-    SOURCE_ID = 'au_tas'
+    SOURCE_ID = 'au_tas_press_releases'
     SOURCE_URL = 'https://coronavirus.tas.gov.au'
     SOURCE_DESCRIPTION = ''
 
@@ -47,7 +47,8 @@ class TasNews(StateNewsBase):
                         region_child=region_child,
                         value=total,
                         date_updated=date,
-                        source_url=date_dict['source_url']
+                        source_url=date_dict['source_url'],
+                        source_id='au_tas_csv'
                     ))
 
         with open(TAS_BY_THS, 'r', encoding='utf-8') as f:
@@ -66,7 +67,8 @@ class TasNews(StateNewsBase):
                         region_child=region_child,
                         value=date_dict[f'{region_child} Active'],
                         date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page'
+                        source_url='Peter Gutweins Facebook Page',
+                        source_id='au_tas_peter_gutwein_fb'
                     ))
                     r.append(DataPoint(
                         region_schema=Schemas.THS,
@@ -74,7 +76,8 @@ class TasNews(StateNewsBase):
                         region_child=region_child,
                         value=int(date_dict[f'{region_child} Recovered']),
                         date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page'
+                        source_url='Peter Gutweins Facebook Page',
+                        source_id='au_tas_peter_gutwein_fb'
                     ))
                     r.append(DataPoint(
                         region_schema=Schemas.THS,
@@ -83,7 +86,8 @@ class TasNews(StateNewsBase):
                         value=int(date_dict[f'{region_child} Active'])+
                               int(date_dict[f'{region_child} Recovered']),
                         date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page'
+                        source_url='Peter Gutweins Facebook Page',
+                        source_id='au_tas_peter_gutwein_fb'
                     ))
 
         r.extend(StateNewsBase.get_data(self))
@@ -93,7 +97,7 @@ class TasNews(StateNewsBase):
         # Format 12 March 2020
         # but sometimes it's an h2 or h3, it's
         # probably entered manually each time
-        print(url)
+        #print(url)
 
         try:
             # cases and testing updates page

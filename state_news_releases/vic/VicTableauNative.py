@@ -111,7 +111,7 @@ class VicTableauNative(URLBase):
 
                 for date, agegroup_map in sorted(out_map.items()):
                     for agegroup, i_map in agegroup_map.items():
-                        print(agegroup, i_map)
+                        #print(agegroup, i_map)
 
                         # Make sure we don't add in totals for some other value if the format changes!
                         assert agegroup
@@ -126,7 +126,8 @@ class VicTableauNative(URLBase):
                                 agerange=agegroup,
                                 datatype=DataTypes.TOTAL_MALE,
                                 value=male_cum[agegroup],  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
                             r.append(DataPoint(
                                 region_schema=Schemas.ADMIN_1,
@@ -136,7 +137,8 @@ class VicTableauNative(URLBase):
                                 agerange=agegroup,
                                 datatype=DataTypes.STATUS_ACTIVE_MALE,
                                 value=int(i_map['Male']['Active_Cases'] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
 
                         if 'Female' in i_map:
@@ -149,7 +151,8 @@ class VicTableauNative(URLBase):
                                 agerange=agegroup,
                                 datatype=DataTypes.TOTAL_FEMALE,
                                 value=female_cum[agegroup],  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
                             r.append(DataPoint(
                                 region_schema=Schemas.ADMIN_1,
@@ -159,7 +162,8 @@ class VicTableauNative(URLBase):
                                 agerange=agegroup,
                                 datatype=DataTypes.STATUS_ACTIVE_FEMALE,
                                 value=int(i_map['Female']['Active_Cases'] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
 
                         total = 0
@@ -191,7 +195,8 @@ class VicTableauNative(URLBase):
                             agerange=agegroup,
                             datatype=DataTypes.TOTAL,
                             value=both_cum[agegroup],
-                            source_url=self.SOURCE_URL
+                            source_url=self.SOURCE_URL,
+                            source_id=self.SOURCE_ID
                         ))
                         r.append(DataPoint(
                             region_schema=Schemas.ADMIN_1,
@@ -201,7 +206,8 @@ class VicTableauNative(URLBase):
                             agerange=agegroup,
                             datatype=DataTypes.STATUS_ACTIVE,
                             value=active,
-                            source_url=self.SOURCE_URL
+                            source_url=self.SOURCE_URL,
+                            source_id=self.SOURCE_ID
                         ))
 
         return r
@@ -247,7 +253,8 @@ class VicTableauNative(URLBase):
                                     '%Y_%m_%d'),
                                 datatype=sources[row[0]],
                                 value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
                         else:
                             r.append(DataPoint(
@@ -258,7 +265,8 @@ class VicTableauNative(URLBase):
                                 date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
                                 datatype=sources[row[0]],
                                 value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
 
         return r
@@ -276,6 +284,8 @@ class VicTableauNative(URLBase):
             path = base_path / 'Data/dash-transmission/vic-details-transmissions-pub-extract-lv.hyper'
             if not path.exists():
                 path = base_path / 'Data/dash-transmission/vic-details-transmissions-prep.hyper'
+            if not path.exists():
+                path = base_path / 'Data/dash-transmission/vic-details-transmissions-prep-xl-pub-extract.hyper'
 
             with Connection(endpoint=hyper.endpoint,
                             database=path) as connection:
@@ -301,7 +311,8 @@ class VicTableauNative(URLBase):
                                     '%Y_%m_%d'),
                                 datatype=sources[row[0]],
                                 value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
                         else:
                             r.append(DataPoint(
@@ -312,7 +323,8 @@ class VicTableauNative(URLBase):
                                 date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
                                 datatype=sources[row[0]],
                                 value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
                             ))
 
         return r

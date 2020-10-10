@@ -10,7 +10,7 @@ from json import loads, dumps
 from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
-from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import place_map
+from covid_19_au_grab.overseas.w_europe.uk_data.uk_place_map import place_map, ni_mappings
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
@@ -141,7 +141,11 @@ class UKGovData(URLBase):
 
             for item in data:
                 date = self.convert_date(item['date'])
-                area = normalize_locality_name(item['name'])
+                if item['name'] in ni_mappings:
+                    area = ni_mappings[item['name']]
+                else:
+                    area = item['name']
+                area = normalize_locality_name(area)
 
                 for datatype, value in (
                     (DataTypes.TOTAL, item['cumulative']),
@@ -239,7 +243,7 @@ class UKGovData(URLBase):
             current_data = response.json()
             page_data = current_data['data']
             data.extend(page_data)
-            print(page_data)
+            #print(page_data)
 
             # The "next" attribute in "pagination" will be `None`
             # when we reach the end.
@@ -257,4 +261,4 @@ if __name__ == "__main__":
     from pprint import pprint
     inst = UKGovData()
     inst.get_datapoints()
-    #pprint(inst.get_datapoints())
+    pprint(inst.get_datapoints())

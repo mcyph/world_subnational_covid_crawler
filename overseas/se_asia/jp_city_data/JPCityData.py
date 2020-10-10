@@ -1,6 +1,6 @@
 import csv
 from pprint import pprint
-from collections import Counter
+from collections import Counter, defaultdict
 from covid_19_au_grab.overseas.se_asia.jp_city_data.extract_from_tokyo_pdf import (
     ExtractFromTokyoPDF
 )
@@ -202,6 +202,8 @@ class JPCityData(URLBase):
         by_city_age_gender = Counter()
         by_prefecture_age_gender = Counter()
 
+        lat_long_counters = defaultdict(Counter)
+
         f = self.get_file('jg-jpn.csv', include_revision=True, encoding='utf-8-sig')
 
         #for item in json.loads(text)['features']:
@@ -215,7 +217,7 @@ class JPCityData(URLBase):
                 item[k] = item[k].strip()
 
             for xxx in range(int(item.get('人数', '').strip() or 1)):
-                print(item)
+                #print(item)
                 #item = item['properties']
 
                 if not item:
@@ -314,6 +316,7 @@ class JPCityData(URLBase):
                         'キルギス': 'kyoto-shi',
                         '外国籍': 'other',
 
+                        '丹後': 'tango-kan',
                         '丹後管内': 'tango-kan',
                         '丹後保健所管内': 'tango-kan',
 
@@ -692,6 +695,8 @@ class JPCityData(URLBase):
                         by_city_gender[date_diagnosed, region_parent, region_child, gender] += 1
                         by_city_age_gender[date_diagnosed, region_parent, region_child, agerange, gender] += 1
 
+                lat_long_counters[region_parent, region_child][item['X'], item['Y']] += 1
+
                 if item.get('居住市区町村') and region_parent == 'jp-27':
                     #print(item)
                     num_city += 1
@@ -853,6 +858,9 @@ class JPCityData(URLBase):
                 date_updated=date,
                 source_url=self.SOURCE_URL,  # FIXME!!
             )
+
+        from pprint import pprint
+        pprint(lat_long_counters)
 
         return r
 

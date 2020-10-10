@@ -86,7 +86,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
         region_dicts = data['result']['data']['dsr']['DS'][0]['PH'][1]['DM1']
 
         for region_dict in region_dicts:
-            print(region_dict, previous_value)
+            #print(region_dict, previous_value)
             value, previous_value = self.process_powerbi_value(region_dict, previous_value, data)
 
             if isinstance(value[0], int):
@@ -106,7 +106,7 @@ class _WestAfricaPowerBI(PowerBIDataReader):
                 'guinea bissau': 'gw',
             }.get(admin_0.lower(), admin_0)
 
-            print(admin_0)
+            #print(admin_0)
 
             for _, (datatype, index) in mappings.items():
                 cases = value[index]

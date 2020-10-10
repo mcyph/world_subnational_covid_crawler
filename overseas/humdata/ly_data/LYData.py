@@ -28,27 +28,27 @@ class LYData(URLBase):
         )
         self.sdpf = StrictDataPointsFactory(
             region_mappings={
-                ('admin_1', 'ly', 'اجدابيا'): None,
-                ('admin_1', 'ly', 'البريقة'): None,
-                ('admin_1', 'ly', 'البيضاء'): None,
-                ('admin_1', 'ly', 'الجفارة'): None,
-                ('admin_1', 'ly', 'الجميل'): None,
-                ('admin_1', 'ly', 'الخمس'): None,
-                ('admin_1', 'ly', 'الرجبان'): None,
-                ('admin_1', 'ly', 'الرحيبات'): None,
-                ('admin_1', 'ly', 'الرياينة'): None,
-                ('admin_1', 'ly', 'الزاوية'): None,
-                ('admin_1', 'ly', 'الزنتان'): None,
-                ('admin_1', 'ly', 'العجيلات'): None,
-                ('admin_1', 'ly', 'العزيزية'): None,
+                ('admin_1', 'ly', 'اجدابيا'): None, # Ajdabiya, Al Wahat
+                ('admin_1', 'ly', 'البريقة'): None, # Brega, Al Wahat
+                ('admin_1', 'ly', 'البيضاء'): None, # Bayda, Jabal al Akhdar
+                ('admin_1', 'ly', 'الجفارة'): None, # Jafara
+                ('admin_1', 'ly', 'الجميل'): None, # Aljmail, Nuqat al Khams
+                ('admin_1', 'ly', 'الخمس'): None, # Al-Khums, Murqub
+                ('admin_1', 'ly', 'الرجبان'): None, # Alrujban, ???
+                ('admin_1', 'ly', 'الرحيبات'): None, # Alruhaibat, ???
+                ('admin_1', 'ly', 'الرياينة'): None, # Alriyayna, ???
+                ('admin_1', 'ly', 'الزاوية'): None, # Az-Zāwiyah, ???
+                ('admin_1', 'ly', 'الزنتان'): None, # Alzintan, Jabal al Gharbi
+                ('admin_1', 'ly', 'العجيلات'): None, # Ajaylat, Nuqat al Khams
+                ('admin_1', 'ly', 'العزيزية'): None, # ʽAziziya, Jafara
                 ('admin_1', 'ly', 'القلعة'): None,
-                ('admin_1', 'ly', 'الكفرة'): None,
+                ('admin_1', 'ly', 'الكفرة'): None, # Kufra District
                 ('admin_1', 'ly', 'المحروقة'): None,
-                ('admin_1', 'ly', 'المرج'): None,
-                ('admin_1', 'ly', 'بني وليد'): None,
+                ('admin_1', 'ly', 'المرج'): None, # Marj, Marj
+                ('admin_1', 'ly', 'بني وليد'): None, # Bani Walid, Misrata District
                 ('admin_1', 'ly', 'جادو'): None,
-                ('admin_1', 'ly', 'جنزور'): None,
-                ('admin_1', 'ly', 'درنة'): None,
+                ('admin_1', 'ly', 'جنزور'): None, # Janzur, Janzour/Greater Tripoli???
+                ('admin_1', 'ly', 'درنة'): None, # Derna, Derna
                 ('admin_1', 'ly', 'رقدالين'): None,
                 ('admin_1', 'ly', 'زلطن'): None,
                 ('admin_1', 'ly', 'زليتن'): None,
@@ -69,7 +69,20 @@ class LYData(URLBase):
                 ('admin_1', 'ly', 'نالوت'): None,
                 ('admin_1', 'ly', 'هراوة'): None,
                 ('admin_1', 'ly', 'وادي الشاطيء'): None,
-                ('admin_1', 'ly', 'يفرن'): None
+                ('admin_1', 'ly', 'يفرن'): None,
+                ('admin_1', 'ly', 'سوسة'): None,
+                ('admin_1', 'ly', 'تيجي'): None,
+                ('admin_1', 'ly', 'امساعد'): None,
+                ('admin_1', 'ly', 'الزهرة'): None,
+                ('admin_1', 'ly', 'السبيعة'): None,
+                ('admin_1', 'ly', 'تندميرة'): None,
+                ('admin_1', 'ly', 'بن جواد'): None,
+                ('admin_1', 'ly', 'الأبيار'): None,
+                ('admin_1', 'ly', 'كاباو'): None,
+                ('admin_1', 'ly', 'الجفرة'): None,
+                ('admin_1', 'ly', 'ككلة'): None,
+                ('admin_1', 'ly', 'الشويرف'): None,
+                ('admin_1', 'ly', 'ترهونة'): None,
             },
             mode=MODE_STRICT
         )
@@ -97,7 +110,7 @@ class LYData(URLBase):
                 first_item = False
                 continue
 
-            print(item)
+            #print(item)
             date = self.convert_date(item['Date'], formats=('%m/%d/%Y',))
             region_child = item['Location'].title() # Location was Governorate
 
@@ -163,4 +176,5 @@ if __name__ == '__main__':
     from pprint import pprint
     inst = LYData()
     inst.sdpf.print_mappings()
-    #pprint(inst.get_datapoints())
+    datapoints = inst.get_datapoints()
+    #pprint()

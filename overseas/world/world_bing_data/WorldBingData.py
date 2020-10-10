@@ -71,6 +71,10 @@ class WorldBingData(GithubRepo):
                     region_schema = Schemas.ADMIN_1
                     region_parent = item['ISO2']
                     region_child = item['AdminRegion1']
+
+                    if region_parent == 'PT':
+                        # TODO: Support the more limited Portugal regions!!! ===========================================
+                        continue
                 else:
                     region_schema = Schemas.ADMIN_0
                     region_parent = None

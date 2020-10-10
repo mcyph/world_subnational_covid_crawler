@@ -57,7 +57,7 @@ class WorldEUCDCData(URLBase):
             prev_date = None
 
             for item in reversed(list(csv.DictReader(f))):
-                print(item)
+                #print(item)
                 date = self.convert_date(item['dateRep'])
 
                 if item['geoId'] in (

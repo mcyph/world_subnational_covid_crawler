@@ -11,6 +11,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 DATA_URL = 'https://maps.registrucentras.lt/arcgis/rest/services/covid/savivaldybes/FeatureServer/0/query?f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=%7B%22xmin%22%3A2504688.542843003%2C%22ymin%22%3A5009377.085700966%2C%22xmax%22%3A5009377.08569099%2C%22ymax%22%3A7514065.628548957%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100&resultType=tile&quantizationParameters=%7B%22mode%22%3A%22view%22%2C%22originPosition%22%3A%22upperLeft%22%2C%22tolerance%22%3A4891.96981024998%2C%22extent%22%3A%7B%22xmin%22%3A306507.4031%2C%22ymin%22%3A5973291.0439%2C%22xmax%22%3A680103.2769%2C%22ymax%22%3A6257813.452%2C%22spatialReference%22%3A%7B%22wkid%22%3A2600%2C%22latestWkid%22%3A3346%7D%7D%7D&callback=dojo_request_script_callbacks.dojo_request_script57'
@@ -50,10 +51,11 @@ class LTData(URLBase):
         return r
 
     def _get_regions_data(self):
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/regions_data.json'
             with open(path, 'r', encoding='utf-8') as f:
                 data = f.read().replace('dojo_request_script_callbacks.dojo_request_script57(', '').rstrip().rstrip(');')
@@ -61,7 +63,7 @@ class LTData(URLBase):
 
             for feature in data['features']:
                 attributes = feature['attributes']
-                print(attributes)
+                #print(attributes)
 
                 # Only confirmed and deaths are shown in the dashboard
                 date = datetime.datetime.fromtimestamp(
@@ -155,7 +157,8 @@ class LTData(URLBase):
                         source_url=self.SOURCE_URL
                     )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

@@ -273,7 +273,7 @@ class NPData(URLBase):
                                         include_revision=True))
 
         for result in data['results']:
-            print(result)
+            #print(result)
             date = self.convert_date(result['reportedOn'])
             province = f'NP-P{result["province"]}'
 

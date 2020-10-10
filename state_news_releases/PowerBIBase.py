@@ -157,7 +157,7 @@ class PowerBIBase:
                                            'public/reports/querydata':
 
                 if not 'postData' in req:
-                    print("ignoring:", req)
+                    #print("ignoring:", req)
                     continue
 
                 # print(req.keys())

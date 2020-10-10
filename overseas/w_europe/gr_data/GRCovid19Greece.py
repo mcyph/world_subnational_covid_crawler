@@ -8,6 +8,7 @@ from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class GRCovid19Greece(URLBase):
@@ -40,7 +41,7 @@ class GRCovid19Greece(URLBase):
         #           "region_gr_name": "Ανατολική Μακεδονία και Θράκη"
         #         },
 
-        r = self.sdpf()
+        out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
         region_map = {
@@ -53,6 +54,7 @@ class GRCovid19Greece(URLBase):
         }
 
         for date in sorted(listdir(base_dir)):
+            r = self.sdpf()
             path = f'{base_dir}/{date}/regions.json'
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
@@ -74,7 +76,8 @@ class GRCovid19Greece(URLBase):
                         source_url=self.SOURCE_URL
                     )
 
-        return r
+            out.extend(r)
+        return out
 
 
 if __name__ == '__main__':

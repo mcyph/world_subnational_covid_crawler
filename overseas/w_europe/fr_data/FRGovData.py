@@ -27,12 +27,13 @@ import json
 import datetime
 from pyquery import PyQuery as pq
 from os import listdir
-from collections import Counter
+from collections import Counter, defaultdict
 
 from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
+from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
 class FRGovData(URLBase):
@@ -111,9 +112,22 @@ class FRGovData(URLBase):
         f = self.get_file('daily_positive_by_department.csv',
                           include_revision=True)
 
-        positive_totals = Counter()
-        tests_totals = Counter()
-        above_90_years_totals = Counter()
+        positive_totals_by_age = Counter()
+        tests_totals_by_age = Counter()
+
+        age_groups = {
+            '0': None,
+            '09': '0-9',
+            '19': '10-19',
+            '29': '20-29',
+            '39': '30-39',
+            '49': '40-49',
+            '59': '50-59',
+            '69': '60-69',
+            '79': '70-79',
+            '89': '80-89',
+            '90': '90+'
+        }
 
         for item in csv.DictReader(f, delimiter=';'):
             date = self.convert_date(item['jour'])
@@ -123,26 +137,30 @@ class FRGovData(URLBase):
                 # e.g. 2A
                 region_child = 'FR-%s' % item['dep']
 
-            positive_totals[region_child] += int(item['P'])
-            tests_totals[region_child] += int(item['T'])
-            above_90_years_totals[region_child] += int(item['cl_age90'])
+            # https://www.arcorama.fr/2020/05/reutiliser-les-donnees-de-notre-tableau.html
+            # cl_age90 of 0 -> total; 09 means 0-9 and so on
+            agerange = age_groups[item['cl_age90']]
+
+            positive_totals_by_age[agerange, region_child] += int(item['P'])
+            tests_totals_by_age[agerange, region_child] += int(item['T'])
 
             r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='FR',
                 region_child=region_child,
+                agerange=agerange,
                 datatype=DataTypes.TOTAL,
-                value=positive_totals[region_child],
+                value=positive_totals_by_age[agerange, region_child],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             )
-
             r.append(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='FR',
                 region_child=region_child,
+                agerange=agerange,
                 datatype=DataTypes.TESTS_TOTAL,
-                value=tests_totals[region_child],
+                value=tests_totals_by_age[agerange, region_child],
                 date_updated=date,
                 source_url=self.SOURCE_URL
             )

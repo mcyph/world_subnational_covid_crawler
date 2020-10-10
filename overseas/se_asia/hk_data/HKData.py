@@ -161,7 +161,7 @@ class HKData(URLBase):
         cumulative = Counter()
         for (date, district), value in sorted(by_district.items()):
             cumulative[district] += value
-            print(district)
+            #print(district)
 
             r.append(
                 region_schema=Schemas.HK_DISTRICT,

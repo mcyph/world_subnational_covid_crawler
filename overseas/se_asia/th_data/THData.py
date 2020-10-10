@@ -28,7 +28,7 @@ def get_districts_map():
               'r', encoding='utf-8') as f:
 
         for item in csv.DictReader(f, delimiter='\t'):
-            print(item)
+            #print(item)
             if item['Status'].strip() not in ('District', 'City District'):
                 continue
 
