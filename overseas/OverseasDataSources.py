@@ -1,7 +1,5 @@
-import threading
 import multiprocessing
 
-from covid_19_au_grab.datatypes.enums import Schemas
 from covid_19_au_grab.datatypes.DataPoint import _DataPoint
 
 #from covid_19_au_grab.overseas.ml_data.MLData import MLData
@@ -58,7 +56,7 @@ from covid_19_au_grab.overseas.se_asia.cn_data.CNQQData import CNQQData
 from covid_19_au_grab.overseas.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
 from covid_19_au_grab.overseas.se_asia.jp_data.JPData import JPData
 from covid_19_au_grab.overseas.se_asia.jp_city_data.JPCityData import JPCityData
-from covid_19_au_grab.overseas.se_asia.jp_city_data.JPTokyoCityPDFs import JPTokyoCityPDFs
+from covid_19_au_grab.overseas.se_asia.jp_tokyo_data.JPTokyoCityPDFs import JPTokyoCityPDFs
 from covid_19_au_grab.overseas.se_asia.kr_data.KRData import KRData
 from covid_19_au_grab.overseas.se_asia.mm_data.MMData import MMData
 from covid_19_au_grab.overseas.se_asia.my_data.MYData import MYData
@@ -158,6 +156,8 @@ from covid_19_au_grab.overseas.world.world_um_data.WorldUMData import WorldUMDat
 from covid_19_au_grab.overseas.world.world_google_mobility.WorldGoogleMobility import WorldGoogleMobility
 from covid_19_au_grab.overseas.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
 from covid_19_au_grab.overseas.world.world_owid_data.WorldOWIDData import WorldOWIDData
+from covid_19_au_grab.overseas.world.world_who.WorldWHO import WorldWHO
+from covid_19_au_grab.overseas.world.world_gender_disaggregated.WorldGenderDisaggregated import WorldGenderDisaggregated
 
 WORLD_DATA = (
     WorldUMData,
@@ -167,7 +167,9 @@ WORLD_DATA = (
     WorldBingData,
     WorldGoogleMobility,
     WorldEUCDCData,
-    WorldOWIDData
+    WorldOWIDData,
+    WorldWHO,
+    WorldGenderDisaggregated
 )
 
 

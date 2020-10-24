@@ -1,19 +1,11 @@
 import csv
 from datetime import datetime
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.datatypes.StrictDataPointsFactory import (
-    StrictDataPointsFactory, MODE_STRICT, MODE_DEV
-)
-from covid_19_au_grab.normalize_locality_name import (
-    normalize_locality_name
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
+from covid_19_au_grab.normalize_locality_name import normalize_locality_name
 
 
 class WorldGoogleMobility(URLBase):

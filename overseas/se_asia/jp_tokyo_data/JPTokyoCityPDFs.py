@@ -1,22 +1,7 @@
-import csv
-from collections import Counter
-from covid_19_au_grab.overseas.se_asia.jp_city_data.extract_from_tokyo_pdf import (
-    ExtractFromTokyoPDF
-)
-
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.geojson_data.LabelsToRegionChild import (
-    LabelsToRegionChild
-)
+from covid_19_au_grab.overseas.URLBase import URLBase
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.geojson_data.LabelsToRegionChild import LabelsToRegionChild
+from covid_19_au_grab.overseas.se_asia.jp_tokyo_data.extract_from_tokyo_pdf import ExtractFromTokyoPDF
 
 
 class JPTokyoCityPDFs(URLBase):

@@ -1,17 +1,14 @@
 import csv
+import requests
+import pandas as pd
+from pyquery import PyQuery as pq
 from datetime import datetime
 from collections import Counter
 
-from covid_19_au_grab.overseas.URLBase import (
-    URL, URLBase
-)
+from covid_19_au_grab.overseas.URLBase import URL, URLBase
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.get_package_dir import (
-    get_overseas_dir
-)
-from covid_19_au_grab.datatypes.StrictDataPointsFactory import (
-    StrictDataPointsFactory, MODE_STRICT, MODE_DEV
-)
+from covid_19_au_grab.get_package_dir import get_overseas_dir
+from covid_19_au_grab.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT, MODE_DEV
 
 
 class WorldEUCDCData(URLBase):
@@ -21,18 +18,105 @@ class WorldEUCDCData(URLBase):
     SOURCE_ID = 'world_eu_cdc'
 
     def __init__(self):
-        URLBase.__init__(self,
-                         output_dir=get_overseas_dir() / 'world_eu_cdc' / 'data',
-                         urls_dict={
-                             'world_data.csv': URL(url='https://opendata.ecdc.europa.eu/covid19/casedistribution/csv',
-                                                   static_file=False)
-                         })
+        # https://www.ecdc.europa.eu/en/publications-data/covid-19-testing
+        # https://www.ecdc.europa.eu/en/publications-data/download-data-hospital-and-icu-admission-rates-and-current-occupancy-covid-19
+
+        URLBase.__init__(
+            self,
+            output_dir=get_overseas_dir() / 'world_eu_cdc' / 'data',
+            urls_dict=self.__get_urls_dict()
+        )
+
         self.update()
         self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
+
+    def __get_urls_dict(self):
+        r = {}
+        r['world_data.csv'] = URL(url='https://opendata.ecdc.europa.eu/covid19/casedistribution/csv',
+                                  static_file=False)
+
+        for url, key in (
+            ('https://www.ecdc.europa.eu/en/publications-data/download-data-hospital-and-icu-admission-rates-and-current-occupancy-covid-19', 'hosp_icu.xlsx'),
+            ('https://www.ecdc.europa.eu/en/publications-data/covid-19-testing', 'tests.xlsx'),
+        ):
+            html = requests.get(url).text
+
+            r[key] = URL(
+                'https://www.ecdc.europa.eu/sites/default/files/documents/' +
+                    html.split(f'https://www.ecdc.europa.eu/sites/default/files/documents/')[1].split('"')[0],
+                static_file=False
+            )
+
+        return r
 
     def get_datapoints(self):
         r = []
         r.extend(self._get_datapoints())
+        date = datetime.today().strftime('%Y_%m_%d')
+        r.extend(self._get_tests_datapoints(date))
+        r.extend(self._get_hosp_icu_datapoints(date))
+        return r
+
+    def _get_tests_datapoints(self, date):
+        r = self.sdpf()
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'tests.xlsx',
+                           sheet_name='Sheet1')
+        tests_done = Counter()
+
+        for idx, row in df.iterrows():
+            #print(row)
+            date = datetime.strptime(row['year_week'] + '-1', "%Y-W%W-%w").strftime('%Y_%m_%d')
+            tests_done[row['country']] += int(row['tests_done'])
+
+            r.append(
+                region_schema=Schemas.ADMIN_0,
+                region_parent='',
+                region_child=row['country'],
+                datatype=DataTypes.TESTS_TOTAL,
+                value=tests_done[row['country']],
+                date_updated=date,
+                source_url='#'
+            )
+        return r
+
+    def _get_hosp_icu_datapoints(self, date):
+        r = self.sdpf()
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'hosp_icu.xlsx',
+                           sheet_name='Sheet1')
+        for idx, row in df.iterrows():
+            #print(row)
+            try:
+                date = self.convert_date(row['date'])
+            except:
+                date = datetime.strptime(row['year_week'] + '-1', "%Y-W%W-%w").strftime('%Y_%m_%d')
+
+            if row['indicator'] == 'Daily hospital occupancy':
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent='',
+                    region_child=row['country'],
+                    datatype=DataTypes.STATUS_HOSPITALIZED,
+                    value=int(row['value']),  # WARNING WARNING!!!
+                    date_updated=date,
+                    source_url='#'
+                )
+            elif row['indicator'] == 'Daily ICU occupancy':
+                r.append(
+                    region_schema=Schemas.ADMIN_0,
+                    region_parent='',
+                    region_child=row['country'],
+                    datatype=DataTypes.STATUS_ICU,
+                    value=int(row['value']),  # WARNING WARNING!!!
+                    date_updated=date,
+                    source_url='#'
+                )
+            elif row['indicator'] == 'Weekly new hospital admissions per 100k':
+                pass
+            elif row['indicator'] == 'Weekly new ICU admissions per 100k':
+                pass
+            else:
+                raise Exception(row)
+
         return r
 
     def _get_datapoints(self):
@@ -49,8 +133,6 @@ class WorldEUCDCData(URLBase):
 
         date = datetime.today().strftime('%Y_%m_%d')
         path = get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.csv'
-
-
 
         with open(path, 'r', encoding='utf-8') as f:
             cur_geoid = None
@@ -107,4 +189,5 @@ class WorldEUCDCData(URLBase):
 if __name__ == "__main__":
     from pprint import pprint
     inst = WorldEUCDCData()
-    pprint(inst.get_datapoints())
+    datapoints = inst.get_datapoints()
+    #pprint(datapoints)

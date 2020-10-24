@@ -9,7 +9,7 @@ def get_tokyo_cities_to_en_map():
     with open(get_package_dir() /
               'overseas' /
               'se_asia' /
-              'jp_city_data'/
+              'jp_tokyo_data'/
               'tokyo_cities.csv', 'r', encoding='utf-8') as f:
 
         for item in csv.DictReader(f, delimiter='\t'):

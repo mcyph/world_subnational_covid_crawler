@@ -27,7 +27,25 @@ class FRESRIData(URLBase):
             urls_dict=self.__get_urls_dict()
         )
         self.sdpf = StrictDataPointsFactory(
-            region_mappings={},
+            region_mappings={
+                # TODO: What are all these codes?
+                ('admin_1', 'fr', 'fr-971'): None,
+                ('admin_1', 'fr', 'fr-972'): None,
+                ('admin_1', 'fr', 'fr-973'): None,
+                ('admin_1', 'fr', 'fr-974'): None,
+                ('admin_1', 'fr', 'fr-975'): None,
+                ('admin_1', 'fr', 'fr-976'): None,
+                ('admin_1', 'fr', 'fr-977'): None,
+                ('admin_1', 'fr', 'fr-978'): None,
+                ('admin_1', 'fr', 'fr-979'): None,
+                ('admin_1', 'fr', 'fr-980'): None,
+                ('admin_1', 'fr', 'fr-981'): None,
+                ('admin_1', 'fr', 'fr-982'): None,
+                ('admin_1', 'fr', 'fr-983'): None,
+                ('admin_1', 'fr', 'fr-984'): None,
+                ('admin_1', 'fr', 'fr-985'): None,
+                ('admin_1', 'fr', 'fr-986'): None,
+            },
             mode=MODE_STRICT
         )
         self.update()
@@ -40,7 +58,7 @@ class FRESRIData(URLBase):
                 yield start_date + timedelta(n)
 
         start_date = date.today() - timedelta(days=14)
-        # start_date = date(2020, 3, 18)
+        #start_date = date(2020, 3, 18)
         end_date = date.today()
 
         for single_date in daterange(start_date, end_date):
@@ -51,7 +69,6 @@ class FRESRIData(URLBase):
                 'returnGeometry=false&'
                 'spatialRel=esriSpatialRelIntersects&'
                 'maxAllowableOffset=2445&'
-                'geometry={%22xmin%22:-0.000004988163709640503,%22ymin%22:5009377.085700966,%22xmax%22:1252344.2714190073,%22ymax%22:6261721.357124962,%22spatialReference%22:{%22wkid%22:102100,%22latestWkid%22:3857}}&'
                 'geometryType=esriGeometryEnvelope&inSR=102100&'
                 'outFields=*&outSR=102100&'
                 'resultType=tile'
@@ -62,16 +79,20 @@ class FRESRIData(URLBase):
 
     def get_datapoints(self):
         r = DataPointMerger()
-        for date in sorted(listdir(get_overseas_dir() / 'fr' / 'esridata')):
-            r.extend(self._get_positive_by_department(date))
-        return r
-
-    def _get_positive_by_department(self, date):
-        out = DataPointMerger()
-        base_path = get_overseas_dir() / 'fr' / 'esridata' / date
-
         totals = Counter()
         added_totals = defaultdict(set)
+        tests = Counter()
+        added_tests = defaultdict(set)
+
+        for date in sorted(listdir(get_overseas_dir() / 'fr' / 'esridata')):
+            r.extend(self._get_positive_by_department(date, totals, added_totals, tests, added_tests))
+        return r
+
+    def _get_positive_by_department(self, date,
+                                    totals, added_totals,
+                                    tests, added_tests):
+        out = DataPointMerger()
+        base_path = get_overseas_dir() / 'fr' / 'esridata' / date
 
         for fnam in sorted(listdir(base_path)):
             r = self.sdpf()
@@ -100,7 +121,7 @@ class FRESRIData(URLBase):
                     #(DataTypes.FIXME, attributes['Deces_H']),
                     #(DataTypes.FIXME, attributes['Deces_F']),
                     (DataTypes.NEW, attributes['Tests_Viro_P']),
-                    (DataTypes.TESTS_TOTAL, attributes['Tests_Viro_T'])
+                    #(DataTypes.TESTS_TOTAL, attributes['Tests_Viro_T'])  # FIXME: This is new tests!
                 ):
                     if value is None:
                         continue
@@ -120,7 +141,6 @@ class FRESRIData(URLBase):
 
                 if attributes['Tests_Viro_P'] and not date in added_totals[region_child]:
                     added_totals[region_child].add(date)
-
                     totals[region_child] += attributes['Tests_Viro_P']# or attributes['Nbre_Cas_Confirmes'])
 
                     r.append(
@@ -129,6 +149,20 @@ class FRESRIData(URLBase):
                         region_child=region_child,
                         datatype=DataTypes.TOTAL,
                         value=totals[region_child],
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    )
+
+                if attributes['Tests_Viro_T'] and not date in added_tests[region_child]:
+                    added_tests[region_child].add(date)
+                    tests[region_child] += attributes['Tests_Viro_T']
+
+                    r.append(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='FR',
+                        region_child=region_child,
+                        datatype=DataTypes.TESTS_TOTAL,
+                        value=tests[region_child],
                         date_updated=date,
                         source_url=self.SOURCE_URL
                     )
