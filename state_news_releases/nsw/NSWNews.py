@@ -2,7 +2,6 @@ from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL, IGNORECASE
 
 from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
-from covid_19_au_grab.state_news_releases.nsw.NSWJSONData import NSWJSONData
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
@@ -11,7 +10,7 @@ from covid_19_au_grab.URLArchiver import URLArchiver
 
 class NSWNews(StateNewsBase):
     STATE_NAME = 'nsw'
-    SOURCE_ISO_3166_2 = 'AU-NSW'
+
     SOURCE_ID = 'au_nsw_press_releases'
     SOURCE_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/Pages/default.aspx'
     SOURCE_DESCRIPTION = ''
@@ -46,7 +45,7 @@ class NSWNews(StateNewsBase):
                 )
             )
 
-    def get_data(self):
+    def get_datapoints(self):
         r = []
 
         for typ, url in (
@@ -64,17 +63,14 @@ class NSWNews(StateNewsBase):
                     path = ua.get_path(subdir)
                     #print("NSW News:", typ, subperiod_id, subdir, url, path)
 
-                    with open(path, 'r',
-                              encoding='utf-8',
-                              errors='ignore') as f:
+                    with open(path, 'r', encoding='utf-8', errors='ignore') as f:
                         html = f.read()
 
                     cbr = self._get_total_cases_by_region(url, html)
                     if cbr:
                         r.extend(cbr)
 
-        r.extend(StateNewsBase.get_data(self))
-        r.extend(NSWJSONData().get_datapoints())
+        r.extend(StateNewsBase.get_datapoints(self))
         return r
 
     #============================================================#
@@ -96,6 +92,9 @@ class NSWNews(StateNewsBase):
                 )
             ),
             c_html.replace('\n', ' '),
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NSW',
             datatype=DataTypes.NEW,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -106,6 +105,9 @@ class NSWNews(StateNewsBase):
         total = self._extract_number_using_regex(
             compile('bringing the total to ([0-9,]+)'),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NSW',
             date_updated=self._get_date(href, html),
             datatype=DataTypes.TOTAL,
             source_url=href
@@ -122,6 +124,9 @@ class NSWNews(StateNewsBase):
         tr = tr[0]
 
         return DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NSW',
             datatype=DataTypes.TOTAL,
             value=int(pq(tr[1]).html().split('<')[0]
                                       .strip()
@@ -142,6 +147,9 @@ class NSWNews(StateNewsBase):
                 IGNORECASE
             ),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NSW',
             date_updated=self._get_date(href, html),
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href
@@ -149,13 +157,8 @@ class NSWNews(StateNewsBase):
         if tests:
             return tests
 
-        table = self._pq_contains(
-            html, 'table', 'Total persons tested',
-            ignore_case=True
-        ) or self._pq_contains(
-            html, 'table', 'Total',
-            ignore_case=True
-        )
+        table = self._pq_contains(html, 'table', 'Total persons tested', ignore_case=True) or \
+                self._pq_contains(html, 'table', 'Total', ignore_case=True)
         if not table:
             return
 
@@ -177,6 +180,9 @@ class NSWNews(StateNewsBase):
                 )
             ),
             table.html(),
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NSW',
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -236,6 +242,9 @@ class NSWNews(StateNewsBase):
                 if value is None:
                     continue
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-NSW',
                     datatype=datatype,
                     agerange=age_group,
                     value=value,
@@ -283,30 +292,20 @@ class NSWNews(StateNewsBase):
                 #print("LGA STATS:", table.text())
                 #print(html)
                 r.extend(self.__get_datapoints_from_table(
-                    href, html, table,
-                    region_schema=Schemas.LGA,
-                    datatype=datatype,
-                    du=du
+                    href, html, table, region_schema=Schemas.LGA, datatype=datatype, du=du
                 ))
             return r or None
         else:
             table = (
-                self._pq_contains(html, 'table', '<span>LHD</span>',
-                                  ignore_case=True) or
+                self._pq_contains(html, 'table', '<span>LHD</span>', ignore_case=True) or
                 # Earliest stats used a different classifier for region_child!!!
                 # Might need to use a different graph..
-                #self._pq_contains(c_html, 'table', 'Local Government Area',
-                #                  ignore_case=True) or
-                self._pq_contains(html, 'table', 'Local health district',
-                                  ignore_case=True) or
-                self._pq_contains(html, 'table', 'LHD',
-                                  ignore_case=True)
+                #self._pq_contains(c_html, 'table', 'Local Government Area', ignore_case=True) or
+                self._pq_contains(html, 'table', 'Local health district', ignore_case=True) or
+                self._pq_contains(html, 'table', 'LHD', ignore_case=True)
             )
             return self.__get_datapoints_from_table(
-                href, html, table,
-                region_schema=Schemas.LHD,
-                datatype=DataTypes.TOTAL,
-                du=du
+                href, html, table, region_schema=Schemas.LHD, datatype=DataTypes.TOTAL, du=du
             ) or None
 
     def __get_datapoints_from_table(self,
@@ -342,8 +341,9 @@ class NSWNews(StateNewsBase):
 
             r.append(DataPoint(
                 region_schema=region_schema,
-                datatype=datatype,
+                region_parent='au-nsw',
                 region_child=lhd,
+                datatype=datatype,
                 value=c_icu,
                 date_updated=du,
                 source_url=href
@@ -418,6 +418,9 @@ class NSWNews(StateNewsBase):
             c_value = int(pq(tr[-1]).text().replace(',', '').strip())
 
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-NSW',
                 datatype=nsw_norm_map[old_type_map.get(k, k)],
                 value=c_value,
                 date_updated=du,
@@ -475,8 +478,9 @@ class NSWNews(StateNewsBase):
 
                     r.append(DataPoint(
                         region_schema=Schemas.LHD,
-                        datatype=DataTypes.STATUS_ACTIVE,
+                        region_parent='',
                         region_child=lhd,
+                        datatype=DataTypes.STATUS_ACTIVE,
                         value=values_dict[DataTypes.TOTAL]-values_dict[DataTypes.STATUS_RECOVERED],
                         date_updated=du,
                         source_url=href
@@ -484,8 +488,9 @@ class NSWNews(StateNewsBase):
                     for datatype, value in values_dict.items():
                         r.append(DataPoint(
                             region_schema=Schemas.LHD,
-                            datatype=datatype,
+                            region_parent='',
                             region_child=lhd,
+                            datatype=datatype,
                             value=value,
                             date_updated=du,
                             source_url=href
@@ -522,12 +527,18 @@ class NSWNews(StateNewsBase):
                     )
 
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-NSW',
                         datatype=DataTypes.STATUS_ACTIVE,
                         value=active,
                         date_updated=du,
                         source_url=href
                     ))
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-NSW',
                         datatype=DataTypes.STATUS_RECOVERED,
                         value=recovered,
                         date_updated=du,
@@ -545,6 +556,9 @@ class NSWNews(StateNewsBase):
                     IGNORECASE
                 ),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-NSW',
                 datatype=DataTypes.STATUS_HOSPITALIZED,
                 source_url=href,
                 date_updated=du
@@ -568,6 +582,9 @@ class NSWNews(StateNewsBase):
                     )
                 ),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-NSW',
                 datatype=DataTypes.STATUS_ICU,
                 source_url=href,
                 date_updated=du
@@ -582,6 +599,9 @@ class NSWNews(StateNewsBase):
                     IGNORECASE
                 ),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-NSW',
                 datatype=DataTypes.STATUS_ICU_VENTILATORS,
                 source_url=href,
                 date_updated=du
@@ -609,6 +629,9 @@ class NSWNews(StateNewsBase):
                             IGNORECASE),
                 ),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-NSW',
                 datatype=DataTypes.STATUS_DEATHS,
                 source_url=href,
                 date_updated=du
@@ -622,4 +645,4 @@ if __name__ == '__main__':
     from pprint import pprint
     nn = NSWNews()
     #print(pq('<td class="moh-rteTableEvenCol-6" rowspan="1">Recovered</td><td align="right" class="moh-rteTableOddCol-6" rowspan="1">2,306</td>', parser='html_fragments')[1])
-    pprint(nn.get_data())
+    pprint(nn.get_datapoints())

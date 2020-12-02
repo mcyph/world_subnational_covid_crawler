@@ -16,7 +16,7 @@ TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv
 
 class TasNews(StateNewsBase):
     STATE_NAME = 'tas'
-    SOURCE_ISO_3166_2 = 'AU-TAS'
+
     SOURCE_ID = 'au_tas_press_releases'
     SOURCE_URL = 'https://coronavirus.tas.gov.au'
     SOURCE_DESCRIPTION = ''
@@ -33,65 +33,6 @@ class TasNews(StateNewsBase):
                             '#pills-Media_Releases .card-rows .card a'
     STATS_BY_REGION_URL = 'https://coronavirus.tas.gov.au/facts/' \
                           'cases-and-testing-updates'
-
-    def get_data(self):
-        r = []
-
-        # Add manually entered data by THS and LGA
-        with open(TAS_BY_LGA, 'r', encoding='utf-8') as f:
-            for date, date_dict in loads(f.read()).items():
-                for _, region_child, total in date_dict['data']:
-                    r.append(DataPoint(
-                        region_schema=Schemas.LGA,
-                        datatype=DataTypes.TOTAL,
-                        region_child=region_child,
-                        value=total,
-                        date_updated=date,
-                        source_url=date_dict['source_url'],
-                        source_id='au_tas_csv'
-                    ))
-
-        with open(TAS_BY_THS, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f, delimiter='\t')
-
-            for date_dict in reader:
-                dd, mm, yyyy = date_dict['Date'].split('/')
-                dt = datetime(day=int(dd), month=int(mm), year=int(yyyy)).strftime('%Y_%m_%d')
-
-                for region_child in (
-                    'North-West', 'North', 'South',
-                ):
-                    r.append(DataPoint(
-                        region_schema=Schemas.THS,
-                        datatype=DataTypes.STATUS_ACTIVE,
-                        region_child=region_child,
-                        value=date_dict[f'{region_child} Active'],
-                        date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page',
-                        source_id='au_tas_peter_gutwein_fb'
-                    ))
-                    r.append(DataPoint(
-                        region_schema=Schemas.THS,
-                        datatype=DataTypes.STATUS_RECOVERED,
-                        region_child=region_child,
-                        value=int(date_dict[f'{region_child} Recovered']),
-                        date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page',
-                        source_id='au_tas_peter_gutwein_fb'
-                    ))
-                    r.append(DataPoint(
-                        region_schema=Schemas.THS,
-                        datatype=DataTypes.TOTAL,
-                        region_child=region_child,
-                        value=int(date_dict[f'{region_child} Active'])+
-                              int(date_dict[f'{region_child} Recovered']),
-                        date_updated=dt,
-                        source_url='Peter Gutweins Facebook Page',
-                        source_id='au_tas_peter_gutwein_fb'
-                    ))
-
-        r.extend(StateNewsBase.get_data(self))
-        return r
 
     def _get_date(self, url, html):
         # Format 12 March 2020
@@ -158,6 +99,9 @@ class TasNews(StateNewsBase):
                 )
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             datatype=DataTypes.NEW,
             source_url=url,
             date_updated=self._get_date(url, html)
@@ -180,6 +124,9 @@ class TasNews(StateNewsBase):
                 )
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             datatype=DataTypes.TOTAL,
             source_url=url,
             date_updated=self._get_date(url, html)
@@ -205,6 +152,9 @@ class TasNews(StateNewsBase):
                 #)
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             source_url=url,
             datatype=DataTypes.TESTS_TOTAL,
             date_updated=self._get_date(url, html)
@@ -240,6 +190,9 @@ class TasNews(StateNewsBase):
         men = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* men', IGNORECASE),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             source_url=url,
             datatype=DataTypes.TOTAL_MALE,
             date_updated=du
@@ -247,6 +200,9 @@ class TasNews(StateNewsBase):
         women = self._extract_number_using_regex(
             compile('([0-9,]+)[^0-9.,]* women', IGNORECASE),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             source_url=url,
             datatype=DataTypes.TOTAL_FEMALE,
             date_updated=du
@@ -291,6 +247,7 @@ class TasNews(StateNewsBase):
                         if False:
                             r.append(DataPoint(
                                 region_schema=Schemas.THS,
+                                region_parent='au-tas',
                                 region_child=pq(table[0][0][0]).text().strip().split(' - ')[-1].strip(),
                                 datatype=DataTypes.TOTAL,
                                 value=int(pq(num_cases).text().replace(',', '').strip()),
@@ -300,6 +257,7 @@ class TasNews(StateNewsBase):
                     else:
                         r.append(DataPoint(
                             region_schema=Schemas.LGA,
+                            region_parent='au-tas',
                             region_child=lga,
                             datatype=DataTypes.TOTAL,
                             value=int(pq(num_cases).text().replace(',', '').strip()),
@@ -320,6 +278,7 @@ class TasNews(StateNewsBase):
                 for region_child, lga, num_cases in table[0][1]:
                     r.append(DataPoint(
                         region_schema=Schemas.LGA,
+                        region_parent='au-tas',
                         region_child=pq(lga).text().strip(),
                         datatype=DataTypes.TOTAL,
                         value=int(pq(num_cases).text().replace(',', '').strip()),
@@ -358,10 +317,7 @@ class TasNews(StateNewsBase):
             'Deaths': DataTypes.STATUS_DEATHS,
         }
 
-        cases_table = self._pq_contains(
-            html, 'table', 'Cases in Tasmania',
-            ignore_case=True
-        )[0]
+        cases_table = self._pq_contains(html, 'table', 'Cases in Tasmania', ignore_case=True)[0]
         du = self._get_date(href, html)
 
         for heading, value in cases_table[1]:
@@ -373,6 +329,9 @@ class TasNews(StateNewsBase):
                 continue
 
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-TAS',
                 datatype=datatype,
                 value=int(value),
                 date_updated=du,
@@ -385,6 +344,9 @@ class TasNews(StateNewsBase):
         )[0]
 
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             datatype=DataTypes.TESTS_TOTAL,
             value=int(pq(tests_table[1]).text().replace('*', '').replace(',', '').replace('.', '').strip()),
             date_updated=du,
@@ -395,6 +357,9 @@ class TasNews(StateNewsBase):
         icu = self._extract_number_using_regex(
             compile(r'includes ([0-9,]+) hospital inpatients', IGNORECASE),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             datatype=DataTypes.STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=du
@@ -405,6 +370,9 @@ class TasNews(StateNewsBase):
         hospitalized = self._extract_number_using_regex(
             compile(r'\(([0-9,]+) in ICU\)', IGNORECASE),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-TAS',
             datatype=DataTypes.STATUS_ICU,
             source_url=href,
             date_updated=du
@@ -418,4 +386,4 @@ class TasNews(StateNewsBase):
 if __name__ == '__main__':
     from pprint import pprint
     tn = TasNews()
-    pprint(tn.get_data())
+    pprint(tn.get_datapoints())

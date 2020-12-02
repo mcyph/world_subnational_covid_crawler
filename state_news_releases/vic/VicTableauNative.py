@@ -2,6 +2,7 @@ import csv
 import json
 import zipfile
 import datetime
+import traceback
 from os import listdir
 from os.path import exists
 from collections import Counter
@@ -52,32 +53,30 @@ class VicTableauNative(URLBase):
 
     def get_datapoints(self):
         r = DataPointMerger()
-        #return r
 
-        for date in sorted(listdir(self.output_dir)):
-            self.__unzip_date(date)
+        # Start Hyper
+        with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hyper:
 
-            # active_cases/Data/dash-transmission/vic-details-transmissions-pub-extract.hyper
-            # cases/Data/dash-charts/vic_detailed_prep Extract_daily-pubextract.hyper
-            r.extend(self.__get_genderagegroup_datapoints(date))
-            r.extend(self.__get_transmissions_datapoints(date))
-            r.extend(self.__get_transmissions_over_time_datapoints(date))
+            for date in sorted(listdir(self.output_dir)):
+                self.__unzip_date(date)
+
+                # active_cases/Data/dash-transmission/vic-details-transmissions-pub-extract.hyper
+                # cases/Data/dash-charts/vic_detailed_prep Extract_daily-pubextract.hyper
+                r.extend(self.__get_genderagegroup_datapoints(hyper, date))
+                r.extend(self.__get_transmissions_datapoints(hyper, date))
+                r.extend(self.__get_transmissions_over_time_datapoints(hyper, date))
 
         return r
 
-    def __get_genderagegroup_datapoints(self, date):
+    def __get_genderagegroup_datapoints(self, hyper, date):
         r = []
         base_path = self.output_dir / date / 'genderagegroup'
         if not exists(str(base_path)+'.json'):
             return r
 
-        # agegroup/Data/TableauTemp/TEMP_0cskvrs1awf0qi17eeuta10ngsof.hyper
-
-        # Start Hyper
-        with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hyper:
-            #  Connect to an existing .hyper file (CreateMode.NONE)
+        for path in base_path.rglob('*.hyper'):
             with Connection(endpoint=hyper.endpoint,
-                            database=base_path / 'Data/dash-gender/dpc-metrics-agegroup-gender-prep-pub-extract-h.hyper') as connection:
+                            database=path) as connection:
                 keys = [
                     str(i.name).strip('"')
                     for i in connection.catalog.get_table_definition(
@@ -209,123 +208,117 @@ class VicTableauNative(URLBase):
                             source_url=self.SOURCE_URL,
                             source_id=self.SOURCE_ID
                         ))
+                assert len(r) > 100
+            break
 
         return r
 
-    def __get_transmissions_datapoints(self, date):
+    def __get_transmissions_datapoints(self, hyper, date):
         r = []
         base_path = self.output_dir / date / 'transmissions'
         # Data/dash-charts/vic-details-transmissions-prep Extract.hyper
 
-        # Start Hyper
-        with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hyper:
-            #  Connect to an existing .hyper file (CreateMode.NONE)
-            path = base_path / 'Data/dash-charts/vic-details-transmissions-prep Extract.hyper'
-            if not path.exists():
-                path = base_path / 'Data/dash-transmission/vic-details-transmissions-pub-extract.hyper'
-            if not path.exists():
-                path = base_path / 'Data/TableauTemp/'
-                path = list(path.glob('*.hyper'))[0]
+        for path in base_path.rglob('*.hyper'):
+            try:
+                with Connection(endpoint=hyper.endpoint,
+                                database=path) as connection:
+                    sources = {
+                        'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY_ACTIVE,
+                        'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED_ACTIVE,
+                        'Travel overseas': DataTypes.SOURCE_OVERSEAS_ACTIVE,
+                        'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION_ACTIVE,
+                    }
+                    #print(connection.catalog.get_table_names('Extract'))
 
-            #print("Opening:", path)
-
-            with Connection(endpoint=hyper.endpoint,
-                            database=path) as connection:
-                sources = {
-                    'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY_ACTIVE,
-                    'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED_ACTIVE,
-                    'Travel overseas': DataTypes.SOURCE_OVERSEAS_ACTIVE,
-                    'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION_ACTIVE,
-                }
-                #print(connection.catalog.get_table_names('Extract'))
-
-                with connection.execute_query(
-                        'SELECT * FROM ' + str(connection.catalog.get_table_names('Extract')[0])) as result:
-                    for row in result:
-                        #print(row)
-                        if len(row) == 3:
-                            r.append(DataPoint(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='au',
-                                region_child='au-vic',
-                                agerange=None,
-                                date_updated=datetime.date(row[-1].year, row[-1].month, row[-1].day).strftime(
-                                    '%Y_%m_%d'),
-                                datatype=sources[row[0]],
-                                value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL,
-                                source_id=self.SOURCE_ID
-                            ))
-                        else:
-                            r.append(DataPoint(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='au',
-                                region_child='au-vic',
-                                agerange=None,
-                                date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
-                                datatype=sources[row[0]],
-                                value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL,
-                                source_id=self.SOURCE_ID
-                            ))
+                    with connection.execute_query(
+                            'SELECT * FROM ' + str(connection.catalog.get_table_names('Extract')[0])) as result:
+                        for row in result:
+                            #print(row)
+                            if len(row) == 3:
+                                r.append(DataPoint(
+                                    region_schema=Schemas.ADMIN_1,
+                                    region_parent='au',
+                                    region_child='au-vic',
+                                    agerange=None,
+                                    date_updated=datetime.date(row[-1].year, row[-1].month, row[-1].day).strftime(
+                                        '%Y_%m_%d'),
+                                    datatype=sources[row[0]],
+                                    value=int(row[1] or 0),  # WARNING!!
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                            else:
+                                r.append(DataPoint(
+                                    region_schema=Schemas.ADMIN_1,
+                                    region_parent='au',
+                                    region_child='au-vic',
+                                    agerange=None,
+                                    date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
+                                    datatype=sources[row[0]],
+                                    value=int(row[1] or 0),  # WARNING!!
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                assert len(r) > 100
+            except AttributeError:
+                traceback.print_exc()
+                continue
+            break
 
         return r
 
-    def __get_transmissions_over_time_datapoints(self, date):
+    def __get_transmissions_over_time_datapoints(self, hyper, date):
         r = []
         base_path = self.output_dir / date / 'transmissions_over_time'
         # Data/dash-transmission/vic-details-transmissions-pub-extract-lv.hyper
         # Data/test-download/vic-details-transmissions-prep-xl-pub-extract.hyper
 
-        # Start Hyper
-        with HyperProcess(telemetry=Telemetry.DO_NOT_SEND_USAGE_DATA_TO_TABLEAU) as hyper:
-            #  Connect to an existing .hyper file (CreateMode.NONE)
+        for path in base_path.rglob('*.hyper'):
+            try:
+                with Connection(endpoint=hyper.endpoint,
+                                database=path) as connection:
 
-            path = base_path / 'Data/dash-transmission/vic-details-transmissions-pub-extract-lv.hyper'
-            if not path.exists():
-                path = base_path / 'Data/dash-transmission/vic-details-transmissions-prep.hyper'
-            if not path.exists():
-                path = base_path / 'Data/dash-transmission/vic-details-transmissions-prep-xl-pub-extract.hyper'
+                    sources = {
+                        'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY_ACTIVE,
+                        'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED_ACTIVE,
+                        'Travel overseas': DataTypes.SOURCE_OVERSEAS_ACTIVE,
+                        'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION_ACTIVE,
+                    }
 
-            with Connection(endpoint=hyper.endpoint,
-                            database=path) as connection:
-
-                sources = {
-                    'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY_ACTIVE,
-                    'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED_ACTIVE,
-                    'Travel overseas': DataTypes.SOURCE_OVERSEAS_ACTIVE,
-                    'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION_ACTIVE,
-                }
-
-                with connection.execute_query(
-                        'SELECT * FROM ' + str(connection.catalog.get_table_names('Extract')[0])) as result:
-                    for row in result:
-                        #print(row)
-                        if len(row) == 3:
-                            r.append(DataPoint(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='au',
-                                region_child='au-vic',
-                                agerange=None,
-                                date_updated=datetime.date(row[-1].year, row[-1].month, row[-1].day).strftime(
-                                    '%Y_%m_%d'),
-                                datatype=sources[row[0]],
-                                value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL,
-                                source_id=self.SOURCE_ID
-                            ))
-                        else:
-                            r.append(DataPoint(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='au',
-                                region_child='au-vic',
-                                agerange=None,
-                                date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
-                                datatype=sources[row[0]],
-                                value=int(row[1] or 0),  # WARNING!!
-                                source_url=self.SOURCE_URL,
-                                source_id=self.SOURCE_ID
-                            ))
+                    with connection.execute_query(
+                            'SELECT * FROM ' + str(connection.catalog.get_table_names('Extract')[0])) as result:
+                        for row in result:
+                            #print(row)
+                            if len(row) == 3:
+                                r.append(DataPoint(
+                                    region_schema=Schemas.ADMIN_1,
+                                    region_parent='au',
+                                    region_child='au-vic',
+                                    agerange=None,
+                                    date_updated=datetime.date(row[-1].year, row[-1].month, row[-1].day).strftime(
+                                        '%Y_%m_%d'),
+                                    datatype=sources[row[0]],
+                                    value=int(row[1] or 0),  # WARNING!!
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                            else:
+                                r.append(DataPoint(
+                                    region_schema=Schemas.ADMIN_1,
+                                    region_parent='au',
+                                    region_child='au-vic',
+                                    agerange=None,
+                                    date_updated=datetime.date(row[-2].year, row[-2].month, row[-2].day).strftime('%Y_%m_%d'),
+                                    datatype=sources[row[0]],
+                                    value=int(row[1] or 0),  # WARNING!!
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                assert len(r) > 100
+            except AttributeError:
+                traceback.print_exc()
+                continue
+            break
 
         return r
 

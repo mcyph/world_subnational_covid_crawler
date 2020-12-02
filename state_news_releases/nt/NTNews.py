@@ -8,7 +8,7 @@ from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 
 class NTNews(StateNewsBase):
     STATE_NAME = 'nt'
-    SOURCE_ISO_3166_2 = 'AU-NT'
+
     SOURCE_ID = 'au_nt_press_releases'
     SOURCE_URL = 'https://coronavirus.nt.gov.au'
     SOURCE_DESCRIPTION = ''
@@ -26,7 +26,7 @@ class NTNews(StateNewsBase):
         date = ' '.join([
             # Remove 6:00pm/6:00PM times,
             # which can be at the start or end
-            i.strip(':.') for i in date.split('updated')[-1].split('\n')[0].split()
+            i.strip(':.') for i in date.split('updated')[1].split('\n')[0].split()
             if not ':' in i
                and not '.' in i.strip('.')
                and not 'pm' in i.lower()
@@ -34,9 +34,8 @@ class NTNews(StateNewsBase):
 
         if not '2020' in date:
             date = date + ' 2020'  # YEAR HACK!!!! ========================
-        return self._extract_date_using_format(
-            date, format='%d %B %Y'
-        )
+
+        return self._extract_date_using_format(date, format='%d %B %Y')
 
     #============================================================#
     #                      General Totals                        #
@@ -50,6 +49,9 @@ class NTNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('([0-9,]+) confirmed cases'),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NT',
             datatype=DataTypes.TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -60,6 +62,9 @@ class NTNews(StateNewsBase):
         return self._extract_number_using_regex(
             compile('([0-9,]+) tests conducted'),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NT',
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -114,6 +119,9 @@ class NTNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile('([0-9,]+) people recovered'),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-NT',
             datatype=DataTypes.STATUS_RECOVERED,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -124,4 +132,4 @@ class NTNews(StateNewsBase):
 if __name__ == '__main__':
     from pprint import pprint
     nn = NTNews()
-    pprint(nn.get_data())
+    pprint(nn.get_datapoints())

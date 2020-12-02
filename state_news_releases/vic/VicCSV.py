@@ -27,6 +27,14 @@ class VicCSV(URLBase):
                                  static_file=False),
                  'postcode.json': URL('https://docs.google.com/spreadsheets/d/e/2PACX-1vTwXSqlP56q78lZKxc092o6UuIyi7VqOIQj6RM4QmlVPgtJZfbgzv0a3X7wQQkhNu8MFolhVwMy4VnF/pub?gid=0&single=true&output=csv',
                                       static_file=False),
+                 'agegroup.csv': URL('https://www.dhhs.vic.gov.au/ncov-covid-cases-by-age-group-csv',
+                                     static_file=False),
+                 'all_lga.csv': URL('https://www.dhhs.vic.gov.au/ncov-covid-cases-by-lga-csv',
+                                    static_file=False),
+                 'all_lga_acquired_source': URL('https://www.dhhs.vic.gov.au/ncov-covid-cases-by-lga-source-csv',
+                                                static_file=False),
+                 'all_acquired_source': URL('https://www.dhhs.vic.gov.au/ncov-covid-cases-by-source-csv',
+                                            static_file=False)
             }
         )
         self.update()
@@ -52,7 +60,8 @@ class VicCSV(URLBase):
 
         r = DataPointMerger()
 
-        for date in listdir(get_data_dir() / 'vic' / 'csv_data'):
+        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
+            print("PostCode:", get_data_dir() / 'vic' / 'csv_data' / date)
             with open(get_data_dir() / 'vic' / 'csv_data' / date / 'postcode.json', 'r', encoding='utf-8') as f:
                 for row in csv.DictReader(f):
                     date_updated = self.convert_date(row['data_date'])
@@ -87,9 +96,11 @@ class VicCSV(URLBase):
 
         r = DataPointMerger()
 
-        for date in listdir(get_data_dir() / 'vic' / 'csv_data'):
+        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
+            print("LGA:", get_data_dir() / 'vic' / 'csv_data' / date)
             with open(get_data_dir() / 'vic' / 'csv_data' / date / 'lga.json', 'r', encoding='utf-8') as f:
                 for row in csv.DictReader(f):
+                    print(row)
                     date_updated = self.convert_date(row['data_date'])
 
                     for datatype, value in (

@@ -14,7 +14,6 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 class QLDNews(StateNewsBase):
     STATE_NAME = 'qld'
-    SOURCE_ISO_3166_2 = 'AU-QLD'
     SOURCE_ID = 'au_qld_press_releases'
     SOURCE_URL = 'https://www.qld.gov.au/health/conditions/health-alerts/coronavirus-covid-19'
     SOURCE_DESCRIPTION = ''
@@ -39,7 +38,7 @@ class QLDNews(StateNewsBase):
                             'health-alerts/coronavirus-covid-19/' \
                             'current-status/statistics'
 
-    def get_data(self):
+    def get_datapoints(self):
         r = DataPointMerger()
         ua = URLArchiver(f'{self.STATE_NAME}/current_statistics')
         ua.get_url_data(
@@ -77,7 +76,7 @@ class QLDNews(StateNewsBase):
                 soi = self._get_total_source_of_infection(self.STATS_BY_REGION_URL_2, html)
                 if soi: r.extend(soi)
 
-        r.extend(StateNewsBase.get_data(self))
+        r.extend(StateNewsBase.get_datapoints(self))
         return r
 
     #============================================================#
@@ -143,6 +142,9 @@ class QLDNews(StateNewsBase):
                 return self._extract_number_using_regex(
                     compile('([0-9,]+)'),
                     pq(cases[0]).text().strip(),
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-QLD',
                     datatype=DataTypes.TOTAL,
                     date_updated=du,
                     source_url=href
@@ -154,6 +156,9 @@ class QLDNews(StateNewsBase):
         totals_dict = self.__get_totals_from_table(html)
         if totals_dict:
             return DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 datatype=DataTypes.TOTAL,
                 value=totals_dict['total'],
                 date_updated=du,
@@ -169,6 +174,9 @@ class QLDNews(StateNewsBase):
                 compile('total of ([0-9,]+) (?:people|person)')
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-QLD',
             source_url=href,
             datatype=DataTypes.TOTAL,
             date_updated=du
@@ -184,6 +192,9 @@ class QLDNews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-QLD',
             source_url=href,
             datatype=DataTypes.TOTAL,
             date_updated=du
@@ -198,6 +209,9 @@ class QLDNews(StateNewsBase):
                 return self._extract_number_using_regex(
                     compile('([0-9,]+)'),
                     pq(new_cases[0]).text().strip(),
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-QLD',
                     date_updated=self._get_date(href, html),
                     datatype=DataTypes.NEW,
                     source_url=href
@@ -210,6 +224,9 @@ class QLDNews(StateNewsBase):
             return self._extract_number_using_regex(
                 compile('([0-9,]+) new(?: confirmed)? cases?'),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 source_url=href,
                 datatype=DataTypes.NEW,
                 date_updated=self._get_date(href, html)
@@ -225,6 +242,9 @@ class QLDNews(StateNewsBase):
             return self._extract_number_using_regex(
                 compile('([0-9,]+)'),
                 pq(tested[0]).text().strip(),
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 date_updated=self._get_date(href, html),
                 datatype=DataTypes.TESTS_TOTAL,
                 source_url=href
@@ -240,6 +260,9 @@ class QLDNews(StateNewsBase):
                 'Total samples tested: <strong>([0-9,]+)'
             ),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-QLD',
             date_updated=self._get_date(href, html),
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href
@@ -277,6 +300,9 @@ class QLDNews(StateNewsBase):
                 MULTILINE | DOTALL
             ),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-QLD',
             date_updated=date_updated,
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href
@@ -313,6 +339,9 @@ class QLDNews(StateNewsBase):
                     if value is None:
                         continue
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-QLD',
                         datatype=datatype,
                         agerange=age_group,
                         value=value,
@@ -534,6 +563,9 @@ class QLDNews(StateNewsBase):
 
                 value = pq(value).text().strip()
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-QLD',
                     datatype=norm_map[header],
                     value=int(value.replace(',', '')),
                     date_updated=du,
@@ -575,6 +607,9 @@ class QLDNews(StateNewsBase):
                         continue
 
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-QLD',
                         datatype=datatype,
                         value=int(pq(tr[1]).text().strip()),
                         date_updated=du,
@@ -584,6 +619,9 @@ class QLDNews(StateNewsBase):
             deaths = pq(html)('.qh-fact-wrapper .lost span')
             if deaths:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-QLD',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(pq(deaths[0]).text().strip()),
                     date_updated=du,
@@ -598,18 +636,27 @@ class QLDNews(StateNewsBase):
 
             r = []
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 datatype=DataTypes.STATUS_RECOVERED,
                 value=totals_dict['recovered'],
                 date_updated=du,
                 source_url=href
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 datatype=DataTypes.STATUS_DEATHS,
                 value=totals_dict['deaths'],
                 date_updated=du,
                 source_url=href
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-QLD',
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=totals_dict['active'],
                 date_updated=du,
@@ -629,4 +676,4 @@ class QLDNews(StateNewsBase):
 if __name__ == '__main__':
     from pprint import pprint
     qn = QLDNews()
-    pprint(qn.get_data())
+    pprint(qn.get_datapoints())

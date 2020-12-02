@@ -1,24 +1,15 @@
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, singledaystat
-)
+from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, singledaystat
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.state_news_releases.act.act_powerbi import (
-    get_powerbi_data
-)
-from covid_19_au_grab.word_to_number import (
-    word_to_number
-)
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.state_news_releases.act.ACTPowerBIReader import ACTPowerBIReader
+from covid_19_au_grab.word_to_number import word_to_number
 
 
 class ACTNews(StateNewsBase):
     STATE_NAME = 'act'
-    SOURCE_ISO_3166_2 = 'AU-ACT'
     SOURCE_ID = 'au_act_press_releases'
     SOURCE_URL = 'https://www.covid19.act.gov.au'
     SOURCE_DESCRIPTION = ''
@@ -49,11 +40,6 @@ class ACTNews(StateNewsBase):
         else:
             return self._extract_date_using_format(date)
 
-    def get_data(self):
-        r = get_powerbi_data()
-        r.extend(StateNewsBase.get_data(self))
-        return r
-
     #============================================================#
     #                      General Totals                        #
     #============================================================#
@@ -73,6 +59,9 @@ class ACTNews(StateNewsBase):
                 compile(r'total remains at\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -96,6 +85,9 @@ class ACTNews(StateNewsBase):
                 compile(r'tested negative is now\s?(?:<strong>)?\s?([0-9,]+)')
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=du
@@ -105,6 +97,9 @@ class ACTNews(StateNewsBase):
         if neg_cases is not None and pos_cases is not None:
             # TODO: ADD negative/positive tests as separate values? =======================================================
             return DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-ACT',
                 datatype=neg_cases.datatype,
                 value=neg_cases.value + pos_cases.value,
                 date_updated=du,
@@ -126,6 +121,9 @@ class ACTNews(StateNewsBase):
                 r'([0-9,]+)\s?(?:</strong>)?\)?\s?new (?:confirmed|cases?)'
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.NEW,
             date_updated=self._get_date(href, html),
             source_url=href
@@ -166,6 +164,9 @@ class ACTNews(StateNewsBase):
         r = []
         for k, v in ages.items():
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-ACT',
                 datatype=DataTypes.TOTAL,
                 agerange=k,
                 value=v,
@@ -199,6 +200,9 @@ class ACTNews(StateNewsBase):
         male = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?(?<!fe)male(?:s)?'),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             source_url=href,
             datatype=DataTypes.NEW_MALE,
             date_updated=du
@@ -209,6 +213,9 @@ class ACTNews(StateNewsBase):
         female = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?[^0-9.]*?female(?:s)?'),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.NEW_FEMALE,
             source_url=href,
             date_updated=du
@@ -237,6 +244,9 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL_FEMALE,
             source_url=href,
             date_updated=du
@@ -249,6 +259,9 @@ class ACTNews(StateNewsBase):
                 IGNORECASE
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL_MALE,
             source_url=href,
             date_updated=du
@@ -321,6 +334,9 @@ class ACTNews(StateNewsBase):
                         continue
 
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-ACT',
                         datatype=act_norm_map[k.replace('_', ' ')],
                         value=int(v.replace(',', '')),
                         date_updated=du,
@@ -345,6 +361,9 @@ class ACTNews(StateNewsBase):
         patients = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?COVID-19 patients'),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.STATUS_HOSPITALIZED,
             source_url=href,
             date_updated=du
@@ -352,6 +371,9 @@ class ACTNews(StateNewsBase):
         recovered = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?cases have(?: now)? recovered'),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.STATUS_RECOVERED,
             source_url=href,
             date_updated=du
@@ -359,6 +381,9 @@ class ACTNews(StateNewsBase):
         deaths = self._extract_number_using_regex(
             compile(r'([0-9,]+)\)?\s?(?:</strong>)?\s?deaths\.'),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.STATUS_DEATHS,
             source_url=href,
             date_updated=du
@@ -377,4 +402,4 @@ class ACTNews(StateNewsBase):
 if __name__ == '__main__':
     from pprint import pprint
     an = ACTNews()
-    pprint(an.get_data())
+    pprint(an.get_datapoints())

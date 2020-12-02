@@ -2,26 +2,28 @@ from os.path import exists
 from datetime import datetime
 
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.state_news_releases.act.ACTPowerBI import (
-    ACTPowerBI, get_globals
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
-    PowerBIDataReader
-)
+from covid_19_au_grab.state_news_releases.act.ACTPowerBI import ACTPowerBI, get_globals
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.state_news_releases.PowerBIDataReader import PowerBIDataReader
 
 
-class _ACTPowerBI(PowerBIDataReader):
+class ACTPowerBIReader(PowerBIDataReader):
     SOURCE_ID = 'au_act_powerbi'
+    SOURCE_URL = 'https://app.powerbi.com/view?r=eyJrIjoiZTY4NTI1Nz' \
+                 'QtYTBhYy00ZTY4LTk3NmQtYjBjNzdiOGMzZjM3IiwidCI6ImI' \
+                 '0NmMxOTA4LTAzMzQtNDIzNi1iOTc4LTU4NWVlODhlNDE5OSJ9'
+    SOURCE_DESCRIPTION = ''
 
-    def __init__(self, base_path, source_url):
+    def __init__(self):
+        base_path = ACTPowerBI.PATH_PREFIX,
+        source_url = ACTPowerBI.POWERBI_URL
+
         self.base_path = base_path
         self.source_url = source_url
+
         PowerBIDataReader.__init__(self, base_path, get_globals())
 
-    def get_powerbi_data(self):
+    def get_datapoints(self):
         r = []
         for updated_date, rev_id, response_dict in self._iter_all_dates():
             subdir = f'{self.base_path}/{updated_date}-{rev_id}'
@@ -40,7 +42,7 @@ class _ACTPowerBI(PowerBIDataReader):
             if i_updated_date is not None:
                 updated_date = i_updated_date
 
-            #print(updated_date)
+            print(updated_date)
             r.extend(self._get_age_groups_data(updated_date, response_dict))
             r.extend(self._get_confirmed_cases_data(updated_date, response_dict))
             r.extend(self._get_deaths_data(updated_date, response_dict))
@@ -104,6 +106,9 @@ class _ACTPowerBI(PowerBIDataReader):
             male = self._to_int(male)
 
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-ACT',
                 datatype=DataTypes.TOTAL_MALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=male,
@@ -112,6 +117,9 @@ class _ACTPowerBI(PowerBIDataReader):
                 source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-ACT',
                 datatype=DataTypes.TOTAL_FEMALE,
                 agerange=age['G0'].replace('–', '-'),
                 value=female,
@@ -120,6 +128,9 @@ class _ACTPowerBI(PowerBIDataReader):
                 source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-ACT',
                 datatype=DataTypes.TOTAL,
                 agerange=age['G0'].replace('–', '-'),
                 value=female + male,
@@ -136,6 +147,9 @@ class _ACTPowerBI(PowerBIDataReader):
 
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.STATUS_DEATHS,
             value=int(value),
             date_updated=updated_date,
@@ -150,6 +164,9 @@ class _ACTPowerBI(PowerBIDataReader):
         data = response_dict['confirmed_cases'][1]
         value = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL,
             value=int(value),
             date_updated=updated_date,
@@ -185,6 +202,9 @@ class _ACTPowerBI(PowerBIDataReader):
             female = male
 
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL_MALE,
             value=self._to_int(male),
             date_updated=updated_date,
@@ -192,6 +212,9 @@ class _ACTPowerBI(PowerBIDataReader):
             source_id=self.SOURCE_ID
         ))
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.TOTAL_FEMALE,
             value=self._to_int(female),
             date_updated=updated_date,
@@ -256,6 +279,9 @@ class _ACTPowerBI(PowerBIDataReader):
             if updated_date == i_date_updated:
                 for xx, (key, value) in enumerate(tally.items()):
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-ACT',
                         datatype=act_norm_map[key],
                         value=value,
                         date_updated=i_date_updated,
@@ -274,6 +300,9 @@ class _ACTPowerBI(PowerBIDataReader):
 
         recovered = data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0'][0]['M0']
         r.append(DataPoint(
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-ACT',
             datatype=DataTypes.STATUS_RECOVERED,
             value=self._to_int(recovered),
             date_updated=updated_date,
@@ -308,8 +337,9 @@ class _ACTPowerBI(PowerBIDataReader):
 
             r.append(DataPoint(
                 region_schema=Schemas.SA3,
-                datatype=DataTypes.TOTAL,
+                region_parent='au-act',
                 region_child=name,
+                datatype=DataTypes.TOTAL,
                 value=self._to_int(value),
                 date_updated=updated_date,
                 source_url=self.source_url,
@@ -319,14 +349,6 @@ class _ACTPowerBI(PowerBIDataReader):
         return r
 
 
-def get_powerbi_data():
-    apb = _ACTPowerBI(
-        ACTPowerBI.PATH_PREFIX,
-        ACTPowerBI.POWERBI_URL
-    )
-    return apb.get_powerbi_data()
-
-
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_powerbi_data())
+    pprint(ACTPowerBIReader().get_datapoints())

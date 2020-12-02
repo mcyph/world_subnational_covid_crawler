@@ -180,14 +180,14 @@ if __name__ == '__main__':
     data = {}
     for inst in news_insts:
         try:
-            data[inst.STATE_NAME] = inst.get_data()
-            status[inst.STATE_NAME] = (
+            data[inst.SOURCE_ID] = inst.get_datapoints()
+            status[inst.SOURCE_ID] = (
                 'OK', None
             )
         except:
             import traceback
             traceback.print_exc()
-            status[inst.STATE_NAME] = (
+            status[inst.SOURCE_ID] = (
                 'ERROR', traceback.format_exc()
             )
     sys.stdout = stdout_logger.stream
@@ -238,32 +238,9 @@ if __name__ == '__main__':
             yyyy, mm, dd = datapoint.date_updated.split('_')
             backwards_date = f'{dd}/{mm}/{yyyy}'
 
-            state_map = {
-                'nsw': 'AU-NSW',
-                'vic': 'AU-VIC',
-                'qld': 'AU-QLD',
-                'wa': 'AU-WA',
-                'tas': 'AU-TAS',
-                'act': 'AU-ACT',
-                'sa': 'AU-SA',
-                'nt': 'AU-NT',
-            }
-
-            if datapoint.region_schema == Schemas.ADMIN_1 and not datapoint.region_child:
-                i_region_parent = 'AU'
-                i_region_child = state_map.get(
-                    region_parent, region_parent
-                )
-            else:
-                i_region_parent = state_map.get(
-                    datapoint.region_parent or region_parent,
-                    datapoint.region_parent or region_parent
-                )
-                i_region_child = datapoint.region_child
-
             print(f'{datapoint.region_schema.value}\t'
-                  f'{i_region_parent}\t'
-                  f'{i_region_child}\t'
+                  f'{datapoint.region_parent}\t'
+                  f'{datapoint.region_child}\t'
                   f'{datapoint.datatype.value}\t'
                   f'{datapoint.agerange}\t'
                   f'{datapoint.value}\t'

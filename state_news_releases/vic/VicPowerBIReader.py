@@ -1,19 +1,11 @@
-from datetime import datetime
 from os.path import exists
+from datetime import datetime
 
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.state_news_releases.PowerBIDataReader import (
-    PowerBIDataReader
-)
-from covid_19_au_grab.state_news_releases.vic.deprecated.VicPowerBI import (
-    VicPowerBI, get_globals
-)
-from covid_19_au_grab.datatypes.DataPoint import (
-    DataPoint
-)
-from covid_19_au_grab.get_package_dir import (
-    get_data_dir
-)
+from covid_19_au_grab.state_news_releases.PowerBIDataReader import PowerBIDataReader
+from covid_19_au_grab.state_news_releases.vic.deprecated.VicPowerBI import VicPowerBI, get_globals
+from covid_19_au_grab.datatypes.DataPoint import DataPoint
+from covid_19_au_grab.get_package_dir import get_data_dir
 
 
 BASE_PATH = get_data_dir() / 'vic' / 'powerbi'
@@ -24,13 +16,17 @@ SOURCE_URL = 'https://app.powerbi.com/view?r=' \
 SOURCE_ID = 'vic_powerbi'
 
 
-class _VicPowerBI(PowerBIDataReader):
-    def __init__(self, base_path, source_url):
+class VicPowerBIReader(PowerBIDataReader):
+    def __init__(self):
+        base_path = VicPowerBI.PATH_PREFIX
+        source_url = VicPowerBI.POWERBI_URL
+
         self.base_path = base_path
         self.source_url = source_url
+
         PowerBIDataReader.__init__(self, base_path, get_globals())
 
-    def get_powerbi_data(self):
+    def get_datapoints(self):
         # Use a fallback only if can't get from the source
 
         r = []
@@ -247,6 +243,7 @@ class _VicPowerBI(PowerBIDataReader):
             region_string = value[0].split('(')[0].strip()
             output.append(DataPoint(
                 region_schema=Schemas.LGA,
+                region_parent='au-vic',
                 region_child=region_string,
                 datatype=DataTypes.TOTAL,
                 value=value[1],
@@ -285,6 +282,7 @@ class _VicPowerBI(PowerBIDataReader):
 
             output.append(DataPoint(
                 region_schema=Schemas.LGA,
+                region_parent='au-vic',
                 region_child=region_string,
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
@@ -297,6 +295,7 @@ class _VicPowerBI(PowerBIDataReader):
                 # Add recovered info if total available
                 output.append(DataPoint(
                     region_schema=Schemas.LGA,
+                    region_parent='au-vic',
                     region_child=region_string,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_string]-value[1],
@@ -313,6 +312,7 @@ class _VicPowerBI(PowerBIDataReader):
             # no longer being reported are reset to 0!
             output.append(DataPoint(
                 region_schema=Schemas.LGA,
+                region_parent='au-vic',
                 region_child=region_child,
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
@@ -325,6 +325,7 @@ class _VicPowerBI(PowerBIDataReader):
                 # Add recovered info if total available
                 output.append(DataPoint(
                     region_schema=Schemas.LGA,
+                    region_parent='au-vic',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_child],
@@ -451,6 +452,9 @@ class _VicPowerBI(PowerBIDataReader):
         ):
             for agerange, value in values.items():
                 output.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-VIC',
                     datatype=datatype,
                     agerange=agerange,
                     value=value,
@@ -487,6 +491,9 @@ class _VicPowerBI(PowerBIDataReader):
 
         for source in data['result']['data']['dsr']['DS'][0]['PH'][0]['DM0']:
             output.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-VIC',
                 datatype=vic_norm_map[source['C'][0]],
                 value=source['C'][1],
                 date_updated=updated_date,
@@ -502,6 +509,9 @@ class _VicPowerBI(PowerBIDataReader):
             # Sometimes "under investigation" isn't provided,
             # but probably can assume at 0 for these days
             output.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-VIC',
                 datatype=datatype,
                 value=0,
                 date_updated=updated_date,
@@ -512,17 +522,7 @@ class _VicPowerBI(PowerBIDataReader):
         return output
 
 
-def get_powerbi_data():
-    apb = _VicPowerBI(
-        VicPowerBI.PATH_PREFIX,
-        VicPowerBI.POWERBI_URL
-    )
-    return apb.get_powerbi_data()
-
-
 if __name__ == '__main__':
-    __r = get_powerbi_data()
-    for i in __r:
-        if i.datatype in (DataTypes.SOURCE_OVERSEAS,):
-            print(i)
-    #pprint(__r)
+    from pprint import pprint
+    datapoints = VicPowerBIReader().get_datapoints()
+    pprint(datapoints)

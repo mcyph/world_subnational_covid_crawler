@@ -11,19 +11,16 @@ from covid_19_au_grab.get_package_dir import get_data_dir
 from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
-SOURCE_URL = 'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
-
-
-def get_wa_dash_datapoints():
-    inst = WARegionsProcess()
-    r = []
-    r.extend(inst.get_new_datapoints())
-    r.extend(inst.get_old_datapoints())
-    return r
-
-
-class WARegionsProcess:
+class WADashReader:
     SOURCE_ID = 'wa_dashboard'
+    SOURCE_URL = 'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
+    SOURCE_DESCRIPTION = ''
+
+    def get_datapoints(self):
+        r = []
+        r.extend(self.get_old_datapoints())
+        r.extend(self.get_new_datapoints())
+        return r
 
     def get_old_datapoints(self):
         r = DataPointMerger()
@@ -127,8 +124,9 @@ class WARegionsProcess:
 
             num = DataPoint(
                 region_schema=Schemas.LGA,
-                datatype=DataTypes.TOTAL,
+                region_parent='au-wa',
                 region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
+                datatype=DataTypes.TOTAL,
                 value=int(value),
                 date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
                 source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
@@ -138,8 +136,9 @@ class WARegionsProcess:
             if 'Active_Case' in attributes and attributes['Active_Case'] is not None:
                 r.append(DataPoint(
                     region_schema=Schemas.LGA,
-                    datatype=DataTypes.STATUS_ACTIVE,
+                    region_parent='au-wa',
                     region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
+                    datatype=DataTypes.STATUS_ACTIVE,
                     value=int(attributes['Active_Case']),
                     date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
                     source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768',
@@ -159,75 +158,99 @@ class WARegionsProcess:
 
             if attribute['Total_Confirmed'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.TOTAL,
                     value=attribute['Total_Confirmed'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Oversea_Travel'] is not None and attribute['Cruise_Ships'] is not None:
                 # WARNING: Cruise ships isn't included in overseas here!
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_OVERSEAS,
                     value=attribute['Oversea_Travel']+
                           attribute['Cruise_Ships'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Cruise_Ships'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_CRUISE_SHIP,
                     value=attribute['Cruise_Ships'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Close_Contact'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_CONFIRMED,
                     value=attribute['Close_Contact'],
                     date_updated=dt,
-                    source_url=SOURCE_URL
+                    source_url=self.SOURCE_URL
                 ))
 
             if attribute['Unknown'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_COMMUNITY,
                     value=attribute['Unknown'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Interstate'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_INTERSTATE,
                     value=attribute['Interstate'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Pending'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.SOURCE_UNDER_INVESTIGATION,
                     value=attribute['Pending'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['Negative_results'] is not None and attribute['Total_Confirmed'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.TESTS_TOTAL,
                     value=attribute['Total_Confirmed']+
                           attribute['Negative_results'],
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
@@ -243,42 +266,57 @@ class WARegionsProcess:
                 self.max_date = dt
 
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.NEW,
                 value=int(attribute['new_cases']),
                 date_updated=dt,
-                source_url=SOURCE_URL
+                source_url=self.SOURCE_URL
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL,
                 value=int(attribute['total_cases']),
                 date_updated=dt,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
 
             if attribute['total_recovered'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=int(attribute['total_recovered']),
                     date_updated=dt,
-                    source_url=SOURCE_URL
+                    source_url=self.SOURCE_URL
                 ))
 
             if attribute['total_death'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=int(attribute['total_death']),
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
             if attribute['existing_cases'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.STATUS_ACTIVE,
                     value=int(attribute['existing_cases']),
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
 
@@ -286,15 +324,18 @@ class WARegionsProcess:
             #    datatype=DataTypes.TESTS_TOTAL,
             #    value=int(attribute['total_ruledout']),
             #    date_updated=dt,
-            #    source_url=SOURCE_URL
+            #    source_url=self.SOURCE_URL
             #))
 
             if attribute['total_hospitalised'] is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-WA',
                     datatype=DataTypes.STATUS_HOSPITALIZED,
                     value=int(attribute['total_hospitalised'] or 0),
                     date_updated=dt,
-                    source_url=SOURCE_URL,
+                    source_url=self.SOURCE_URL,
                     source_id=self.SOURCE_ID
                 ))
         return r
@@ -304,17 +345,23 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL_MALE,
                 value=int(attribute['Male']),
                 date_updated=period,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL_FEMALE,
                 value=int(attribute['Female']),
                 date_updated=period,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
         return r
@@ -324,27 +371,36 @@ class WARegionsProcess:
         for feature in data['features']:
             attribute = feature['attributes']
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Total']),
                 date_updated=period,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL_MALE,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Male']),
                 date_updated=period,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-WA',
                 datatype=DataTypes.TOTAL_FEMALE,
                 agerange=attribute['Age_Group'],
                 value=int(attribute['Female']),
                 date_updated=period,
-                source_url=SOURCE_URL,
+                source_url=self.SOURCE_URL,
                 source_id=self.SOURCE_ID
             ))
         return r
@@ -456,4 +512,4 @@ URL_AGE_BALANCE = 'https://services.arcgis.com/Qxcws3oU4ypcnx4H/arcgis/rest/serv
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_wa_dash_datapoints())
+    pprint(WADashReader().get_datapoints())

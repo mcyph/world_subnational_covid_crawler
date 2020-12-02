@@ -1,51 +1,27 @@
-import json
-import datetime
-from os import listdir
 from re import compile
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.state_news_releases.StateNewsBase import (
-    StateNewsBase, bothlistingandstat, singledaystat
-)
+from covid_19_au_grab.state_news_releases.StateNewsBase import StateNewsBase, bothlistingandstat, singledaystat
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import DataPoint
 from covid_19_au_grab.word_to_number import word_to_number
-from covid_19_au_grab.get_package_dir import get_package_dir, get_data_dir
-from covid_19_au_grab.URLArchiver import URLArchiver
-from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
+from covid_19_au_grab.get_package_dir import get_package_dir
 
 
 OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
-SA_MAP_DIR = get_data_dir() / 'sa' / 'custom_map'
 
 
-# https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/media+releases?mr-sort=date-desc&mr-pg=1
 class SANews(StateNewsBase):
     STATE_NAME = 'sa'
-    SOURCE_ISO_3166_2 = 'AU-SA'
+
     SOURCE_ID = 'au_sa_press_releases'
-    SOURCE_ID_DASH = 'au_sa_dash'
     SOURCE_URL = 'https://www.covid-19.sa.gov.au'
     SOURCE_DESCRIPTION = ''
 
-    #LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/'  \
-    #              'SA+Health+Internet/About+us/News+and+media/all+media+releases/'
     LISTING_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/Public+Content/SA+Health+Internet/About+us/News+and+media/all+media+releases/?mr-sort=date-desc&mr-pg=1'
-
     LISTING_HREF_SELECTOR = '.news a, .article-list-item a.arrow-link'
-    # SA actually has two URLS - the below and 'https://www.sa.gov.au/covid-19/
-    #                                          latest-updates/daily-update/current' - SHOULD SUPPORT BOTH!!
-    #STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/' \
-    #                      'sa+health+internet/health+topics/health+topics+a+-+z/covid+2019/' \
-    #                      'latest+updates/' \
-    #                      'confirmed+and+suspected+cases+of+covid-19+in+south+australia'
-
-    # Changed as of 23/4/2020!
     STATS_BY_REGION_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia'
 
-    SA_CUSTOM_MAP_URL = 'https://www.covid-19.sa.gov.au/home/dashboard'
-
-    # https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/conditions/infectious+diseases/covid+2019/latest+updates/covid-19+cases+in+south+australia
     def _get_date(self, href, html):
         #print("HREF:", href)
         try:
@@ -69,11 +45,10 @@ class SANews(StateNewsBase):
                 # sa+health+internet/about+us/news+and+media/all+media+releases/
                 # covid-19+update+17+april+2020
                 date = pq(html)('div.wysiwyg h1, h1.page-heading').text().split('Update')[-1].strip()
+                date = date.replace('COVID-19 update ', '')
                 if date.count(' ') != 2:
                     date += ' 2020'
-                return self._extract_date_using_format(
-                    date
-                )
+                return self._extract_date_using_format(date)
             except (ValueError, IndexError):
                 date = pq(pq(html)('div.middle-column div.wysiwyg p')[0]) \
                                    .text().strip().split(',')[-1].strip()
@@ -84,142 +59,6 @@ class SANews(StateNewsBase):
         except:
             # e.g. Sunday 22 March 2020
             return self._extract_date_using_format(date.partition(' ')[-1])
-
-    def get_data(self):
-        r = []
-
-        SA_DASH_JSON_URL = 'https://www.covid-19.sa.gov.au/__data/assets/' \
-                      'file/0004/145849/covid_19_daily.json'
-        SA_DASH_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/' \
-                      'public+content/sa+health+internet/conditions/' \
-                      'infectious+diseases/covid+2019/covid-19+dashboard'
-        ua = URLArchiver(f'sa/dashboard')
-        ua.get_url_data(SA_DASH_JSON_URL, cache=False)
-
-        i_r = DataPointMerger()
-        for period in ua.iter_periods():
-            for subperiod_id, subdir in ua.iter_paths_for_period(period):
-                path = ua.get_path(subdir)
-                with open(path, 'r', encoding='utf-8') as f:
-                    data = json.loads(f.read())
-                i_r.extend(self._get_from_json(SA_DASH_URL, data))
-        r.extend(i_r)
-
-        i_r = DataPointMerger()
-        for sub_dir in sorted(listdir(SA_MAP_DIR)):
-            # OPEN ISSUE: only add the most recent?? ==========================================================================
-            joined_dir = f'{SA_MAP_DIR}/{sub_dir}'
-            for fnam in listdir(joined_dir):
-                with open(f'{joined_dir}/{fnam}', 'r', encoding='utf-8') as f:
-                    r.extend(self._get_total_cases_by_region(
-                        self.SA_CUSTOM_MAP_URL, f.read()
-                    ))
-        r.extend(i_r)
-
-        r.extend(StateNewsBase.get_data(self))
-        return r
-
-    def _get_from_json(self, url, data):
-        # Additional time series data is also available:
-        # 'laboratory_char'
-        # 'newcase_sa_char'
-        # travellers/expiations/compliance not currently used
-
-        def parse_date(s):
-            return datetime.datetime.strptime(
-                ' '.join(s.split()[-3:]), '%d %B %Y'
-            ).strftime('%Y_%m_%d')
-
-        r = []
-        base_data_date = parse_date(data['hp_date'])
-
-        r.append(DataPoint(
-            datatype=DataTypes.NEW,
-            value=int(data['newcase_sa']),
-            date_updated=base_data_date,
-            source_url=url,
-            source_id=self.SOURCE_ID_DASH
-        ))
-        r.append(DataPoint(
-            datatype=DataTypes.TOTAL,
-            value=int(data['todaycase_sa']),
-            date_updated=base_data_date,
-            source_url=url,
-            source_id=self.SOURCE_ID_DASH
-        ))
-        r.append(DataPoint(
-            datatype=DataTypes.STATUS_ICU,
-            value=int(data['icu_sa']),
-            date_updated=base_data_date,
-            source_url=url,
-            source_id=self.SOURCE_ID_DASH
-        ))
-        r.append(DataPoint(
-            datatype=DataTypes.STATUS_DEATHS,
-            value=int(data['deaths_sa']),
-            date_updated=base_data_date,
-            source_url=url,
-            source_id=self.SOURCE_ID_DASH
-        ))
-        r.append(DataPoint(
-            datatype=DataTypes.STATUS_RECOVERED,
-            value=int(data['recovered_sa']),
-            date_updated=base_data_date,
-            source_url=url,
-            source_id=self.SOURCE_ID_DASH
-        ))
-
-        for agerange, value in zip(
-            data['age_char']['field_order'],
-            data['age_char']['data']
-        ):
-            agerange = agerange.replace(' - ', '-')
-            r.append(DataPoint(
-                datatype=DataTypes.TOTAL,
-                agerange=agerange,
-                value=int(value),
-                date_updated=parse_date(data['age_char']['datetime']),
-                source_url=url,
-                source_id=self.SOURCE_ID_DASH
-            ))
-
-        for gender, value in zip(
-            data['gender_char']['field_order'],
-            data['gender_char']['data']
-        ):
-            datatype = {
-                'male': DataTypes.TOTAL_MALE,
-                'female': DataTypes.TOTAL_FEMALE
-            }[gender.lower()]
-
-            r.append(DataPoint(
-                datatype=datatype,
-                value=int(value),
-                date_updated=parse_date(data['gender_char']['datetime']),
-                source_url=url,
-                source_id=self.SOURCE_ID_DASH
-            ))
-
-        for source, value in zip(
-            data['infection_char']['field_order'],
-            data['infection_char']['data']
-        ):
-            datatype = {
-                'overseas acquired': DataTypes.SOURCE_OVERSEAS,
-                'contact confirmed': DataTypes.SOURCE_CONFIRMED,
-                'interstate travel': DataTypes.SOURCE_INTERSTATE,
-                'under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
-                'locally acquired': DataTypes.SOURCE_COMMUNITY
-            }[source.lower()]
-
-            r.append(DataPoint(
-                datatype=datatype,
-                value=int(value),
-                date_updated=parse_date(data['infection_char']['datetime']),
-                source_url=url,
-                source_id=self.SOURCE_ID_DASH
-            ))
-        return r
 
     #============================================================#
     #                      General Totals                        #
@@ -237,6 +76,9 @@ class SANews(StateNewsBase):
                 compile('([0-9,]+) new cases of COVID-19'),
             ),
             c_html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-SA',
             source_url=href,
             datatype=DataTypes.NEW,
             date_updated=self._get_date(href, html)
@@ -255,6 +97,9 @@ class SANews(StateNewsBase):
             cc = int(pq(tr[1]).text().strip())
             if cc is not None:
                 return DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-SA',
                     datatype=DataTypes.TOTAL,
                     value=cc,
                     date_updated=self._get_date(href, html),
@@ -271,6 +116,9 @@ class SANews(StateNewsBase):
                     compile('total number of cases notified in SA remains at ([0-9,]+)')
                 ),
                 c_html,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=DataTypes.TOTAL,
                 source_url=href,
                 date_updated=self._get_date(href, html)
@@ -284,6 +132,9 @@ class SANews(StateNewsBase):
                 compile(r'(?:undertaken (?:almost|more than) )?([0-9,]+)(?: COVID-19)? tests'),
             ),
             html,
+            region_schema=Schemas.ADMIN_1,
+            region_parent='AU',
+            region_child='AU-SA',
             datatype=DataTypes.TESTS_TOTAL,
             source_url=href,
             date_updated=self._get_date(href, html)
@@ -365,6 +216,9 @@ class SANews(StateNewsBase):
                     continue   # HACK: SA has stopped providing these values, so will stop providing them fullstop for now!!! ===========================================================
 
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-SA',
                     datatype=datatype,
                     agerange=age_group,
                     value=value,
@@ -394,95 +248,7 @@ class SANews(StateNewsBase):
         pass
 
     def _get_total_cases_by_region(self, href, html):
-        if href != self.SA_CUSTOM_MAP_URL:
-            return None
-
-        from json import loads
-        data = loads(html)  # Not actually html
-
-        r = []
-        for feature_dict in data.get('features', []):
-            """
-            {
-                {
-                  "exceededTransferLimit": false,
-                  "features": [
-                    {
-                      "attributes": {
-                        "objectid": 52,
-                        "lga_code18": "49399",
-                        "lga_name18": "Unincorporated SA",
-                        "ste_code16": "4",
-                        "ste_name16": "South Australia",
-                        "areasqkm18": 622489.4848,
-                        "lga": 49399.0,
-                        "lga_name": "Unincorporated SA",
-                        "lga_code": 49399,
-                        "date_time_20200401_1000": "1/4/2020 @ 10:00 am",
-                        "positive_20200401_1000": 0,
-                        "active_20200401_1000": 0,
-                        "date_time_20200402_0000": "2/4/2020",
-                        "positive_20200402_0000": 0,
-                        "active_20200402_0000": 0,
-                        ...
-                      },
-                      "geometry": {
-                        "rings": [
-                          [
-                            }
-            """
-
-            #print(feature_dict)
-            attributes = feature_dict['attributes']
-            if attributes.get('exceedslimit'):
-                continue
-
-            for k, v in attributes.items():
-                if k.startswith('positive'):
-                    du = datetime.datetime.strptime(
-                        k.split('_')[1], '%Y%m%d'
-                    ).strftime('%Y_%m_%d')
-                    if du == '2020_04_12':
-                        # HACK: Ignore this unreliable datapoint!
-                        continue
-                    elif v is None:
-                        continue
-
-                    num = DataPoint(
-                        region_schema=Schemas.LGA,
-                        datatype=DataTypes.TOTAL,
-                        region_child=attributes['lga_name'].split('(')[0].strip(),
-                        value=int(v),
-                        date_updated=du,
-                        source_url=href,
-                        source_id=self.SOURCE_ID_DASH
-                    )
-                    r.append(num)
-                elif k.startswith('active'):
-                    du = datetime.datetime.strptime(
-                        k.split('_')[1], '%Y%m%d'
-                    ).strftime('%Y_%m_%d')
-                    if du == '2020_04_12':
-                        # HACK: Ignore this unreliable datapoint!
-                        continue
-                    elif du <= '2020_04_15' and not int(v):
-                        # HACK: early datapoints were of very low quality!
-                        continue
-                    elif v is None:
-                        continue
-
-                    num = DataPoint(
-                        region_schema=Schemas.LGA,
-                        datatype=DataTypes.STATUS_ACTIVE,
-                        region_child=attributes['lga_name'].split('(')[0].strip(),
-                        value=int(v),
-                        date_updated=du,
-                        source_url=href,
-                        source_id=self.SOURCE_ID_DASH
-                    )
-                    r.append(num)
-
-        return r
+        pass
 
     #============================================================#
     #                     Totals by Source                       #
@@ -533,6 +299,9 @@ class SANews(StateNewsBase):
             c_icu = int(pq(tr[1]).text().strip())
 
             r.append(DataPoint(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=sa_norm_map[k],
                 value=c_icu,
                 date_updated=du,
@@ -546,9 +315,6 @@ class SANews(StateNewsBase):
 
     @bothlistingandstat
     def _get_total_dhr(self, href, html):
-        # TODO: Also support updates!
-        # e.g. https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/about+us/news+and+media/all+media+releases/covid-19+update+15+april+2020
-
         if href == self.STATS_BY_REGION_URL:
             r = []
             #print(href)
@@ -565,6 +331,9 @@ class SANews(StateNewsBase):
 
             if c_icu is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-SA',
                     datatype=DataTypes.STATUS_ICU,
                     value=c_icu,
                     date_updated=du,
@@ -576,6 +345,9 @@ class SANews(StateNewsBase):
             t_d = int(pq(tr[1]).text().strip())
             if t_d is not None:
                 r.append(DataPoint(
+                    region_schema=Schemas.ADMIN_1,
+                    region_parent='AU',
+                    region_child='AU-SA',
                     datatype=DataTypes.STATUS_DEATHS,
                     value=t_d,
                     date_updated=du,
@@ -590,6 +362,9 @@ class SANews(StateNewsBase):
 
                 if t_d is not None:
                     r.append(DataPoint(
+                        region_schema=Schemas.ADMIN_1,
+                        region_parent='AU',
+                        region_child='AU-SA',
                         datatype=DataTypes.STATUS_RECOVERED,
                         value=t_d,
                         date_updated=du,
@@ -604,6 +379,9 @@ class SANews(StateNewsBase):
             active = self._extract_number_using_regex(
                 compile('([0-9,]+) active cases? in SA'),
                 c_html, href,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=DataTypes.STATUS_ACTIVE,
                 date_updated=du
             )
@@ -613,6 +391,9 @@ class SANews(StateNewsBase):
             recovered = self._extract_number_using_regex(
                 compile('([0-9,]+) people have been cleared'),
                 c_html, href,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=DataTypes.STATUS_RECOVERED,
                 date_updated=du
             )
@@ -622,6 +403,9 @@ class SANews(StateNewsBase):
             deaths = self._extract_number_using_regex(
                 compile('([0-9,]+) reported deaths'),
                 c_html, href,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=DataTypes.STATUS_DEATHS,
                 date_updated=du
             )
@@ -631,6 +415,9 @@ class SANews(StateNewsBase):
             hospital = self._extract_number_using_regex(
                 compile('([0-9,]+) (?:person|people) remains? in hospital'),
                 c_html, href,
+                region_schema=Schemas.ADMIN_1,
+                region_parent='AU',
+                region_child='AU-SA',
                 datatype=DataTypes.STATUS_HOSPITALIZED,
                 date_updated=du
             )
@@ -643,4 +430,4 @@ class SANews(StateNewsBase):
 if __name__ == '__main__':
     from pprint import pprint
     sn = SANews()
-    pprint(sn.get_data())
+    pprint(sn.get_datapoints())

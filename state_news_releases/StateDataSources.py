@@ -1,13 +1,33 @@
+import threading
 import multiprocessing
+from queue import Queue
 
 from covid_19_au_grab.state_news_releases.act.ACTNews import ACTNews
+from covid_19_au_grab.state_news_releases.act.ACTPowerBIReader import ACTPowerBIReader
+
 from covid_19_au_grab.state_news_releases.nsw.NSWNews import NSWNews
+from covid_19_au_grab.state_news_releases.nsw.NSWJSONOpenData import NSWJSONOpenData
+from covid_19_au_grab.state_news_releases.nsw.NSWJSONWebsiteData import NSWJSONWebsiteData
+
 from covid_19_au_grab.state_news_releases.nt.NTNews import NTNews
 from covid_19_au_grab.state_news_releases.qld.QLDNews import QLDNews
+
 from covid_19_au_grab.state_news_releases.sa.SANews import SANews
+from covid_19_au_grab.state_news_releases.sa.SARegionsReader import SARegionsReader
+from covid_19_au_grab.state_news_releases.sa.SAJSONReader import SAJSONReader
+
 from covid_19_au_grab.state_news_releases.tas.TasNews import TasNews
+from covid_19_au_grab.state_news_releases.tas.TasFacebook import TasFacebook
+
 from covid_19_au_grab.state_news_releases.vic.VicNews import VicNews
+from covid_19_au_grab.state_news_releases.vic.VicPowerBIReader import VicPowerBIReader
+from covid_19_au_grab.state_news_releases.vic.VicGoogleSheets import VicGoogleSheets
+from covid_19_au_grab.state_news_releases.vic.VicCSV import VicCSV
+from covid_19_au_grab.state_news_releases.vic.VicTableauNative import VicTableauNative
+
 from covid_19_au_grab.state_news_releases.wa.WANews import WANews
+from covid_19_au_grab.state_news_releases.wa.WADashReader import WADashReader
+
 from covid_19_au_grab.datatypes.enums import Schemas, DataTypes
 from covid_19_au_grab.datatypes.DataPoint import DataPoint, _DataPoint
 
@@ -19,22 +39,33 @@ class StateDataSources:
     def iter_data_sources(self):
         processes = []
         all_source_ids = []
+        #send_q = Queue()
         send_q = multiprocessing.Queue()
 
         # Run all of the other grabbers
         news_insts = [
             # We'll make it so crawlers with dashboards run
             # together with ones which don't when possible
-            (NSWNews, ACTNews, QLDNews, NTNews),
-            (SANews, WANews, TasNews, VicNews),
+            (NSWNews, NSWJSONOpenData, NSWJSONWebsiteData),
+            (ACTNews, ACTPowerBIReader),
+            (QLDNews,),
+            (NTNews,),
+            (SANews, SARegionsReader, SAJSONReader),
+            (WANews, WADashReader),
+            (TasNews, TasFacebook),
+            (VicNews, VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative),
         ]
 
         for klass_set in news_insts:
             all_source_ids.extend([i.SOURCE_ID for i in klass_set])
 
+            #process = threading.Thread(
+            #    target=_get_datapoints, args=(klass_set, send_q)
+            #)
             process = multiprocessing.Process(
                 target=_get_datapoints, args=(klass_set, send_q)
             )
+
             print("START:", klass_set)
             process.start()
             processes.append(process)
@@ -61,6 +92,7 @@ class StateDataSources:
             if new_datapoints is not None:
                 new_datapoints = [_DataPoint(*i) for i in new_datapoints]
                 yield source_id, source_url, source_description, new_datapoints
+                del new_datapoints
 
         for process in processes:
             try:
@@ -83,69 +115,29 @@ def _get_datapoints(classes, send_q):
         inst = i()
 
         try:
-            datapoints = inst.get_data()
-
-            new_datapoints = [
-                DataPoint(
-                    region_schema=dp.region_schema,
-                    region_parent=(
-                        inst.SOURCE_ISO_3166_2
-                        if dp.region_schema != Schemas.ADMIN_1
-                        else 'AU'
-                    ),
-                    region_child=(
-                        dp.region_child
-                        if dp.region_schema != Schemas.ADMIN_1
-                        else inst.SOURCE_ISO_3166_2
-                    ),
-                    date_updated=dp.date_updated,
-                    datatype=dp.datatype,
-                    agerange=dp.agerange,
-                    value=dp.value,
-                    source_url=dp.source_url,
-                    source_id=dp.source_id or i.SOURCE_ID,
-                    text_match=dp.text_match
-                ) for dp in datapoints
-
-                #if not (
-                #    dp.datatype in (
-                #        DataTypes.NEW,
-                #        DataTypes.TOTAL,
-
-                #        DataTypes.STATUS_ACTIVE,
-                #        DataTypes.STATUS_DEATHS,
-                #        DataTypes.STATUS_ICU,
-                #        DataTypes.STATUS_RECOVERED,
-                #        DataTypes.STATUS_HOSPITALIZED,
-                #        DataTypes.STATUS_ICU_VENTILATORS,
-
-                #        DataTypes.STATUS_ACTIVE_NEW,
-                #        DataTypes.STATUS_DEATHS_NEW,
-                #        DataTypes.STATUS_ICU_NEW,
-                #        DataTypes.STATUS_RECOVERED_NEW,
-                #        DataTypes.STATUS_HOSPITALIZED_NEW,
-                #        DataTypes.STATUS_ICU_VENTILATORS_NEW
-                #    ) and
-                #    dp.region_schema == Schemas.ADMIN_1 and
-                #    not dp.agerange
-                #)   # NOTE ME: The admin 1 totals data is currently really broken!!! =============================
-            ]
+            datapoints = inst.get_datapoints()
 
             print("Class done:", i)
             send_q.put((inst.SOURCE_ID,
                   inst.SOURCE_URL,
                   inst.SOURCE_DESCRIPTION,
-                  [tuple(i) for i in new_datapoints], {
+                  datapoints, {
                 'status': 'OK',
                 'message': None,
             }))
+
+            # Reduce memory usage!
+            del datapoints
 
         except:
             print("Class done with exception:", i)
             import traceback
             traceback.print_exc()
 
-            send_q.put((inst.SOURCE_ID,
+            send_q.put((
+                # WARNING WARNING: This will have trouble when the source ID is OVERRIDDEN!!!!! ================================================================
+
+                inst.SOURCE_ID,
                   inst.SOURCE_URL,
                   inst.SOURCE_DESCRIPTION,
                   None, {

@@ -108,7 +108,7 @@ class StateNewsBase(ABC):
         #print("OUT:", out)
         return pq(out, parser='html_fragments')
 
-    def get_data(self):
+    def get_datapoints(self):
         """
         -> [DataPoint(...), ...]
         """
@@ -353,7 +353,9 @@ class StateNewsBase(ABC):
         return listing_urls
 
     def _extract_number_using_regex(self, regex, s, source_url, datatype,
-                                    date_updated, agerange=None, region_child=None,
+                                    date_updated, agerange=None,
+                                    region_parent=None,
+                                    region_child=None,
                                     region_schema=Schemas.ADMIN_1):
         """
         Convenience function for removing numeral grouping X,XXX
@@ -364,11 +366,15 @@ class StateNewsBase(ABC):
         case the first match will be returned
         """
         #
+        assert region_parent
+        assert region_child
+
         if isinstance(regex, (list, tuple)):
             for i_regex in regex:
                 dp = self._extract_number_using_regex(
                     i_regex, s, source_url, datatype,
-                    date_updated, agerange, region_child, region_schema
+                    date_updated, agerange,
+                    region_parent, region_child, region_schema
                 )
                 if dp:
                     return dp
@@ -388,8 +394,9 @@ class StateNewsBase(ABC):
 
                 return DataPoint(
                     region_schema=region_schema,
-                    datatype=datatype,
+                    region_parent=region_parent,
                     region_child=region_child,
+                    datatype=datatype,
                     agerange=agerange,
                     value=num,
                     date_updated=date_updated,
