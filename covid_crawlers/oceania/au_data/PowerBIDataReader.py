@@ -1,5 +1,6 @@
 import json
 import glob
+from pathlib import Path
 
 from math import log
 from os import listdir
@@ -14,9 +15,13 @@ class PowerBIDataReader:
     def _iter_all_dates(self):
         for sub_dir in sorted(listdir(self.base_dir)):
             date, subid = sub_dir.split('-')
-            yield date, int(subid), self._match_grabbed_with_types(
-                f'{self.base_dir}/{sub_dir}'
-            )
+
+            path = f'{self.base_dir}/{sub_dir}'
+            if not any(Path(path).iterdir()):
+                # Previous run failed??
+                continue
+
+            yield date, int(subid), self._match_grabbed_with_types(path)
 
     def _match_grabbed_with_types(self, dir_):
         """
