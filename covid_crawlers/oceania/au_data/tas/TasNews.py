@@ -7,8 +7,8 @@ from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
 from covid_19_au_grab._utility.word_to_number import word_to_number
 from covid_19_au_grab._utility.get_package_dir import get_package_dir
 
-TAS_BY_LGA = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_lga.json'
-TAS_BY_THS = get_package_dir() / 'state_news_releases' / 'tas' / 'tas_by_ths.tsv'
+TAS_BY_LGA = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'tas' / 'tas_by_lga.json'
+TAS_BY_THS = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'tas' / 'tas_by_ths.tsv'
 
 
 class TasNews(StateNewsBase):

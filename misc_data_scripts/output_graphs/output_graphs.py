@@ -10,7 +10,7 @@ from covid_19_au_grab._utility.get_package_dir import get_package_dir
 
 
 OUTPUT_CSV_DIR = (
-    get_package_dir() / 'state_news_releases' / 'output'
+    get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'output'
 )
 GRAPH_OUTPUT_DIR = (
     get_package_dir() / 'output_graphs' / 'output'

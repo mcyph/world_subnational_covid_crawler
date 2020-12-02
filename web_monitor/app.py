@@ -26,7 +26,7 @@ from covid_19_au_grab.covid_db.output_compressor.output_revision_datapoints_to_z
 from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
 
 
-OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'output'
+OUTPUT_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'output'
 OUTPUT_GRAPHS_DIR = get_package_dir() / 'covid_19_au_grab' / 'output_graphs' / 'output'
 UPDATE_SCRIPT_PATH = get_package_dir() / 'output_data.py'
 mimetypes.types_map['.tsv'] = 'text/tab-separated-values'

@@ -8,7 +8,7 @@ from covid_19_au_grab._utility.word_to_number import word_to_number
 from covid_19_au_grab._utility.get_package_dir import get_package_dir
 
 
-OUTPUT_DIR = get_package_dir() / 'state_news_releases' / 'sa' / 'output'
+OUTPUT_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'sa' / 'output'
 
 
 class SANews(StateNewsBase):
