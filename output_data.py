@@ -1,21 +1,20 @@
 import sys
 import json
 import datetime
-from os import system
 
-from covid_19_au_grab.Logger import Logger
-from covid_19_au_grab.get_package_dir import get_output_dir
-from covid_19_au_grab.overseas.OverseasDataSources import OverseasDataSources
-from covid_19_au_grab.state_news_releases.StateDataSources import StateDataSources
-from covid_19_au_grab.state_news_releases.InfrequentStateDataJobs import InfrequentStateDataJobs
+from covid_19_au_grab._utility.Logger import Logger
+from covid_19_au_grab._utility.get_package_dir import get_output_dir
+from covid_19_au_grab.covid_crawlers._base_classes.OverseasDataSources import OverseasDataSources
+from covid_19_au_grab.covid_crawlers.oceania.au_data.StateDataSources import StateDataSources
+from covid_19_au_grab.covid_crawlers.oceania.au_data.InfrequentStateDataJobs import InfrequentStateDataJobs
 
-from covid_19_au_grab.db.RevisionIDs import RevisionIDs
-from covid_19_au_grab.db.DerivedData import DerivedData
-from covid_19_au_grab.db.DataPointsDB import DataPointsDB
-from covid_19_au_grab.db.delete_old_dbs import delete_old_dbs
-from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
-from covid_19_au_grab.db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
-from covid_19_au_grab.output_tsv_data import output_tsv_data, output_source_info, push_to_github, output_geojson
+from covid_19_au_grab.covid_db.RevisionIDs import RevisionIDs
+from covid_19_au_grab.covid_db.DerivedData import DerivedData
+from covid_19_au_grab.covid_db.DataPointsDB import DataPointsDB
+from covid_19_au_grab.covid_db.delete_old_dbs import delete_old_dbs
+from covid_19_au_grab.covid_db.SQLiteDataRevisions import SQLiteDataRevisions
+from covid_19_au_grab.covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
+from covid_19_au_grab._utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
@@ -154,8 +153,8 @@ if __name__ == '__main__':
         output_revision_datapoints_to_zip(f, TIME_FORMAT, LATEST_REVISION_ID)
 
     # Upload them to remote AWS instance
-    print("Uploading zip file to remote server...")
-    system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
+    print("DISABLED: Uploading zip file to remote server...")
+    #system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
 
     # Clean up old DBs to save on space
     print("Deleting older DBs to save space..")
@@ -175,8 +174,8 @@ if __name__ == '__main__':
     output_geojson()
 
     # Commit to GitHub
-    print("Pushing to GitHub...")
-    push_to_github()
+    print("DISABLED: Pushing to GitHub...")
+    #push_to_github()
     print("Push to GitHub done!")
 
     print("[end of script]")
