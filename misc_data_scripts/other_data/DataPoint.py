@@ -1,4 +1,4 @@
-from covid_19_au_grab.misc_data_scripts.other_data import DateType
+from misc_data_scripts.other_data import DateType
 
 
 class DataPoint:

@@ -3,16 +3,16 @@
 # https://data.humdata.org/dataset/2ec81cad-04a3-4bfe-b127-c36658947427/resource/22bb4232-897b-4e7a-8e35-bbe030fca37c/download/wca_covid19_data_admin1_master.xlsx
 
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import (
+from covid_crawlers._base_classes.URLBase import (
     URL, URLBase
 )
-from covid_19_au_grab._utility.get_package_dir import (
+from _utility.get_package_dir import (
     get_overseas_dir
 )
-from covid_19_au_grab.covid_crawlers.africa.west_africa_data.west_africa_powerbi import (
+from covid_crawlers.africa.west_africa_data.west_africa_powerbi import (
     get_powerbi_data
 )
-from covid_19_au_grab.covid_crawlers.africa.west_africa_data.WestAfricaPowerBI import (
+from covid_crawlers.africa.west_africa_data.WestAfricaPowerBI import (
     WestAfricaPowerBI
 )
 

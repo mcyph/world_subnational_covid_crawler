@@ -2,8 +2,8 @@ import json
 from polylabel import polylabel
 from os.path import basename
 from abc import ABC, abstractmethod
-from covid_19_au_grab.covid_db.datatypes.schema_types import schema_types
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from covid_db.datatypes.schema_types import schema_types
+from _utility.get_package_dir import get_package_dir
 
 
 OUTPUT_DIR = get_package_dir() / 'world_geodata' / 'output'

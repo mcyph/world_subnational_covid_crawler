@@ -3,17 +3,17 @@ import csv
 import json
 from collections import Counter
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import (
+from covid_crawlers._base_classes.URLBase import (
     URL, URLBase
 )
-from covid_19_au_grab.covid_db.datatypes.DataPoint import (
+from covid_db.datatypes.DataPoint import (
     DataPoint
 )
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import (
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import (
     get_overseas_dir, get_package_dir
 )
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import (
+from world_geodata.LabelsToRegionChild import (
     LabelsToRegionChild
 )
 

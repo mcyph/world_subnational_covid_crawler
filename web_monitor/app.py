@@ -17,17 +17,17 @@ _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
 
 env = Environment(loader=FileSystemLoader('./templates'))
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.SQLiteDataRevision import SQLiteDataRevision
-from covid_19_au_grab.covid_db.SQLiteDataRevisions import SQLiteDataRevisions
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_db.datatypes import date_fns
-from covid_19_au_grab.covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
-from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.SQLiteDataRevision import SQLiteDataRevision
+from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
+from _utility.get_package_dir import get_package_dir
+from covid_db.datatypes import date_fns
+from covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
+from _utility.normalize_locality_name import normalize_locality_name
 
 
 OUTPUT_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'output'
-OUTPUT_GRAPHS_DIR = get_package_dir() / 'covid_19_au_grab' / 'output_graphs' / 'output'
+OUTPUT_GRAPHS_DIR = get_package_dir() / 'world_subnational_covid_crawler' / 'output_graphs' / 'output'
 UPDATE_SCRIPT_PATH = get_package_dir() / 'output_data.py'
 mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 

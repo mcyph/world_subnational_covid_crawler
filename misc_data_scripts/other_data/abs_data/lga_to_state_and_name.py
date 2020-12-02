@@ -1,6 +1,6 @@
 import csv
 from glob import glob
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 BASE_PATH = get_package_dir() / 'misc_data_scripts' / 'other_data' / 'abs_data' / 'lga'

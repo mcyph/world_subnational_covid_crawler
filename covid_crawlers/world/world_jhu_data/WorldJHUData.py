@@ -1,13 +1,13 @@
 import csv
 from os import listdir
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_crawlers._base_classes.GithubRepo import GithubRepo
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_crawlers.world.world_jhu_data.get_county_to_code_map import get_county_to_code_map
-from covid_19_au_grab.covid_db.datatypes.SchemaTypeInfo import get_schema_type_info
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_crawlers.world.world_jhu_data.world_jhu_mappings import world_jhu_mappings
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers._base_classes.GithubRepo import GithubRepo
+from _utility.get_package_dir import get_overseas_dir
+from covid_crawlers.world.world_jhu_data.get_county_to_code_map import get_county_to_code_map
+from covid_db.datatypes.SchemaTypeInfo import get_schema_type_info
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_crawlers.world.world_jhu_data.world_jhu_mappings import world_jhu_mappings
 
 
 county_to_code_map = get_county_to_code_map()

@@ -1,7 +1,7 @@
 from pprint import pprint
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import Schemas
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
 
 
 MODE_DEV = 0

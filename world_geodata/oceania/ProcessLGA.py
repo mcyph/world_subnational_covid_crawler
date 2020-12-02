@@ -1,5 +1,5 @@
-from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from _utility.normalize_locality_name import normalize_locality_name
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
 

@@ -1,11 +1,11 @@
 import json
 import unidecode
 
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.misc_data_scripts.other_data.iso_3166_1 import iso_3166_data
-from covid_19_au_grab.misc_data_scripts.other_data.iso_3166_2 import iso_3166_2_data
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from _utility.get_package_dir import get_package_dir
+from misc_data_scripts.other_data.iso_3166_1 import iso_3166_data
+from misc_data_scripts.other_data.iso_3166_2 import iso_3166_2_data
+from covid_db.datatypes.enums import Schemas
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
 
 
 with open(get_package_dir() / 'covid_db' / 'datatypes' / 'schema_types.json',

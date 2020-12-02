@@ -7,12 +7,12 @@ import datetime
 from os import listdir
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URLBase, URL
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab._utility.set_locale import set_locale
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URLBase, URL
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from _utility.set_locale import set_locale
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 WIKI_URL = 'https://tr.wikipedia.org/wiki/T%C3%BCrkiye%27de_b%C3%B6lgelere_g%C3%B6re_COVID-19_pandemisi'
 

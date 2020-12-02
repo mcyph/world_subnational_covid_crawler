@@ -2,34 +2,34 @@ import threading
 import multiprocessing
 from queue import Queue
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.act.ACTNews import ACTNews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.act.ACTPowerBIReader import ACTPowerBIReader
+from covid_crawlers.oceania.au_data.act.ACTNews import ACTNews
+from covid_crawlers.oceania.au_data.act.ACTPowerBIReader import ACTPowerBIReader
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.nsw.NSWNews import NSWNews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.nsw.NSWJSONOpenData import NSWJSONOpenData
-from covid_19_au_grab.covid_crawlers.oceania.au_data.nsw.NSWJSONWebsiteData import NSWJSONWebsiteData
+from covid_crawlers.oceania.au_data.nsw.NSWNews import NSWNews
+from covid_crawlers.oceania.au_data.nsw.NSWJSONOpenData import NSWJSONOpenData
+from covid_crawlers.oceania.au_data.nsw.NSWJSONWebsiteData import NSWJSONWebsiteData
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.nt.NTNews import NTNews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.qld.QLDNews import QLDNews
+from covid_crawlers.oceania.au_data.nt.NTNews import NTNews
+from covid_crawlers.oceania.au_data.qld.QLDNews import QLDNews
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.sa.SANews import SANews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.sa.SARegionsReader import SARegionsReader
-from covid_19_au_grab.covid_crawlers.oceania.au_data.sa.SAJSONReader import SAJSONReader
+from covid_crawlers.oceania.au_data.sa.SANews import SANews
+from covid_crawlers.oceania.au_data.sa.SARegionsReader import SARegionsReader
+from covid_crawlers.oceania.au_data.sa.SAJSONReader import SAJSONReader
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.tas.TasNews import TasNews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.tas.TasFacebook import TasFacebook
+from covid_crawlers.oceania.au_data.tas.TasNews import TasNews
+from covid_crawlers.oceania.au_data.tas.TasFacebook import TasFacebook
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.VicNews import VicNews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.VicPowerBIReader import VicPowerBIReader
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.VicGoogleSheets import VicGoogleSheets
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.VicCSV import VicCSV
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.VicTableauNative import VicTableauNative
+from covid_crawlers.oceania.au_data.vic.VicNews import VicNews
+from covid_crawlers.oceania.au_data.vic.VicPowerBIReader import VicPowerBIReader
+from covid_crawlers.oceania.au_data.vic.VicGoogleSheets import VicGoogleSheets
+from covid_crawlers.oceania.au_data.vic.VicCSV import VicCSV
+from covid_crawlers.oceania.au_data.vic.VicTableauNative import VicTableauNative
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.wa.WANews import WANews
-from covid_19_au_grab.covid_crawlers.oceania.au_data.wa.WADashReader import WADashReader
+from covid_crawlers.oceania.au_data.wa.WANews import WANews
+from covid_crawlers.oceania.au_data.wa.WADashReader import WADashReader
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint, _DataPoint
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint, _DataPoint
 
 
 class StateDataSources:

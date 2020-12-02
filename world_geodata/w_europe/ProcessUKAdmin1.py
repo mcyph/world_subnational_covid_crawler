@@ -1,7 +1,7 @@
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
-from covid_19_au_grab.covid_crawlers.w_europe.uk_data.uk_place_map import place_map
+from covid_crawlers.w_europe.uk_data.uk_place_map import place_map
 
 
 # NOTE: Admin1 seems equvalent to UTLA (upper tier-level authority)

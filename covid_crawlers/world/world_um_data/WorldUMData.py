@@ -6,10 +6,10 @@ from os import makedirs, listdir
 from os.path import exists
 from json import loads, dumps
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URLBase
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
+from covid_crawlers._base_classes.URLBase import URLBase
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
 
 TYPE = 'smoothed'  # Can also use "daily"
 

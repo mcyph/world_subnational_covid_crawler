@@ -1,8 +1,8 @@
 from collections import Counter
 
-from covid_19_au_grab.covid_db.datatypes import date_fns
-from covid_19_au_grab.covid_db.datatypes.enums import DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes import date_fns
+from covid_db.datatypes.enums import DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
 
 
 class DerivedData:
@@ -160,9 +160,9 @@ class DerivedData:
 
 
 if __name__ == '__main__':
-    from covid_19_au_grab.covid_db.SQLiteDataRevisions import SQLiteDataRevisions
-    from covid_19_au_grab.covid_db.DataPointsDB import DataPointsDB
-    from covid_19_au_grab._utility.get_package_dir import get_output_dir
+    from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
+    from covid_db.DataPointsDB import DataPointsDB
+    from _utility.get_package_dir import get_output_dir
 
     OUTPUT_DIR = get_output_dir() / 'output'
 

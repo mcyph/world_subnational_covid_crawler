@@ -1,9 +1,9 @@
 from re import compile
 from pyquery import PyQuery as pq
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateNewsBase import (
+from covid_crawlers.oceania.au_data.StateNewsBase import (
     StateNewsBase, singledaystat
 )
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 class NTNews(StateNewsBase):

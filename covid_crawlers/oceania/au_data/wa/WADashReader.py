@@ -4,11 +4,11 @@ import datetime
 from os import listdir
 from os.path import dirname, exists
 
-from covid_19_au_grab._utility.URLArchiver import URLArchiver
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from _utility.URLArchiver import URLArchiver
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.get_package_dir import get_data_dir
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 class WADashReader:

@@ -2,8 +2,8 @@ import re
 import csv
 import pycountry
 from collections import namedtuple
-from covid_19_au_grab.misc_data_scripts.other_data.iso_3166_1.iso_3166_data import get_data_item_by_name as _get_3166_1_by_name
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from misc_data_scripts.other_data.iso_3166_1.iso_3166_data import get_data_item_by_name as _get_3166_1_by_name
+from _utility.get_package_dir import get_package_dir
 
 
 DataItem = namedtuple('DataItem', [

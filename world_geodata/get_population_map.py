@@ -1,5 +1,5 @@
 import csv
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 def get_population_map():

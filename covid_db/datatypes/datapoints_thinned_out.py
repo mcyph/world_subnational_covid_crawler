@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 def datapoints_thinned_out(datapoints):

@@ -6,11 +6,11 @@ from os import listdir
 from datetime import timedelta, date
 from collections import Counter, defaultdict
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DatapointMerger import DataPointMerger
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 
 
 class FRESRIData(URLBase):

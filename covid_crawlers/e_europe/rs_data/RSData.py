@@ -6,10 +6,10 @@ from os.path import exists
 from urllib import request
 from collections import Counter
 
-from covid_19_au_grab.covid_crawlers._base_classes.GlobalBase import GlobalBase
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers._base_classes.GlobalBase import GlobalBase
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 # TODO: Also scrape from https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Serbia  !! =================================================

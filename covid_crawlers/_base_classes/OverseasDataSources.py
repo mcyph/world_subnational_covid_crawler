@@ -1,28 +1,28 @@
 import multiprocessing
 
-from covid_19_au_grab.covid_db.datatypes.DataPoint import _DataPoint
+from covid_db.datatypes.DataPoint import _DataPoint
 
-#from covid_19_au_grab.overseas.ml_data.MLData import MLData
-#from covid_19_au_grab.overseas.fi_data.FIData import FIData
-#from covid_19_au_grab.overseas.ph_data.PHData import PHData
-#from covid_19_au_grab.overseas.uz_data.UZData import UZData
+#from overseas.ml_data.MLData import MLData
+#from overseas.fi_data.FIData import FIData
+#from overseas.ph_data.PHData import PHData
+#from overseas.uz_data.UZData import UZData
 
 #==================================================================#
 # Africa
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.africa.et_data.ETData import ETData
-from covid_19_au_grab.covid_crawlers.africa.sn_data.SNData import SNData
-from covid_19_au_grab.covid_crawlers.africa.so_data.SOData import SOData
-from covid_19_au_grab.covid_crawlers.africa.bw_data.BWData import BWData
-from covid_19_au_grab.covid_crawlers.africa.gh_data.GHDataDash import GHDataDash
-from covid_19_au_grab.covid_crawlers.africa.ma_data.MAData import MAData
-from covid_19_au_grab.covid_crawlers.africa.mw_data.MWData import MWData
-from covid_19_au_grab.covid_crawlers.africa.na_data.NAData import NAData
-from covid_19_au_grab.covid_crawlers.africa.ng_data.NGData import NGData
-from covid_19_au_grab.covid_crawlers.africa.sd_data.SDData import SDData
-from covid_19_au_grab.covid_crawlers.africa.west_africa_data.WestAfricaData import WestAfricaData
-from covid_19_au_grab.covid_crawlers.africa.za_data.ZAData import ZAData
+from covid_crawlers.africa.et_data.ETData import ETData
+from covid_crawlers.africa.sn_data.SNData import SNData
+from covid_crawlers.africa.so_data.SOData import SOData
+from covid_crawlers.africa.bw_data.BWData import BWData
+from covid_crawlers.africa.gh_data.GHDataDash import GHDataDash
+from covid_crawlers.africa.ma_data.MAData import MAData
+from covid_crawlers.africa.mw_data.MWData import MWData
+from covid_crawlers.africa.na_data.NAData import NAData
+from covid_crawlers.africa.ng_data.NGData import NGData
+from covid_crawlers.africa.sd_data.SDData import SDData
+from covid_crawlers.africa.west_africa_data.WestAfricaData import WestAfricaData
+from covid_crawlers.africa.za_data.ZAData import ZAData
 
 AFRICA_SOURCES = (
     WestAfricaData, BWData, ETData, GHDataDash, MAData, MWData,
@@ -33,14 +33,14 @@ AFRICA_SOURCES = (
 # Americas
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.americas.co_data.COData import COData
-from covid_19_au_grab.covid_crawlers.americas.ht_data.HTData import HTData
-from covid_19_au_grab.covid_crawlers.americas.br_data.BRData import BRData
-from covid_19_au_grab.covid_crawlers.americas.ca_data.CACovid19Canada import CACovid19Canada
-from covid_19_au_grab.covid_crawlers.americas.cu_data.CUData import CUData
-from covid_19_au_grab.covid_crawlers.americas.ve_data.VEData import VEData as VEDataNonHumData
-from covid_19_au_grab.covid_crawlers.humdata.ve_data.VEData import VEData
-from covid_19_au_grab.covid_crawlers.americas.us_nyt_data.USNYTData import USNYTData
+from covid_crawlers.americas.co_data.COData import COData
+from covid_crawlers.americas.ht_data.HTData import HTData
+from covid_crawlers.americas.br_data.BRData import BRData
+from covid_crawlers.americas.ca_data.CACovid19Canada import CACovid19Canada
+from covid_crawlers.americas.cu_data.CUData import CUData
+from covid_crawlers.americas.ve_data.VEData import VEData as VEDataNonHumData
+from covid_crawlers.humdata.ve_data.VEData import VEData
+from covid_crawlers.americas.us_nyt_data.USNYTData import USNYTData
 
 AMERICAS_SOURCES = (
     BRData, CACovid19Canada, COData, CUData, HTData, VEData,
@@ -51,27 +51,27 @@ AMERICAS_SOURCES = (
 # Asia/Oceania
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.se_asia.cn_data.CNData import CNData
-from covid_19_au_grab.covid_crawlers.se_asia.cn_data.CNQQData import CNQQData
-from covid_19_au_grab.covid_crawlers.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
-from covid_19_au_grab.covid_crawlers.se_asia.jp_data.JPData import JPData
-from covid_19_au_grab.covid_crawlers.se_asia.jp_city_data.JPCityData import JPCityData
-from covid_19_au_grab.covid_crawlers.se_asia.jp_tokyo_data.JPTokyoCityPDFs import JPTokyoCityPDFs
-from covid_19_au_grab.covid_crawlers.se_asia.kr_data.KRData import KRData
-from covid_19_au_grab.covid_crawlers.se_asia.mm_data.MMData import MMData
-from covid_19_au_grab.covid_crawlers.se_asia.my_data.MYData import MYData
-from covid_19_au_grab.covid_crawlers.se_asia.my_data.MYESRIDashData import MYESRIDashData
-from covid_19_au_grab.covid_crawlers.se_asia.th_data.THData import THData
-from covid_19_au_grab.covid_crawlers.se_asia.tw_data.TWData import TWData
-from covid_19_au_grab.covid_crawlers.se_asia.vn_data.VNData import VNData
-from covid_19_au_grab.covid_crawlers.se_asia.hk_data.HKData import HKData
-from covid_19_au_grab.covid_crawlers.se_asia.kh_data.KHData import KHData
+from covid_crawlers.se_asia.cn_data.CNData import CNData
+from covid_crawlers.se_asia.cn_data.CNQQData import CNQQData
+from covid_crawlers.se_asia.id_data.IDGoogleDocsData import IDGoogleDocsData
+from covid_crawlers.se_asia.jp_data.JPData import JPData
+from covid_crawlers.se_asia.jp_city_data.JPCityData import JPCityData
+from covid_crawlers.se_asia.jp_tokyo_data.JPTokyoCityPDFs import JPTokyoCityPDFs
+from covid_crawlers.se_asia.kr_data.KRData import KRData
+from covid_crawlers.se_asia.mm_data.MMData import MMData
+from covid_crawlers.se_asia.my_data.MYData import MYData
+from covid_crawlers.se_asia.my_data.MYESRIDashData import MYESRIDashData
+from covid_crawlers.se_asia.th_data.THData import THData
+from covid_crawlers.se_asia.tw_data.TWData import TWData
+from covid_crawlers.se_asia.vn_data.VNData import VNData
+from covid_crawlers.se_asia.hk_data.HKData import HKData
+from covid_crawlers.se_asia.kh_data.KHData import KHData
 
-from covid_19_au_grab.covid_crawlers.s_asia.bd_data.BDData import BDData
-from covid_19_au_grab.covid_crawlers.s_asia.lk_data.LKData import LKData
-from covid_19_au_grab.covid_crawlers.s_asia.np_data.NPData import NPData
+from covid_crawlers.s_asia.bd_data.BDData import BDData
+from covid_crawlers.s_asia.lk_data.LKData import LKData
+from covid_crawlers.s_asia.np_data.NPData import NPData
 
-from covid_19_au_grab.covid_crawlers.oceania.nz_data.NZData import NZData
+from covid_crawlers.oceania.nz_data.NZData import NZData
 
 #INData, # Will use Bing data for India
 
@@ -85,35 +85,35 @@ ASIA_SOURCES = (
 # Europe
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.world.eu_subnational_data.EUSubNationalData import EUSubNationalData
+from covid_crawlers.world.eu_subnational_data.EUSubNationalData import EUSubNationalData
 
-from covid_19_au_grab.covid_crawlers.e_europe.kg_data.KGData import KGData
-from covid_19_au_grab.covid_crawlers.e_europe.kz_data.KZData import KZData
-from covid_19_au_grab.covid_crawlers.e_europe.mk_data.MKData import MKData
-from covid_19_au_grab.covid_crawlers.e_europe.rs_data.RSData import RSData
+from covid_crawlers.e_europe.kg_data.KGData import KGData
+from covid_crawlers.e_europe.kz_data.KZData import KZData
+from covid_crawlers.e_europe.mk_data.MKData import MKData
+from covid_crawlers.e_europe.rs_data.RSData import RSData
 
-from covid_19_au_grab.covid_crawlers.w_europe.be_data.BEData import BEData
-from covid_19_au_grab.covid_crawlers.w_europe.ch_data.CHData import CHData
-from covid_19_au_grab.covid_crawlers.w_europe.cz_data.CZData import CZData
-from covid_19_au_grab.covid_crawlers.w_europe.de_data.DEData import DEData
-from covid_19_au_grab.covid_crawlers.w_europe.de_data.DERKIData import DERKIData
-from covid_19_au_grab.covid_crawlers.w_europe.es_data.ESData import ESData
-from covid_19_au_grab.covid_crawlers.w_europe.es_data.ESISCIIIData import ESISCIIIData
-from covid_19_au_grab.covid_crawlers.w_europe.fr_data.FRData import FRData
-from covid_19_au_grab.covid_crawlers.w_europe.fr_data.FRGovData import FRGovData
-from covid_19_au_grab.covid_crawlers.w_europe.fr_data.FRESRIData import FRESRIData
-from covid_19_au_grab.covid_crawlers.w_europe.gr_data.GRCovid19Greece import GRCovid19Greece
-from covid_19_au_grab.covid_crawlers.w_europe.hr_data.HRData import HRData
-from covid_19_au_grab.covid_crawlers.w_europe.ie_data.IEData import IEData
-from covid_19_au_grab.covid_crawlers.w_europe.is_data.ISData import ISData
-from covid_19_au_grab.covid_crawlers.w_europe.it_data.ITData import ITData
-from covid_19_au_grab.covid_crawlers.w_europe.lt_data.LTData import LTData
-from covid_19_au_grab.covid_crawlers.w_europe.lv_data.LVData import LVData
-from covid_19_au_grab.covid_crawlers.w_europe.lv_data.LVDataArcGIS import LVDataArcGIS
-from covid_19_au_grab.covid_crawlers.w_europe.pt_data.PTData import PTData
-from covid_19_au_grab.covid_crawlers.w_europe.si_data.SIData import SIData
-from covid_19_au_grab.covid_crawlers.w_europe.uk_data.UKData import UKData
-from covid_19_au_grab.covid_crawlers.w_europe.uk_data.UKGovData import UKGovData
+from covid_crawlers.w_europe.be_data.BEData import BEData
+from covid_crawlers.w_europe.ch_data.CHData import CHData
+from covid_crawlers.w_europe.cz_data.CZData import CZData
+from covid_crawlers.w_europe.de_data.DEData import DEData
+from covid_crawlers.w_europe.de_data.DERKIData import DERKIData
+from covid_crawlers.w_europe.es_data.ESData import ESData
+from covid_crawlers.w_europe.es_data.ESISCIIIData import ESISCIIIData
+from covid_crawlers.w_europe.fr_data.FRData import FRData
+from covid_crawlers.w_europe.fr_data.FRGovData import FRGovData
+from covid_crawlers.w_europe.fr_data.FRESRIData import FRESRIData
+from covid_crawlers.w_europe.gr_data.GRCovid19Greece import GRCovid19Greece
+from covid_crawlers.w_europe.hr_data.HRData import HRData
+from covid_crawlers.w_europe.ie_data.IEData import IEData
+from covid_crawlers.w_europe.is_data.ISData import ISData
+from covid_crawlers.w_europe.it_data.ITData import ITData
+from covid_crawlers.w_europe.lt_data.LTData import LTData
+from covid_crawlers.w_europe.lv_data.LVData import LVData
+from covid_crawlers.w_europe.lv_data.LVDataArcGIS import LVDataArcGIS
+from covid_crawlers.w_europe.pt_data.PTData import PTData
+from covid_crawlers.w_europe.si_data.SIData import SIData
+from covid_crawlers.w_europe.uk_data.UKData import UKData
+from covid_crawlers.w_europe.uk_data.UKGovData import UKGovData
 
 EUROPE_DATA = (
     BEData, CHData, CZData, DEData, DERKIData, ESData, ESISCIIIData,
@@ -127,19 +127,19 @@ EUROPE_DATA = (
 # Middle East/Central Asia
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.c_asia.af_data.AFData import AFData
-from covid_19_au_grab.covid_crawlers.humdata.iq_data.IQData import IQData
-from covid_19_au_grab.covid_crawlers.humdata.ly_data.LYData import LYData
+from covid_crawlers.c_asia.af_data.AFData import AFData
+from covid_crawlers.humdata.iq_data.IQData import IQData
+from covid_crawlers.humdata.ly_data.LYData import LYData
 
-from covid_19_au_grab.covid_crawlers.mid_east.il_data.ILWikiData import ILWikiData
-from covid_19_au_grab.covid_crawlers.mid_east.iq_data.IQWikiData import IQWikiData
-from covid_19_au_grab.covid_crawlers.mid_east.om_data.OMData import OMData
-from covid_19_au_grab.covid_crawlers.mid_east.ps_data.PSData import PSData
-from covid_19_au_grab.covid_crawlers.mid_east.sa_data.SAData import SAData
-from covid_19_au_grab.covid_crawlers.mid_east.tr_data.TRData import TRData
-from covid_19_au_grab.covid_crawlers.mid_east.tr_data.TRWikiData import TRWikiData
-from covid_19_au_grab.covid_crawlers.mid_east.ye_data.YEData import YEData
-#from covid_19_au_grab.overseas.ye_data.YEData import YEData
+from covid_crawlers.mid_east.il_data.ILWikiData import ILWikiData
+from covid_crawlers.mid_east.iq_data.IQWikiData import IQWikiData
+from covid_crawlers.mid_east.om_data.OMData import OMData
+from covid_crawlers.mid_east.ps_data.PSData import PSData
+from covid_crawlers.mid_east.sa_data.SAData import SAData
+from covid_crawlers.mid_east.tr_data.TRData import TRData
+from covid_crawlers.mid_east.tr_data.TRWikiData import TRWikiData
+from covid_crawlers.mid_east.ye_data.YEData import YEData
+#from overseas.ye_data.YEData import YEData
 
 MIDDLE_EAST_DATA = (
     AFData, IQData, LYData, OMData, PSData, SAData,
@@ -150,15 +150,15 @@ MIDDLE_EAST_DATA = (
 # World
 #==================================================================#
 
-from covid_19_au_grab.covid_crawlers.world.world_bing_data.WorldBingData import WorldBingData
-from covid_19_au_grab.covid_crawlers.world.world_jhu_data.WorldJHUData import \
+from covid_crawlers.world.world_bing_data.WorldBingData import WorldBingData
+from covid_crawlers.world.world_jhu_data.WorldJHUData import \
     WorldJHUDataAdmin0, WorldJHUDataAdmin1, WorldJHUDataAdmin2
-from covid_19_au_grab.covid_crawlers.world.world_um_data.WorldUMData import WorldUMData
-from covid_19_au_grab.covid_crawlers.world.world_google_mobility.WorldGoogleMobility import WorldGoogleMobility
-from covid_19_au_grab.covid_crawlers.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
-from covid_19_au_grab.covid_crawlers.world.world_owid_data.WorldOWIDData import WorldOWIDData
-from covid_19_au_grab.covid_crawlers.world.world_who.WorldWHO import WorldWHO
-from covid_19_au_grab.covid_crawlers.world.world_gender_disaggregated.WorldGenderDisaggregated import WorldGenderDisaggregated
+from covid_crawlers.world.world_um_data.WorldUMData import WorldUMData
+from covid_crawlers.world.world_google_mobility.WorldGoogleMobility import WorldGoogleMobility
+from covid_crawlers.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
+from covid_crawlers.world.world_owid_data.WorldOWIDData import WorldOWIDData
+from covid_crawlers.world.world_who.WorldWHO import WorldWHO
+from covid_crawlers.world.world_gender_disaggregated.WorldGenderDisaggregated import WorldGenderDisaggregated
 
 WORLD_DATA = (
     WorldUMData,

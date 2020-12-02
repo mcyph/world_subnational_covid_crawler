@@ -1,7 +1,7 @@
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URLBase
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
-from covid_19_au_grab.covid_crawlers.se_asia.jp_tokyo_data.extract_from_tokyo_pdf import ExtractFromTokyoPDF
+from covid_crawlers._base_classes.URLBase import URLBase
+from _utility.get_package_dir import get_overseas_dir
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_crawlers.se_asia.jp_tokyo_data.extract_from_tokyo_pdf import ExtractFromTokyoPDF
 
 
 class JPTokyoCityPDFs(URLBase):

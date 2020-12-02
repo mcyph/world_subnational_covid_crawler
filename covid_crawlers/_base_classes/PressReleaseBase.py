@@ -3,8 +3,8 @@ from os.path import exists, dirname
 from urllib.request import urlretrieve
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.covid_crawlers._base_classes.GlobalBase import GlobalBase
-from covid_19_au_grab._utility.URLArchiver import URLArchiver
+from covid_crawlers._base_classes.GlobalBase import GlobalBase
+from _utility.URLArchiver import URLArchiver
 
 
 class PressReleaseBase(GlobalBase):

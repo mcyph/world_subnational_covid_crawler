@@ -1,6 +1,6 @@
 import csv
 
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
 

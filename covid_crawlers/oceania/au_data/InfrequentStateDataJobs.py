@@ -13,7 +13,7 @@ class InfrequentStateDataJobs:
         return self._status
 
     def update_vic_tableau(self):
-        from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.deprecated.VicTableau import \
+        from covid_crawlers.oceania.au_data.vic.deprecated.VicTableau import \
             run_vic_tableau
         try:
             run_vic_tableau()
@@ -31,7 +31,7 @@ class InfrequentStateDataJobs:
             }
 
     def update_act_powerbi(self):
-        from covid_19_au_grab.covid_crawlers.oceania.au_data.act.ACTPowerBI import \
+        from covid_crawlers.oceania.au_data.act.ACTPowerBI import \
             ACTPowerBI
         try:
             ACTPowerBI().run_powerbi_grabber()
@@ -49,7 +49,7 @@ class InfrequentStateDataJobs:
             }
 
     def update_wa_regions(self):
-        from covid_19_au_grab.covid_crawlers.oceania.au_data.wa.WADash import \
+        from covid_crawlers.oceania.au_data.wa.WADash import \
             run_wa_dash
         try:
             run_wa_dash()
@@ -67,7 +67,7 @@ class InfrequentStateDataJobs:
             }
 
     def update_sa_regions(self):
-        from covid_19_au_grab.covid_crawlers.oceania.au_data.sa.SARegions import run_sa_regions
+        from covid_crawlers.oceania.au_data.sa.SARegions import run_sa_regions
 
         try:
             run_sa_regions()

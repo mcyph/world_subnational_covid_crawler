@@ -1,15 +1,15 @@
 from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateNewsBase import (
+from covid_crawlers.oceania.au_data.StateNewsBase import (
     StateNewsBase, bothlistingandstat,
     ALWAYS_DOWNLOAD_LISTING
 )
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.word_to_number import word_to_number
-from covid_19_au_grab._utility.URLArchiver import URLArchiver
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.word_to_number import word_to_number
+from _utility.URLArchiver import URLArchiver
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 class QLDNews(StateNewsBase):

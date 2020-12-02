@@ -6,12 +6,12 @@ from os.path import exists
 from pyquery import PyQuery as _pq
 from urllib.request import urlopen
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_crawlers.se_asia.jp_data.jp_city_data import get_tokyo_cities_to_en_map
-from covid_19_au_grab.covid_crawlers.se_asia.jp_tokyo_data.get_text_from_pdf import get_text_from_pdf
-from covid_19_au_grab.covid_crawlers.se_asia.jp_tokyo_data.tokyo_pdf_stats_map import stats_map, CITY
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.get_package_dir import get_overseas_dir
+from covid_crawlers.se_asia.jp_data.jp_city_data import get_tokyo_cities_to_en_map
+from covid_crawlers.se_asia.jp_tokyo_data.get_text_from_pdf import get_text_from_pdf
+from covid_crawlers.se_asia.jp_tokyo_data.tokyo_pdf_stats_map import stats_map, CITY
 
 _tokyo_cities_to_en = get_tokyo_cities_to_en_map()
 
@@ -26,10 +26,11 @@ def pq(*args, **kw):
             time.sleep(1)
 
 
+PDFS_BASE_DIR = get_overseas_dir() / 'jp_city_data' / 'pdfs'
+
+
 class ExtractFromTokyoPDF:
     def download_pdfs(self, only_most_recent=True):
-        base_dir = get_package_dir() / 'covid_crawlers' / 'se_asia' / 'jp_tokyo_data' / 'tokyocities_pdf'
-
         current_month = datetime.datetime.now().month
 
         if only_most_recent:
@@ -55,7 +56,7 @@ class ExtractFromTokyoPDF:
                 d = int(d)
                 m = int(m)
                 y = int(y)
-                out_path = base_dir / (f'tokyocities_%04d_%02d_%02d.pdf' % (y, m, d))
+                out_path = PDFS_BASE_DIR / (f'tokyocities_%04d_%02d_%02d.pdf' % (y, m, d))
 
                 if not exists(out_path):
                     self._download_pdfs_from_month_page(
@@ -85,15 +86,13 @@ class ExtractFromTokyoPDF:
         time.sleep(5)
 
     def get_from_pdfs(self):
-        base_dir = get_package_dir() / 'covid_crawlers' / 'se_asia' / 'jp_tokyo_data' / 'tokyocities_pdf'
-
         r = []
-        for fnam in sorted(listdir(base_dir)):
+        for fnam in sorted(listdir(PDFS_BASE_DIR)):
             if not '.pdf' in fnam:
                 continue
             #elif not '2020_08_09' in fnam:
             #    continue
-            path = base_dir / fnam
+            path = PDFS_BASE_DIR / fnam
 
             found_fumei = False
             text_items = get_text_from_pdf(path, [0])

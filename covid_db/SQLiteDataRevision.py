@@ -5,9 +5,9 @@ from io import StringIO
 from pytz import timezone
 from os.path import getctime
 
-from covid_19_au_grab.covid_db.DataPointsDB import DataPointsDB
-from covid_19_au_grab._utility.get_package_dir import get_output_dir
-from covid_19_au_grab.covid_db.datatypes.datapoints_thinned_out import datapoints_thinned_out
+from covid_db.DataPointsDB import DataPointsDB
+from _utility.get_package_dir import get_output_dir
+from covid_db.datatypes.datapoints_thinned_out import datapoints_thinned_out
 
 
 OUTPUT_DIR = get_output_dir() / 'output'

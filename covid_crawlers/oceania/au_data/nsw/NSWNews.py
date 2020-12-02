@@ -1,11 +1,11 @@
 from pyquery import PyQuery as pq
 from re import compile, MULTILINE, DOTALL, IGNORECASE
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.word_to_number import word_to_number
-from covid_19_au_grab._utility.URLArchiver import URLArchiver
+from covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, singledaystat, ALWAYS_DOWNLOAD_LISTING, bothlistingandstat
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.word_to_number import word_to_number
+from _utility.URLArchiver import URLArchiver
 
 
 class NSWNews(StateNewsBase):

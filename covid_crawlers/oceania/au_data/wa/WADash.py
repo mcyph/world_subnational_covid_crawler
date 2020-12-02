@@ -20,7 +20,7 @@ from os.path import expanduser
 from urllib.request import urlopen
 from browsermobproxy import Server
 from selenium import webdriver
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
+from _utility.get_package_dir import get_data_dir
 
 
 BROWSER_MOB_PROXY_LOC = expanduser(

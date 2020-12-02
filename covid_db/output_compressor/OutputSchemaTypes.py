@@ -2,7 +2,7 @@ import json
 
 from os import listdir
 from os.path import expanduser
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 class OutputSchemaTypes:

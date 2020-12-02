@@ -2,9 +2,9 @@ import csv
 from os.path import exists
 from urllib.request import urlretrieve
 
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_data_dir
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 # https://docs.google.com/spreadsheets/d/1oxJt0BBPzk-w2Gn1ImO4zASBCdqeeLJRwHEA4DASBFQ/edit#gid=0

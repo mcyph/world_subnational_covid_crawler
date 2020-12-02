@@ -2,19 +2,19 @@ import sys
 import json
 import datetime
 
-from covid_19_au_grab._utility.Logger import Logger
-from covid_19_au_grab._utility.get_package_dir import get_output_dir
-from covid_19_au_grab.covid_crawlers._base_classes.OverseasDataSources import OverseasDataSources
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateDataSources import StateDataSources
-from covid_19_au_grab.covid_crawlers.oceania.au_data.InfrequentStateDataJobs import InfrequentStateDataJobs
+from _utility.Logger import Logger
+from _utility.get_package_dir import get_output_dir
+from covid_crawlers._base_classes.OverseasDataSources import OverseasDataSources
+from covid_crawlers.oceania.au_data.StateDataSources import StateDataSources
+from covid_crawlers.oceania.au_data.InfrequentStateDataJobs import InfrequentStateDataJobs
 
-from covid_19_au_grab.covid_db.RevisionIDs import RevisionIDs
-from covid_19_au_grab.covid_db.DerivedData import DerivedData
-from covid_19_au_grab.covid_db.DataPointsDB import DataPointsDB
-from covid_19_au_grab.covid_db.delete_old_dbs import delete_old_dbs
-from covid_19_au_grab.covid_db.SQLiteDataRevisions import SQLiteDataRevisions
-from covid_19_au_grab.covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
-from covid_19_au_grab._utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson
+from covid_db.RevisionIDs import RevisionIDs
+from covid_db.DerivedData import DerivedData
+from covid_db.DataPointsDB import DataPointsDB
+from covid_db.delete_old_dbs import delete_old_dbs
+from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
+from covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
+from _utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson
 
 
 OUTPUT_DIR = get_output_dir() / 'output'

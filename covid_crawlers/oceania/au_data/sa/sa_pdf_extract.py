@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import pdf2image
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 PDFS_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'sa' / 'pdfs'

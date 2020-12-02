@@ -1,10 +1,10 @@
 import json
 import datetime
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.URLArchiver import URLArchiver
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.URLArchiver import URLArchiver
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 class SAJSONReader:

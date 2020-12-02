@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from covid_19_au_grab.misc_data_scripts.other_data import TimeSeriesSource
+from misc_data_scripts.other_data import TimeSeriesSource
 
 
 class UnderlayDataBase(ABC):

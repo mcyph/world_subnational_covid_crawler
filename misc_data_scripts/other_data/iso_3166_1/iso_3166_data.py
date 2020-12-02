@@ -1,7 +1,7 @@
 import re
 import csv
 from collections import namedtuple
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 Coord = namedtuple('Coord', [

@@ -1,11 +1,11 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_crawlers.africa.west_africa_data.WestAfricaPowerBI import WestAfricaPowerBI, get_globals
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers.africa.west_africa_data.WestAfricaPowerBI import WestAfricaPowerBI, get_globals
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
 
 
 class _WestAfricaPowerBI(PowerBIDataReader):

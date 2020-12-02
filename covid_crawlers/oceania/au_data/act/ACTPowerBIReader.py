@@ -1,10 +1,10 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_crawlers.oceania.au_data.act.ACTPowerBI import ACTPowerBI, get_globals
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers.oceania.au_data.act.ACTPowerBI import ACTPowerBI, get_globals
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
 
 
 class ACTPowerBIReader(PowerBIDataReader):

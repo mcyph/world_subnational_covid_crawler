@@ -5,12 +5,12 @@ import brotli
 import zipfile
 from os import listdir
 
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_db.datatypes.schema_types import schema_types
-from covid_19_au_grab.covid_db.SQLiteDataRevision import SQLiteDataRevision
-from covid_19_au_grab.covid_db.output_compressor.OutputSchemaTypes import OutputSchemaTypes
-from covid_19_au_grab.covid_db.output_compressor.TimeSeriesDataPoints import TimeSeriesDataPoints
-from covid_19_au_grab.world_geodata.get_population_map import get_population_map
+from _utility.get_package_dir import get_package_dir
+from covid_db.datatypes.schema_types import schema_types
+from covid_db.SQLiteDataRevision import SQLiteDataRevision
+from covid_db.output_compressor.OutputSchemaTypes import OutputSchemaTypes
+from covid_db.output_compressor.TimeSeriesDataPoints import TimeSeriesDataPoints
+from world_geodata.get_population_map import get_population_map
 
 
 def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None):

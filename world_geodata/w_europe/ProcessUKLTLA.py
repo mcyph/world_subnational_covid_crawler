@@ -1,7 +1,7 @@
 # NOTE: LTLA = lower tier-level authority, in finer granularity than UTLA
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
-from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
-from covid_19_au_grab.covid_crawlers.w_europe.uk_data.uk_place_map import place_map
+from world_geodata.ProcessGeoJSONBase import ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
+from _utility.normalize_locality_name import normalize_locality_name
+from covid_crawlers.w_europe.uk_data.uk_place_map import place_map
 
 
 class ProcessUKArea(ProcessGeoJSONBase):

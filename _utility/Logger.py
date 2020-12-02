@@ -1,6 +1,6 @@
 import datetime
 
-from covid_19_au_grab.covid_db.RevisionIDs import RevisionIDs
+from covid_db.RevisionIDs import RevisionIDs
 
 
 TIME_FORMAT = datetime.datetime \

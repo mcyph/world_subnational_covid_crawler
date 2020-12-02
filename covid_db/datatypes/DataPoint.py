@@ -1,10 +1,10 @@
 import csv
 from collections import namedtuple
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_db.datatypes.SchemaTypeInfo import get_schema_type_info
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_package_dir
+from covid_db.datatypes.SchemaTypeInfo import get_schema_type_info
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
 
 
 def _get_mappings_to_iso_3166():

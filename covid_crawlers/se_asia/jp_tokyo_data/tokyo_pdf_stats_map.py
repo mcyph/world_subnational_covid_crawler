@@ -1,4 +1,4 @@
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 class CITY:

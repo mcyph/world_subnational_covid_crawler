@@ -5,11 +5,11 @@ import json
 import datetime
 from os import listdir
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 DATA_URL = 'https://maps.registrucentras.lt/arcgis/rest/services/covid/savivaldybes/FeatureServer/0/query?f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=%7B%22xmin%22%3A2504688.542843003%2C%22ymin%22%3A5009377.085700966%2C%22xmax%22%3A5009377.08569099%2C%22ymax%22%3A7514065.628548957%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100&resultType=tile&quantizationParameters=%7B%22mode%22%3A%22view%22%2C%22originPosition%22%3A%22upperLeft%22%2C%22tolerance%22%3A4891.96981024998%2C%22extent%22%3A%7B%22xmin%22%3A306507.4031%2C%22ymin%22%3A5973291.0439%2C%22xmax%22%3A680103.2769%2C%22ymax%22%3A6257813.452%2C%22spatialReference%22%3A%7B%22wkid%22%3A2600%2C%22latestWkid%22%3A3346%7D%7D%7D&callback=dojo_request_script_callbacks.dojo_request_script57'

@@ -3,11 +3,11 @@ import json
 import datetime
 from os import listdir
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 #REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'

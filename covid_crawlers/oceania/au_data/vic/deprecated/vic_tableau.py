@@ -2,7 +2,7 @@ import json
 from pprint import pprint
 from os import listdir
 
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
+from _utility.get_package_dir import get_data_dir
 
 SOURCE_URL = 'https://www.dhhs.vic.gov.au/victorian-coronavirus-covid-19-data'
 

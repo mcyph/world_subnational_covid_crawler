@@ -1,5 +1,5 @@
 import csv
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 PATH = get_package_dir() / 'covid_crawlers' / 'world' / 'world_jhu_data' / 'state_and_county_fips.csv'
 

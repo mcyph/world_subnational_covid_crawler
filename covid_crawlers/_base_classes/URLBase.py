@@ -2,7 +2,7 @@ import requests
 from os import makedirs
 from os.path import exists, dirname
 from collections import namedtuple
-from covid_19_au_grab.covid_crawlers._base_classes.GlobalBase import GlobalBase
+from covid_crawlers._base_classes.GlobalBase import GlobalBase
 
 
 URL = namedtuple('URL', [

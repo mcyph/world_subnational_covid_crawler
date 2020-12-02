@@ -5,8 +5,8 @@ import rasterio
 import rasterio.mask
 import geopandas as gpd
 from shapely.geometry import mapping
-from covid_19_au_grab.misc_data_scripts.other_data import get_population_dict
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from misc_data_scripts.other_data import get_population_dict
+from _utility.get_package_dir import get_package_dir
 
 
 # Population data from https://www.worldpop.org/project/categories?id=3

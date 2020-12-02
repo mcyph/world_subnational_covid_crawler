@@ -1,11 +1,11 @@
 import json
 from os import listdir
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 DATA_URL = 'https://services7.arcgis.com/g8j6ESLxQjUogx9p/arcgis/rest/services/Latvia_covid_novadi/FeatureServer/0/query?f=json&where=Novadu_radit%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Novadu_radit%20desc&outSR=102100&resultOffset=0&resultRecordCount=4000&resultType=standard&cacheHint=true'

@@ -3,7 +3,7 @@ import zipfile
 from os import listdir
 from os.path import exists
 
-from covid_19_au_grab.covid_crawlers._base_classes.GlobalBase import \
+from covid_crawlers._base_classes.GlobalBase import \
     GlobalBase
 
 

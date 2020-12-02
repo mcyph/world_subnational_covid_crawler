@@ -1,10 +1,10 @@
 from pyquery import PyQuery as pq
 from re import compile, IGNORECASE
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, singledaystat
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.word_to_number import word_to_number
+from covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, singledaystat
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.word_to_number import word_to_number
 
 
 class ACTNews(StateNewsBase):

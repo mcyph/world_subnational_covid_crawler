@@ -1,10 +1,10 @@
 import json
 from os import listdir
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
 
 
 # http://www.geodata.cn/sari2020/web/yiqingMap.html

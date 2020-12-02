@@ -1,12 +1,12 @@
 import csv
 from os import listdir
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
-from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
-from covid_19_au_grab.covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_data_dir
+from _utility.normalize_locality_name import normalize_locality_name
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 class VicCSV(URLBase):

@@ -1,6 +1,6 @@
-from covid_19_au_grab.covid_crawlers.oceania.au_data.PowerBIBase import \
+from covid_crawlers.oceania.au_data.PowerBIBase import \
     PowerBIBase
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
+from _utility.get_package_dir import get_data_dir
 
 
 class ACTPowerBI(PowerBIBase):

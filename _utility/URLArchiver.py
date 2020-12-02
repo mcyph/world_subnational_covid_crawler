@@ -8,7 +8,7 @@ from urllib.request import urlretrieve
 from os.path import isfile, exists, dirname
 from urllib.request import urlretrieve, urlopen
 
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
+from _utility.get_package_dir import get_data_dir
 
 
 #ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())

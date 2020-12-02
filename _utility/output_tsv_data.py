@@ -2,9 +2,9 @@ import os
 import json
 from os import listdir
 
-from covid_19_au_grab.covid_db.SQLiteDataRevision import SQLiteDataRevision
-from covid_19_au_grab._utility.get_package_dir import get_global_subnational_covid_data_dir, get_package_dir
-from covid_19_au_grab.world_geodata.get_population_map import get_population_map
+from covid_db.SQLiteDataRevision import SQLiteDataRevision
+from _utility.get_package_dir import get_global_subnational_covid_data_dir, get_package_dir
+from world_geodata.get_population_map import get_population_map
 
 
 def output_tsv_data(time_format, latest_revision_id):

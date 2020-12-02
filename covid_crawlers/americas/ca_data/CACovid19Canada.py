@@ -2,12 +2,12 @@
 
 import csv
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_crawlers._base_classes.GithubRepo import GithubRepo
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_crawlers.americas.ca_data.hr_convert import health_region_to_uid, province_to_iso_3166_2
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_crawlers._base_classes.GithubRepo import GithubRepo
+from _utility.get_package_dir import get_overseas_dir
+from covid_crawlers.americas.ca_data.hr_convert import health_region_to_uid, province_to_iso_3166_2
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
 
 _ltrc = LabelsToRegionChild()
 

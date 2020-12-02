@@ -1,7 +1,7 @@
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 iso639_map = {
     'sme': 'se',

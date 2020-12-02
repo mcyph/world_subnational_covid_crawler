@@ -1,10 +1,10 @@
 import json
 from collections import Counter
 
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_crawlers._base_classes.GithubRepo import GithubRepo
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers._base_classes.GithubRepo import GithubRepo
+from _utility.get_package_dir import get_overseas_dir
 
 
 class NZData(GithubRepo):

@@ -2,7 +2,7 @@ import os
 from os import makedirs
 from os.path import dirname
 
-from covid_19_au_grab._utility.get_package_dir import get_output_dir
+from _utility.get_package_dir import get_output_dir
 
 
 class RevisionIDs:

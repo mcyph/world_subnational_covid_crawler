@@ -1,10 +1,10 @@
 # https://github.com/jlacko/RCzechia
 # {"KOD_OKRES":"40185","KOD_LAU1":"CZ0203","NAZ_LAU1":"Kladno","KOD_KRAJ":"3026","KOD_CZNUTS3":"CZ020","NAZ_CZNUTS3":"Stďż˝edoďż˝eskďż˝ kraj"}
 
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
-from covid_19_au_grab._utility.normalize_locality_name import (
+from _utility.normalize_locality_name import (
     normalize_locality_name
 )
 

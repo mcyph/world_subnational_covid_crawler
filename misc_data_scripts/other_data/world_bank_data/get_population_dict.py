@@ -1,6 +1,6 @@
 import csv
-from covid_19_au_grab.misc_data_scripts.other_data.iso_3166_1.iso_3166_data import get_data_item_by_code
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from misc_data_scripts.other_data.iso_3166_1.iso_3166_data import get_data_item_by_code
+from _utility.get_package_dir import get_package_dir
 
 
 def get_population_dict(year):

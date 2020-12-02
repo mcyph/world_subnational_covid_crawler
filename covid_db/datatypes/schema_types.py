@@ -1,5 +1,5 @@
 import json
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 with open(get_package_dir() / 'covid_db' / 'datatypes' / 'schema_types.json',

@@ -2,7 +2,7 @@ import datetime
 from os import listdir
 from pytz import timezone
 from os.path import getctime
-from covid_19_au_grab._utility.get_package_dir import get_output_dir
+from _utility.get_package_dir import get_output_dir
 
 
 OUTPUT_DIR = get_output_dir() / 'output'

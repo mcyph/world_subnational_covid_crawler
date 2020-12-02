@@ -1,9 +1,9 @@
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.covid_crawlers._base_classes.PressReleaseBase import PressReleaseBase
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
+from covid_crawlers._base_classes.PressReleaseBase import PressReleaseBase
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from _utility.get_package_dir import get_overseas_dir
 
 
 class ZAData(PressReleaseBase):

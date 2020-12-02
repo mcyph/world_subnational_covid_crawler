@@ -1,10 +1,10 @@
 import csv
 
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.covid_crawlers.world.world_bing_data.world_bing_mappings import world_bing_mappings
-from covid_19_au_grab.covid_crawlers._base_classes.GithubRepo import GithubRepo
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from covid_crawlers.world.world_bing_data.world_bing_mappings import world_bing_mappings
+from covid_crawlers._base_classes.GithubRepo import GithubRepo
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 class WorldBingData(GithubRepo):

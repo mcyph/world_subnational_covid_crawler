@@ -1,7 +1,7 @@
-from covid_19_au_grab.covid_crawlers._base_classes.GithubRepo import (
+from covid_crawlers._base_classes.GithubRepo import (
     GithubRepo
 )
-from covid_19_au_grab._utility.get_package_dir import (
+from _utility.get_package_dir import (
     get_overseas_dir
 )
 

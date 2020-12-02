@@ -1,7 +1,7 @@
 from collections import Counter, defaultdict
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas
-from covid_19_au_grab.covid_db.datatypes.datapoints_thinned_out import datapoints_thinned_out
+from covid_db.datatypes.enums import Schemas
+from covid_db.datatypes.datapoints_thinned_out import datapoints_thinned_out
 
 
 class TimeSeriesDataPoints:

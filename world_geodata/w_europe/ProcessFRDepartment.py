@@ -1,10 +1,10 @@
-from covid_19_au_grab.world_geodata.ProcessGeoJSONBase import (
+from world_geodata.ProcessGeoJSONBase import (
     ProcessGeoJSONBase, DATA_DIR, OUTPUT_DIR
 )
-from covid_19_au_grab._utility.normalize_locality_name import (
+from _utility.normalize_locality_name import (
     normalize_locality_name
 )
-from covid_19_au_grab.covid_crawlers.w_europe.fr_data.fr_region_maps import (
+from covid_crawlers.w_europe.fr_data.fr_region_maps import (
     place_map, department_to_region_map
 )
 

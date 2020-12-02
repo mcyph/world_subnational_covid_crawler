@@ -1,8 +1,8 @@
 import glob
 import datetime
-from covid_19_au_grab.covid_crawlers.oceania.au_data.PowerBIBase import \
+from covid_crawlers.oceania.au_data.PowerBIBase import \
     PowerBIBase
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
+from _utility.get_package_dir import get_overseas_dir
 
 
 class WestAfricaPowerBI(PowerBIBase):

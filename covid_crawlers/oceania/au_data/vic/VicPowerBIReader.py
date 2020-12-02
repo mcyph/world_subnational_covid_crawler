@@ -1,11 +1,11 @@
 from os.path import exists
 from datetime import datetime
 
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
-from covid_19_au_grab.covid_crawlers.oceania.au_data.vic.deprecated.VicPowerBI import VicPowerBI, get_globals
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.get_package_dir import get_data_dir
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_crawlers.oceania.au_data.PowerBIDataReader import PowerBIDataReader
+from covid_crawlers.oceania.au_data.vic.deprecated.VicPowerBI import VicPowerBI, get_globals
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.get_package_dir import get_data_dir
 
 
 BASE_PATH = get_data_dir() / 'vic' / 'powerbi'

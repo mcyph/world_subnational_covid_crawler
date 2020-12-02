@@ -1,7 +1,7 @@
 import datetime
 from os import listdir, unlink
 
-DB_DIR = '/mnt/ssd_970pro_512gb/covid_19_au_grab/output/'
+DB_DIR = '/mnt/ssd_970pro_512gb/world_subnational_covid_crawler/output/'
 
 ACTUALLY_DELETE = True
 DELETE_BEFORE = (

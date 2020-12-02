@@ -1,11 +1,11 @@
 from re import compile
 from pyquery import PyQuery as pq
 
-from covid_19_au_grab.covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, bothlistingandstat, singledaystat
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.word_to_number import word_to_number
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from covid_crawlers.oceania.au_data.StateNewsBase import StateNewsBase, bothlistingandstat, singledaystat
+from covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.word_to_number import word_to_number
+from _utility.get_package_dir import get_package_dir
 
 
 OUTPUT_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'sa' / 'output'

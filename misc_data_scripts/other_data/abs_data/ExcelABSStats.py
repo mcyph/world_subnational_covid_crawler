@@ -1,18 +1,18 @@
 import csv
 from glob import glob
 
-from covid_19_au_grab.misc_data_scripts.other_data import UnderlayDataBase
-from covid_19_au_grab.misc_data_scripts.other_data.TimeSeriesKey import \
+from misc_data_scripts.other_data import UnderlayDataBase
+from misc_data_scripts.other_data.TimeSeriesKey import \
     TimeSeriesKey, DataTypes.PERCENT, DataTypes.INTEGER, DataTypes.FLOATING_POINT
-from covid_19_au_grab.misc_data_scripts.other_data import DataPoint
-from covid_19_au_grab.misc_data_scripts.other_data import DateType
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from misc_data_scripts.other_data import DataPoint
+from misc_data_scripts.other_data import DateType
+from covid_db.datatypes.enums import Schemas, DataTypes
 
-from covid_19_au_grab.misc_data_scripts.other_data.abs_data.lga_to_state_and_name import \
+from misc_data_scripts.other_data.abs_data.lga_to_state_and_name import \
     get_lga_to_state_and_name_dict
-from covid_19_au_grab._utility.normalize_locality_name import \
+from _utility.normalize_locality_name import \
     normalize_locality_name
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 
 lga_dict = get_lga_to_state_and_name_dict()

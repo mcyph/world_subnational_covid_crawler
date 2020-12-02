@@ -1,9 +1,9 @@
 import sqlite3
 from os.path import exists
 
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from _utility.get_package_dir import get_package_dir
+from covid_db.datatypes.enums import Schemas, DataTypes
 
 
 class DataPointsDB:
@@ -522,8 +522,8 @@ class DataPointsDB:
 
 
 if __name__ == '__main__':
-    from covid_19_au_grab.covid_db.SQLiteDataRevisions import SQLiteDataRevisions
-    from covid_19_au_grab.covid_db.SQLiteDataRevision import SQLiteDataRevision
+    from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
+    from covid_db.SQLiteDataRevision import SQLiteDataRevision
 
     rev_date, rev_subid, dt = SQLiteDataRevisions().get_revisions()[0]
     dr = SQLiteDataRevision(rev_date, rev_subid)

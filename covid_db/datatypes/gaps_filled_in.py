@@ -1,5 +1,5 @@
-from covid_19_au_grab.covid_db.datatypes.DataPoint import DataPoint
-from covid_19_au_grab.covid_db.datatypes.enums import DataTypes
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import DataTypes
 
 
 def gaps_filled_in(datapoints):

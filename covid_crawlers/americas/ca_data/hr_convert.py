@@ -1,5 +1,5 @@
 import csv
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir
 
 HR_MAP_PATH = get_package_dir() / 'covid_crawlers' / 'americas' / 'ca_data' / 'hr_map.csv'
 

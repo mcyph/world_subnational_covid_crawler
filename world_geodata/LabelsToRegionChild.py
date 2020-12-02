@@ -1,8 +1,8 @@
 import json
 from os import listdir
-from covid_19_au_grab._utility.get_package_dir import get_package_dir
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas
-from covid_19_au_grab._utility.normalize_locality_name import normalize_locality_name
+from _utility.get_package_dir import get_package_dir
+from covid_db.datatypes.enums import Schemas
+from _utility.normalize_locality_name import normalize_locality_name
 
 
 _labels_to_region_child = [None]

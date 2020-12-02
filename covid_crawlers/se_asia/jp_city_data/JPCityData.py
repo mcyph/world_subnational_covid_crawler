@@ -1,14 +1,14 @@
 import csv
 from collections import Counter
 
-from covid_19_au_grab.covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_19_au_grab.covid_db.datatypes.enums import Schemas, DataTypes
-from covid_19_au_grab._utility.get_package_dir import get_overseas_dir
-from covid_19_au_grab.world_geodata.LabelsToRegionChild import LabelsToRegionChild
-from covid_19_au_grab.covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.get_package_dir import get_overseas_dir
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_DEV
 
-from covid_19_au_grab.covid_crawlers.se_asia.jp_city_data.JPCityDataCityMap import city_map
-from covid_19_au_grab.covid_crawlers.se_asia.jp_city_data.JPCityDataBikouMap import bikou_map
+from covid_crawlers.se_asia.jp_city_data.JPCityDataCityMap import city_map
+from covid_crawlers.se_asia.jp_city_data.JPCityDataBikouMap import bikou_map
 
 
 # https://stopcovid19.metro.tokyo.lg.jp/
