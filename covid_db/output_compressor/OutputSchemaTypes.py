@@ -18,7 +18,7 @@ class OutputSchemaTypes:
         """
 
         """
-        with open(get_package_dir() / 'datatypes' / 'schema_types.json',
+        with open(get_package_dir() / 'covid_db' / 'datatypes' / 'schema_types.json',
                   'r', encoding='utf-8') as f:
 
             data = f.read()

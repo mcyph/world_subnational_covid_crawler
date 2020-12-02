@@ -1,4 +1,5 @@
 import datetime
+from os.path import exists
 from pyquery import PyQuery as pq
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
@@ -126,6 +127,8 @@ class StateNewsBase(ABC):
             for period in self.current_status_ua.iter_periods():
                 for subperiod_id, subdir in self.current_status_ua.iter_paths_for_period(period):
                     path = self.current_status_ua.get_path(subdir)
+                    if not exists(path):
+                        continue
 
                     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
                         html = self.current_status_ua.unicode_fix(
@@ -270,7 +273,11 @@ class StateNewsBase(ABC):
             for subperiod_id, dir_ in self.listing_ua.iter_paths_for_period(
                 period, newest_first=False
             ):
-                with open(self.listing_ua.get_path(dir_), 'r',
+                path = self.listing_ua.get_path(dir_)
+                if not exists(path):
+                    continue
+
+                with open(path, 'r',
                           encoding='utf-8',
                           errors='replace') as f:
 
