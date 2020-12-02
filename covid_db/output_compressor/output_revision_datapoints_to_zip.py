@@ -20,7 +20,7 @@ def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None)
 
 
 USE_MSGPACK = False
-GEOJSON_DIR = get_package_dir() / 'geojson_data' / 'output'
+GEOJSON_DIR = get_package_dir() / 'world_geodata' / 'output'
 
 
 class _TimeSeriesDataZipper:

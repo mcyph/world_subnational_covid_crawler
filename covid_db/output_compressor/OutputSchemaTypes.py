@@ -46,7 +46,7 @@ class OutputSchemaTypes:
 
         """
         r = {}
-        dir_ = get_package_dir() / 'geojson_data' / 'output'
+        dir_ = get_package_dir() / 'world_geodata' / 'output'
 
         for fnam in listdir(dir_):
             if not (fnam == 'admin_0.json' or fnam.startswith('admin_1')):

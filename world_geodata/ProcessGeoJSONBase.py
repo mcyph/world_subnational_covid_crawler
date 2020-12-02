@@ -6,8 +6,8 @@ from covid_19_au_grab.covid_db.datatypes.schema_types import schema_types
 from covid_19_au_grab._utility.get_package_dir import get_package_dir
 
 
-OUTPUT_DIR = get_package_dir() / 'geojson_data' / 'output'
-DATA_DIR = get_package_dir() / 'geojson_data' / 'data'
+OUTPUT_DIR = get_package_dir() / 'world_geodata' / 'output'
+DATA_DIR = get_package_dir() / 'world_geodata' / 'data'
 
 
 class ProcessGeoJSONBase(ABC):

@@ -60,7 +60,7 @@ for path in base_path.iterdir():
 
 print()
 
-with open(get_package_dir() / 'geojson_data' / 'geojson_pop.tsv', 'w', encoding='utf-8') as f:
+with open(get_package_dir() / 'world_geodata' / 'geojson_pop.tsv', 'w', encoding='utf-8') as f:
     f.write('region_schema\tregion_parent\tregion_child\tpop_2020\tno_exc\n')
 
     for (region_schema, region_parent, region_child), pop in sorted(out.items()):

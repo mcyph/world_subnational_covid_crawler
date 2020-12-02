@@ -38,7 +38,7 @@ def output_source_info(source_info):
             f.write(f'| {source_id} | {source_url} | {source_desc} |\n')
 
 
-GEOJSON_DIR = get_package_dir() / 'geojson_data' / 'output'
+GEOJSON_DIR = get_package_dir() / 'world_geodata' / 'output'
 
 
 def output_geojson():
