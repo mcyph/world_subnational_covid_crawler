@@ -9,14 +9,16 @@ from covid_19_au_grab.get_package_dir import get_data_dir
 
 
 BASE_PATH = get_data_dir() / 'vic' / 'powerbi'
-SOURCE_URL = 'https://app.powerbi.com/view?r=' \
-             'eyJrIjoiODBmMmE3NWQtZWNlNC00OWRkLTk1NjYtM' \
-             'jM2YTY1MjI2NzdjIiwidCI6ImMwZTA2MDFmLTBmYW' \
-             'MtNDQ5Yy05Yzg4LWExMDRjNGViOWYyOCJ9'
-SOURCE_ID = 'vic_powerbi'
 
 
 class VicPowerBIReader(PowerBIDataReader):
+    SOURCE_ID = 'vic_powerbi'
+    SOURCE_URL = 'https://app.powerbi.com/view?r=' \
+             'eyJrIjoiODBmMmE3NWQtZWNlNC00OWRkLTk1NjYtM' \
+             'jM2YTY1MjI2NzdjIiwidCI6ImMwZTA2MDFmLTBmYW' \
+             'MtNDQ5Yy05Yzg4LWExMDRjNGViOWYyOCJ9'
+    SOURCE_DESCRIPTION = ''
+
     def __init__(self):
         base_path = VicPowerBI.PATH_PREFIX
         source_url = VicPowerBI.POWERBI_URL
@@ -138,8 +140,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
             previous_value = value
             # print(output[-1])
@@ -177,8 +179,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
 
             if region_string in self.totals_dict_postcode:
@@ -190,8 +192,8 @@ class VicPowerBIReader(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_string] - value[1],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL,
-                    source_id=SOURCE_ID
+                    source_url=self.SOURCE_URL,
+                    source_id=self.SOURCE_ID
                 ))
 
             previous_value = value
@@ -207,8 +209,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
 
             if region_child in self.totals_dict_postcode:
@@ -220,8 +222,8 @@ class VicPowerBIReader(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict_postcode[region_child],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL,
-                    source_id=SOURCE_ID
+                    source_url=self.SOURCE_URL,
+                    source_id=self.SOURCE_ID
                 ))
 
         return output
@@ -248,8 +250,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.TOTAL,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
             previous_value = value
             # print(output[-1])
@@ -287,8 +289,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=value[1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
 
             if region_string in self.totals_dict:
@@ -300,8 +302,8 @@ class VicPowerBIReader(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_string]-value[1],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL,
-                    source_id=SOURCE_ID
+                    source_url=self.SOURCE_URL,
+                    source_id=self.SOURCE_ID
                 ))
 
             previous_value = value
@@ -317,8 +319,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=DataTypes.STATUS_ACTIVE,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
 
             if region_child in self.totals_dict:
@@ -330,8 +332,8 @@ class VicPowerBIReader(PowerBIDataReader):
                     datatype=DataTypes.STATUS_RECOVERED,
                     value=self.totals_dict[region_child],
                     date_updated=updated_date,
-                    source_url=SOURCE_URL,
-                    source_id=SOURCE_ID
+                    source_url=self.SOURCE_URL,
+                    source_id=self.SOURCE_ID
                 ))
 
         return output
@@ -459,8 +461,8 @@ class VicPowerBIReader(PowerBIDataReader):
                     agerange=agerange,
                     value=value,
                     date_updated=updated_date,
-                    source_url=SOURCE_URL,
-                    source_id=SOURCE_ID
+                    source_url=self.SOURCE_URL,
+                    source_id=self.SOURCE_ID
                 ))
 
         return output
@@ -497,8 +499,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=vic_norm_map[source['C'][0]],
                 value=source['C'][1],
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
             added.add(vic_norm_map[source['C'][0]])
 
@@ -515,8 +517,8 @@ class VicPowerBIReader(PowerBIDataReader):
                 datatype=datatype,
                 value=0,
                 date_updated=updated_date,
-                source_url=SOURCE_URL,
-                source_id=SOURCE_ID
+                source_url=self.SOURCE_URL,
+                source_id=self.SOURCE_ID
             ))
 
         return output

@@ -9,7 +9,7 @@ from covid_19_au_grab.word_to_number import word_to_number
 
 class WANews(StateNewsBase):
     STATE_NAME = 'wa'
-    SOURCE_ISO_3166_2 = 'AU-WA'
+
     SOURCE_ID = 'au_wa_press_releases'
     SOURCE_URL = 'https://ww2.health.wa.gov.au/en/Articles/A_E/Coronavirus'
     SOURCE_DESCRIPTION = ''

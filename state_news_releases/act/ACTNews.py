@@ -10,6 +10,7 @@ from covid_19_au_grab.word_to_number import word_to_number
 
 class ACTNews(StateNewsBase):
     STATE_NAME = 'act'
+
     SOURCE_ID = 'au_act_press_releases'
     SOURCE_URL = 'https://www.covid19.act.gov.au'
     SOURCE_DESCRIPTION = ''

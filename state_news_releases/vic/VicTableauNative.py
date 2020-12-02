@@ -19,9 +19,9 @@ from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 class VicTableauNative(URLBase):
     # https://public.tableau.com/profile/vicdhhs#!/
+    SOURCE_ID = 'vic_tableau_native'
     SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
     SOURCE_DESCRIPTION = ''
-    SOURCE_ID = 'vic_tableau_native'
 
     def __init__(self):
         # Only raw_data4.json is currently being updated,
