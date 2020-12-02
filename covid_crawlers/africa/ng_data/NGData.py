@@ -45,7 +45,7 @@ class NGData(URLBase):
             'No. of Deaths': DataTypes.STATUS_DEATHS
         }
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = base_dir / date / 'index.html'
             try:
                 with open(path, 'r', encoding='utf-8') as f:

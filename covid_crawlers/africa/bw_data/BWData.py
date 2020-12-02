@@ -59,7 +59,7 @@ class BWData(URLBase):
         # "geo_code":5038,"lat":25.102372,"long":89.021208,"adjusted_cases":54.06590339,
         # "labels":"Joypurhat(55)","ObjectId":1332},"geometry":{"x":78920,"y":143477}}
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             added = set()
 
             confirmed = Counter()

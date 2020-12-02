@@ -45,7 +45,7 @@ class IEData(URLBase):
         out = DataPointMerger()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             r = self.sdpf()
             path = f'{base_dir}/{date}/county_data.csv'
 

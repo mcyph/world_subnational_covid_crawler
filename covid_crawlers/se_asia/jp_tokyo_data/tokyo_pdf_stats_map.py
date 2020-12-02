@@ -16,18 +16,18 @@ stats_map = {
     '調査中': (DataTypes.SOURCE_UNDER_INVESTIGATION, None),
     #'うち重症者': (DataTypes.STATUS_ICU, None),  # CHECK ME! =========================
 
-    '10歳未満': (DataTypes.TOTAL, '0-9'),
-    '10代': (DataTypes.TOTAL, '10-19'),
-    '20代': (DataTypes.TOTAL, '20-29'),
-    '30代': (DataTypes.TOTAL, '30-39'),
-    '40代': (DataTypes.TOTAL, '40-49'),
-    '50代': (DataTypes.TOTAL, '50-59'),
-    '60代': (DataTypes.TOTAL, '60-69'),
-    '70代': (DataTypes.TOTAL, '70-79'),
-    '80代': (DataTypes.TOTAL, '80-89'),
-    '90代': (DataTypes.TOTAL, '90-99'),
-    '100歳以上': (DataTypes.TOTAL, '100+'),
-    '不明_1': (DataTypes.TOTAL, 'Unknown'),  # FIXME!!! ===============================================
+    '10歳未満': (DataTypes.NEW, '0-9'),
+    '10代': (DataTypes.NEW, '10-19'),
+    '20代': (DataTypes.NEW, '20-29'),
+    '30代': (DataTypes.NEW, '30-39'),
+    '40代': (DataTypes.NEW, '40-49'),
+    '50代': (DataTypes.NEW, '50-59'),
+    '60代': (DataTypes.NEW, '60-69'),
+    '70代': (DataTypes.NEW, '70-79'),
+    '80代': (DataTypes.NEW, '80-89'),
+    '90代': (DataTypes.NEW, '90-99'),
+    '100歳以上': (DataTypes.NEW, '100+'),
+    '不明_1': (DataTypes.NEW, 'Unknown'),  # FIXME!!! ===============================================
 
     '男性': (DataTypes.TOTAL_MALE, None),
     '女性': (DataTypes.TOTAL_FEMALE, None),

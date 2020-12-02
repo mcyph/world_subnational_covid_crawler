@@ -146,9 +146,9 @@ class ExtractFromTokyoPDF:
             print(i)
             datatype, agerange = i
             return DataPoint(
-                region_schema=Schemas.JP_CITY,
-                region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
-                region_child='unknown',
+                region_schema=Schemas.ADMIN_1,
+                region_parent='jp',  # CHECK ME - should this have "city" etc added?
+                region_child='jp-13',
                 agerange=agerange,
                 datatype=datatype,
                 value=num_below,

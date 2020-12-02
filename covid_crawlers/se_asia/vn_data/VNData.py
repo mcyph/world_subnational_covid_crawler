@@ -186,7 +186,7 @@ class VNData(URLBase):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/corona.html'
             with open(path, 'rb') as f:
                 data = f.read()

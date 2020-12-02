@@ -60,7 +60,7 @@ class KZData(URLBase):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             #print(date)
             path = f'{base_dir}/{date}/kz_corona.html'
             with open(path, 'r', encoding='utf-8') as f:

@@ -280,7 +280,7 @@ class SIData(URLBase):
 
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             r = self.sdpf()
             print(date)
             path = f'{base_dir}/{date}/municipalities.json'

@@ -24,6 +24,32 @@ class GlobalBase(ABC):
     def __init__(self, output_dir):
         self.output_dir = output_dir
 
+    def iter_nonempty_dirs(self, p,
+                           name_only=True,
+                           newest_revision_only=False):
+        p = Path(p)
+        out = []
+
+        for i in p.iterdir():
+            if not i.is_dir():
+                continue
+            elif not any(p.iterdir()):
+                continue
+            out.append(i)
+
+        # Sort so newer dates in format YYYY_MM_DD are first
+        # TODO: Make it so that revisions are in order, too!
+        out.sort(key=lambda x: x.name)
+
+        if newest_revision_only:
+            # TODO!!
+            raise NotImplementedError()
+
+        # Most of the time, we're only interested in the name (usually a date)
+        if name_only:
+            out = [i.name for i in out]
+        return out
+
     #=============================================================#
     #                        Miscellaneous                        #
     #=============================================================#

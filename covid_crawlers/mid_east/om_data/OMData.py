@@ -56,7 +56,7 @@ class OMData(URLBase):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/region_walayat_summary.json'
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())

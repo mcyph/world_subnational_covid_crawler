@@ -52,7 +52,7 @@ class GRCovid19Greece(URLBase):
             'under investigation': 'Unknown',
         }
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             r = self.sdpf()
             path = f'{base_dir}/{date}/regions.json'
             with open(path, 'r', encoding='utf-8') as f:

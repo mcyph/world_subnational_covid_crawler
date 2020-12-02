@@ -81,7 +81,7 @@ class CNData(URLBase):
     def _get_datapoints(self):
         r = self.sdpf()
 
-        for date in listdir(get_overseas_dir() / 'cn' / 'data'):
+        for date in self.iter_nonempty_dirs(self.output_dir):
             for province_dict in provinces:
                 if province_dict["value"] in ('86', '88', '710000', '810000'):
                     continue

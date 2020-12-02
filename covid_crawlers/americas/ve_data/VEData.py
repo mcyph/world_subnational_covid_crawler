@@ -58,7 +58,7 @@ class VEData(URLBase):
 
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/regions.json'
             with open(path, 'rb') as f:
                 case_dict = json.loads(f.read())

@@ -91,7 +91,7 @@ class CNQQData(URLBase):
     def _get_datapoints(self):
         r = self.sdpf()
 
-        for date in listdir(get_overseas_dir() / 'cn' / 'qqdata'):
+        for date in self.iter_nonempty_dirs(self.output_dir):
             with open(self.output_dir / date / 'data.json', 'r', encoding='utf-8') as f:
                 data = f.read()
                 data = json.loads(data)

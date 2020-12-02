@@ -265,7 +265,7 @@ class MYESRIDashData(URLBase):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/district_case.json'
 
             try:
@@ -370,7 +370,7 @@ class MYESRIDashData(URLBase):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
-        for date in sorted(listdir(base_dir)):
+        for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/sub_district_case.json'
 
             try:
