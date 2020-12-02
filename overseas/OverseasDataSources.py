@@ -109,6 +109,7 @@ from covid_19_au_grab.overseas.w_europe.is_data.ISData import ISData
 from covid_19_au_grab.overseas.w_europe.it_data.ITData import ITData
 from covid_19_au_grab.overseas.w_europe.lt_data.LTData import LTData
 from covid_19_au_grab.overseas.w_europe.lv_data.LVData import LVData
+from covid_19_au_grab.overseas.w_europe.lv_data.LVDataArcGIS import LVDataArcGIS
 from covid_19_au_grab.overseas.w_europe.pt_data.PTData import PTData
 from covid_19_au_grab.overseas.w_europe.si_data.SIData import SIData
 from covid_19_au_grab.overseas.w_europe.uk_data.UKData import UKData
@@ -119,7 +120,7 @@ EUROPE_DATA = (
     EUSubNationalData, FRData, FRESRIData, FRGovData, GRCovid19Greece,
     HRData, IEData, ISData, ITData, KGData, KZData,
     MKData, PTData, RSData, SIData, UKData, UKGovData, LVData,
-    LTData,
+    LTData, LVDataArcGIS
 )
 
 #==================================================================#

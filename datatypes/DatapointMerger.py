@@ -14,7 +14,8 @@ class DataPointMerger(list):
             datapoint.region_child,
             datapoint.date_updated,
             datapoint.datatype,
-            datapoint.agerange
+            datapoint.agerange,
+            datapoint.source_id
         )
         if not unique_key in self.__added:
             self.__added.add(unique_key)

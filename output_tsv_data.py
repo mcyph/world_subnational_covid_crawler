@@ -4,8 +4,8 @@ from os import listdir
 
 from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
 from covid_19_au_grab.db.SQLiteDataRevisions import SQLiteDataRevisions
-from covid_19_au_grab.get_package_dir import \
-    get_output_dir, get_global_subnational_covid_data_dir, get_package_dir
+from covid_19_au_grab.get_package_dir import get_output_dir, get_global_subnational_covid_data_dir, get_package_dir
+from covid_19_au_grab.geojson_data.get_population_map import get_population_map
 
 
 def output_tsv_data(time_format, latest_revision_id):
@@ -56,6 +56,9 @@ def output_geojson():
 
 
 class _OutputGeoJSON:
+    def __init__(self):
+        self._population_map = get_population_map()
+
     def get_geojson_data(self):
         r = {}
         for fnam in listdir(GEOJSON_DIR):
@@ -93,7 +96,10 @@ class _OutputGeoJSON:
                             'area': feature[0],
                             'bounding_box': feature[1],
                             'point': feature[2],
-                            'labels': region_child_dict['label']
+                            'labels': region_child_dict['label'],
+                            'population': self._population_map.get(
+                                (region_schema, region_parent, region_child)
+                            )
                         }
                         out_poly_features.append({
                             'type': 'Feature',

@@ -11,6 +11,7 @@ from covid_19_au_grab.datatypes.schema_types import schema_types
 from covid_19_au_grab.db.SQLiteDataRevision import SQLiteDataRevision
 from covid_19_au_grab.db.output_compressor.OutputSchemaTypes import OutputSchemaTypes
 from covid_19_au_grab.db.output_compressor.TimeSeriesDataPoints import TimeSeriesDataPoints
+from covid_19_au_grab.geojson_data.get_population_map import get_population_map
 
 
 def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None):
@@ -19,21 +20,13 @@ def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None)
     )
 
 
-def _get_population_map():
-    r = {}
-    with open(get_package_dir() / 'geojson_data' / 'geojson_pop.tsv', 'r', encoding='utf-8') as f:
-        for item in csv.DictReader(f, delimiter='\t'):
-            r[item['region_schema'], item['region_parent'], item['region_child']] = int(item['pop_2020'])
-    return r
-
-
 USE_MSGPACK = False
 GEOJSON_DIR = get_package_dir() / 'geojson_data' / 'output'
 
 
 class _TimeSeriesDataZipper:
     def __init__(self):
-        self._population_map = _get_population_map()
+        self._population_map = get_population_map()
 
     def output_revision_datapoints_to_zip(self, zip_buffer, rev_date=None, rev_subid=None):
         r = {}

@@ -12,7 +12,8 @@ from covid_19_au_grab.get_package_dir import get_overseas_dir, get_package_dir
 from covid_19_au_grab.datatypes.DatapointMerger import DataPointMerger
 
 
-REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'
+#REGIONS_URL = 'https://e.infogram.com/api/live/flex/fd882665-1d1a-4706-9b74-e36f4767d2b5/e0023a48-5a9a-427c-b123-76caef50513a'
+REGIONS_URL = 'https://e.infogram.com/d3e1b3ca-f610-456b-b5e0-62ac19d01dfc?src=embed'
 
 
 regions_map = {
@@ -58,7 +59,7 @@ class LVData(URLBase):
             },
             mode=MODE_STRICT
         )
-        self.update()
+        #self.update()
 
     def get_datapoints(self):
         r = []
@@ -73,15 +74,19 @@ class LVData(URLBase):
         for date in sorted(listdir(base_dir)):
             r = self.sdpf()
             path = f'{base_dir}/{date}/regions_data.json'
+            print(path)
             with open(path, 'r', encoding='utf-8') as f:
-                data = json.loads(f.read())
+                data = f.read()
+                if '<!DOCTYPE HTML>' in data:
+                    continue   # WARNING!!! - TODO: Add agegroup data, etc from the new page!!! ===================================================
+                data = json.loads(data)
 
             for i_data in data['data']:
                 for region_name, value, *leftover in i_data:
                     print(region_name)
 
                     # Only confirmed and deaths are shown in the dashboard
-                    date = datetime.datetime.fromtimestamp(1595133942147/1000.0).strftime('%Y_%m_%d')
+                    date = datetime.datetime.fromtimestamp(data['refreshed']/1000.0).strftime('%Y_%m_%d')
 
                     if value is not None:
                         r.append(

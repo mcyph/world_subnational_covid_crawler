@@ -159,6 +159,7 @@ class JPCityData(URLBase):
                     '男性\xa0': DataTypes.TOTAL_MALE,
                     '女性\xa0': DataTypes.TOTAL_FEMALE,
                     '女性': DataTypes.TOTAL_FEMALE,
+                    '⼥性': DataTypes.TOTAL_FEMALE,
                     '不明': None,
                     '惰性': DataTypes.TOTAL_MALE,  # Pretty sure this is a typo
                     '未満 女性': DataTypes.TOTAL_FEMALE,

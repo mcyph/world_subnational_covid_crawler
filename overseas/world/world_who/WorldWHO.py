@@ -45,42 +45,42 @@ class WorldWHO(URLBase):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['Date_reported'])
 
-                if item[' Country_code'] in ('BQ', 'GF', 'GP', 'MQ', 'YT', 'RE', 'TK', ' '):
+                if item['Country_code'] in ('BQ', 'GF', 'GP', 'MQ', 'YT', 'RE', 'TK', ' '):
                     continue
 
                 r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent='',
-                    region_child=item[' Country_code'],
+                    region_child=item['Country_code'],
                     datatype=DataTypes.NEW,
-                    value=int(item[' New_cases']),
+                    value=int(item['New_cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
                 r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent='',
-                    region_child=item[' Country_code'],
+                    region_child=item['Country_code'],
                     datatype=DataTypes.TOTAL,
-                    value=int(item[' Cumulative_cases']),
+                    value=int(item['Cumulative_cases']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
                 r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent='',
-                    region_child=item[' Country_code'],
+                    region_child=item['Country_code'],
                     datatype=DataTypes.STATUS_DEATHS,
-                    value=int(item[' New_deaths']),
+                    value=int(item['New_deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
                 r.append(
                     region_schema=Schemas.ADMIN_0,
                     region_parent='',
-                    region_child=item[' Country_code'],
+                    region_child=item['Country_code'],
                     datatype=DataTypes.STATUS_DEATHS_NEW,
-                    value=int(item[' Cumulative_deaths']),
+                    value=int(item['Cumulative_deaths']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )

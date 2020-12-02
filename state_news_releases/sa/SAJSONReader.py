@@ -12,6 +12,7 @@ class SAJSONReader:
     SOURCE_URL = 'https://www.sahealth.sa.gov.au/wps/wcm/connect/' \
                   'public+content/sa+health+internet/conditions/' \
                   'infectious+diseases/covid+2019/covid-19+dashboard'
+    SOURCE_DESCRIPTION = ''
 
     def get_datapoints(self):
         ua = URLArchiver(f'sa/dashboard')

@@ -72,6 +72,7 @@ class MYESRIDashData(URLBase):
                 ('my_district', 'my', 'bachok'): ('my_district', 'my', 'bachok'),
                 ('my_district', 'my', 'baling'): ('my_district', 'my', 'baling'),
                 ('my_district', 'my', 'bandar baharu'): ('my_district', 'my', 'bandar baharu'),
+                ('my_district', 'my', 'bandar bahru'): ('my_district', 'my', 'bandar baharu'),
                 ('my_district', 'my', 'bandar tun razak'): None,
                 ('my_district', 'my', 'bangsar'): None,
                 ('my_district', 'my', 'barat daya'): ('my_district', 'my', 'barat daya'),
@@ -88,6 +89,7 @@ class MYESRIDashData(URLBase):
                 ('my_district', 'my', 'brickfields'): None,
                 ('my_district', 'my', 'bukit damansara'): None,
                 ('my_district', 'my', 'bukit jalil'): None,
+                ('my_district', 'my', 'bukit bintang'): None,
                 ('my_district', 'my', 'cameron highlands'): ('my_district', 'my', 'cameron highlands'),
                 ('my_district', 'my', 'cheras'): None,
                 ('my_district', 'my', 'dalat'): ('my_district', 'my', 'dalat'),
@@ -132,7 +134,8 @@ class MYESRIDashData(URLBase):
                 ('my_district', 'my', 'kuala kangsar'): ('my_district', 'my', 'kuala kangsar'),
                 ('my_district', 'my', 'kuala krai'): ('my_district', 'my', 'kuala krai'),
                 ('my_district', 'my', 'kuala langat'): ('my_district', 'my', 'kuala langat'),
-                ('my_district', 'my', 'kuala lumpur'): None,
+                ('my_district', 'my', 'kuala lumpur'): None,  # FIXME!!!!! ===================================================
+                ('my_district', 'my', 'setiawangsa'): None,
                 ('my_district', 'my', 'kuala muda'): ('my_district', 'my', 'kuala muda'),
                 ('my_district', 'my', 'kuala pilah'): ('my_district', 'my', 'kuala pilah'),
                 ('my_district', 'my', 'kuala selangor'): ('my_district', 'my', 'kuala selangor'),
@@ -227,6 +230,8 @@ class MYESRIDashData(URLBase):
                 ('my_district', 'my', 'yan'): ('my_district', 'my', 'yan'),
                 ('my_district', 'my', 'kuala nerus'): None,
                 ('my_district', 'my', 'telupid'): None,
+
+                ('my_district', 'my', 'segambut'): None,
             },
             mode=MODE_STRICT
         )

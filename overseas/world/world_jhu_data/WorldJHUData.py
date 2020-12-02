@@ -58,7 +58,7 @@ class WorldJHUData(GithubRepo):
                     if not item['Last_Update']:
                         continue # WARNING!!
 
-                    #print(item)
+                    print(item)
                     try:
                         date = self.convert_date(item['Last_Update'].split()[0])
                     except:
@@ -117,13 +117,23 @@ class WorldJHUData(GithubRepo):
                             source_url=self.SOURCE_URL
                         )
 
-                    if item['People_Tested']:
+                    if 'People_Tested' in item and item['People_Tested']:
                         r.append(
                             region_schema=region_schema,
                             region_parent=region_parent,
                             region_child=region_child,
                             datatype=DataTypes.TESTS_TOTAL,
                             value=int(float(item['People_Tested'])),
+                            date_updated=date,
+                            source_url=self.SOURCE_URL
+                        )
+                    elif 'Total_Test_Results' in item and item['Total_Test_Results']:
+                        r.append(
+                            region_schema=region_schema,
+                            region_parent=region_parent,
+                            region_child=region_child,
+                            datatype=DataTypes.TESTS_TOTAL,
+                            value=int(float(item['Total_Test_Results'])),
                             date_updated=date,
                             source_url=self.SOURCE_URL
                         )

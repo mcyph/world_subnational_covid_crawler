@@ -45,6 +45,10 @@ def DataPoint(region_schema=Schemas.ADMIN_1,
     arguments for this `namedtuple`.
     """
 
+    # Transition HACK!!!
+    assert region_parent is not None
+    assert region_child is not None
+
     assert isinstance(region_schema, Schemas), region_schema
     assert isinstance(datatype, DataTypes), datatype
 

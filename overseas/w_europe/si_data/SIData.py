@@ -226,6 +226,7 @@ SI-147	Žiri
 SI-192	Žirovnica
 SI-193	Žužemberk
 SI-197	Kostanjevica na Krki
+SI-088	Osilnica
 Other	tujina
 """.lower().strip().split('\n')])
 

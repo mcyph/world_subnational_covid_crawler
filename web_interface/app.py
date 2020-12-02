@@ -10,6 +10,7 @@ from shlex import quote
 from os import listdir, system
 from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
+from _thread import start_new_thread
 
 # MONKEY PATCH: Reduce cherrpy json file output
 _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
@@ -53,24 +54,24 @@ class App(object):
 
                 if dt.hour >= 12 and dt.hour < 14 and not powerbi_run_1st:
                     # Run powerbi once only between 12pm and 2pm
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = True
                     powerbi_run_2nd = False
                     powerbi_run_3rd = False
                 elif dt.hour >= 15 and dt.hour < 17 and not powerbi_run_2nd:
                     # Run powerbi once only between 3pm and 5pm
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = False
                     powerbi_run_2nd = True
                     powerbi_run_3rd = False
                 elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_3rd:
                     # Run powerbi once only between 5pm and 7pm
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs')
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = False
                     powerbi_run_2nd = False
                     powerbi_run_3rd = True
                 else:
-                    system(f'python3 {quote(str(UPDATE_SCRIPT_PATH))}')
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))}',))
 
     #=============================================================#
     #                            Index                            #

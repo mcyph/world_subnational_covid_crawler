@@ -28,7 +28,14 @@ class ETData(URLBase):
                  )
              }
         )
-        self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
+        self.sdpf = StrictDataPointsFactory(
+            region_mappings={
+                ('admin_1', 'et', 'snnpr'): ('admin_1', 'et', 'et-sn'),
+                ('admin_1', 'et', 'sidama'): None,
+                ('admin_1', 'et', 'benshangul gumuz'): ('admin_1', 'et', 'et-be'),
+            },
+            mode=MODE_STRICT
+        )
         self.update()
 
     def get_datapoints(self):
@@ -61,10 +68,10 @@ class ETData(URLBase):
             if item['Number of confirmed COVID-19']:
                 r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Ethiopia',
+                    region_parent='et',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
-                    value=int(item['Number of confirmed COVID-19']),
+                    value=int(item['Number of confirmed COVID-19'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -72,10 +79,10 @@ class ETData(URLBase):
             if item['Number of reported deaths']:
                 r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Ethiopia',
+                    region_parent='et',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
-                    value=int(item['Number of reported deaths']),
+                    value=int(item['Number of reported deaths'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -83,20 +90,20 @@ class ETData(URLBase):
             if item['Number of reported recoveries']:
                 r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Ethiopia',
+                    region_parent='et',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
-                    value=int(item['Number of reported recoveries']),
+                    value=int(item['Number of reported recoveries'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
                 r.append(
                     region_schema=Schemas.ADMIN_1,
-                    region_parent='Ethiopia',
+                    region_parent='et',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
-                    value=int(item['Number of confirmed COVID-19']) -
-                          int(item['Number of reported recoveries']),
+                    value=int(item['Number of confirmed COVID-19'].replace(',', '')) -
+                          int(item['Number of reported recoveries'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )

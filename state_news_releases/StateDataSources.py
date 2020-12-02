@@ -115,7 +115,7 @@ def _get_datapoints(classes, send_q):
         inst = i()
 
         try:
-            datapoints = inst.get_datapoints()
+            datapoints = [tuple(i) for i in inst.get_datapoints()]
 
             print("Class done:", i)
             send_q.put((inst.SOURCE_ID,

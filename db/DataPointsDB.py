@@ -19,8 +19,8 @@ class DataPointsDB:
             self.path, detect_types=sqlite3.PARSE_DECLTYPES
         )
         self.conn.execute('PRAGMA journal_mode = WAL;')
-        self.conn.execute('PRAGMA cache_size = -512000;')  # 512MB
-        self.conn.execute('PRAGMA SYNCHRONOUS = 0;')
+        #self.conn.execute('PRAGMA cache_size = -512000;')  # 512MB
+        #self.conn.execute('PRAGMA SYNCHRONOUS = 0;')
 
     def __create_tables(self):
         sql = open(get_package_dir() / 'db' / 'datapoints.sql',

@@ -337,7 +337,7 @@ class NSWJSONWebsiteData:
                         value=cases-num_active-deaths,  # CHECK ME!!!!! =====================================
                         date_updated=date,
                         source_url=SOURCE_URL,
-                        source_id=self.SOURCE_ID_WEBSITE_DATA
+                        source_id=self.SOURCE_ID
                     ))
                 elif date <= '2020_06_12':
                     r.append(DataPoint(

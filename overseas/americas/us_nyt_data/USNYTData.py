@@ -61,6 +61,7 @@ class USNYTData(GithubRepo):
                 ('us_county', 'alaska', 'haines borough'): None,
                 ('us_county', 'alaska', 'denali borough'): None,
                 ('us_county', 'alaska', 'kusilvak census area'): None,
+                ('us_county', 'alaska', 'skagway municipality'): None,
                 ('us_county', 'missouri', 'joplin'): None,
 
                 ('admin_1', 'us', 'puerto rico'): None,
