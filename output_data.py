@@ -1,6 +1,7 @@
 import sys
 import json
 import datetime
+from os import system
 
 from _utility.Logger import Logger
 from _utility.get_package_dir import get_output_dir

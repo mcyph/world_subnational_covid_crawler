@@ -106,17 +106,21 @@ class ExtractFromTokyoPDF:
                 elif found_fumei and text_item.text == '不明':
                     continue # HACK!
 
-                num_below = self._get_number_immediately_below(
-                    text_items, text_item
-                )
-                r.append(self._to_datatype(
-                    text_item, num_below, found_fumei, date
-                ))
+                num_below = self._get_number_immediately_below(text_items, text_item, brackets=False)
+                try:
+                    num_below_brackets = self._get_number_immediately_below(text_items, text_item, brackets=True)
+                except IndexError:
+                    # No number in brackets available!
+                    num_below_brackets = None
+
+                r.extend(self._to_datatype(text_item, num_below, num_below_brackets, found_fumei, date))
+
                 if text_item.text == '不明':
                     found_fumei = True
         return r
 
-    def _to_datatype(self, text_item, num_below, found_fumei, date_updated):
+    def _to_datatype(self, text_item, num_below, num_below_brackets, found_fumei, date_updated):
+        r = []
 
         if not found_fumei and text_item.text == '不明':
             i = stats_map['不明_1']
@@ -126,6 +130,12 @@ class ExtractFromTokyoPDF:
             i = stats_map[text_item.text]
 
         if i == CITY:
+            if date_updated >= '2020_08_03':
+                # As far as I know, the number in brackets
+                # is always provided except before this date
+                assert num_below_brackets is not None, \
+                    (date_updated, text_item, num_below, num_below_brackets, found_fumei)
+
             if text_item.text == '調査中※':
                 region_child = 'Unknown'
             elif text_item.text == '都外':
@@ -133,7 +143,7 @@ class ExtractFromTokyoPDF:
             else:
                 region_child = text_item.text #_tokyo_cities_to_en[text_item.text]
 
-            return DataPoint(
+            r.append(DataPoint(
                 region_schema=Schemas.JP_CITY,
                 region_parent='Tokyo',  # CHECK ME - should this have "city" etc added?
                 region_child=region_child,
@@ -141,11 +151,22 @@ class ExtractFromTokyoPDF:
                 value=num_below,
                 source_url='https://www.metro.tokyo.lg.jp', # FIXME!
                 date_updated=date_updated
-            )
+            ))
+
+            if num_below_brackets is not None:
+                r.append(DataPoint(
+                    region_schema=Schemas.JP_CITY,
+                    region_parent='Tokyo',
+                    region_child=region_child,
+                    datatype=DataTypes.STATUS_DISCHARGED_DEATHS,
+                    value=num_below_brackets,
+                    source_url='https://www.metro.tokyo.lg.jp',  # FIXME!
+                    date_updated=date_updated
+                ))
         else:
             print(i)
             datatype, agerange = i
-            return DataPoint(
+            r.append(DataPoint(
                 region_schema=Schemas.ADMIN_1,
                 region_parent='jp',  # CHECK ME - should this have "city" etc added?
                 region_child='jp-13',
@@ -154,18 +175,33 @@ class ExtractFromTokyoPDF:
                 value=num_below,
                 source_url='https://www.metro.tokyo.lg.jp',  # FIXME!
                 date_updated=date_updated
-            )
+            ))
 
-    def _get_number_immediately_below(self, text_items, text_item):
+        return r
+
+    def _get_number_immediately_below(self, text_items, text_item, brackets=False):
         # coords needs to be
         dists = []
 
         for other_text_item in text_items:
+            # Brackets: for discharged or deaths
+            is_bracket = other_text_item.text[0] == '(' or other_text_item.text[-1] == ')'
+            #print('OTHER TEXT:', other_text_item.text, is_bracket)
+
             if other_text_item == text_item:
+                continue
+            elif brackets and not is_bracket:
+                # Don't process if enclosed and not in bracket mode
+                continue
+            elif not brackets and is_bracket:
+                # Don't process if not enclosed and in bracket mode
                 continue
 
             try:
-                num = int(other_text_item.text.replace(',', '').strip())
+                num = other_text_item.text.replace(',', '').strip()
+                if brackets:
+                    num = num.replace(')', '').replace('(', '').strip()
+                num = int(num)
             except ValueError:
                 continue
 
@@ -192,4 +228,5 @@ class ExtractFromTokyoPDF:
 if __name__ == '__main__':
     from pprint import pprint
     #ExtractFromTokyoPDF().download_pdfs(only_most_recent=False)
-    pprint(ExtractFromTokyoPDF().get_from_pdfs())
+    dp = ExtractFromTokyoPDF().get_from_pdfs()
+    pprint(dp)

@@ -94,6 +94,7 @@ class DataTypes(str, Enum):
     STATUS_DEATHS_NEW = 'status_deaths_new'
     STATUS_HOSPITALIZED_NEW = 'status_hospitalized_new'
     STATUS_HOSPITALIZED_RUNNINGTOTAL_NEW = 'status_hospitalized_runningtotal_new'
+    STATUS_DISCHARGED_DEATHS = 'status_discharged_deaths'
     STATUS_ICU_NEW = 'status_icu_new'
     STATUS_ICU_VENTILATORS_NEW = 'status_icu_ventilators_new'
     STATUS_ICU_RUNNINGTOTAL_NEW = 'status_icu_runningtotal_new'

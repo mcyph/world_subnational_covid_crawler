@@ -103,6 +103,12 @@
             "roc": true,
             "percapita": true
         },
+        "status_discharged_deaths": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
 
         "status_icu": {
             "timeperiods": true,

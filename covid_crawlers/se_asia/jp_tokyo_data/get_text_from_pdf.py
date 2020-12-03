@@ -96,9 +96,9 @@ def get_text_from_pdf(path, page_nums=None):
             text_item_1 = r[x]
             text_item_2 = r[y]
 
-            text_1_num = all(i.isnumeric() or i == ','
+            text_1_num = all(i.isnumeric() or i in ',()'
                              for i in text_item_1.text.strip())
-            text_2_num = all(i.isnumeric() or i == ','
+            text_2_num = all(i.isnumeric() or i in ',()'
                              for i in text_item_2.text.strip())
 
             if not dist:
