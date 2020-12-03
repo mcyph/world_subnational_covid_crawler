@@ -15,7 +15,7 @@ levels where it is available. It also includes statistics on age group breakdown
 and infection sources in many cases. The outputted data is updated periodically and 
 can be obtained from https://github.com/mcyph/global_subnational_covid_data,
 which is updated automatically. This project page also contains information 
-about the websites which are crawled.  
+about the websites which are crawled and the possible datatypes/schemas.  
 
 It was intended to automatically obtain statistics related to COVID-19 for the 
 [COVID-19 Case Tracker Australia](https://covid-19-au.com/) website which was 
