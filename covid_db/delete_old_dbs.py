@@ -1,25 +1,22 @@
 import datetime
-from os import listdir, unlink
+from _utility.get_package_dir import get_output_dir
 
-DB_DIR = '/mnt/ssd_970pro_512gb/world_subnational_covid_crawler/output/'
+
+DB_DIR = get_output_dir() / 'output'
 
 ACTUALLY_DELETE = True
-DELETE_BEFORE = (
-    datetime.datetime.now() - datetime.timedelta(days=2)
-)
+DELETE_BEFORE = datetime.datetime.now() - datetime.timedelta(days=2)
 
 
 def delete_old_dbs():
-    for fnam in listdir(DB_DIR):
-        date = datetime.datetime.strptime(
-            fnam.split('-')[0], '%Y_%m_%d'
-        )
+    for path in DB_DIR.iterdir():
+        date = datetime.datetime.strptime(path.name.split('-')[0], '%Y_%m_%d')
 
         if date <= DELETE_BEFORE:
-            print("DELETING:", fnam)
+            print("DELETING:", path)
 
             if ACTUALLY_DELETE:
-                unlink(f'{DB_DIR}/{fnam}')
+                path.unlink()
 
 
 if __name__ == '__main__':

@@ -153,8 +153,8 @@ if __name__ == '__main__':
         output_revision_datapoints_to_zip(f, TIME_FORMAT, LATEST_REVISION_ID)
 
     # Upload them to remote AWS instance
-    print("DISABLED: Uploading zip file to remote server...")
-    #system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
+    print("Uploading zip file to remote server...")
+    system('/usr/bin/env bash /home/david/upload_to_remote.sh %s' % f'{TIME_FORMAT}-{LATEST_REVISION_ID}')
 
     # Clean up old DBs to save on space
     print("Deleting older DBs to save space..")
@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
     # Commit to GitHub
     print("DISABLED: Pushing to GitHub...")
-    #push_to_github()
+    push_to_github()
     print("Push to GitHub done!")
 
     print("[end of script]")
