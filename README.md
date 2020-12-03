@@ -2,7 +2,8 @@
 
 This repo contains a collection of scrapers I wrote for both Australian and 
 international COVID-19 data. As far as I know it's the most comprehensive 
-automatic collection system of its kind in the world. 
+automatic collection system of its kind in the world. It is licensed under 
+the [GNU Lesser GPL](LICENSE).
 
 It also includes a basic web interface for 
 monitoring its status, and parsing for statistics which can be overlayed 
