@@ -32,7 +32,7 @@ resources related to GeoData and COVID-19.
 
 ## Source code layout
 
-* `output_data.py` 
+* `output_data.py`:
   > is the main output and conversion script. It crawls 
   > each enabled crawler in 
   > `covid_crawlers/_base_classes/OverseasDataSources.py`.
@@ -46,36 +46,44 @@ resources related to GeoData and COVID-19.
   datafiles, extracting numbers from words such as "twenty-four", 
   normalizing place names, etc.
 
-* `covid_crawlers/` 
+* `covid_crawlers/`:
   > contains the different crawlers, arranged by region.
   For instance, Australian crawlers are under `covid_crawlers/oceania/au_data`
 
-* `covid_db/` 
+* `covid_db/`:
   > contains an SQLite database system for efficient storage and 
    management of statistic revisions over time.
 
-    * `covid_db/datatypes/` 
+    * `covid_db/datatypes/`:
       > contains the datatypes which allow storing 
       individual covid-19 and other statistics categorized by age group,
       region (region schema/parent/child), datatype 
       (like total cases or deaths), source URL, source ID etc.
 
-* `world_geodata/` 
+* `world_geodata/`:
   > provides processing and normalization of various different 
   GeoJSON data files that can be used with mapping software. 
   This is one of the biggest compilations of its type online. 
   I've needed to make a number of modifications to the data because of 
   updates to the ISO-3166-2 and other geographic schemas.
 
-* `misc_data_scripts/` 
+* `misc_data_scripts/`:
   > has a number of miscellaneous scripts and data:
 
-    * `misc_data_scripts/hospitals/get_hospitals.py` 
+    * `misc_data_scripts/hospitals/get_hospitals.py`:
       > Used to get COVID-19 hospital/clinic information 
         from the state websites, however is out-of-date and 
         needs to be refactored. 
   
-* `web_monitor/` 
+    * `misc_data_scripts/other_data`:
+      > Many of these modules are incomplete, but `abs_data` contains
+      > parsers for Australian Bureau of Statistics census data.
+      >
+      > `iso_3166_1`/`iso_3166_2` also provide modules for working 
+      > with these country/subdivision standards, and converting 
+      > between names like "Australia" and their codes like "AU".
+  
+* `web_monitor/`:
   > a web monitoring interface using `cherrypy` which 
   shows the status of previous runs and allows browsing statistics.
   Automatically schedules statistics gathering every hour or two 
