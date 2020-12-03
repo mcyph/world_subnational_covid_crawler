@@ -14,7 +14,8 @@ data, it also crawls data on sub-national and sub-state/province/territory
 levels where it is available. It also includes statistics on age group breakdowns 
 and infection sources in many cases. The outputted data is updated periodically and 
 can be obtained from https://github.com/mcyph/global_subnational_covid_data,
-which is updated automatically.
+which is updated automatically. This project page also contains information 
+about the websites which are crawled.  
 
 It was intended to automatically obtain statistics related to COVID-19 for the 
 [COVID-19 Case Tracker Australia](https://covid-19-au.com/) website which was 
@@ -26,7 +27,19 @@ easier deployment (as I'm mostly using it on my own server), but if you'd like
 to use these scripts, by all means let me know by direct messaging me or opening 
 a new GitHub issue! 
 
+See also the [potential_sources.md](potential_sources.md) file for various 
+resources related to GeoData and COVID-19.
+
 ## Source code layout
+
+* `output_data.py` 
+  > is the main output and conversion script. It crawls 
+  > each enabled crawler in 
+  > `covid_crawlers/_base_classes/OverseasDataSources.py`.
+  >
+  > Some sources which need selenium or are otherwise more 
+  > bandwidth/CPU-intensive aren't crawled unless the 
+  > `--run-infrequent-jobs` flag is specified.
 
 * `_utility/`: 
   > various scripts which allow getting the path on disk of the 
