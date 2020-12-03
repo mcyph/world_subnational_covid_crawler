@@ -1,8 +1,8 @@
 # Introduction
 
 This repo contains a collection of scrapers I wrote for both Australian and 
-international COVID-19 data. As far as I know it's the most comprehensive collection 
-of its kind in the world. 
+international COVID-19 data. As far as I know it's the most comprehensive 
+automatic collection system of its kind in the world. 
 
 It also includes a basic web interface for 
 monitoring its status, and parsing for statistics which can be overlayed 
