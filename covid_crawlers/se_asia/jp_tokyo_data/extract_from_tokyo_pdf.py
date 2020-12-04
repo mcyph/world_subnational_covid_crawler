@@ -163,6 +163,17 @@ class ExtractFromTokyoPDF:
                     source_url='https://www.metro.tokyo.lg.jp',  # FIXME!
                     date_updated=date_updated
                 ))
+
+                # CHECK THIS: is there a better way of getting the active numbers for each city?
+                r.append(DataPoint(
+                    region_schema=Schemas.JP_CITY,
+                    region_parent='Tokyo',
+                    region_child=region_child,
+                    datatype=DataTypes.STATUS_ACTIVE,
+                    value=num_below - num_below_brackets,
+                    source_url='https://www.metro.tokyo.lg.jp',  # FIXME!
+                    date_updated=date_updated
+                ))
         else:
             print(i)
             datatype, agerange = i

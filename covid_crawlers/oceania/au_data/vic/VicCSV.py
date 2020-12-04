@@ -1,12 +1,13 @@
 import csv
 from os import listdir
 
-from covid_crawlers._base_classes.URLBase import URL, URLBase
-from covid_db.datatypes.DataPoint import DataPoint
-from covid_db.datatypes.enums import Schemas, DataTypes
+from _utility.cache_by_date import cache_by_date
 from _utility.get_package_dir import get_data_dir
 from _utility.normalize_locality_name import normalize_locality_name
+from covid_db.datatypes.DataPoint import DataPoint
+from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers._base_classes.URLBase import URL, URLBase
 
 
 class VicCSV(URLBase):
@@ -37,12 +38,14 @@ class VicCSV(URLBase):
         self.update()
 
     def get_datapoints(self):
-        r = []
-        r.extend(self._get_postcode_datapoints())
-        r.extend(self._get_lga_datapoints())
+        r = DataPointMerger()
+        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
+            r.extend(self._get_postcode_datapoints(date))
+            r.extend(self._get_lga_datapoints(date))
         return r
 
-    def _get_postcode_datapoints(self):
+    @cache_by_date(SOURCE_ID)
+    def _get_postcode_datapoints(self, date):
         # postcode	population	active	cases	rate	new	band	data_date
         # 	3000	37979	18	119	47.4	0	2	29/08/2020
         # 	3001	0	0	1	0	0	0	29/08/2020
@@ -55,32 +58,31 @@ class VicCSV(URLBase):
         # 	3010	1595	0	0	0	0	0	29/08/2020
         # 	3011	21464	36	164	167.7	2	4	29/08/2020
 
-        r = DataPointMerger()
+        r = []
+        print("PostCode:", get_data_dir() / 'vic' / 'csv_data' / date)
 
-        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
-            print("PostCode:", get_data_dir() / 'vic' / 'csv_data' / date)
-            with open(get_data_dir() / 'vic' / 'csv_data' / date / 'postcode.json', 'r', encoding='utf-8') as f:
-                for row in csv.DictReader(f):
-                    date_updated = self.convert_date(row['data_date'])
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'postcode.json', 'r', encoding='utf-8') as f:
+            for row in csv.DictReader(f):
+                date_updated = self.convert_date(row['data_date'])
 
-                    for datatype, value in (
-                        (DataTypes.STATUS_ACTIVE, row['active']),
-                        (DataTypes.TOTAL, row['cases'])
-                    ):
-                        r.append(DataPoint(
-                            region_schema=Schemas.POSTCODE,
-                            region_parent='AU-VIC',
-                            region_child=row['postcode'],
-                            datatype=datatype,
-                            value=int(value),
-                            date_updated=date_updated,
-                            source_url=self.SOURCE_URL,
-                            source_id=self.SOURCE_ID
-                        ))
-
+                for datatype, value in (
+                    (DataTypes.STATUS_ACTIVE, row['active']),
+                    (DataTypes.TOTAL, row['cases'])
+                ):
+                    r.append(DataPoint(
+                        region_schema=Schemas.POSTCODE,
+                        region_parent='AU-VIC',
+                        region_child=row['postcode'],
+                        datatype=datatype,
+                        value=int(value),
+                        date_updated=date_updated,
+                        source_url=self.SOURCE_URL,
+                        source_id=self.SOURCE_ID
+                    ))
         return r
 
-    def _get_lga_datapoints(self):
+    @cache_by_date(SOURCE_ID)
+    def _get_lga_datapoints(self, date):
         # LGA	lga_pid	population	active	cases	rate	new	band	LGADisplay	data_date
         # 	Alpine (S)	VIC242	12814	0	1	0	0	0	Alpine	29/08/2020
         # 	Ararat (RC)	VIC220	11845	1	7	8.4	0	1	Ararat	29/08/2020
@@ -91,30 +93,28 @@ class VicCSV(URLBase):
         # 	Bayside (C)	VIC182	106862	72	227	67.4	6	3	Bayside	29/08/2020
         # 	Benalla (RC)	VIC199	14037	0	3	0	0	0	Benalla	29/08/2020
 
-        r = DataPointMerger()
+        r = []
+        print("LGA:", get_data_dir() / 'vic' / 'csv_data' / date)
 
-        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
-            print("LGA:", get_data_dir() / 'vic' / 'csv_data' / date)
-            with open(get_data_dir() / 'vic' / 'csv_data' / date / 'lga.json', 'r', encoding='utf-8') as f:
-                for row in csv.DictReader(f):
-                    print(row)
-                    date_updated = self.convert_date(row['data_date'])
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'lga.json', 'r', encoding='utf-8') as f:
+            for row in csv.DictReader(f):
+                #print(row)
+                date_updated = self.convert_date(row['data_date'])
 
-                    for datatype, value in (
-                        (DataTypes.STATUS_ACTIVE, row['active']),
-                        (DataTypes.TOTAL, row['cases'])
-                    ):
-                        r.append(DataPoint(
-                            region_schema=Schemas.LGA,
-                            region_parent='AU-VIC',
-                            region_child=normalize_locality_name(row['LGA'].split('(')[0].strip()),
-                            datatype=datatype,
-                            value=int(value),
-                            date_updated=date_updated,
-                            source_url=self.SOURCE_URL,
-                            source_id=self.SOURCE_ID
-                        ))
-
+                for datatype, value in (
+                    (DataTypes.STATUS_ACTIVE, row['active']),
+                    (DataTypes.TOTAL, row['cases'])
+                ):
+                    r.append(DataPoint(
+                        region_schema=Schemas.LGA,
+                        region_parent='AU-VIC',
+                        region_child=normalize_locality_name(row['LGA'].split('(')[0].strip()),
+                        datatype=datatype,
+                        value=int(value),
+                        date_updated=date_updated,
+                        source_url=self.SOURCE_URL,
+                        source_id=self.SOURCE_ID
+                    ))
         return r
 
 

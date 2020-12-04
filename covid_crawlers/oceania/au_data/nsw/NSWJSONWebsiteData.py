@@ -6,20 +6,23 @@ from os import makedirs, listdir
 from os.path import exists
 
 from _utility.get_package_dir import get_data_dir
+from _utility.cache_by_date import cache_by_date
 from covid_db.datatypes.DataPoint import DataPoint
 from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DatapointMerger import DataPointMerger
+from covid_crawlers.oceania.au_data.nsw.NSWJSONOpenData import POSTCODE_TO_LGA, NSWJSONOpenData
 
 
 class NSWJSONWebsiteData:
     SOURCE_ID = 'au_nsw_website_data'
-    SOURCE_URL = ''
+    SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data'
     SOURCE_DESCRIPTION = ''
 
-    def __init__(self):
-        self.postcode_to_lga = {}
-
     def get_datapoints(self):
+        if not POSTCODE_TO_LGA:
+            # HACK: Make sure postcode -> lga map is available!
+            NSWJSONOpenData().get_datapoints()
+
         date = (
             datetime.now() - timedelta(hours=20, minutes=30)
         ).strftime('%Y_%m_%d')
@@ -38,6 +41,7 @@ class NSWJSONWebsiteData:
         r.extend(website_data)
         return r
 
+    @cache_by_date(SOURCE_ID)
     def __get_website_datapoints(self, date, download=True):
         dir_ = get_data_dir() / 'nsw' / 'open_data' / date
         if not exists(dir_):
@@ -68,8 +72,8 @@ class NSWJSONWebsiteData:
                 continue
             elif datapoint.region_schema != Schemas.POSTCODE:
                 continue
-            elif datapoint.region_child in self.postcode_to_lga:
-                lga = self.postcode_to_lga[datapoint.region_child]
+            elif datapoint.region_child in POSTCODE_TO_LGA:
+                lga = POSTCODE_TO_LGA[datapoint.region_child]
             else:
                 lga = 'unknown'
                 if datapoint.region_child != 'unknown':

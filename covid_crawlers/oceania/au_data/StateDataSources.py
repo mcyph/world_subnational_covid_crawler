@@ -46,6 +46,9 @@ class StateDataSources:
         news_insts = [
             # We'll make it so crawlers with dashboards run
             # together with ones which don't when possible
+
+            # Note that NSWJSONOpenData must be before NSWJSONWebsiteData
+            # as the map from postcode to LGA is generated there
             (NSWNews, NSWJSONOpenData, NSWJSONWebsiteData),
             (ACTNews, ACTPowerBIReader),
             (QLDNews,),

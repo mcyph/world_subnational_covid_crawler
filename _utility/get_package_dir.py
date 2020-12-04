@@ -1,5 +1,17 @@
 import os
+import dotenv
 from pathlib import Path
+from os import environ
+from os.path import expanduser
+
+
+dotenv.load_dotenv(override=True)
+
+DATA_DIR = Path(expanduser(environ['DATA_DIR']))
+OVERSEAS_DIR = Path(expanduser(environ['OVERSEAS_DIR']))
+OUTPUT_DIR = Path(expanduser(environ['OUTPUT_DIR']))
+GLOBAL_SUBNATIONAL_COVID_DATA_DIR = Path(expanduser(environ['GLOBAL_SUBNATIONAL_COVID_DATA_DIR']))
+CACHE_DIR = Path(expanduser(environ['CACHE_DIR']))
 
 
 def get_package_dir():
@@ -9,16 +21,20 @@ def get_package_dir():
 def get_data_dir():
     # Perhaps this shouldn't be hardcoded, but putting all this
     # data in source control can slow down the IDE substantially!
-    return Path(os.path.expanduser(f'~/dev/covid_19_data/'))
+    return DATA_DIR
 
 
 def get_overseas_dir():
-    return Path(os.path.expanduser(f'~/dev/covid_19_gitdata'))
+    return OVERSEAS_DIR
 
 
 def get_output_dir():
-    return Path('/mnt/ssd_970pro_512gb/covid_19_au_grab')
+    return OUTPUT_DIR
 
 
 def get_global_subnational_covid_data_dir():
-    return Path(os.path.expanduser(f'~/dev/global_subnational_covid_data/'))
+    return GLOBAL_SUBNATIONAL_COVID_DATA_DIR
+
+
+def get_cache_dir():
+    return CACHE_DIR

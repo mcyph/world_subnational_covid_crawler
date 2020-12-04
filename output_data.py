@@ -15,7 +15,7 @@ from covid_db.DataPointsDB import DataPointsDB
 from covid_db.delete_old_dbs import delete_old_dbs
 from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
 from covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
-from _utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson
+from _utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson, push_to_github
 
 
 OUTPUT_DIR = get_output_dir() / 'output'
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     output_geojson()
 
     # Commit to GitHub
-    print("DISABLED: Pushing to GitHub...")
+    print("Pushing to GitHub...")
     push_to_github()
     print("Push to GitHub done!")
 

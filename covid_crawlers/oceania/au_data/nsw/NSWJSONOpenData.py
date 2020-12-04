@@ -1,23 +1,30 @@
 import csv
-from collections import Counter
-from datetime import datetime, timedelta
-from urllib.request import urlretrieve
-from os import makedirs, listdir
+import json
 from os.path import exists
+from os import makedirs, listdir
+from collections import Counter
+from urllib.request import urlretrieve
+from datetime import datetime, timedelta
 
-from _utility.get_package_dir import get_data_dir
+from _utility.get_package_dir import get_data_dir, get_package_dir
+from _utility.cache_by_date import cache_by_date
 from covid_db.datatypes.DataPoint import DataPoint
 from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
+POSTCODE_TO_LGA_PATH = \
+    get_package_dir() / 'covid_crawlers' / 'oceania' / \
+    'au_data' / 'nsw' / 'postcode_to_lga.json'
+
+with open(POSTCODE_TO_LGA_PATH, 'r', encoding='utf-8') as f:
+    POSTCODE_TO_LGA = json.loads(f.read())
+
+
 class NSWJSONOpenData:
     SOURCE_ID = 'au_nsw_open_data'
-    SOURCE_URL = ''
+    SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data'
     SOURCE_DESCRIPTION = ''
-
-    def __init__(self):
-        self.postcode_to_lga = {}
 
     def get_datapoints(self):
         date = (
@@ -38,6 +45,7 @@ class NSWJSONOpenData:
         r.extend(open_data)
         return r
 
+    @cache_by_date(SOURCE_ID)
     def __get_open_datapoints(self, date, download=True):
         dir_ = get_data_dir() / 'nsw' / 'open_data' / date
         if not exists(dir_):
@@ -67,8 +75,8 @@ class NSWJSONOpenData:
                 continue
             elif datapoint.region_schema != Schemas.POSTCODE:
                 continue
-            elif datapoint.region_child in self.postcode_to_lga:
-                lga = self.postcode_to_lga[datapoint.region_child]
+            elif datapoint.region_child in POSTCODE_TO_LGA:
+                lga = POSTCODE_TO_LGA[datapoint.region_child]
             else:
                 lga = 'unknown'
                 if datapoint.region_child != 'unknown':
@@ -192,10 +200,10 @@ class NSWJSONOpenData:
                     .setdefault(soi, []).append(row)
 
                 lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
-                if row['postcode'] in self.postcode_to_lga:
-                    assert self.postcode_to_lga[row['postcode']] == lga, lga
+                if row['postcode'] in POSTCODE_TO_LGA:
+                    assert POSTCODE_TO_LGA[row['postcode']] == lga, lga
                 else:
-                    self.postcode_to_lga[row['postcode']] = lga
+                    POSTCODE_TO_LGA[row['postcode']] = lga
 
         r = []
 
@@ -334,10 +342,10 @@ class NSWJSONOpenData:
                     .setdefault(posneg, []).append(row)
 
                 lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
-                if row['postcode'] in self.postcode_to_lga:
-                    assert self.postcode_to_lga[row['postcode']] == lga, lga
+                if row['postcode'] in POSTCODE_TO_LGA:
+                    assert POSTCODE_TO_LGA[row['postcode']] == lga, lga
                 else:
-                    self.postcode_to_lga[row['postcode']] = lga
+                    POSTCODE_TO_LGA[row['postcode']] = lga
 
         r = []
 
