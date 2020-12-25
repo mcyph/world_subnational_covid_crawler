@@ -13,33 +13,27 @@ from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
-POSTCODE_TO_LGA_PATH = \
-    get_package_dir() / 'covid_crawlers' / 'oceania' / \
-    'au_data' / 'nsw' / 'postcode_to_lga.json'
-
-with open(POSTCODE_TO_LGA_PATH, 'r', encoding='utf-8') as f:
-    POSTCODE_TO_LGA = json.loads(f.read())
-
-
 class NSWJSONOpenData:
     SOURCE_ID = 'au_nsw_open_data'
     SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data'
     SOURCE_DESCRIPTION = ''
 
     def get_datapoints(self):
-        date = (
-            datetime.now() - timedelta(hours=20, minutes=30)
-        ).strftime('%Y_%m_%d')
+        date = datetime.now() - timedelta(hours=20, minutes=30)
+        date = date.strftime('%Y_%m_%d')
 
         dates = sorted(listdir(get_data_dir() / 'nsw' / 'open_data'))
         if not date in dates:
             dates.append(date)
 
-        open_data = DataPointMerger()
-        for i_date in dates:
+        open_data = DataPointMerger() # source_id=self.SOURCE_ID
+
+        for i_date in dates:  # open_data.iter_unprocessed_dates(dates)
             download = i_date == date
             for datapoint in self.__get_open_datapoints(i_date, download=download):
                 open_data.append(datapoint)
+
+        #open_data.save_state()
 
         r = []
         r.extend(open_data)
@@ -53,13 +47,15 @@ class NSWJSONOpenData:
 
         # Add open data
         open_data = []
-        open_data.extend(self.get_nsw_cases_data(dir_, download=download))
-        open_data.extend(self.get_nsw_tests_data(dir_, download=download))
-        open_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', open_data,
+        postcode_to_lga, datapoints = self.get_nsw_cases_data_postcode_to_lga(dir_, download=download)
+        open_data.extend(datapoints)
+        open_data.extend(self.get_nsw_tests_data(dir_, postcode_to_lga, download=download))
+        open_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data',
+                                                           postcode_to_lga, open_data,
                                                            source_id=self.SOURCE_ID))
         return open_data
 
-    def __postcode_datapoints_to_lga(self, SOURCE_URL, r, source_id):
+    def __postcode_datapoints_to_lga(self, SOURCE_URL, postcode_to_lga, r, source_id):
         # Convert postcode to LGA where possible
         new_r = DataPointMerger()
         added_to_lga = set()
@@ -75,8 +71,8 @@ class NSWJSONOpenData:
                 continue
             elif datapoint.region_schema != Schemas.POSTCODE:
                 continue
-            elif datapoint.region_child in POSTCODE_TO_LGA:
-                lga = POSTCODE_TO_LGA[datapoint.region_child]
+            elif datapoint.region_child in postcode_to_lga:
+                lga = postcode_to_lga[datapoint.region_child]
             else:
                 lga = 'unknown'
                 if datapoint.region_child != 'unknown':
@@ -125,7 +121,7 @@ class NSWJSONOpenData:
     #   lhd_2010_code,lhd_2010_name,lga_code19,lga_name19
     # 2020-01-22,2134,Overseas,X700,Sydney,11300,Burwood (A)
 
-    def get_nsw_cases_data(self, dir_, download=True):
+    def get_nsw_cases_data_postcode_to_lga(self, dir_, download=True):
         DEFAULT_REGION = 'Unknown'
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/cases'
 
@@ -139,14 +135,17 @@ class NSWJSONOpenData:
         by_lga_soi = {}
         by_admin_1_soi = {}  # Statewide
 
+        postcode_to_lga = {}
+
         soi_map = {
             'Overseas': DataTypes.SOURCE_OVERSEAS,
             'Locally acquired - contact not identified': DataTypes.SOURCE_COMMUNITY,
-            'Locally acquired - contact not yet identified': DataTypes.SOURCE_COMMUNITY,
+            'Locally acquired - contact not yet identified': DataTypes.SOURCE_COMMUNITY,  # CHECK ME!!!
             'Locally acquired - source not identified': DataTypes.SOURCE_COMMUNITY,
             'Locally acquired - no links to known case or cluster': DataTypes.SOURCE_COMMUNITY,
             'Locally acquired - contact of a confirmed case and/or in a known cluster': DataTypes.SOURCE_CONFIRMED,
             'Locally acquired - linked to known case or cluster': DataTypes.SOURCE_CONFIRMED,
+            'Locally acquired - investigation ongoing': DataTypes.SOURCE_UNDER_INVESTIGATION,
             'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
             'Interstate': DataTypes.SOURCE_INTERSTATE
         }
@@ -199,11 +198,17 @@ class NSWJSONOpenData:
                     .setdefault('AU-NSW', {}) \
                     .setdefault(soi, []).append(row)
 
-                lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
-                if row['postcode'] in POSTCODE_TO_LGA:
-                    assert POSTCODE_TO_LGA[row['postcode']] == lga, lga
-                else:
-                    POSTCODE_TO_LGA[row['postcode']] = lga
+                if row['postcode'].lower() not in ('masked', 'unknown'):  # NOTE ME!!!!
+                    lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
+
+                    if lga == 'unknown':
+                        if row['postcode'] not in postcode_to_lga:
+                            postcode_to_lga[row['postcode']] = lga
+                    else:
+                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] != 'unknown':
+                            assert postcode_to_lga[row['postcode']] == lga, (lga, row, postcode_to_lga[row['postcode']])
+                        else:
+                            postcode_to_lga[row['postcode']] = lga
 
         r = []
 
@@ -266,7 +271,7 @@ class NSWJSONOpenData:
                             source_id=self.SOURCE_ID
                         ))
 
-        return r
+        return postcode_to_lga, r
 
     #=============================================================================#
     # Postcode-level open tests json data
@@ -275,7 +280,7 @@ class NSWJSONOpenData:
     # test_date,postcode,lhd_2010_code,lhd_2010_name,lga_code19,lga_name19,result
     # 2020-01-08,2071,X760,Northern Sydney,14500,Ku-ring-gai (A),Tested & excluded
 
-    def get_nsw_tests_data(self, dir_, download=True):
+    def get_nsw_tests_data(self, dir_, postcode_to_lga, download=True):
         DEFAULT_REGION = 'Unknown'
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/tests'
 
@@ -341,11 +346,17 @@ class NSWJSONOpenData:
                     .setdefault(row['lga_name19'], {}) \
                     .setdefault(posneg, []).append(row)
 
-                lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
-                if row['postcode'] in POSTCODE_TO_LGA:
-                    assert POSTCODE_TO_LGA[row['postcode']] == lga, lga
-                else:
-                    POSTCODE_TO_LGA[row['postcode']] = lga
+                if row['postcode'].lower() not in ('masked', 'unknown'):  # NOTE ME!!!!
+                    lga = row['lga_name19'].split('(')[0].strip().lower() or 'unknown'
+
+                    if lga == 'unknown':
+                        if row['postcode'] not in postcode_to_lga:
+                            postcode_to_lga[row['postcode']] = lga
+                    else:
+                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] != 'unknown':
+                            assert postcode_to_lga[row['postcode']] == lga, (lga, row, postcode_to_lga[row['postcode']])
+                        else:
+                            postcode_to_lga[row['postcode']] = lga
 
         r = []
 

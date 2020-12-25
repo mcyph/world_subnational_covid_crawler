@@ -1,4 +1,5 @@
 import threading
+from time import time
 import multiprocessing
 from queue import Queue
 
@@ -114,8 +115,8 @@ def _get_datapoints(classes, send_q):
     for i in classes:
         # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
         print("Getting using class:", i)
-
         inst = i()
+        t_from = time()
 
         try:
             datapoints = [tuple(i) for i in inst.get_datapoints()]
@@ -126,6 +127,7 @@ def _get_datapoints(classes, send_q):
                   inst.SOURCE_DESCRIPTION,
                   datapoints, {
                 'status': 'OK',
+                'elapsed': time() - t_from,
                 'message': None,
             }))
 
@@ -145,6 +147,7 @@ def _get_datapoints(classes, send_q):
                   inst.SOURCE_DESCRIPTION,
                   None, {
                 'status': 'ERROR',
+                'elapsed': time() - t_from,
                 'message': traceback.format_exc()
             }))
 

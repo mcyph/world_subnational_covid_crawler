@@ -3,6 +3,7 @@
 import json
 from os import listdir
 
+from _utility.cache_by_date import cache_by_date
 from covid_crawlers._base_classes.URLBase import URL, URLBase
 from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_db.datatypes.enums import Schemas, DataTypes
@@ -211,6 +212,7 @@ SI-136	Vipava
 SI-137	Vitanje
 SI-138	Vodice
 SI-139	Vojnik
+SI-139	Vojnki
 SI-189	Vransko
 SI-140	Vrhnika
 SI-141	Vuzenica
@@ -264,6 +266,8 @@ class SIData(URLBase):
                 ('admin_1', 'si', 'si-203'): None,
                 ('admin_1', 'si', 'si-198'): None,
                 ('admin_1', 'si', 'si-202'): None,
+                ('admin_1', 'si', 'si-088'): None,
+                ('admin_1', 'si', 'si-210'): None,
             },
             mode=MODE_STRICT
         )
@@ -271,72 +275,72 @@ class SIData(URLBase):
 
     def get_datapoints(self):
         r = []
-        r.extend(self._get_municipalities_data())
-        return r
-
-    def _get_municipalities_data(self):
-        out = DataPointMerger()
+        dpm = DataPointMerger()
         # [{"year":2020,"month":3,"day":4,"regions":{"mb":{"benedikt":{"activeCases":null,"confirmedToDate":null,"deceasedToDate":0},
-
         base_dir = self.get_path_in_dir('')
 
         for date in self.iter_nonempty_dirs(base_dir):
-            r = self.sdpf()
             print(date)
-            path = f'{base_dir}/{date}/municipalities.json'
+            r.extend(self._get_municipalities_data(date, dpm))
+        return r
 
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    data = json.loads(f.read())
-            except UnicodeDecodeError:
-                import brotli
-                with open(path, 'rb') as f:
-                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
+    @cache_by_date(source_id=SOURCE_ID)
+    def _get_municipalities_data(self, date, dpm):
+        r = self.sdpf()
+        base_dir = self.get_path_in_dir('')
+        path = f'{base_dir}/{date}/municipalities.json'
 
-            for i_data in data:
-                for region, region_dict in i_data['regions'].items():
-                    for sub_region, sub_region_dict in region_dict.items():
-                        region_child = region_map[sub_region.replace('_', ' ').lower()]
-                        #print(region, sub_region, sub_region_dict)
-                        date = '%04d_%02d_%02d' % (
-                            i_data['year'], i_data['month'], i_data['day']
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.loads(f.read())
+        except UnicodeDecodeError:
+            import brotli
+            with open(path, 'rb') as f:
+                data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
+
+        for i_data in data:
+            for region, region_dict in i_data['regions'].items():
+                for sub_region, sub_region_dict in region_dict.items():
+                    region_child = region_map[sub_region.replace('_', ' ').lower()]
+                    #print(region, sub_region, sub_region_dict)
+                    date = '%04d_%02d_%02d' % (
+                        i_data['year'], i_data['month'], i_data['day']
+                    )
+
+                    if sub_region_dict.get('activeCases') is not None:
+                        r.append(
+                            region_schema=Schemas.ADMIN_1,
+                            region_parent='SI',
+                            region_child=region_child,
+                            datatype=DataTypes.STATUS_ACTIVE,
+                            value=sub_region_dict['activeCases'],
+                            source_url=self.SOURCE_URL,
+                            date_updated=date
                         )
 
-                        if sub_region_dict['activeCases'] is not None:
-                            r.append(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='SI',
-                                region_child=region_child,
-                                datatype=DataTypes.STATUS_ACTIVE,
-                                value=sub_region_dict['activeCases'],
-                                source_url=self.SOURCE_URL,
-                                date_updated=date
-                            )
+                    if sub_region_dict.get('confirmedToDate') is not None:
+                        r.append(
+                            region_schema=Schemas.ADMIN_1,
+                            region_parent='SI',
+                            region_child=region_child,
+                            datatype=DataTypes.TOTAL,
+                            value=sub_region_dict['confirmedToDate'],
+                            source_url=self.SOURCE_URL,
+                            date_updated=date
+                        )
 
-                        if sub_region_dict['confirmedToDate'] is not None:
-                            r.append(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='SI',
-                                region_child=region_child,
-                                datatype=DataTypes.TOTAL,
-                                value=sub_region_dict['confirmedToDate'],
-                                source_url=self.SOURCE_URL,
-                                date_updated=date
-                            )
+                    if sub_region_dict.get('deceasedToDate') is not None:
+                        r.append(
+                            region_schema=Schemas.ADMIN_1,
+                            region_parent='SI',
+                            region_child=region_child,
+                            datatype=DataTypes.STATUS_DEATHS,
+                            value=sub_region_dict['deceasedToDate'],
+                            source_url=self.SOURCE_URL,
+                            date_updated=date
+                        )
 
-                        if sub_region_dict['deceasedToDate'] is not None:
-                            r.append(
-                                region_schema=Schemas.ADMIN_1,
-                                region_parent='SI',
-                                region_child=region_child,
-                                datatype=DataTypes.STATUS_DEATHS,
-                                value=sub_region_dict['deceasedToDate'],
-                                source_url=self.SOURCE_URL,
-                                date_updated=date
-                            )
-
-            out.extend(r)
-        return out
+        return dpm.extend(r)
 
 
 if __name__ == '__main__':

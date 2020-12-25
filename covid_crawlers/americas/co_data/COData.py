@@ -44,10 +44,15 @@ class COData(URLBase):
                 ('admin_1', 'co', 'co-dc'): ('MERGE', 'admin_1', 'co', 'co-cun'),
                 ('admin_1', 'co', 'co-cun'): ('MERGE', 'admin_1', 'co', 'co-cun'),
                 ('admin_1', 'co', 'cartagena d.t. y c.'): ('MERGE', 'admin_1', 'co', 'co-bol'),
+                ('admin_1', 'co', 'cartagena'): ('MERGE', 'admin_1', 'co', 'co-bol'),
                 ('admin_1', 'co', 'barranquilla d.e.'): ('MERGE', 'admin_1', 'co', 'co-atl'),
+                ('admin_1', 'co', 'barranquilla'): ('MERGE', 'admin_1', 'co', 'co-atl'),
                 ('admin_1', 'co', 'santa marta d.t. y c.'): ('MERGE', 'admin_1', 'co', 'co-atl'),
+                ('admin_1', 'co', 'santa marta'): ('MERGE', 'admin_1', 'co', 'co-atl'),
                 ('admin_1', 'co', 'archipiélago de san andrés providencia y santa catalina'): ('MERGE', 'admin_1', 'co', 'co-atl'),
                 ('admin_1', 'co', 'buenaventura d.e.'): ('MERGE', 'admin_1', 'co', 'co-vac'),
+                ('admin_1', 'co', 'buenaventura'): ('MERGE', 'admin_1', 'co', 'co-vac'),
+                ('admin_1', 'co', 'norte santander'): ('MERGE', 'admin_1', 'co', 'co-vac'),
 
                 ('co_municipality', 'cartagena d.t. y c.', 'cartagena de indias'): ('co_municipality', 'co-bol', 'cartagena de indias'),
                 ('co_municipality', 'norte de santander', 'cúcuta'): None,
@@ -124,13 +129,13 @@ class COData(URLBase):
 
             #print(item)
             case_id = item['ID de caso']
-            notification_date = self.convert_date(item['Fecha de notificación'].split('T')[0])
+            notification_date = self.convert_date(item['Fecha de notificación'].split('T')[0].split()[0])
             #divipola = item['Codigo DIVIPOLA']
-            municipality = item['Ciudad de ubicación']
+            municipality = item['Nombre municipio']
             admin1 = {
                 'bogotá d.c.': 'co-dc', #'Distrito Capital de Bogota',
-            }.get(item['Departamento o Distrito '].lower(), item['Departamento o Distrito '])
-            attention = item['atención']
+            }.get(item['Nombre departamento'].lower(), item['Nombre departamento'])
+            #attention = item['atención']
             age = self._age_to_range(item['Edad'])
             gender = {
                 'M': DataTypes.TOTAL_MALE,
@@ -140,23 +145,24 @@ class COData(URLBase):
                 'importado': DataTypes.SOURCE_OVERSEAS,
                 'relacionado': DataTypes.SOURCE_CONFIRMED,
                 'en estudio': DataTypes.SOURCE_UNDER_INVESTIGATION,
-                'desconocido': DataTypes.SOURCE_COMMUNITY
-            }[item['Tipo'].lower()]
+                'desconocido': DataTypes.SOURCE_COMMUNITY,
+                '': DataTypes.SOURCE_COMMUNITY,  # HACK!
+            }[item['Tipo de contagio'].lower()]
             state = item['Estado']
-            country_of_origin = item['País de procedencia']  # TODO: Add support for this!! ============================
+            country_of_origin = item['Nombre del país']  # TODO: Add support for this!! ============================
 
             #date_reported = self.convert_date(item['FIS'])
             #date_diagnosed = self.convert_date(item['Fecha diagnostico'])
             #date_web_report = self.convert_date(item['fecha reporte web'])
 
             if item['Fecha de muerte'].strip('-/NA').strip():
-                date_death = self.convert_date(item['Fecha de muerte'].split('T')[0])
+                date_death = self.convert_date(item['Fecha de muerte'].split('T')[0].split()[0])
                 by_status[date_death, DataTypes.STATUS_DEATHS] += 1
                 by_admin1_status[date_death, admin1, DataTypes.STATUS_DEATHS] += 1
                 by_municipality_status[date_death, admin1, municipality, DataTypes.STATUS_DEATHS] += 1
 
-            if item['Fecha recuperado'].strip('-/NA').strip():
-                date_recovered = self.convert_date(item['Fecha recuperado'].split('T')[0])
+            if item['Fecha de recuperación'].strip('-/NA').strip():
+                date_recovered = self.convert_date(item['Fecha de recuperación'].split('T')[0].split()[0])
                 by_status[date_recovered, DataTypes.STATUS_RECOVERED] += 1
                 by_admin1_status[date_recovered, admin1, DataTypes.STATUS_RECOVERED] += 1
                 by_municipality_status[date_recovered, admin1, municipality, DataTypes.STATUS_RECOVERED] += 1

@@ -125,7 +125,7 @@ class EUSubNationalData(URLBase):
              output_dir=get_overseas_dir() / 'eu_subnational' / 'data',
              urls_dict={
                  'jrc-covid-19-regions-hxl.csv':
-                     URL('https://proxy.hxlstandard.org/data/e2bb4b/download/jrc-covid-19-regions-hxl.csv',
+                     URL('https://raw.githubusercontent.com/ec-jrc/COVID-19/master/data-by-region/jrc-covid-19-all-days-by-regions.csv',
                          static_file=False),
              }
         )
@@ -145,6 +145,7 @@ class EUSubNationalData(URLBase):
                 if first_line:
                     first_line = False
                     continue
+                print(item)
 
                 date = self.convert_date(item['Date'])
                 country = {

@@ -5,7 +5,7 @@ from _utility.get_package_dir import get_output_dir
 DB_DIR = get_output_dir() / 'output'
 
 ACTUALLY_DELETE = True
-DELETE_BEFORE = datetime.datetime.now() - datetime.timedelta(days=2)
+DELETE_BEFORE = datetime.datetime.now() - datetime.timedelta(days=1)
 
 
 def delete_old_dbs():

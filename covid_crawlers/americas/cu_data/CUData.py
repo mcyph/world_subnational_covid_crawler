@@ -73,7 +73,7 @@ class CUData(GithubRepo):
         #}
 
         def age_to_range(age):
-            for x in range(0, 110, 10):
+            for x in range(0, 130, 10):
                 if x <= age < x+10:
                     return f'{x}-{x+9}'
             raise Exception()
@@ -94,7 +94,9 @@ class CUData(GithubRepo):
 
                 by_totals[date] += 1
                 by_gender[date, genders[item['sexo']]] += 1
-                by_age[date, age_to_range(int(item['edad']))] += 1
+
+                if item['edad']:
+                    by_age[date, age_to_range(int(item['edad']))] += 1
 
                 if item['provincia'] and item['municipio']:
                     by_municipality[date, region_map[item['provincia']], item['municipio']] += 1

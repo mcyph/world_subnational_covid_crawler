@@ -1,3 +1,4 @@
+from time import time
 import multiprocessing
 
 from covid_db.datatypes.DataPoint import _DataPoint
@@ -151,8 +152,7 @@ MIDDLE_EAST_DATA = (
 #==================================================================#
 
 from covid_crawlers.world.world_bing_data.WorldBingData import WorldBingData
-from covid_crawlers.world.world_jhu_data.WorldJHUData import \
-    WorldJHUDataAdmin0, WorldJHUDataAdmin1, WorldJHUDataAdmin2
+from covid_crawlers.world.world_jhu_data.WorldJHUData import WorldJHUData
 from covid_crawlers.world.world_um_data.WorldUMData import WorldUMData
 from covid_crawlers.world.world_google_mobility.WorldGoogleMobility import WorldGoogleMobility
 from covid_crawlers.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
@@ -162,9 +162,7 @@ from covid_crawlers.world.world_gender_disaggregated.WorldGenderDisaggregated im
 
 WORLD_DATA = (
     WorldUMData,
-    WorldJHUDataAdmin0,
-    WorldJHUDataAdmin1,
-    WorldJHUDataAdmin2,
+    WorldJHUData,
     WorldBingData,
     WorldGoogleMobility,
     WorldEUCDCData,
@@ -243,6 +241,7 @@ def _get_datapoints(classes, send_q):
     for i in classes:
         # TODO: OUTPUT AS CSV OR SOMETHING, with state info added?? ====================================================
         print("Getting using class:", i)
+        t_from = time()
 
         try:
             inst = i()
@@ -259,6 +258,7 @@ def _get_datapoints(classes, send_q):
             print("Class done:", i)
             send_q.put((inst.SOURCE_ID, inst.SOURCE_URL, inst.SOURCE_DESCRIPTION, new_datapoints, {
                 'status': 'OK',
+                'elapsed': time() - t_from,
                 'message': None,
             }))
 
@@ -269,6 +269,7 @@ def _get_datapoints(classes, send_q):
 
             send_q.put((i.SOURCE_ID, i.SOURCE_URL, i.SOURCE_DESCRIPTION, None, {
                 'status': 'ERROR',
+                'elapsed': time() - t_from,
                 'message': traceback.format_exc()
             }))
 

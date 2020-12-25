@@ -234,10 +234,10 @@ class MYData(GithubRepo):
         # You may refer to their cases in
         # states/covid-19-my-states-cases.csv
 
-        for fnam in listdir(self.get_path_in_dir('districts')):
+        for fnam in listdir(self.get_path_in_dir('archive/districts')):
             if not fnam.endswith('.csv'):
                 continue
-            path = f"{self.get_path_in_dir('districts')}/{fnam}"
+            path = f"{self.get_path_in_dir('archive/districts')}/{fnam}"
 
             with open(path, 'r', encoding='utf-8') as f:
                 for item in csv.DictReader(f):
@@ -301,7 +301,7 @@ class MYData(GithubRepo):
         # 17/2/2020,12,8,-,0,2,-
         # 18/2/2020,12,8,-,0,2,-
 
-        with open(self.get_path_in_dir('covid-19-my-cases-types.csv'),
+        with open(self.get_path_in_dir('archive/covid-19-my-cases-types.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
                 date = self.convert_date(item['date'])

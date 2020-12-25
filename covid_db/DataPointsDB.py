@@ -18,9 +18,13 @@ class DataPointsDB:
         self.conn = sqlite3.connect(
             self.path, detect_types=sqlite3.PARSE_DECLTYPES
         )
-        self.conn.execute('PRAGMA journal_mode = WAL;')
+
+        #self.conn.execute('PRAGMA journal_mode = WAL;')
         #self.conn.execute('PRAGMA cache_size = -512000;')  # 512MB
-        #self.conn.execute('PRAGMA SYNCHRONOUS = 0;')
+
+        self.conn.execute('PRAGMA JOURNAL_MODE = OFF;')
+        self.conn.execute('PRAGMA SYNCHRONOUS = OFF;')
+        self.conn.execute('PRAGMA LOCKING_MODE = EXCLUSIVE;')
 
     def __create_tables(self):
         sql = open(get_package_dir() / 'covid_db' / 'datapoints.sql',
@@ -29,6 +33,14 @@ class DataPointsDB:
         with conn:
             conn.executescript(sql)
         conn.close()
+
+    def create_indexes(self):
+        # Create the indexes after inserting to improve performance
+        sql = open(get_package_dir() / 'covid_db' / 'indexes.sql',
+                   'r', encoding='utf-8').read()
+        with self.conn:
+            self.conn.executescript(sql)
+            self.conn.commit()
 
     def migrate_source_ids(self, path, source_ids):
         """

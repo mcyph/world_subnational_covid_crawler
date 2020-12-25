@@ -9,7 +9,7 @@ from covid_db.datatypes.DataPoint import _DataPoint
 DATE_RE = re.compile('[0-9]{4}_[0-9]{2}_[0-9]{2}(-[0-9]*)?')
 
 
-def cache_by_date(source_id):
+def cache_by_date(source_id, validate_date=True):
     def new_fn(fn):
         def new_fn(self, arg, *args, **kw):
             try:
@@ -17,7 +17,9 @@ def cache_by_date(source_id):
             except AttributeError:
                 date = arg
 
-            assert DATE_RE.match(date), date
+            if validate_date:
+                assert DATE_RE.match(date), date
+
             fnam = hashlib.md5((source_id + date).encode('utf-8')).hexdigest()
             cache_path = get_cache_dir() / source_id / f'{fnam}.json'
 

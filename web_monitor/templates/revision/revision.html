@@ -19,7 +19,7 @@
 
     <ul style="column-count: 2">
         {% for key, value in status_list %}
-            <li><b>{{ key|e }}</b>: {{ value['status']|e }} {% if value['message'] %}{{ value['message']|e }}{% endif %}</li>
+            <li><b>{{ key|e }}</b>: {{ value['status']|e }} {{ value['elapsed']|e }} {% if value['message'] %}{{ value['message']|e }}{% endif %}</li>
         {% endfor %}
     </ul>
 

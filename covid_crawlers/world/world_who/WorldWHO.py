@@ -40,7 +40,7 @@ class WorldWHO(URLBase):
             for item in csv.DictReader(f):
                 date = self.convert_date(item['Date_reported'])
 
-                if item['Country_code'] in ('BQ', 'GF', 'GP', 'MQ', 'YT', 'RE', 'TK', ' '):
+                if item['Country_code'] in ('BQ', 'GF', 'GP', 'MQ', 'YT', 'RE', 'TK', 'XA', 'XC', 'XB', ' '):
                     continue
 
                 r.append(

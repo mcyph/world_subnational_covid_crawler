@@ -114,6 +114,9 @@ if __name__ == '__main__':
         t1.join(); t2.join()
         print("State and overseas data done. Migrating sources with errors...")
 
+    # NOTE ME: There shouldn't be any dupes!!!
+    dpdb.create_indexes()
+
     # If any of them failed, copy them across from the previous revision.
     # Note the previous revision might have failed too, but should have
     # copied the values from the previous revision before that, etc

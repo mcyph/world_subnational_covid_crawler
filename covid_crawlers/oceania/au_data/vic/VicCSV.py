@@ -16,8 +16,6 @@ class VicCSV(URLBase):
     SOURCE_DESCRIPTION = ''
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
              output_dir=get_data_dir() / 'vic' / 'csv_data',
              urls_dict={
@@ -38,10 +36,13 @@ class VicCSV(URLBase):
         self.update()
 
     def get_datapoints(self):
-        r = DataPointMerger()
-        for date in sorted(listdir(get_data_dir() / 'vic' / 'csv_data')):
+        r = DataPointMerger(source_id=self.SOURCE_ID)
+
+        for date in r.iter_unprocessed_dates(sorted(listdir(get_data_dir() / 'vic' / 'csv_data'))):
             r.extend(self._get_postcode_datapoints(date))
             r.extend(self._get_lga_datapoints(date))
+
+        r.save_state()
         return r
 
     @cache_by_date(SOURCE_ID)

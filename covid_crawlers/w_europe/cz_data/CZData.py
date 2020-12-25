@@ -27,6 +27,7 @@ DEATHS = 'https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv'
 import csv
 from os import listdir
 
+from _utility.cache_by_date import cache_by_date
 from covid_crawlers._base_classes.URLBase import URL, URLBase
 from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_db.datatypes.enums import Schemas, DataTypes
@@ -77,49 +78,52 @@ class CZData(URLBase):
 
     def get_datapoints(self):
         r = []
-        r.extend(self._get_data_from_cases_csv())
+        dpm = DataPointMerger()
+        base_dir = self.get_path_in_dir('')
+        for date in self.iter_nonempty_dirs(base_dir):
+            r.extend(self._get_data_from_cases_csv(date, dpm))
         return r
 
-    def _get_data_from_cases_csv(self):
+    @cache_by_date(source_id=SOURCE_ID)
+    def _get_data_from_cases_csv(self, date, dpm):
         # datum	kraj_nuts_kod	okres_lau_kod	kumulativni_pocet_nakazenych	kumulativni_pocet_vylecenych	kumulativni_pocet_umrti
         # 2020-03-01	CZ010	CZ0100	2	0	0
         # 2020-03-01	CZ020	CZ0201	0	0	0
         # 2020-03-01	CZ020	CZ0202	0	0	0
 
-        out = DataPointMerger()
+        r = self.sdpf()
+
         base_dir = self.get_path_in_dir('')
+        path = f'{base_dir}/{date}/regional_totals.json'
 
-        for date in self.iter_nonempty_dirs(base_dir):
-            r = self.sdpf()
-            path = f'{base_dir}/{date}/regional_totals.json'
+        with open(path, 'r', encoding='utf-8-sig') as f:
+            for item in csv.DictReader(f):
+                #print(item)
 
-            with open(path, 'r', encoding='utf-8-sig') as f:
-                for item in csv.DictReader(f):
-                    date = self.convert_date(item['datum'])
-                    confirmed = int(item['kumulativni_pocet_nakazenych'])
-                    recovered = int(item['kumulativni_pocet_nakazenych'])
-                    death = int(item['kumulativni_pocet_umrti'])
-                    active = confirmed - recovered - death
-                    region_child = item['okres_lau_kod']
+                date = self.convert_date(item['datum'])
+                confirmed = int(item['kumulativni_pocet_nakazenych'])
+                recovered = int(item['kumulativni_pocet_nakazenych'])
+                death = int(item['kumulativni_pocet_umrti'])
+                active = confirmed - recovered - death
+                region_child = item['okres_lau_kod'] or 'unknown'
 
-                    for datatype, value in (
-                        (DataTypes.TOTAL, confirmed),
-                        (DataTypes.STATUS_RECOVERED, recovered),
-                        (DataTypes.STATUS_DEATHS, death),
-                        (DataTypes.STATUS_ACTIVE, active)
-                    ):
-                        r.append(
-                            region_schema=Schemas.CZ_OKRES,
-                            region_parent='CZ',  # FIXME!
-                            region_child=region_child,
-                            datatype=datatype,
-                            value=value,
-                            date_updated=date,
-                            source_url=self.SOURCE_URL
-                        )
+                for datatype, value in (
+                    (DataTypes.TOTAL, confirmed),
+                    (DataTypes.STATUS_RECOVERED, recovered),
+                    (DataTypes.STATUS_DEATHS, death),
+                    (DataTypes.STATUS_ACTIVE, active)
+                ):
+                    r.append(
+                        region_schema=Schemas.CZ_OKRES,
+                        region_parent='CZ',  # FIXME!
+                        region_child=region_child,
+                        datatype=datatype,
+                        value=value,
+                        date_updated=date,
+                        source_url=self.SOURCE_URL
+                    )
 
-            out.extend(r)
-        return out
+        return dpm.extend(r)
 
 
 if __name__ == '__main__':

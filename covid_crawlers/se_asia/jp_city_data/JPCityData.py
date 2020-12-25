@@ -138,7 +138,7 @@ class JPCityData(URLBase):
                     assert not ''.join(item.values()).strip(), item
                     continue  # WARNING!
 
-                if item.get('年代') == '0-10' or item.get('年代') == '10歳未満':
+                if item.get('年代') == '0-10' or item.get('年代') == '10歳未満' or item.get('年代') == '1歳未満':
                     agerange = '0-9'
                 elif item.get('年代') in ('不明', '', None):
                     agerange = 'Unknown'
@@ -159,6 +159,7 @@ class JPCityData(URLBase):
                     '女性\xa0': DataTypes.TOTAL_FEMALE,
                     '女性': DataTypes.TOTAL_FEMALE,
                     '⼥性': DataTypes.TOTAL_FEMALE,
+                    '女|生': DataTypes.TOTAL_FEMALE,
                     '不明': None,
                     '惰性': DataTypes.TOTAL_MALE,  # Pretty sure this is a typo
                     '未満 女性': DataTypes.TOTAL_FEMALE,

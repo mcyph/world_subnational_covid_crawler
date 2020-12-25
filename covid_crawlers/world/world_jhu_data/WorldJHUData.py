@@ -312,48 +312,6 @@ class WorldJHUData(GithubRepo):
         return r
 
 
-class WorldJHUDataAdmin0(WorldJHUData):
-    SOURCE_ID = 'world_jhu_admin0'
-
-    def __init__(self):
-        WorldJHUData.__init__(self, do_update=True)
-
-    def get_datapoints(self):
-        r = []
-        for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema == Schemas.ADMIN_0:
-                r.append(i)
-        return r
-
-
-class WorldJHUDataAdmin1(WorldJHUData):
-    SOURCE_ID = 'world_jhu_admin1'
-
-    def __init__(self):
-        WorldJHUData.__init__(self, do_update=False)
-
-    def get_datapoints(self):
-        r = []
-        for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema == Schemas.ADMIN_1:
-                r.append(i)
-        return r
-
-
-class WorldJHUDataAdmin2(WorldJHUData):
-    SOURCE_ID = 'world_jhu_admin2'
-
-    def __init__(self):
-        WorldJHUData.__init__(self, do_update=False)
-
-    def get_datapoints(self):
-        r = []
-        for i in WorldJHUData.get_datapoints(self):
-            if i.region_schema in (Schemas.US_COUNTY,):
-                r.append(i)
-        return r
-
-
 if __name__ == '__main__':
     WorldJHUData().get_datapoints()
     #pprint()

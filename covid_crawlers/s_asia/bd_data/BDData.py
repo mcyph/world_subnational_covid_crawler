@@ -3,6 +3,8 @@ import datetime
 from os import listdir
 from collections import Counter
 
+from _utility.cache_by_date import cache_by_date
+from covid_db.datatypes.DatapointMerger import DataPointMerger
 from covid_crawlers._base_classes.URLBase import URL, URLBase
 from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, MODE_STRICT
 from covid_db.datatypes.enums import Schemas, DataTypes
@@ -136,10 +138,13 @@ class BDData(URLBase):
 
     def get_datapoints(self):
         r = []
-        r.extend(self._get_recovered_sum())
+        dpm = DataPointMerger()
+        for date in self.iter_nonempty_dirs(self.output_dir):
+            r.extend(self._get_recovered_sum(date, dpm))
         return r
 
-    def _get_recovered_sum(self):
+    @cache_by_date(source_id=SOURCE_ID)
+    def _get_recovered_sum(self, date, dpm):
         r = self.sdpf()
         base_dir = self.get_path_in_dir('')
 
@@ -152,122 +157,121 @@ class BDData(URLBase):
         # "geo_code":5038,"lat":25.102372,"long":89.021208,"adjusted_cases":54.06590339,
         # "labels":"Joypurhat(55)","ObjectId":1332},"geometry":{"x":78920,"y":143477}}
 
-        for date in self.iter_nonempty_dirs(base_dir):
-            path = f'{base_dir}/{date}/data.json'
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    data = json.loads(f.read())
-            except UnicodeDecodeError:
-                import brotli
-                with open(path, 'rb') as f:
-                    data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
+        path = f'{base_dir}/{date}/data.json'
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.loads(f.read())
+        except UnicodeDecodeError:
+            import brotli
+            with open(path, 'rb') as f:
+                data = json.loads(brotli.decompress(f.read()).decode('utf-8'))
 
-            by_total = Counter()
-            by_recovered = Counter()
-            by_active = Counter()
-            by_death = Counter()
+        by_total = Counter()
+        by_recovered = Counter()
+        by_active = Counter()
+        by_death = Counter()
 
-            for feature in data['features']:
-                #print(feature)
-                attributes = feature['attributes']
-                date = datetime.datetime \
-                    .fromtimestamp(attributes['date']/1000.0) \
-                    .strftime('%Y_%m_%d')
-                district = place_map[attributes['district']]
-                admin_1 = division_map[attributes['division']]
+        for feature in data['features']:
+            #print(feature)
+            attributes = feature['attributes']
+            date = datetime.datetime \
+                .fromtimestamp(attributes['date']/1000.0) \
+                .strftime('%Y_%m_%d')
+            district = place_map[attributes['district']]
+            admin_1 = division_map[attributes['division']]
 
+            r.append(
+                region_schema=Schemas.BD_DISTRICT,
+                region_parent=admin_1,
+                region_child=district,
+                datatype=DataTypes.TOTAL,
+                value=int(attributes['cases']),
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+            by_total[date, admin_1] += int(attributes['cases'])
+
+            if attributes['recovered'] is not None:
                 r.append(
                     region_schema=Schemas.BD_DISTRICT,
                     region_parent=admin_1,
                     region_child=district,
-                    datatype=DataTypes.TOTAL,
-                    value=int(attributes['cases']),
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-                by_total[date, admin_1] += int(attributes['cases'])
-
-                if attributes['recovered'] is not None:
-                    r.append(
-                        region_schema=Schemas.BD_DISTRICT,
-                        region_parent=admin_1,
-                        region_child=district,
-                        datatype=DataTypes.STATUS_RECOVERED,
-                        value=int(attributes['recovered']),
-                        date_updated=date,
-                        source_url=self.SOURCE_URL
-                    )
-                    r.append(
-                        region_schema=Schemas.BD_DISTRICT,
-                        region_parent=admin_1,
-                        region_child=district,
-                        datatype=DataTypes.STATUS_ACTIVE,
-                        value=int(attributes['cases']) -
-                              int(attributes['death'] or 0) -
-                              int(attributes['recovered']),
-                        date_updated=date,
-                        source_url=self.SOURCE_URL
-                    )
-                    by_recovered[date, admin_1] += int(attributes['recovered'])
-                    by_active[date, admin_1] += int(r[-1].value)
-
-                if attributes['death'] is not None:
-                    r.append(
-                        region_schema=Schemas.BD_DISTRICT,
-                        region_parent=admin_1,
-                        region_child=district,
-                        datatype=DataTypes.STATUS_DEATHS,
-                        value=int(attributes['death']),
-                        date_updated=date,
-                        source_url=self.SOURCE_URL
-                    )
-                    by_death[date, admin_1] += int(attributes['death'])
-
-            for (date, admin_1), value in by_total.items():
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='BD',
-                    region_child=admin_1,
-                    datatype=DataTypes.TOTAL,
-                    value=value,
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-
-            for (date, admin_1), value in by_death.items():
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='BD',
-                    region_child=admin_1,
-                    datatype=DataTypes.STATUS_DEATHS,
-                    value=value,
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-
-            for (date, admin_1), value in by_recovered.items():
-                r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='BD',
-                    region_child=admin_1,
                     datatype=DataTypes.STATUS_RECOVERED,
-                    value=value,
+                    value=int(attributes['recovered']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
-
-            for (date, admin_1), value in by_active.items():
                 r.append(
-                    region_schema=Schemas.ADMIN_1,
-                    region_parent='BD',
-                    region_child=admin_1,
+                    region_schema=Schemas.BD_DISTRICT,
+                    region_parent=admin_1,
+                    region_child=district,
                     datatype=DataTypes.STATUS_ACTIVE,
-                    value=value,
+                    value=int(attributes['cases']) -
+                          int(attributes['death'] or 0) -
+                          int(attributes['recovered']),
                     date_updated=date,
                     source_url=self.SOURCE_URL
                 )
+                by_recovered[date, admin_1] += int(attributes['recovered'])
+                by_active[date, admin_1] += int(r[-1].value)
 
-        return r
+            if attributes['death'] is not None:
+                r.append(
+                    region_schema=Schemas.BD_DISTRICT,
+                    region_parent=admin_1,
+                    region_child=district,
+                    datatype=DataTypes.STATUS_DEATHS,
+                    value=int(attributes['death']),
+                    date_updated=date,
+                    source_url=self.SOURCE_URL
+                )
+                by_death[date, admin_1] += int(attributes['death'])
+
+        for (date, admin_1), value in by_total.items():
+            r.append(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='BD',
+                region_child=admin_1,
+                datatype=DataTypes.TOTAL,
+                value=value,
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+
+        for (date, admin_1), value in by_death.items():
+            r.append(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='BD',
+                region_child=admin_1,
+                datatype=DataTypes.STATUS_DEATHS,
+                value=value,
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+
+        for (date, admin_1), value in by_recovered.items():
+            r.append(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='BD',
+                region_child=admin_1,
+                datatype=DataTypes.STATUS_RECOVERED,
+                value=value,
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+
+        for (date, admin_1), value in by_active.items():
+            r.append(
+                region_schema=Schemas.ADMIN_1,
+                region_parent='BD',
+                region_child=admin_1,
+                datatype=DataTypes.STATUS_ACTIVE,
+                value=value,
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+
+        return dpm.extend(r)
 
 
 if __name__ == '__main__':

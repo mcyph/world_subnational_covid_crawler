@@ -6,8 +6,10 @@ PRAGMA ENCODING = "UTF-8";
 -- we'll still be able to roll back to a previous
 -- SQLite file in the case of power failure, etc.
 
-PRAGMA SYNCHRONOUS = 0;
-PRAGMA JOURNAL_MODE = WAL;
+-- PRAGMA JOURNAL_MODE = WAL;
+PRAGMA JOURNAL_MODE = OFF;
+PRAGMA SYNCHRONOUS = OFF;
+PRAGMA LOCKING_MODE = EXCLUSIVE;
 
 -- --------------------------- --
 --         DataPoints          --
@@ -28,29 +30,6 @@ CREATE TABLE datapoints (
     date_inserted TIMESTAMP NOT NULL,
 
     source_id CHAR(32) NOT NULL
-);
-
-CREATE INDEX datapoints_idx1 ON datapoints (
-    date_updated,
-    region_schema, region_parent, region_child,
-    datatype, agerange,
-    `value`
-);
-
-CREATE INDEX datapoints_idx2 ON datapoints (
-    region_schema, region_parent, region_child,
-    date_updated,
-    datatype, agerange,
-    `value`
-);
-
-CREATE INDEX datapoints_idx3 ON datapoints (
-    source_id, datatype, date_updated
-);
-
-CREATE INDEX datapoints_idx4 ON datapoints (
-    -- For querying+outputting
-    region_schema, datatype, region_parent, region_child
 );
 
 -- -------------- --

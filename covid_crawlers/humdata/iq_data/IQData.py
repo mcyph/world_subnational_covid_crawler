@@ -30,6 +30,8 @@ class IQData(URLBase):
                 ('admin_1', 'iq', 'baghdad-karkh'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
                 ('admin_1', 'iq', 'baghdad-rusafa and medical city'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
                 ('admin_1', 'iq', 'baghdad-resafa and midical city'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
+                ('admin_1', 'iq', 'baghdad-resafa'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
+                ('admin_1', 'iq', 'baghdad-rusafa'): ('MERGE', 'admin_1', 'iq', 'IQ-BG'),
                 ('admin_1', 'iq', 'basrah'): ('admin_1', 'iq', 'IQ-BA'),
                 ('admin_1', 'iq', 'diwaniya'): ('admin_1', 'iq', 'IQ-QA'),
                 ('admin_1', 'iq', 'kerbala'): ('admin_1', 'iq', 'IQ-KA'),
@@ -61,12 +63,17 @@ class IQData(URLBase):
                           include_revision=True)
         first_item = True
 
+        # HACK: Skip the first line!!
+        next(f)
+
         for item in csv.DictReader(f):
+            print("FIRST:", item)
+
             if first_item:
                 first_item = False
                 continue
 
-            #print(item)
+            print(item)
             date = self.convert_date(item['Date'])
             region_child = item['Governorate'].title()
 
@@ -76,7 +83,7 @@ class IQData(URLBase):
                     region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.TOTAL,
-                    value=int(item['Cases']),
+                    value=int(item['Cases'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -87,7 +94,7 @@ class IQData(URLBase):
                     region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_DEATHS,
-                    value=int(item['Deaths']),
+                    value=int(item['Deaths'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -98,7 +105,7 @@ class IQData(URLBase):
                     region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_RECOVERED,
-                    value=int(item['Recoveries']),
+                    value=int(item['Recoveries'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -109,7 +116,7 @@ class IQData(URLBase):
                     region_parent='IQ',
                     region_child=region_child,
                     datatype=DataTypes.STATUS_ACTIVE,
-                    value=int(item['Active Cases']),
+                    value=int(item['Active Cases'].replace(',', '')),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )

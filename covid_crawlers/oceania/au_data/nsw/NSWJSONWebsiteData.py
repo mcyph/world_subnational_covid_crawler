@@ -10,7 +10,7 @@ from _utility.cache_by_date import cache_by_date
 from covid_db.datatypes.DataPoint import DataPoint
 from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DatapointMerger import DataPointMerger
-from covid_crawlers.oceania.au_data.nsw.NSWJSONOpenData import POSTCODE_TO_LGA, NSWJSONOpenData
+from covid_crawlers.oceania.au_data.nsw.NSWJSONOpenData import NSWJSONOpenData
 
 
 class NSWJSONWebsiteData:
@@ -19,10 +19,6 @@ class NSWJSONWebsiteData:
     SOURCE_DESCRIPTION = ''
 
     def get_datapoints(self):
-        if not POSTCODE_TO_LGA:
-            # HACK: Make sure postcode -> lga map is available!
-            NSWJSONOpenData().get_datapoints()
-
         date = (
             datetime.now() - timedelta(hours=20, minutes=30)
         ).strftime('%Y_%m_%d')
@@ -47,16 +43,20 @@ class NSWJSONWebsiteData:
         if not exists(dir_):
             makedirs(dir_)
 
+        postcode_to_lga, _ = NSWJSONOpenData().get_nsw_cases_data_postcode_to_lga(dir_, download=download)
+        NSWJSONOpenData().get_nsw_tests_data(dir_, postcode_to_lga, download=download)
+
         # Add website data
         website_data = []
         website_data.extend(self.get_nsw_postcode_data(dir_, download=download))
-        website_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data', website_data,
+        website_data.extend(self.__postcode_datapoints_to_lga('https://data.nsw.gov.au/nsw-covid-19-data',
+                                                              postcode_to_lga, website_data,
                                                               source_id=self.SOURCE_ID))
         # Age distributions
         website_data.extend(self.get_nsw_age_data(dir_, date, download=download))
         return website_data
 
-    def __postcode_datapoints_to_lga(self, SOURCE_URL, r, source_id):
+    def __postcode_datapoints_to_lga(self, SOURCE_URL, postcode_to_lga, r, source_id):
         # Convert postcode to LGA where possible
         new_r = DataPointMerger()
         added_to_lga = set()
@@ -72,8 +72,8 @@ class NSWJSONWebsiteData:
                 continue
             elif datapoint.region_schema != Schemas.POSTCODE:
                 continue
-            elif datapoint.region_child in POSTCODE_TO_LGA:
-                lga = POSTCODE_TO_LGA[datapoint.region_child]
+            elif datapoint.region_child in postcode_to_lga:
+                lga = postcode_to_lga[datapoint.region_child]
             else:
                 lga = 'unknown'
                 if datapoint.region_child != 'unknown':

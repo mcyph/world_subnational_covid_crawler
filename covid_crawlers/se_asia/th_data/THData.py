@@ -1,21 +1,15 @@
 # https://data.go.th/en/dataset/covid-19-daily
 import csv
 import json
+import pandas as pd
 from collections import Counter
 
-from covid_crawlers._base_classes.URLBase import (
-    URL, URLBase
-)
-from covid_db.datatypes.DataPoint import (
-    DataPoint
-)
+from covid_db.datatypes.DataPoint import DataPoint
 from covid_db.datatypes.enums import Schemas, DataTypes
-from _utility.get_package_dir import (
-    get_overseas_dir, get_package_dir
-)
-from world_geodata.LabelsToRegionChild import (
-    LabelsToRegionChild
-)
+from covid_crawlers._base_classes.URLBase import URL, URLBase
+from world_geodata.LabelsToRegionChild import LabelsToRegionChild
+from _utility.get_package_dir import get_overseas_dir, get_package_dir
+
 
 ltrc = LabelsToRegionChild()
 
@@ -47,11 +41,11 @@ class THData(URLBase):
     SOURCE_ID = 'th_open_data'
 
     def __init__(self):
-        # Only raw_data4.json is currently being updated,
-        # so won't download the others every day
         URLBase.__init__(self,
              output_dir=get_overseas_dir() / 'th' / 'data',
              urls_dict={
+                 'covid_19_daily.xlsx': URL('https://data.go.th/dataset/8a956917-436d-4afd-a2d4-59e4dd8e906e/resource/24ac8406-0cf9-4f8e-a55e-b53cf6766d1a/download/pm-covid19-adj.xlsx',
+                                            static_file=False),
                  'cases.json': URL('https://covid19.th-stat.com/api/open/cases',
                                    static_file=False),
                  'timeline.json': URL('https://covid19.th-stat.com/api/open/timeline',
@@ -99,8 +93,7 @@ class THData(URLBase):
                     return f'{x}-{x+9}'
             raise Exception()
 
-        text = self.get_text('cases.json',
-                             include_revision=True)
+        text = pd.read_excel(self.get_path_in_dir('covid_19_daily.xlsx'))
         data = json.loads(text)
         not_found = Counter()
 
@@ -116,9 +109,7 @@ class THData(URLBase):
             if case_dict['ProvinceEn'].lower() == 'unknown':
                 province = 'unknown'
             else:
-                province = ltrc.get_by_label(
-                    Schemas.ADMIN_1, 'TH', case_dict['ProvinceEn']
-                )
+                province = ltrc.get_by_label(Schemas.ADMIN_1, 'TH', case_dict['Province'])
 
             by_total[date] += 1
             by_age[date, agerange] += 1
@@ -131,9 +122,7 @@ class THData(URLBase):
                 'ศาลาธรรมสพน์',
             ):
                 try:
-                    district = ltrc.get_by_label(
-                        Schemas.TH_DISTRICT, province, case_dict['District']
-                    )
+                    district = ltrc.get_by_label(Schemas.TH_DISTRICT, province, case_dict['District'])
                     by_district[date, province, district] += 1
                     #print('FOUND:', district)
                 except KeyError:
@@ -153,7 +142,7 @@ class THData(URLBase):
             cumulative += value
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=DataTypes.TOTAL,
                 value=cumulative,
@@ -166,7 +155,7 @@ class THData(URLBase):
             cumulative[age] += value
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 agerange=age,
                 datatype=DataTypes.TOTAL,
@@ -180,7 +169,7 @@ class THData(URLBase):
             cumulative[gender] += value
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=gender,
                 value=cumulative[gender],
@@ -245,7 +234,7 @@ class THData(URLBase):
 
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=DataTypes.TOTAL,
                 value=int(item['Confirmed']),
@@ -254,7 +243,7 @@ class THData(URLBase):
             ))
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=DataTypes.STATUS_RECOVERED,
                 value=int(item['Recovered']),
@@ -263,7 +252,7 @@ class THData(URLBase):
             ))
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=DataTypes.STATUS_HOSPITALIZED,
                 value=int(item['Hospitalized']),
@@ -272,7 +261,7 @@ class THData(URLBase):
             ))
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_0,
-                region_parent=None,
+                region_parent='',
                 region_child='TH',
                 datatype=DataTypes.STATUS_DEATHS,
                 value=int(item['Deaths']),

@@ -7,6 +7,7 @@ from os.path import exists
 from http import HTTPStatus
 from json import loads, dumps
 
+from _utility.cache_by_date import cache_by_date
 from covid_crawlers._base_classes.URLBase import URLBase
 from covid_db.datatypes.enums import Schemas, DataTypes
 from _utility.get_package_dir import get_overseas_dir
@@ -59,19 +60,24 @@ class UKGovData(URLBase):
         self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
 
     def get_datapoints(self):
-        r = DataPointMerger()
-
+        r = []
+        dpm = DataPointMerger()
         for date in sorted(listdir(get_overseas_dir() / 'uk' / 'gov-api')):
-            try:
-                r.extend(self._get_utla_datapoints(date))
-            except FileNotFoundError:
-                pass
+            r.extend(self._get_datapoints(date, dpm))
+        return r
 
-            try:
-                r.extend(self._get_ltla_datapoints(date))
-            except FileNotFoundError:
-                pass
+    @cache_by_date(source_id=SOURCE_ID)
+    def _get_datapoints(self, date, dpm):
+        r = []
+        try:
+            r.extend(dpm.extend(self._get_utla_datapoints(date)))
+        except FileNotFoundError:
+            pass
 
+        try:
+            r.extend(dpm.extend(self._get_ltla_datapoints(date)))
+        except FileNotFoundError:
+            pass
         return r
 
     def _get_utla_datapoints(self, date):

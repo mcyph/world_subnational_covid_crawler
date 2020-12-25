@@ -43,9 +43,9 @@ class App(object):
         powerbi_run_3rd = False
 
         while True:
-            # Run once every around every hour and a half
+            # Run once every around every three hours
             # (an hour is 3600 seconds)
-            time.sleep(random.randint(4000, 5000))
+            time.sleep(random.randint(9000, 11000))
 
             dt = datetime.datetime.now()
 

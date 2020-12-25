@@ -31,21 +31,13 @@ class WorldEUCDCData(URLBase):
 
     def __get_urls_dict(self):
         r = {}
-        r['world_data.csv'] = URL(url='https://opendata.ecdc.europa.eu/covid19/casedistribution/csv',
+        r['world_data.xlsx'] = URL(url='https://opendata.ecdc.europa.eu/covid19/casedistribution/xlsx',
                                   static_file=False)
-
         for url, key in (
-            ('https://www.ecdc.europa.eu/en/publications-data/download-data-hospital-and-icu-admission-rates-and-current-occupancy-covid-19', 'hosp_icu.xlsx'),
-            ('https://www.ecdc.europa.eu/en/publications-data/covid-19-testing', 'tests.xlsx'),
+            ('https://opendata.ecdc.europa.eu/covid19/hospitalicuadmissionrates/xlsx', 'hosp_icu.xlsx'),
+            ('https://opendata.ecdc.europa.eu/covid19/testing/xlsx', 'tests.xlsx'),
         ):
-            html = requests.get(url).text
-
-            r[key] = URL(
-                'https://www.ecdc.europa.eu/sites/default/files/documents/' +
-                    html.split(f'https://www.ecdc.europa.eu/sites/default/files/documents/')[1].split('"')[0],
-                static_file=False
-            )
-
+            r[key] = URL(url, static_file=False)
         return r
 
     def get_datapoints(self):
@@ -58,8 +50,7 @@ class WorldEUCDCData(URLBase):
 
     def _get_tests_datapoints(self, date):
         r = self.sdpf()
-        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'tests.xlsx',
-                           sheet_name='Sheet1')
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'tests.xlsx', engine='openpyxl')
         tests_done = Counter()
 
         for idx, row in df.iterrows():
@@ -80,8 +71,8 @@ class WorldEUCDCData(URLBase):
 
     def _get_hosp_icu_datapoints(self, date):
         r = self.sdpf()
-        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'hosp_icu.xlsx',
-                           sheet_name='Sheet1')
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'hosp_icu.xlsx', engine='openpyxl')
+
         for idx, row in df.iterrows():
             #print(row)
             try:
@@ -131,56 +122,52 @@ class WorldEUCDCData(URLBase):
         r = self.sdpf()
 
         date = datetime.today().strftime('%Y_%m_%d')
-        path = get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.csv'
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.xlsx')
+        df = df.sort_values('dateRep', axis=0)
 
-        with open(path, 'r', encoding='utf-8') as f:
-            cur_geoid = None
-            prev_date = None
+        prev_date = None
 
-            for item in reversed(list(csv.DictReader(f))):
-                #print(item)
-                date = self.convert_date(item['dateRep'])
+        cases_cumulative = Counter()
+        deaths_cumulative = Counter()
 
-                if item['geoId'] in (
-                    'BQ', 'JPG11668'
-                ):
-                    continue
-                elif item['geoId'] == 'EL':
-                    item['geoId'] = 'gr'
-                elif item['geoId'] == 'UK':
-                    item['geoId'] = 'gb'
+        for idx, item in df.iterrows():
+            #print(item)
+            date = self.convert_date(str(item['dateRep']).split()[0])
 
-                if item['geoId'] != cur_geoid:
-                    cur_geoid = item['geoId']
-                    prev_date = None
-                    cases_cumulative = Counter()
-                    deaths_cumulative = Counter()
+            if item['geoId'] in ('BQ', 'JPG11668'):
+                continue
+            elif item['geoId'] == 'EL':
+                item['geoId'] = 'gr'
+            elif item['geoId'] == 'UK':
+                item['geoId'] = 'gb'
+            elif not isinstance(item['geoId'], str):
+                continue
 
-                if prev_date and prev_date >= date:
-                    raise Exception(prev_date, date)
-                prev_date = date
+            if prev_date and prev_date > date:
+                raise Exception(prev_date, date)
+            prev_date = date
 
-                cases_cumulative[item['geoId']] += int(item['cases'])
-                deaths_cumulative[item['geoId']] += int(item['deaths'])
+            cases_cumulative[item['geoId']] += int(item['cases'])
+            deaths_cumulative[item['geoId']] += int(item['deaths'])
 
-                r.append(
-                    region_schema=Schemas.ADMIN_0,
-                    region_parent='',
-                    region_child=item['geoId'],
-                    datatype=DataTypes.TOTAL,
-                    value=cases_cumulative[item['geoId']],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
-                r.append(
-                    region_schema=Schemas.ADMIN_0,
-                    region_parent='',
-                    region_child=item['geoId'],
-                    datatype=DataTypes.STATUS_DEATHS,
-                    value=deaths_cumulative[item['geoId']],
-                    date_updated=date,
-                    source_url=self.SOURCE_URL
-                )
+            r.append(
+                region_schema=Schemas.ADMIN_0,
+                region_parent='',
+                region_child=item['geoId'],
+                datatype=DataTypes.TOTAL,
+                value=cases_cumulative[item['geoId']],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
+            r.append(
+                region_schema=Schemas.ADMIN_0,
+                region_parent='',
+                region_child=item['geoId'],
+                datatype=DataTypes.STATUS_DEATHS,
+                value=deaths_cumulative[item['geoId']],
+                date_updated=date,
+                source_url=self.SOURCE_URL
+            )
 
         return r
 

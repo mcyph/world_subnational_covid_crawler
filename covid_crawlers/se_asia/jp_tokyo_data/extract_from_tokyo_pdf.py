@@ -5,6 +5,7 @@ from os import listdir
 from os.path import exists
 from pyquery import PyQuery as _pq
 from urllib.request import urlopen
+from _utility.cache_by_date import cache_by_date
 
 from covid_db.datatypes.enums import Schemas, DataTypes
 from covid_db.datatypes.DataPoint import DataPoint
@@ -42,8 +43,9 @@ class ExtractFromTokyoPDF:
 
         for month in months:
             url = 'https://www.metro.tokyo.lg.jp/tosei/' \
-                  'hodohappyo/press/2020/%02d/index.html' % month
+                  'hodohappyo/press/%s/%02d/index.html' % (datetime.datetime.now().year, month)
             print(url)
+
             html = pq(url, parser='html', encoding='utf-8')
 
             for a in html('a'):
@@ -52,6 +54,10 @@ class ExtractFromTokyoPDF:
                 print(pq(a).html())
 
                 href = pq(a).attr('href')
+                if '2020/12/06/01.html' in href:
+                    # HACK: This day didn't have the normal "by city" tables!
+                    continue
+
                 y, m, d = href.split('/')[-4:-1]
                 d = int(d)
                 m = int(m)
@@ -90,33 +96,44 @@ class ExtractFromTokyoPDF:
         for fnam in sorted(listdir(PDFS_BASE_DIR)):
             if not '.pdf' in fnam:
                 continue
-            #elif not '2020_08_09' in fnam:
-            #    continue
-            path = PDFS_BASE_DIR / fnam
+            elif fnam == 'tokyocities_2020_12_06.pdf':
+                continue  # HACK!
+            r.extend(self._get_from_pdfs(fnam))
+        return r
 
-            found_fumei = False
-            text_items = get_text_from_pdf(path, [0])
-            date = fnam.partition('_')[-1]
-            date = date.split('.')[0]
+    @cache_by_date(source_id='jp_tokyo_city', validate_date=False)  # NOTE ME!!
+    def _get_from_pdfs(self, fnam):
+        r = []
 
-            for text_item in text_items:
-                if text_item.text != '不明' and not text_item.text in stats_map:
-                    print("IGNORE:", text_item.text)
-                    continue
-                elif found_fumei and text_item.text == '不明':
-                    continue # HACK!
+        #elif not '2020_08_09' in fnam:
+        #    continue
+        path = PDFS_BASE_DIR / fnam
+        print("Getting from PDF:", path)
 
-                num_below = self._get_number_immediately_below(text_items, text_item, brackets=False)
-                try:
-                    num_below_brackets = self._get_number_immediately_below(text_items, text_item, brackets=True)
-                except IndexError:
-                    # No number in brackets available!
-                    num_below_brackets = None
+        found_fumei = False
+        text_items = get_text_from_pdf(path, [0])
+        date = fnam.partition('_')[-1]
+        date = date.split('.')[0]
 
-                r.extend(self._to_datatype(text_item, num_below, num_below_brackets, found_fumei, date))
+        for text_item in text_items:
+            if text_item.text != '不明' and not text_item.text in stats_map:
+                print("IGNORE:", text_item.text)
+                continue
+            elif found_fumei and text_item.text == '不明':
+                continue # HACK!
 
-                if text_item.text == '不明':
-                    found_fumei = True
+            num_below = self._get_number_immediately_below(text_items, text_item, brackets=False)
+            try:
+                num_below_brackets = self._get_number_immediately_below(text_items, text_item, brackets=True)
+            except IndexError:
+                # No number in brackets available!
+                num_below_brackets = None
+
+            r.extend(self._to_datatype(text_item, num_below, num_below_brackets, found_fumei, date))
+
+            if text_item.text == '不明':
+                found_fumei = True
+
         return r
 
     def _to_datatype(self, text_item, num_below, num_below_brackets, found_fumei, date_updated):
