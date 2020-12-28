@@ -2,7 +2,7 @@ import json
 
 from os import listdir
 from os.path import expanduser
-from _utility.get_package_dir import get_package_dir
+from _utility.get_package_dir import get_package_dir, get_covid_19_au_dir
 
 
 class OutputSchemaTypes:
@@ -111,20 +111,19 @@ class OutputSchemaTypes:
 
         def do_listdir(dir_):
             return [
-                i.replace('.json', '')
-                for i in listdir(expanduser(dir_))
+                i.replace('.json', '') for i in listdir(dir_)
                 if (not i.startswith('.') and 'json' in i)
             ]
 
         for k, v in {
             #'case_data_listing': do_listdir(
-            #    '~/dev/pull_req/covid-19-au.github.io/src/data/caseData'
+            #    get_covid_19_au_dir() / 'src' / 'data' / 'caseData'
             #),
             #'geo_json_data_listing': do_listdir(
-            #    '~/dev/pull_req/covid-19-au.github.io/src/data/geoJSONData'
+            #    get_covid_19_au_dir() / 'src' / 'data' / 'geoJSONData'
             #),
             'underlay_data_listing': do_listdir(
-                '~/dev/pull_req/covid-19-au.github.io/src/data/underlayData'
+                get_covid_19_au_dir() / 'src' / 'data' / 'underlayData'
             )
         }.items():
             # Allow for combining

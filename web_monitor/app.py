@@ -427,17 +427,5 @@ if __name__ == '__main__':
             'server.socket_port': 6006,
             #'environment': 'production',
         },
-        '/': {
-
-        },
-        '/graphs': {
-            'tools.staticdir.root': OUTPUT_GRAPHS_DIR,
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': ""
-        },
-        '/raw_data': {
-            'tools.staticdir.root': OUTPUT_DIR,
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': ""
-        }
+        '/': {},
     })

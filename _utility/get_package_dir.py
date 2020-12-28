@@ -12,6 +12,7 @@ OVERSEAS_DIR = Path(expanduser(environ['OVERSEAS_DIR']))
 OUTPUT_DIR = Path(expanduser(environ['OUTPUT_DIR']))
 GLOBAL_SUBNATIONAL_COVID_DATA_DIR = Path(expanduser(environ['GLOBAL_SUBNATIONAL_COVID_DATA_DIR']))
 CACHE_DIR = Path(expanduser(environ['CACHE_DIR']))
+COVID_19_AU_DIR = Path(expanduser(environ['COVID_19_AU_DIR']))
 
 
 def get_package_dir():
@@ -38,3 +39,7 @@ def get_global_subnational_covid_data_dir():
 
 def get_cache_dir():
     return CACHE_DIR
+
+
+def get_covid_19_au_dir():
+    return COVID_19_AU_DIR

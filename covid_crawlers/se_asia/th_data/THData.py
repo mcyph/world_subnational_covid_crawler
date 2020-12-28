@@ -93,7 +93,7 @@ class THData(URLBase):
                     return f'{x}-{x+9}'
             raise Exception()
 
-        text = pd.read_excel(self.get_path_in_dir('covid_19_daily.xlsx'))
+        text = pd.read_excel(self.get_path_in_dir('covid_19_daily.xlsx'), engine="openpyxl")
         data = json.loads(text)
         not_found = Counter()
 

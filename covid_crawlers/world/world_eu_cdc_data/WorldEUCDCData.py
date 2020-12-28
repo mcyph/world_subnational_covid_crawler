@@ -122,7 +122,7 @@ class WorldEUCDCData(URLBase):
         r = self.sdpf()
 
         date = datetime.today().strftime('%Y_%m_%d')
-        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.xlsx')
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.xlsx', engine="openpyxl")
         df = df.sort_values('dateRep', axis=0)
 
         prev_date = None
