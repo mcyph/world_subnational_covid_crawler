@@ -86,8 +86,8 @@ class _NSWCaseLocations:
                     date=parse_datetime(i['Date'], dayfirst=True),
                     time=i['Time'],
                     alert=i['Alert'],
-                    long=float(i['Lon']),
-                    lat=float(i['Lat']),
+                    long=float(i['Lon']) if float(i['Lon']) >= 100.0 else float(i['Lat']),
+                    lat=float(i['Lat']) if float(i['Lat']) < 100.0 else float(i['Lon']),
                 ))
         return r
 
@@ -115,11 +115,13 @@ if __name__ == '__main__':
             'state': 'NSW',
             'area': datapoint.suburb,
             'name': f"{datapoint.type.title()}: {datapoint.venue}",
+            'venue': datapoint.venue,
+            'type': datapoint.type,
             'date': datapoint.date.strftime('%d/%m/%y'),
             'time': datapoint.time,
             'description': datapoint.alert,
             'coor': [datapoint.lat, datapoint.long]
         })
 
-    print(json.dumps(out, indent=4))
+    print(json.dumps(out, indent=2))
     #pprint(datapoints)
