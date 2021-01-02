@@ -12,7 +12,7 @@ BASE_PATH = get_data_dir() / 'vic' / 'powerbi'
 
 
 class VicPowerBIReader(PowerBIDataReader):
-    SOURCE_ID = 'vic_powerbi'
+    SOURCE_ID = 'au_vic_powerbi'
     SOURCE_URL = 'https://app.powerbi.com/view?r=' \
              'eyJrIjoiODBmMmE3NWQtZWNlNC00OWRkLTk1NjYtM' \
              'jM2YTY1MjI2NzdjIiwidCI6ImMwZTA2MDFmLTBmYW' \

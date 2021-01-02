@@ -19,22 +19,7 @@ class COData(URLBase):
              output_dir=get_overseas_dir() / 'co' / 'data',
              urls_dict={
                  'co_data.csv': URL(
-                     'https://proxy.hxlstandard.org/data.csv?'
-                     'dest=data_edit&tagger-match-all=on&tagger-01-header=id+de+caso&'
-                     'tagger-01-tag=%23meta+%2Bid&tagger-02-header=fecha+de+notificacion&'
-                     'tagger-02-tag=%23date+%2Bnotification&tagger-03-header=codigo+divipola&'
-                     'tagger-03-tag=%23code&tagger-04-header=ciudad+de+ubicacion&tagger-04-tag=%23adm3+%2Bname&'
-                     'tagger-05-header=departamento+o+distrito&tagger-05-tag=%23adm2+%2Bname&'
-                     'tagger-06-header=atencion&tagger-06-tag=%23indicator+%2Binfected+%2Btype&'
-                     'tagger-07-header=edad&tagger-07-tag=%23indicator+%2Binfected+%2Bage&'
-                     'tagger-08-header=sexo&tagger-08-tag=%23indicator+%2Binfected+%2Bsex&'
-                     'tagger-10-header=estado&tagger-10-tag=%23indicator+%2Binfected+%2Bstatus&'
-                     'tagger-11-header=pais+de+procedencia&tagger-11-tag=%23indicator+%2Binfected+%2Borigin&'
-                     'tagger-13-header=fecha+de+muerte&tagger-13-tag=%23date+%2Breported+%2Bdeath&'
-                     'tagger-14-header=fecha+diagnostico&tagger-14-tag=%23date+%2Breported+%2Bnotification&'
-                     'tagger-15-header=fecha+recuperado&tagger-15-tag=%23date+%2Breported+%2Brecovered&'
-                     'tagger-16-header=fecha+reporte+web&tagger-16-tag=%23date+%2Breported&header-row=1&'
-                     'url=https%3A%2F%2Fwww.datos.gov.co%2Fapi%2Fviews%2Fgt2j-8ykr%2Frows.csv%3FaccessType%3DDOWNLOAD',
+                     'https://proxy.hxlstandard.org/data.csv?dest=data_edit&tagger-match-all=on&tagger-01-header=id+de+caso&tagger-01-tag=%23meta+%2Bid&tagger-02-header=fecha+de+notificacion&tagger-02-tag=%23date+%2Bnotification&tagger-03-header=codigo+divipola&tagger-03-tag=%23code&tagger-04-header=ciudad+de+ubicacion&tagger-04-tag=%23adm3+%2Bname&tagger-05-header=departamento+o+distrito&tagger-05-tag=%23adm2+%2Bname&tagger-06-header=atencion&tagger-06-tag=%23indicator+%2Binfected+%2Btype&tagger-07-header=edad&tagger-07-tag=%23indicator+%2Binfected+%2Bage&tagger-08-header=sexo&tagger-08-tag=%23indicator+%2Binfected+%2Bsex&tagger-10-header=estado&tagger-10-tag=%23indicator+%2Binfected+%2Bstatus&tagger-11-header=pais+de+procedencia&tagger-11-tag=%23indicator+%2Binfected+%2Borigin&tagger-13-header=fecha+de+muerte&tagger-13-tag=%23date+%2Breported+%2Bdeath&tagger-14-header=fecha+diagnostico&tagger-14-tag=%23date+%2Breported+%2Bnotification&tagger-15-header=fecha+recuperado&tagger-15-tag=%23date+%2Breported+%2Brecovered&tagger-16-header=fecha+reporte+web&tagger-16-tag=%23date+%2Breported&header-row=1&url=https%3A%2F%2Fwww.datos.gov.co%2Fapi%2Fviews%2Fgt2j-8ykr%2Frows.csv%3FaccessType%3DDOWNLOAD',
                      static_file=False
                  ),
              }
@@ -127,7 +112,7 @@ class COData(URLBase):
                 first_item = False
                 continue
 
-            #print(item)
+            print(item)
             case_id = item['ID de caso']
             notification_date = self.convert_date(item['Fecha de notificación'].split('T')[0].split()[0])
             #divipola = item['Codigo DIVIPOLA']

@@ -3,6 +3,11 @@ from time import time
 import multiprocessing
 from queue import Queue
 
+from covid_crawlers.oceania.au_data.covid19au.Covid19AUData import Covid19AUData
+from covid_crawlers.oceania.au_data.covid19data_com_au.Covid19DataComAUData import Covid19DataComAUData
+from covid_crawlers.oceania.au_data.aucovid19.AUCovid19Data import AUCovid19Data
+from covid_crawlers.oceania.au_data.guardian.GuardianData import GuardianData
+
 from covid_crawlers.oceania.au_data.act.ACTNews import ACTNews
 from covid_crawlers.oceania.au_data.act.ACTPowerBIReader import ACTPowerBIReader
 
@@ -58,6 +63,7 @@ class StateDataSources:
             (WANews, WADashReader),
             (TasNews, TasFacebook),
             (VicNews, VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative),
+            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, GuardianData),
         ]
 
         for klass_set in news_insts:

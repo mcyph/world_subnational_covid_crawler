@@ -12,7 +12,7 @@ URL_TEMPLATE = 'https://docs.google.com/spreadsheet/ccc?key=%(long_id)s&gid=%(sh
 
 
 class VicGoogleSheets:
-    SOURCE_ID = 'vic_the_age_google_doc'
+    SOURCE_ID = 'au_vic_the_age_google_doc'
     SOURCE_URL = 'https://docs.google.com/spreadsheets/d/1oxJt0BBPzk-w2Gn1ImO4zASBCdqeeLJRwHEA4DASBFQ/edit#gid=0'
     SOURCE_DESCRIPTION = ''
 

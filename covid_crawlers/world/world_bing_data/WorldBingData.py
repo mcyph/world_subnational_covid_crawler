@@ -44,6 +44,11 @@ class WorldBingData(GithubRepo):
         with open(self.get_path_in_dir(f'data/Bing-COVID19-Data.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
+
+                if item['ISO2'].lower() in ('au', 'nz'):
+                    # HACK: Disable recovered/active values for AU, as they aren't accurate!
+                    item['Recovered'] = None
+
                 #print(item)
                 if not item['Updated']:
                     continue  # WARNING!!

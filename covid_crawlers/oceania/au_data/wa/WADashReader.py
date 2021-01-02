@@ -12,7 +12,7 @@ from covid_db.datatypes.DatapointMerger import DataPointMerger
 
 
 class WADashReader:
-    SOURCE_ID = 'wa_dashboard'
+    SOURCE_ID = 'au_wa_dashboard'
     SOURCE_URL = 'https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
     SOURCE_DESCRIPTION = ''
 

@@ -201,6 +201,11 @@ class WorldJHUData(GithubRepo):
                         province_state = item['Province_State'].strip('*')
                         country_region = item['Country_Region'].strip('*')
 
+                    if country_region.lower() in ('australia', 'new zealand'):
+                        # HACK: Disable recovered/active values for AU, as they aren't accurate!
+                        item['Recovered'] = None
+                        item['Active'] = None
+
                     if item.get('Admin2'):
                         assert item['Country_Region'] == 'US', item['Country_Region']
                         region_schema = Schemas.US_COUNTY

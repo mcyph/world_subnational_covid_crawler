@@ -166,6 +166,7 @@ class JPCityData(URLBase):
                     '女児': DataTypes.TOTAL_FEMALE,
                     '男児': DataTypes.TOTAL_MALE,
                     '': None,
+                    '非公表': None,
                     None: None,
                 }[item['性別']]
 

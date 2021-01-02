@@ -54,6 +54,7 @@ class FRData(GithubRepo):
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
                 region_child = item['maille_nom']
+                item['date'] = item['date'].replace('_', '-')
                 date = self.convert_date(item['date'])
 
                 confirmed = item['cas_confirmes']

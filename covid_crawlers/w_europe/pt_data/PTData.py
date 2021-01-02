@@ -61,8 +61,10 @@ class PTData(URLBase):
                 ('pt_municipality', 'pt', 'vila da praia da vitória'): None,
                 ('pt_municipality', 'pt', 'ponte de sor'): None,
                 ('pt_municipality', 'pt', 'calheta (açores)'): None,
+                ('pt_municipality', 'pt', 'calheta [r.a. açores]'): None,
                 ('pt_municipality', 'pt', 'lagoa [r.a. açores]'): None,
                 ('pt_municipality', 'pt', 'calheta de são jorge'): None,
+                ('pt_municipality', 'pt', 'calheta [r.a. madeira]'): None,
             },
             mode=MODE_STRICT
         )
@@ -70,7 +72,7 @@ class PTData(URLBase):
 
     def get_datapoints(self):
         r = []
-        r.extend(self._get_municipality_data())
+        #r.extend(self._get_municipality_data())
         r.extend(self._get_national_data())
         return r
 

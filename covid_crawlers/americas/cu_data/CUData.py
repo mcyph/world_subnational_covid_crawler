@@ -93,7 +93,9 @@ class CUData(GithubRepo):
                 date = self.convert_date(item['fecha_confirmacion'])
 
                 by_totals[date] += 1
-                by_gender[date, genders[item['sexo']]] += 1
+
+                if item['sexo']:
+                    by_gender[date, genders[item['sexo']]] += 1
 
                 if item['edad']:
                     by_age[date, age_to_range(int(item['edad']))] += 1

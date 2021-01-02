@@ -11,7 +11,7 @@ from covid_crawlers._base_classes.URLBase import URL, URLBase
 
 
 class VicCSV(URLBase):
-    SOURCE_ID = 'vic_dhhs_csv'
+    SOURCE_ID = 'au_vic_dhhs_csv'
     SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
     SOURCE_DESCRIPTION = ''
 
