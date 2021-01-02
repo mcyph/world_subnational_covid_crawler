@@ -77,8 +77,7 @@ class _NSWCaseLocations(CacheBase):
         return r
 
 
-if __name__ == '__main__':
-
+def get_nsw_case_locations():
     #   {
     #     "state": "NSW",
     #     "area": "",
@@ -96,6 +95,9 @@ if __name__ == '__main__':
             continue
 
         out.append(datapoint.to_dict())
+    return out
 
-    print(json.dumps(out, indent=2))
+
+if __name__ == '__main__':
+    print(json.dumps(get_nsw_case_locations(), indent=2))
     #pprint(datapoints)

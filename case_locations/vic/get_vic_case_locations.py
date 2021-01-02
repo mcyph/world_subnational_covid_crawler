@@ -67,25 +67,14 @@ class _VicCaseLocations(CacheBase):
         return out
 
 
-if __name__ == '__main__':
-
-    #   {
-    #     "state": "NSW",
-    #     "area": "",
-    #     "name": "St Brendan’s Catholic Church Bankstown",
-    #     "date": "16/07/20",
-    #     "time": "for one hour from 6.30pm",
-    #     "description": "St Brendan’s Catholic Church Bankstown for one hour from 6.30pm on July 16",
-    #     "coor": [-33.9220903,151.0277432]
-    #   },
-
+def get_vic_case_locations():
     out = []
     datapoints = _VicCaseLocations().get_datapoints()
+
     for datapoint in datapoints:
-        if not isinstance(datapoint, VenueLocation):
-            continue
-
         out.append(datapoint.to_dict())
+    return out
 
-    print(json.dumps(out, indent=2))
-    #pprint(datapoints)
+
+if __name__ == '__main__':
+    print(json.dumps(get_vic_case_locations(), indent=2))
