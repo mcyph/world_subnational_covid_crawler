@@ -36,13 +36,10 @@ class VicCSV(URLBase):
         self.update()
 
     def get_datapoints(self):
-        r = DataPointMerger(source_id=self.SOURCE_ID)
-
+        r = DataPointMerger()
         for date in r.iter_unprocessed_dates(sorted(listdir(get_data_dir() / 'vic' / 'csv_data'))):
             r.extend(self._get_postcode_datapoints(date))
             r.extend(self._get_lga_datapoints(date))
-
-        r.save_state()
         return r
 
     @cache_by_date(SOURCE_ID)
@@ -82,7 +79,7 @@ class VicCSV(URLBase):
                     ))
         return r
 
-    @cache_by_date(SOURCE_ID)
+    @cache_by_date(SOURCE_ID+'_lga')
     def _get_lga_datapoints(self, date):
         # LGA	lga_pid	population	active	cases	rate	new	band	LGADisplay	data_date
         # 	Alpine (S)	VIC242	12814	0	1	0	0	0	Alpine	29/08/2020

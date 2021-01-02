@@ -44,6 +44,7 @@ class WorldBingData(GithubRepo):
         with open(self.get_path_in_dir(f'data/Bing-COVID19-Data.csv'),
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
+                #print(item)
                 if not item['Updated']:
                     continue  # WARNING!!
                 date = self.convert_date(item['Updated'], formats=('%m/%d/%Y',))

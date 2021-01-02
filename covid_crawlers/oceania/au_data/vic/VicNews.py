@@ -54,9 +54,9 @@ class VicNews(StateNewsBase):
             s = pq(html)('.page-banner-content h1').text().split('-')[-1].strip()
         #print('S:', s)
 
-        if not '2020' in s and '/' in s:
+        if (not '2020' in s and not '2021' in s) and '/' in s:
             s = s.strip()+'/2020'
-        elif not '2020' in s:
+        elif not '2020' in s and not '2021' in s:
             s = s.strip()+' 2020'
 
         try:

@@ -32,7 +32,7 @@ class NTNews(StateNewsBase):
                and not 'pm' in i.lower()
         ])
 
-        if not '2020' in date:
+        if not '2020' in date and not '2021' in date:
             date = date + ' 2020'  # YEAR HACK!!!! ========================
 
         return self._extract_date_using_format(date, format='%d %B %Y')

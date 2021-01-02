@@ -1,10 +1,9 @@
 import json
 import requests
 from pyquery import PyQuery as pq
-from datetime import datetime
-from collections import namedtuple
 from dateutil.parser import parse as parse_datetime
-from _utility.get_package_dir import get_data_dir
+from case_locations._base_classes.CacheBase import CacheBase
+from case_locations._base_classes.datatypes import PublicTransportRoutePortion, VenueLocation
 
 # https://transitfeeds.com/p/transport-for-nsw/237
 
@@ -12,32 +11,11 @@ CASE_LOCATIONS_ALERTS_URL = 'https://www.health.nsw.gov.au/Infectious/covid-19/P
 # https://www.health.nsw.gov.au/Infectious/covid-19/Documents/data/venue-data-20201226.js
 
 
-VenueLocation = namedtuple('VenueLocation', [
-    'type', 'venue', 'suburb', 'date', 'time', 'alert', 'long', 'lat'
-])
-
-PublicTransportRoutePortion = namedtuple('PublicTransportRoutePortion', [
-    'by', 'route', 'date', 'time', 'start_loc', 'end_loc', 'health_advice'
-])
-
-
-class _NSWCaseLocations:
-    def __get_new_dir(self):
-        revision_id = 0
-        while True:
-            fmt = f'%%y_%%m_%%d-%03d' % revision_id
-            child_dir_name = datetime.now().strftime(fmt)
-            path = get_data_dir() / 'nsw' / 'case_locs' / child_dir_name
-
-            if path.exists():
-                revision_id += 1
-                continue
-            else:
-                path.mkdir()
-                return path
+class _NSWCaseLocations(CacheBase):
+    STATE_NAME = 'nsw'
 
     def get_datapoints(self):
-        revision_dir = self.__get_new_dir()
+        revision_dir = self._get_new_dir()
         cla_rq = requests.get(CASE_LOCATIONS_ALERTS_URL)
 
         with open(revision_dir / 'case_locations_and_alerts.html', 'w', encoding='utf-8') as f:
@@ -79,11 +57,17 @@ class _NSWCaseLocations:
 
         for k, v in data['data'].items():
             for i in v:
+                try:
+                    date = parse_datetime(i['Date'], dayfirst=True)
+                except:
+                    date = parse_datetime(i['Date'].partition(' ')[-1],
+                                          dayfirst=True)
+
                 r.append(VenueLocation(
                     type=k,
                     venue=i['Venue'],
                     suburb=i['Suburb'],
-                    date=parse_datetime(i['Date'], dayfirst=True),
+                    date=date,
                     time=i['Time'],
                     alert=i['Alert'],
                     long=float(i['Lon']) if float(i['Lon']) >= 100.0 else float(i['Lat']),
@@ -93,7 +77,6 @@ class _NSWCaseLocations:
 
 
 if __name__ == '__main__':
-    from pprint import pprint
 
     #   {
     #     "state": "NSW",

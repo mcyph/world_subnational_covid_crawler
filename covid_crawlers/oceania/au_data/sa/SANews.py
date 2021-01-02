@@ -27,7 +27,7 @@ class SANews(StateNewsBase):
         try:
             # New format of updated SA website as of 23/4/2020
             date = pq(html)('.main-content p')[0]
-            if '2020' in pq(date).text():
+            if '2020' in pq(date).text() or '2021' in pq(date).text():
                 return self._extract_date_using_format(
                     pq(date).text().split(',')[-1].strip()
                 )

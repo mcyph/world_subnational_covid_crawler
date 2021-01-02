@@ -83,7 +83,10 @@ def _datapoints_thinned_out(datapoints):
     def _get_dayskip(date):
         dft = _diff_from_today(date)
 
-        if dft > (7*20):
+        if dft > (7*25):
+            # > 25 weeks: 1 in 28 datapoints
+            return 28
+        elif dft > (7*20):
             # > 20 weeks: 1 in 14 datapoints
             return 14
         elif dft > (7*18):
@@ -101,8 +104,8 @@ def _datapoints_thinned_out(datapoints):
         elif dft > (7*6):
             # > 6 weeks: 1 in 3 datapoints
             return 2
-        elif dft > (7*3):
-            # > 3 weeks: 1 in 2 datapoints
+        elif dft > (7*4):
+            # > 4 weeks: 1 in 2 datapoints
             return 1
         else:
             # <= 3 weeks: don't skip
