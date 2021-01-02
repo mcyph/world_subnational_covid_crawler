@@ -64,6 +64,7 @@ class _NSWCaseLocations(CacheBase):
                                           dayfirst=True)
 
                 r.append(VenueLocation(
+                    state=self.STATE_NAME.upper(),
                     type=k,
                     venue=i['Venue'],
                     suburb=i['Suburb'],
@@ -94,17 +95,7 @@ if __name__ == '__main__':
         if not isinstance(datapoint, VenueLocation):
             continue
 
-        out.append({
-            'state': 'NSW',
-            'area': datapoint.suburb,
-            'name': f"{datapoint.type.title()}: {datapoint.venue}",
-            'venue': datapoint.venue,
-            'type': datapoint.type,
-            'date': datapoint.date.strftime('%d/%m/%y'),
-            'time': datapoint.time,
-            'description': datapoint.alert,
-            'coor': [datapoint.lat, datapoint.long]
-        })
+        out.append(datapoint.to_dict())
 
     print(json.dumps(out, indent=2))
     #pprint(datapoints)

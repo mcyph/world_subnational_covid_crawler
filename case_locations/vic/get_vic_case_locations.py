@@ -53,6 +53,7 @@ class _VicCaseLocations(CacheBase):
 
             map_item = map_dict[idx]
             out.append(VenueLocation(
+                state=self.STATE_NAME.upper(),
                 type='isolate',
                 venue=name,
                 suburb=area,
@@ -84,17 +85,7 @@ if __name__ == '__main__':
         if not isinstance(datapoint, VenueLocation):
             continue
 
-        out.append({
-            'state': 'VIC',
-            'area': datapoint.suburb,
-            'name': f"{datapoint.type.title()}: {datapoint.venue}",
-            'venue': datapoint.venue,
-            'type': datapoint.type,
-            'date': datapoint.date.strftime('%d/%m/%y'),
-            'time': datapoint.time,
-            'description': datapoint.alert,
-            'coor': [datapoint.lat, datapoint.long]
-        })
+        out.append(datapoint.to_dict())
 
     print(json.dumps(out, indent=2))
     #pprint(datapoints)
