@@ -308,7 +308,7 @@ class WADashReader:
                     source_id=self.SOURCE_ID
                 ))
 
-            if attribute['existing_cases'] is not None:
+            if attribute['existing_cases'] is not None and False:
                 r.append(DataPoint(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='AU',

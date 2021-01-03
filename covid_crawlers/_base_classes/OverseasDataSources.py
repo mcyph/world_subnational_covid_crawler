@@ -111,6 +111,7 @@ from covid_crawlers.w_europe.it_data.ITData import ITData
 from covid_crawlers.w_europe.lt_data.LTData import LTData
 from covid_crawlers.w_europe.lv_data.LVData import LVData
 from covid_crawlers.w_europe.lv_data.LVDataArcGIS import LVDataArcGIS
+from covid_crawlers.w_europe.pl_data.PLGovData import PLGovData
 from covid_crawlers.w_europe.pt_data.PTData import PTData
 from covid_crawlers.w_europe.si_data.SIData import SIData
 from covid_crawlers.w_europe.uk_data.UKData import UKData
@@ -120,8 +121,8 @@ EUROPE_DATA = (
     BEData, CHData, CZData, DEData, DERKIData, ESData, ESISCIIIData,
     EUSubNationalData, FRData, FRESRIData, FRGovData, GRCovid19Greece,
     HRData, IEData, ISData, ITData, KGData, KZData,
-    MKData, PTData, RSData, SIData, UKData, UKGovData, LVData,
-    LTData, LVDataArcGIS
+    MKData, PLGovData, PTData, RSData, SIData, UKData, UKGovData,
+    LVData, LTData, LVDataArcGIS
 )
 
 #==================================================================#
@@ -159,6 +160,8 @@ from covid_crawlers.world.world_eu_cdc_data.WorldEUCDCData import WorldEUCDCData
 from covid_crawlers.world.world_owid_data.WorldOWIDData import WorldOWIDData
 from covid_crawlers.world.world_who.WorldWHO import WorldWHO
 from covid_crawlers.world.world_gender_disaggregated.WorldGenderDisaggregated import WorldGenderDisaggregated
+from covid_crawlers.world.world_covid19datahub_data.WorldCovid19DataHubData import WorldCovid19DataHubData
+from covid_crawlers.world.world_gcp_covid19opendata.WorldGCPCovid19OpenData import WorldGCPCovid19OpenData
 
 WORLD_DATA = (
     WorldUMData,
@@ -168,7 +171,9 @@ WORLD_DATA = (
     WorldEUCDCData,
     WorldOWIDData,
     WorldWHO,
-    WorldGenderDisaggregated
+    WorldGenderDisaggregated,
+    WorldCovid19DataHubData,
+    WorldGCPCovid19OpenData
 )
 
 

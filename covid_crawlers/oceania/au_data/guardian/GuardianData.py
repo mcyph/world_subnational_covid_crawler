@@ -52,6 +52,7 @@ class GuardianData(CacheBase):
 
         r = self.sdpf()
         data = self.get_csv('stats_history.csv')
+        deaths = {}
 
         for item in data:
             state = 'AU-%s' % item['State']
@@ -62,12 +63,14 @@ class GuardianData(CacheBase):
                     item[k] = ''
 
             d = {}
-            if item['Cumulative case count']:
-                d[DataTypes.TOTAL] = item['Cumulative case count']
             if item['Cumulative deaths']:
                 d[DataTypes.STATUS_DEATHS] = item['Cumulative deaths']
-            if item['Tests conducted (negative)']:
-                d[DataTypes.TESTS_NEGATIVE] = item['Tests conducted (negative)']
+                deaths[state] = item['Cumulative deaths']
+            elif state in deaths:
+                d[DataTypes.STATUS_DEATHS] = deaths[state]
+
+            if item['Cumulative case count']:
+                d[DataTypes.TOTAL] = item['Cumulative case count']
             if item['Tests conducted (total)']:
                 d[DataTypes.TESTS_TOTAL] = item['Tests conducted (total)']
             if item['Hospitalisations (count)']:
@@ -78,10 +81,12 @@ class GuardianData(CacheBase):
                 d[DataTypes.STATUS_ICU_VENTILATORS] = item['Ventilator usage (count)']
             if item['Recovered (cumulative)']:
                 d[DataTypes.STATUS_RECOVERED] = item['Recovered (cumulative)']
-                if DataTypes.TOTAL in d:
+
+                if DataTypes.TOTAL in d and DataTypes.STATUS_DEATHS in d:
                     d[DataTypes.STATUS_ACTIVE] = \
                         str(int(d[DataTypes.TOTAL].replace(',', '')) -
-                            int(d[DataTypes.STATUS_RECOVERED].replace(',', '')))
+                            int(d[DataTypes.STATUS_RECOVERED].replace(',', '')) -
+                            int(d[DataTypes.STATUS_DEATHS].replace(',', '')))
 
             for datatype, value in d.items():
                 r.append(

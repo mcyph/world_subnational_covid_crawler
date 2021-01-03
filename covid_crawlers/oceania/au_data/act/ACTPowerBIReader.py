@@ -15,7 +15,7 @@ class ACTPowerBIReader(PowerBIDataReader):
     SOURCE_DESCRIPTION = ''
 
     def __init__(self):
-        base_path = ACTPowerBI.PATH_PREFIX,
+        base_path = ACTPowerBI.PATH_PREFIX
         source_url = ACTPowerBI.POWERBI_URL
 
         self.base_path = base_path

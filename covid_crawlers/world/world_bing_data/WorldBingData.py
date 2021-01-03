@@ -24,11 +24,6 @@ class WorldBingData(GithubRepo):
         self.update()
 
     def get_datapoints(self):
-        r = []
-        r.extend(self._get_daily_reports_us())
-        return r
-
-    def _get_daily_reports_us(self):
         r = self.sdpf()
 
         # ID,Updated,Confirmed,ConfirmedChange,Deaths,DeathsChange,Recovered,RecoveredChange,Latitude,Longitude,ISO2,ISO3,Country_Region,AdminRegion1,AdminRegion2
@@ -40,6 +35,7 @@ class WorldBingData(GithubRepo):
         # 339000,01/26/2020,2014,694,0,0,,,,,,,Worldwide,,
         # 339001,01/27/2020,2798,784,0,0,,,,,,,Worldwide,,
         warning_printed = set()
+        items = {}
 
         with open(self.get_path_in_dir(f'data/Bing-COVID19-Data.csv'),
                   'r', encoding='utf-8') as f:
@@ -49,100 +45,96 @@ class WorldBingData(GithubRepo):
                     # HACK: Disable recovered/active values for AU, as they aren't accurate!
                     item['Recovered'] = None
 
-                #print(item)
                 if not item['Updated']:
                     continue  # WARNING!!
                 date = self.convert_date(item['Updated'], formats=('%m/%d/%Y',))
 
-                if item['AdminRegion2'] and item['ISO2'] != 'US':
-                    if item['Country_Region'] == 'India':
-                        region_schema = Schemas.IN_DISTRICT
-                        region_parent = item['AdminRegion1']
-                        region_child = item['AdminRegion2']
-                    elif item['Country_Region'] == 'Costa Rica':
-                        region_schema = Schemas.CR_CANTON
-                        region_parent = item['AdminRegion1']
-                        region_child = item['AdminRegion2']
-                    else:
-                        if (item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']) in warning_printed:
-                            continue
-                        warning_printed.add((item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']))
-                        print("WARNING, IGNORING:", item)
-                        continue  # HACK!!! =====================================================================================
-                elif item['ISO2'] == 'US':
-                    # Will use other sources for the US
+                region_schema, region_parent, region_child = \
+                    self.__get_region(item, warning_printed)
+                if region_schema is None:
                     continue
 
-                elif item['AdminRegion1']:
-                    region_schema = Schemas.ADMIN_1
-                    region_parent = item['ISO2']
-                    region_child = item['AdminRegion1']
-
-                    if region_parent == 'PT':
-                        # TODO: Support the more limited Portugal regions!!! ===========================================
-                        continue
-                else:
-                    region_schema = Schemas.ADMIN_0
-                    region_parent = None
-                    region_child = item['Country_Region']
-
-                r.append(
-                    region_schema=region_schema,
-                    region_parent=region_parent,
-                    region_child=region_child,
-                    datatype=DataTypes.TOTAL,
-                    value=int(item['Confirmed']),
-                    date_updated=date,
-                    source_url='Bing'
-                )
-                #if region_schema == Schemas.ADMIN_1 and r[-1].region_child.upper() == 'US-TX':
-                #    print(r[-1])
-
-                if item['ConfirmedChange']:
-                    r.append(
-                        region_schema=region_schema,
-                        region_parent=region_parent,
-                        region_child=region_child,
-                        datatype=DataTypes.NEW,
-                        value=int(item['ConfirmedChange']),
-                        date_updated=date,
-                        source_url='Bing'
-                    )
-
+                d = {}
+                if item['Confirmed']:
+                    d[DataTypes.TOTAL] = int(item['Confirmed'])
+                #if item['ConfirmedChange']:
+                #    d[DataTypes.NEW] = int(item['ConfirmedChange'])
                 if item['Deaths']:
-                    r.append(
-                        region_schema=region_schema,
-                        region_parent=region_parent,
-                        region_child=region_child,
-                        datatype=DataTypes.STATUS_DEATHS,
-                        value=int(item['Deaths']),
-                        date_updated=date,
-                        source_url='Bing'
-                    )
-
+                    d[DataTypes.STATUS_DEATHS] = int(item['Deaths'])
                 if item['Recovered']:
+                    d[DataTypes.STATUS_RECOVERED] = int(item['Recovered'])
+
+                # Only add if greater than previous values, as Bing has
+                # quite a few problems with aggregators stopping working!
+                unique_key = (region_schema, region_parent, region_child)
+                if unique_key in items:
+                    prev_dict = items[unique_key]
+                    for k, v in list(d.items()):
+                        if k in prev_dict and v < prev_dict[k]:
+                            del d[k]
+
+                for k, v in d.items():
                     r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
-                        datatype=DataTypes.STATUS_RECOVERED,
-                        value=int(item['Recovered']),
+                        datatype=k,
+                        value=v,
                         date_updated=date,
                         source_url='Bing'
                     )
+                    items.setdefault(unique_key, {})[k] = v
+
+                if DataTypes.TOTAL in d and \
+                   DataTypes.STATUS_DEATHS in d and \
+                   DataTypes.STATUS_RECOVERED in d:
                     r.append(
                         region_schema=region_schema,
                         region_parent=region_parent,
                         region_child=region_child,
                         datatype=DataTypes.STATUS_ACTIVE,
-                        value=int(item['Confirmed']) -
-                              int(item['Deaths'] or '0') -
-                              int(item['Recovered']),
+                        value=d[DataTypes.TOTAL] -
+                              d[DataTypes.STATUS_DEATHS] -
+                              d[DataTypes.STATUS_RECOVERED],
                         date_updated=date,
                         source_url='Bing'
                     )
-
         return r
+
+    def __get_region(self, item, warning_printed):
+        if item['AdminRegion2'] and item['ISO2'] != 'US':
+            if item['Country_Region'] == 'India':
+                region_schema = Schemas.IN_DISTRICT
+                region_parent = item['AdminRegion1']
+                region_child = item['AdminRegion2']
+            elif item['Country_Region'] == 'Costa Rica':
+                region_schema = Schemas.CR_CANTON
+                region_parent = item['AdminRegion1']
+                region_child = item['AdminRegion2']
+            else:
+                if (item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']) in warning_printed:
+                    return None, None, None
+                warning_printed.add((item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']))
+                print("WARNING, IGNORING:", item)
+                return None, None, None  # HACK!!! =====================================================================================
+        elif item['ISO2'] == 'US':
+            # Will use other sources for the US
+            return None, None, None
+
+        elif item['AdminRegion1']:
+            region_schema = Schemas.ADMIN_1
+            region_parent = item['ISO2']
+            region_child = item['AdminRegion1']
+
+            if region_parent == 'PT':
+                # TODO: Support the more limited Portugal regions!!! ===========================================
+                return None, None, None
+        else:
+            region_schema = Schemas.ADMIN_0
+            region_parent = None
+            region_child = item['Country_Region']
+
+        return region_schema, region_parent, region_child
 
 
 if __name__ == '__main__':

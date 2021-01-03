@@ -55,15 +55,21 @@ class StateDataSources:
 
             # Note that NSWJSONOpenData must be before NSWJSONWebsiteData
             # as the map from postcode to LGA is generated there
-            (NSWNews, NSWJSONOpenData, NSWJSONWebsiteData),
-            (ACTNews, ACTPowerBIReader),
-            (QLDNews,),
-            (NTNews,),
-            (SANews, SARegionsReader, SAJSONReader),
-            (WANews, WADashReader),
-            (TasNews, TasFacebook),
-            (VicNews, VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative),
-            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, GuardianData),
+            (#NSWNews,
+             NSWJSONOpenData, NSWJSONWebsiteData,),
+            (#ACTNews,
+             ACTPowerBIReader,),
+            #(QLDNews,),
+            #(NTNews,),
+            (#SANews,
+             SARegionsReader, SAJSONReader,),
+            (#WANews,
+             WADashReader,),
+            (#TasNews,
+             TasFacebook,),
+            (#VicNews,
+             VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative,),
+            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, GuardianData,),
         ]
 
         for klass_set in news_insts:

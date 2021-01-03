@@ -103,6 +103,10 @@ class PTData(URLBase):
                     # formula is incidence = (cases / population) * 100000
                     # incidence / 100000 = cases / population
                     # incidence / 100000 * population = cases
+                    print(attributes['Incidência']/100000*attributes['Total'],
+                          attributes['Incidência']/100000,
+                          attributes['Incidência'],
+                          attributes['Total'])
                     confirmed = round(attributes['Incidência']/100000*attributes['Total']) if attributes['Incidência'] else 0
 
                     if confirmed is not None:

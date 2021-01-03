@@ -59,8 +59,12 @@ class Covid19DataComAUData(GithubRepo):
                 d[DataTypes.STATUS_HOSPITALIZED] = int(float(item['hosp']))
                 d[DataTypes.STATUS_ICU] = int(item['icu'])
                 d[DataTypes.STATUS_ICU_VENTILATORS] = int(item['vent'])
-                if d[DataTypes.STATUS_RECOVERED]:
-                    d[DataTypes.STATUS_ACTIVE] = d[DataTypes.TOTAL]-d[DataTypes.STATUS_RECOVERED]
+
+                if d[DataTypes.STATUS_RECOVERED] and \
+                   d[DataTypes.STATUS_DEATHS] and False:
+                    d[DataTypes.STATUS_ACTIVE] = d[DataTypes.TOTAL] - \
+                                                 d[DataTypes.STATUS_RECOVERED] - \
+                                                 d[DataTypes.STATUS_DEATHS]
 
                 for datatype, value in d.items():
                     if admin1:

@@ -11,6 +11,7 @@ from covid_db.SQLiteDataRevision import SQLiteDataRevision
 from covid_db.output_compressor.OutputSchemaTypes import OutputSchemaTypes
 from covid_db.output_compressor.TimeSeriesDataPoints import TimeSeriesDataPoints
 from world_geodata.get_population_map import get_population_map
+from case_locations.get_case_locations import get_case_locations
 
 
 def output_revision_datapoints_to_zip(zip_buffer, rev_date=None, rev_subid=None):
@@ -57,6 +58,9 @@ class _TimeSeriesDataZipper:
             time_format=rev_date,
             revision_id=rev_subid
         ).get_schema_types()
+
+        # Add case locations data
+        r['case_locations'] = get_case_locations()
 
         with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
             for file_name, data in r.items():

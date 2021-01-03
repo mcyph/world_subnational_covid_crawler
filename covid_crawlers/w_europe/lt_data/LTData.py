@@ -55,8 +55,13 @@ class LTData(URLBase):
         for date in self.iter_nonempty_dirs(base_dir):
             r = self.sdpf()
             path = f'{base_dir}/{date}/regions_data.json'
+
             with open(path, 'r', encoding='utf-8') as f:
-                data = f.read().replace('dojo_request_script_callbacks.dojo_request_script57(', '').rstrip().rstrip(');')
+                data = f.read()
+                if 'Error performing query operation' in data:
+                    continue
+
+                data = data.replace('dojo_request_script_callbacks.dojo_request_script57(', '').rstrip().rstrip(');')
                 data = json.loads(data)
 
             for feature in data['features']:

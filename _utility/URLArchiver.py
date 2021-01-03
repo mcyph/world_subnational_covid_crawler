@@ -182,7 +182,7 @@ class URLArchiver:
         """
         out = []
         for dir_ in listdir(f"{self.base_dir}"):
-            if dir_.split('-')[0] == period:
+            if dir_.split('-')[0] == period and len(listdir(f"{self.base_dir}/{dir_}")):
                 subperiod_id = int(dir_.split('-')[-1])
                 out.append((subperiod_id, dir_))
         out.sort(reverse=newest_first)

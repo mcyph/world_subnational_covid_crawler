@@ -104,6 +104,12 @@ class VicTableauNative(URLBase):
 
                 assert '2020_01_25' in out_map  # Make sure previous items haven't been trimmed!
 
+                def get_active_cases(i):
+                    if 'Active_Cases' in i:
+                        return int(i['Active_Cases'] or 0)
+                    else:
+                        return int(i['Active_cases'] or 0)
+
                 for date, agegroup_map in sorted(out_map.items()):
                     for agegroup, i_map in agegroup_map.items():
                         #print(agegroup, i_map)
@@ -112,6 +118,7 @@ class VicTableauNative(URLBase):
                         assert agegroup
 
                         if 'Male' in i_map:
+                            print(i_map)
                             male_cum[agegroup] += int(i_map['Male']['Cases'] or 0)
                             r.append(DataPoint(
                                 region_schema=Schemas.ADMIN_1,
@@ -124,6 +131,7 @@ class VicTableauNative(URLBase):
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
+
                             r.append(DataPoint(
                                 region_schema=Schemas.ADMIN_1,
                                 region_parent='au',
@@ -131,7 +139,7 @@ class VicTableauNative(URLBase):
                                 date_updated=date,
                                 agerange=agegroup,
                                 datatype=DataTypes.STATUS_ACTIVE_MALE,
-                                value=int(i_map['Male']['Active_Cases'] or 0),  # WARNING!!
+                                value=get_active_cases(i_map['Male']),
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
@@ -149,6 +157,7 @@ class VicTableauNative(URLBase):
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
+
                             r.append(DataPoint(
                                 region_schema=Schemas.ADMIN_1,
                                 region_parent='au',
@@ -156,7 +165,7 @@ class VicTableauNative(URLBase):
                                 date_updated=date,
                                 agerange=agegroup,
                                 datatype=DataTypes.STATUS_ACTIVE_FEMALE,
-                                value=int(i_map['Female']['Active_Cases'] or 0),  # WARNING!!
+                                value=get_active_cases(i_map['Female']),
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
@@ -166,19 +175,19 @@ class VicTableauNative(URLBase):
 
                         if 'Male' in i_map:
                             total += int(i_map['Male']['Cases'] or 0)
-                            active += int(i_map['Male']['Active_Cases'] or 0)
+                            active += get_active_cases(i_map['Male'])
 
                         if 'Female' in i_map:
                             total += int(i_map['Female']['Cases'] or 0)
-                            active += int(i_map['Female']['Active_Cases'] or 0)
+                            active += get_active_cases(i_map['Female'])
 
                         if 'Other' in i_map:
                             total += int(i_map['Other']['Cases'] or 0)
-                            active += int(i_map['Other']['Active_Cases'] or 0)
+                            active += get_active_cases(i_map['Other'])
 
                         if 'Not stated' in i_map:
                             total += int(i_map['Not stated']['Cases'] or 0)
-                            active += int(i_map['Not stated']['Active_Cases'] or 0)
+                            active += get_active_cases(i_map['Not stated'])
 
                         both_cum[agegroup] += total
 
