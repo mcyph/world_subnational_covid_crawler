@@ -74,10 +74,22 @@ class IDGoogleDocsData(URLBase):
 
         f = self.get_file('provinces_1.csv',
                           include_revision=True)
+        current_year = 20
+        current_month = 'mar'
+
         for item in csv.DictReader(f):
             if not item['Total Kasus'].strip():
                 break
-            date = self.convert_date(item['Total Kasus'].replace(' ', '-')+'-20')
+
+            # This source doesn't include the year,
+            # so will need to detect based on changing months
+            month = item['Total Kasus'].split('-')[-1].lower()
+            if month == 'jan' and current_month != 'jan':
+                current_year += 1
+            current_month = month
+            date = self.convert_date(
+                item['Total Kasus'].replace(' ', '-')+'-'+str(current_year)
+            )
 
             for province in list(item.keys())[1:]:
                 value = item[province].replace(',', '')

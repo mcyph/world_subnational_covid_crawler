@@ -10,7 +10,8 @@ from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, 
 class WorldCovid19DataHubData(URLBase):
     SOURCE_ID = 'world_covid19datahub'
     SOURCE_URL = 'https://covid19datahub.io/articles/data.html'
-    SOURCE_DESCRIPTION = ''
+    SOURCE_DESCRIPTION = 'citation: citation: Guidotti and Ardia (2020) ' \
+                         'https://joss.theoj.org/papers/10.21105/joss.02376'
 
     def __init__(self):
         URLBase.__init__(self,
@@ -117,6 +118,7 @@ class WorldCovid19DataHubData(URLBase):
                 elif admin0 == 'France': continue
                 elif admin0 == 'Italy': schema = Schemas.IT_PROVINCE
                 elif admin0 == 'Puerto Rico': continue
+                elif admin0 == 'Spain': schema = Schemas.ES_PROVINCE
                 else: raise ValueError(admin0)
 
                 self._add_datapoints(r,
@@ -129,6 +131,9 @@ class WorldCovid19DataHubData(URLBase):
     def _add_datapoints(self, r, region_schema, region_parent, region_child, item):
 
         if region_schema == Schemas.ADMIN_1 and region_parent.lower() == 'australia':
+            return
+        elif region_schema == Schemas.ADMIN_1 and region_parent.lower() == 'portugal':
+            # TODO!!! =================================================================
             return
         date = self.convert_date(item['date'])
 

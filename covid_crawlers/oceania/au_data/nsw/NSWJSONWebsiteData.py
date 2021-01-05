@@ -298,7 +298,7 @@ class NSWJSONWebsiteData:
 
         with open(path_active_deaths, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
-                date = datetime.strptime(item['Date'] + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
+                date = self.__get_partial_date(path_active_deaths, item['Date'])
                 recovered = int(item['Recovered'])
                 deaths = int(item['Deaths'])
                 cases = int(item['Cases'])
@@ -381,7 +381,7 @@ class NSWJSONWebsiteData:
 
         with open(path_tests, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
-                date = datetime.strptime(item['Date'] + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
+                date = self.__get_partial_date(path_tests, item['Date'])
                 number = int(item['Number'])
                 # recent = item['Recent'] # TODO: ADD ME!!! ========================================================
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
@@ -406,7 +406,7 @@ class NSWJSONWebsiteData:
 
         with open(path_totals, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
-                date = datetime.strptime(item['Date'] + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
+                date = self.__get_partial_date(path_totals, item['Date'])
                 number = int(item['Number'])
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
@@ -422,6 +422,25 @@ class NSWJSONWebsiteData:
                 ))
 
         return r
+
+    def __get_partial_date(self, path, date):
+        dir_ = path.parent.name
+
+        if '2020_' in dir_:
+            return datetime.strptime(date + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
+        elif '2021_' in dir_:
+            if '2021_12_' in dir_ or '2021_11_' in dir_:
+                raise Exception(path)
+
+            month = date.split('-')[-1].lower()
+            assert len(month) == 3, month
+
+            if month in ('nov', 'dec'):
+                return datetime.strptime(date + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
+            else:
+                return datetime.strptime(date + '-21', '%d-%b-%y').strftime('%Y_%m_%d')
+        else:
+            raise Exception(path)
 
 
 if __name__ == '__main__':

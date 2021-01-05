@@ -80,6 +80,10 @@ class WorldGCPCovid19OpenData(URLBase):
                     admin2 = item['subregion2_name']
                     admin_level = int(item['aggregation_level'])
 
+                    if admin_level == 1:
+                        if admin0.lower() == 'pt' or admin0.lower() == 'pl':
+                            continue  # TODO: support the "other" admin1 system for Portugal!!!
+
                     for datatype, value in (
                         (DataTypes.TOTAL, item['total_confirmed']),
                         (DataTypes.STATUS_DEATHS, item['total_deceased']),

@@ -57,6 +57,7 @@ class GuardianData(CacheBase):
         for item in data:
             state = 'AU-%s' % item['State']
             date = datetime.strptime(item['Date'], '%d/%m/%Y')
+            date = date.strftime('%Y_%m_%d')
 
             for k, v in item.items():
                 if v == '-':
@@ -83,10 +84,18 @@ class GuardianData(CacheBase):
                 d[DataTypes.STATUS_RECOVERED] = item['Recovered (cumulative)']
 
                 if DataTypes.TOTAL in d and DataTypes.STATUS_DEATHS in d:
-                    d[DataTypes.STATUS_ACTIVE] = \
-                        str(int(d[DataTypes.TOTAL].replace(',', '')) -
-                            int(d[DataTypes.STATUS_RECOVERED].replace(',', '')) -
-                            int(d[DataTypes.STATUS_DEATHS].replace(',', '')))
+                    if item['State'].lower() in ('nsw',):
+                        # NOTE ME: NSW currently gives strange
+                        # results for active for some reason
+                        pass
+                    elif item['State'].lower() in ('tas', 'wa') and date <= '2020_05_01':
+                        # Will exclude older data for tas/wa for now
+                        pass
+                    else:
+                        d[DataTypes.STATUS_ACTIVE] = \
+                            str(int(d[DataTypes.TOTAL].replace(',', '')) -
+                                int(d[DataTypes.STATUS_RECOVERED].replace(',', '')) -
+                                int(d[DataTypes.STATUS_DEATHS].replace(',', '')))
 
             for datatype, value in d.items():
                 r.append(
@@ -96,7 +105,7 @@ class GuardianData(CacheBase):
 
                     datatype=datatype,
                     value=int(value.replace(',', '')),
-                    date_updated=date.strftime('%Y_%m_%d')
+                    date_updated=date
                 )
         return r
 

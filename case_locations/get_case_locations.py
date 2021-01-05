@@ -1,13 +1,9 @@
 import json
-from case_locations.nsw.get_nsw_case_locations import get_nsw_case_locations
-from case_locations.vic.get_vic_case_locations import get_vic_case_locations
+from case_locations.update_spreadsheet import get_worksheet_data_as_dicts
 
 
 def get_case_locations():
-    out = []
-    out.extend(get_nsw_case_locations())
-    out.extend(get_vic_case_locations())
-    return out
+    return get_worksheet_data_as_dicts()
 
 
 if __name__ == '__main__':

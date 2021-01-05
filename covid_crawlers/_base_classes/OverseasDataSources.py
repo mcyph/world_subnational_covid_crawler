@@ -121,7 +121,8 @@ EUROPE_DATA = (
     BEData, CHData, CZData, DEData, DERKIData, ESData, ESISCIIIData,
     EUSubNationalData, FRData, FRESRIData, FRGovData, GRCovid19Greece,
     HRData, IEData, ISData, ITData, KGData, KZData,
-    MKData, PLGovData, PTData, RSData, SIData, UKData, UKGovData,
+    #MKData,
+    PLGovData, PTData, RSData, SIData, UKData, UKGovData,
     LVData, LTData, LVDataArcGIS
 )
 

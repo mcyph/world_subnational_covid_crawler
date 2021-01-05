@@ -53,6 +53,9 @@ class GRCovid19Greece(URLBase):
         }
 
         for date in self.iter_nonempty_dirs(base_dir):
+            if date >= '2020_10_10':
+                continue  # NOTE ME: This stopped getting updated!!!
+
             r = self.sdpf()
             path = f'{base_dir}/{date}/regions.json'
             with open(path, 'r', encoding='utf-8') as f:

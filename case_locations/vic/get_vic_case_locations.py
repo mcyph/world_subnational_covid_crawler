@@ -56,10 +56,10 @@ class _VicCaseLocations(CacheBase):
                 state=self.STATE_NAME.upper(),
                 type='isolate',
                 venue=name,
-                suburb=area,
+                area=area,
                 date=date,
                 time=time,
-                alert='Get tested immediately and self-isolate until you get a negative result',
+                description='Get tested immediately and self-isolate until you get a negative result',
                 long=map_item['long'],
                 lat=map_item['lat'],
             ))

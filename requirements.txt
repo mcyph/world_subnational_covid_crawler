@@ -19,3 +19,4 @@ cherrypy
 jinja2
 python-snappy
 openpyxl
+pygsheets

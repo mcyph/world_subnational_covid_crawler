@@ -29,6 +29,7 @@ from _utility.normalize_locality_name import normalize_locality_name
 OUTPUT_DIR = get_package_dir() / 'covid_crawlers' / 'oceania' / 'au_data' / 'output'
 OUTPUT_GRAPHS_DIR = get_package_dir() / 'world_subnational_covid_crawler' / 'output_graphs' / 'output'
 UPDATE_SCRIPT_PATH = get_package_dir() / 'output_data.py'
+UPDATE_CASE_LOCS_PATH = get_package_dir() / 'case_locations' / 'update_spreadsheet.py'
 mimetypes.types_map['.tsv'] = 'text/tab-separated-values'
 
 
@@ -54,23 +55,27 @@ class App(object):
 
                 if dt.hour >= 12 and dt.hour < 14 and not powerbi_run_1st:
                     # Run powerbi once only between 12pm and 2pm
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_CASE_LOCS_PATH))}',))
                     start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = True
                     powerbi_run_2nd = False
                     powerbi_run_3rd = False
                 elif dt.hour >= 15 and dt.hour < 17 and not powerbi_run_2nd:
                     # Run powerbi once only between 3pm and 5pm
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_CASE_LOCS_PATH))}',))
                     start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = False
                     powerbi_run_2nd = True
                     powerbi_run_3rd = False
                 elif dt.hour >= 17 and dt.hour < 19 and not powerbi_run_3rd:
                     # Run powerbi once only between 5pm and 7pm
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_CASE_LOCS_PATH))}',))
                     start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))} --run-infrequent-jobs',))
                     powerbi_run_1st = False
                     powerbi_run_2nd = False
                     powerbi_run_3rd = True
                 else:
+                    start_new_thread(system, (f'python3 {quote(str(UPDATE_CASE_LOCS_PATH))}',))
                     start_new_thread(system, (f'python3 {quote(str(UPDATE_SCRIPT_PATH))}',))
 
     #=============================================================#

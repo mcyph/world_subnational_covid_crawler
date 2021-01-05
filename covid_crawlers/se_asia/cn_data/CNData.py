@@ -87,6 +87,7 @@ class CNData(URLBase):
                     continue
 
                 path = get_overseas_dir() / 'cn' / 'data' / date / f'{province_dict["value"]}.json'
+                print(path)
                 with open(path, 'r', encoding='utf-8') as f:
                     json_data = f.read()
                     json_data = json_data.replace("dojo_request_script_callbacks.dojo_request_script0(", "")

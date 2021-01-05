@@ -67,10 +67,10 @@ class _NSWCaseLocations(CacheBase):
                     state=self.STATE_NAME.upper(),
                     type=k,
                     venue=i['Venue'],
-                    suburb=i['Suburb'],
+                    area=i['Suburb'],
                     date=date,
                     time=i['Time'],
-                    alert=i['Alert'],
+                    description=i['Alert'],
                     long=float(i['Lon']) if float(i['Lon']) >= 100.0 else float(i['Lat']),
                     lat=float(i['Lat']) if float(i['Lat']) < 100.0 else float(i['Lon']),
                 ))

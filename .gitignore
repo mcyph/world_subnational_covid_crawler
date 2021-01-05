@@ -1,1 +1,2 @@
-/.env
+/.auth
+/case_locations/credentials.json

@@ -7,6 +7,7 @@ from _utility.get_package_dir import get_overseas_dir
 
 
 class SNData(URLBase):
+    # Pretty sure this isn't being updated any more...
     SOURCE_URL = 'https://data.humdata.org/dataset/positive-cases-of-covid-19-in-senegal'
     SOURCE_DESCRIPTION = ''
     SOURCE_ID = 'sn_ocha_rowca_humdata'
