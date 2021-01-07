@@ -1,5 +1,6 @@
 import csv
 from os import listdir
+from collections import Counter
 
 from _utility.cache_by_date import cache_by_date
 from _utility.get_package_dir import get_data_dir
@@ -40,6 +41,175 @@ class VicCSV(URLBase):
         for date in r.iter_unprocessed_dates(sorted(listdir(get_data_dir() / 'vic' / 'csv_data'))):
             r.extend(self._get_postcode_datapoints(date))
             r.extend(self._get_lga_datapoints(date))
+
+            if (get_data_dir() / 'vic' / 'csv_data' / date / 'agegroup.csv').exists():
+                r.extend(self._get_agegroup_datapoints(date))
+            if (get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga.csv').exists():
+                r.extend(self._get_all_lga_datapoints(date))
+            if (get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga_acquired_source').exists():
+                r.extend(self._get_all_lga_acquired_source_datapoints(date))
+            if (get_data_dir() / 'vic' / 'csv_data' / date / 'all_acquired_source').exists():
+                r.extend(self._get_all_acquired_source_datapoints(date))
+        return r
+
+    @cache_by_date(SOURCE_ID + '_all_lga_acquired_source')
+    def _get_all_lga_acquired_source_datapoints(self, date):
+        r = []
+        current_date = None
+        by_postcode = {}
+        by_lga = {}
+
+        sources = {
+            'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY,
+            'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED,
+            'Travel overseas': DataTypes.SOURCE_OVERSEAS,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION
+        }
+
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga_acquired_source', 'r', encoding='utf-8') as f:
+            for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
+                       [{'diagnosis_date': '1111-01-01',
+                         'Postcode': None,
+                         'Localgovernmentarea': None,
+                         'acquired': None}]:
+
+                date_updated = self.convert_date(row['diagnosis_date'])
+
+                if current_date != date_updated:
+                    if current_date is not None:
+                        for postcode, by_source in by_postcode.items():
+                            for source, value in by_source.items():
+                                r.append(DataPoint(
+                                    region_schema=Schemas.POSTCODE,
+                                    region_parent='AU-VIC',
+                                    region_child=postcode,
+                                    datatype=sources[source],
+                                    value=int(value),
+                                    date_updated=date_updated,
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                        for lga, by_source in by_lga.items():
+                            for source, value in by_source.items():
+                                r.append(DataPoint(
+                                    region_schema=Schemas.LGA,
+                                    region_parent='AU-VIC',
+                                    region_child=lga,
+                                    datatype=sources[source],
+                                    value=int(value),
+                                    date_updated=date_updated,
+                                    source_url=self.SOURCE_URL,
+                                    source_id=self.SOURCE_ID
+                                ))
+                    current_date = date_updated
+
+                if row['Localgovernmentarea']:
+                    by_lga.setdefault(row['Localgovernmentarea'].split('(')[0].strip(), Counter())[row['acquired']] += 1
+                if row['Postcode']:
+                    by_postcode.setdefault(row['Localgovernmentarea'].strip('_'), Counter())[row['acquired']] += 1
+
+        return r
+
+    @cache_by_date(SOURCE_ID + '_all_acquired_source')
+    def _get_all_acquired_source_datapoints(self, date):
+        r = []
+        current_date = None
+        by_source = Counter()
+
+        sources = {
+            'Acquired in Australia, unknown source': DataTypes.SOURCE_COMMUNITY,
+            'Contact with a confirmed case': DataTypes.SOURCE_CONFIRMED,
+            'Travel overseas': DataTypes.SOURCE_OVERSEAS,
+            'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION
+        }
+
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'all_acquired_source', 'r', encoding='utf-8') as f:
+            for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
+                       [{'diagnosis_date': '1111-01-01', 'acquired': None}]:
+
+                date_updated = self.convert_date(row['diagnosis_date'])
+
+                if current_date != date_updated:
+                    if current_date is not None:
+                        for source, value in by_source.items():
+                            r.append(DataPoint(
+                                region_schema=Schemas.ADMIN_1,
+                                region_parent='AU',
+                                region_child='AU-VIC',
+                                datatype=sources[source],
+                                value=int(value),
+                                date_updated=date_updated,
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
+                            ))
+                    current_date = date_updated
+
+                if row['acquired']:
+                    by_source[row['acquired'].strip('_')] += 1
+        return r
+
+    @cache_by_date(SOURCE_ID + '_all_lga')
+    def _get_all_lga_datapoints(self, date):
+        r = []
+        current_date = None
+        by_agegroup = Counter()
+
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga.csv', 'r', encoding='utf-8') as f:
+            for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
+                       [{'diagnosis_date': '1111-01-01', 'Localgovernmentarea': None}]:
+
+                date_updated = self.convert_date(row['diagnosis_date'])
+
+                if current_date != date_updated:
+                    if current_date is not None:
+                        for lga, value in by_agegroup.items():
+                            r.append(DataPoint(
+                                region_schema=Schemas.LGA,
+                                region_parent='AU-VIC',
+                                region_child=lga.split('(')[0].strip(),
+                                datatype=DataTypes.TOTAL,
+                                value=int(value),
+                                date_updated=date_updated,
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
+                            ))
+                    current_date = date_updated
+
+                if row['Localgovernmentarea']:
+                    by_agegroup[row['Localgovernmentarea'].strip('_')] += 1
+        return r
+
+    @cache_by_date(SOURCE_ID+'_agegroup')
+    def _get_agegroup_datapoints(self, date):
+        r = []
+        current_date = None
+        by_agegroup = Counter()
+
+        with open(get_data_dir() / 'vic' / 'csv_data' / date / 'agegroup.csv', 'r', encoding='utf-8') as f:
+            for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
+                       [{'diagnosis_date': '1111-01-01', 'agegroup': None}]:
+
+                assert len(row['diagnosis_date']) == 10
+                date_updated = self.convert_date(row['diagnosis_date'])
+
+                if current_date != date_updated:
+                    if current_date is not None:
+                        for agerange, value in by_agegroup.items():
+                            r.append(DataPoint(
+                                region_schema=Schemas.ADMIN_1,
+                                region_parent='AU',
+                                region_child='AU-VIC',
+                                datatype=DataTypes.TOTAL,
+                                agerange=agerange,
+                                value=int(value),
+                                date_updated=date_updated,
+                                source_url=self.SOURCE_URL,
+                                source_id=self.SOURCE_ID
+                            ))
+                    current_date = date_updated
+
+                if row['agegroup']:
+                    by_agegroup[row['agegroup'].strip('_')] += 1
         return r
 
     @cache_by_date(SOURCE_ID)

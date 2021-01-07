@@ -3,7 +3,7 @@ from case_locations.update_spreadsheet import get_worksheet_data_as_dicts
 
 
 def get_case_locations():
-    return get_worksheet_data_as_dicts()
+    return get_worksheet_data_as_dicts(remove_no_geoloc=True)
 
 
 if __name__ == '__main__':

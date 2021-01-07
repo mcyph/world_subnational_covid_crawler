@@ -1,5 +1,7 @@
+from os import environ
 import pygsheets
 import pandas as pd
+from geopy.geocoders import MapBox
 
 from _utility.get_package_dir import get_package_dir
 from case_locations.nsw.get_nsw_case_locations import get_nsw_case_locations
@@ -22,6 +24,9 @@ def df_to_dicts(df):
     return [dict(zip(df.columns, i)) for i in df.values.tolist()]
 
 
+GEOLOCATOR = [None]
+
+
 def dicts_to_df(geocoords_by_key, dicts):
     """
 
@@ -41,6 +46,28 @@ def dicts_to_df(geocoords_by_key, dicts):
 
         if not out['long'] and vl.get_geocoord_key() in geocoords_by_key:
             out['long'], out['lat'] = geocoords_by_key[vl.get_geocoord_key()]
+        elif 'trains' in out['venue'].lower() or 'v/line' in out['venue'].lower():
+            # Need to add public transport lines separately!
+            pass
+        elif not out['long']:
+            if not GEOLOCATOR[0]:
+                GEOLOCATOR[0] = MapBox(
+                    api_key=environ['MAPBOX_KEY'],
+                    user_agent="https://covid-19-au.com"
+                )
+            try:
+                location = GEOLOCATOR[0].geocode(out['venue']+', '+out['area']+', '+out['state'])
+                print(out, location)
+                if location:
+                    out['long'] = location.longitude
+                    out['lat'] = location.latitude
+            except:
+                # Make sure it doesn't keep trying to get the lat/long
+                # when the service didn't find the location!
+                import traceback
+                traceback.print_exc()
+                out['long'] = '!error'
+                out['lat'] = '!error'
         return out
 
     df = pd.DataFrame(
@@ -65,7 +92,9 @@ def get_geocoords_by_key(venue_locations):
         return i
 
     venue_locations = [to_venue_location(i) for i in venue_locations]
-    return {i.get_geocoord_key(): (i.long, i.lat) for i in venue_locations}
+    return {i.get_geocoord_key(): (i.long, i.lat)
+            for i in venue_locations
+            if i.long and i.lat}
 
 
 def get_worksheet():
@@ -76,7 +105,8 @@ def get_worksheet():
         service_file=str(get_package_dir() / 'case_locations' / 'credentials.json')
     )
     sh = gc.open_by_url(
-        'https://docs.google.com/spreadsheets/d/1ddw3GqI4RsrphdjJcYX-llnQ-JTV_q2atOr1UToLbw0/edit#gid=0'
+        'https://docs.google.com/spreadsheets/d/'
+        '1ddw3GqI4RsrphdjJcYX-llnQ-JTV_q2atOr1UToLbw0/edit#gid=0'
     )
     wk1 = sh[0]
     return wk1
@@ -103,12 +133,22 @@ def update_spreadsheet(wk1):
     wk1.set_dataframe(new_df, (1, 1), nan='')
 
 
-def get_worksheet_data_as_dicts():
+def get_worksheet_data_as_dicts(remove_no_geoloc=True):
     """
 
     """
     wk1 = get_worksheet()
-    return df_to_dicts(wk1.get_as_df())
+    r = df_to_dicts(wk1.get_as_df())
+    if remove_no_geoloc:
+        out = []
+        for i in r:
+            if not i['lat']:
+                continue
+            elif i['lat'] == '!error':
+                continue
+            out.append(i)
+        r = out
+    return r
 
 
 if __name__ == '__main__':

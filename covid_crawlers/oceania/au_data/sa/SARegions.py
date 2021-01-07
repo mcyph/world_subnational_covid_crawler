@@ -33,9 +33,10 @@ GECKO_BROWSER_DIR = expanduser(
 )
 SA_REGIONS_URL = (
     #'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=963e7887610146ec813e7889bb658805'
-    'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=1ae1bf4b7b6a46bda4a65b48c2da9406'
+    #'https://dpc.geohub.sa.gov.au/portal/apps/View/index.html?appid=1ae1bf4b7b6a46bda4a65b48c2da9406'
+    'https://public.tableau.com/views/COVID-19casesinSouthAustraliabyLocalGovernmentArea_15971074477850/MapLive?:embed=y&:showVizHome=no&:host_url=https%3A%2F%2Fpublic.tableau.com%2F&:embed_code_version=3&:tabs=no&:toolbar=no&:animate_transition=yes&:display_static_image=no&:display_spinner=no&:display_overlay=yes&:display_count=yes&:language=en&:loadOrderID=0'
 )
-PATH_PREFIX = get_data_dir() / 'sa' / 'custom_map'
+PATH_PREFIX = get_data_dir() / 'sa' / 'custom_map_tableau'
 
 
 class _SARegions:
@@ -113,7 +114,7 @@ class _SARegions:
             '--disable-extensions',
             '--disable-gpu',
             '--no-sandbox',
-            '--headless',
+            #'--headless',
         ]
         chrome_options = webdriver.ChromeOptions()
         for arg in args:
@@ -126,13 +127,13 @@ class _SARegions:
                                             'captureBinaryContent': True})
         driver.get(SA_REGIONS_URL)
         time.sleep(15)
-        for i in range(5):
-            # Zoom out a few times
-            content = driver.find_element_by_css_selector(
-                '.esriSimpleSliderDecrementButton'
-            )
-            content.click()
-            time.sleep(4)
+        #for i in range(5):
+        #    # Zoom out a few times
+        #    content = driver.find_element_by_css_selector(
+        #        '.esriSimpleSliderDecrementButton'
+        #    )
+        #    content.click()
+        #    time.sleep(4)
 
         proxy.wait_for_traffic_to_stop(10, 60)
 
@@ -143,8 +144,8 @@ class _SARegions:
             print(req['url'])
 
             if req['url'].startswith(
-                'https://dpc.geohub.sa.gov.au/server/rest/services/Hosted/'
-            ) and 'query?' in req['url']:
+                'https://public.tableau.com/vizql/w/COVID-19casesinSouthAustraliabyLocalGovernmentArea_15971074477850/v/MapLive/bootstrapSession/sessions/'
+            ):
                 print(ent)
                 print(ent.keys())
                 if not 'text' in ent['response']['content']:
@@ -154,22 +155,36 @@ class _SARegions:
                 try:
                     data = base64.b64decode(data)
                 except: pass
+                #print('b64decode:', data)
                 try:
                     data = brotli.decompress(data)
                 except: pass
+                #print('brotli:', data)
                 try:
                     data = data.decode('utf-8')
                 except: pass
 
-                try:
-                    r.append(json.loads(data))
-                except UnicodeDecodeError:
-                    with urlopen(req['url'].replace('query?f=pbf', 'query?f=json')) as f:
-                        r.append(json.loads(f.read().decode('utf-8')))
+                r.append(data)
 
         server.stop()
         driver.quit()
         return r
+
+    def _get_from_multipart(self, s, contains):
+        if s.startswith('GIF89'):
+            return
+
+        while s:
+            num_chars, _, s = s.partition(';')
+            num_chars = int(num_chars)
+
+            i_s = s[:num_chars]
+            # print(i_s)
+            s = s[num_chars:]
+
+            if contains in i_s:
+                # print("FOUND:", contains, i_s)
+                return json.loads(i_s)
 
 
 def run_sa_regions():
