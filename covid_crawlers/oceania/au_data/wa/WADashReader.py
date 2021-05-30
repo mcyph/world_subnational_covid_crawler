@@ -241,7 +241,7 @@ class WADashReader:
                     source_id=self.SOURCE_ID
                 ))
 
-            if attribute['Negative_results'] is not None and attribute['Total_Confirmed'] is not None:
+            if attribute.get('Negative_results') is not None and attribute['Total_Confirmed'] is not None:
                 r.append(DataPoint(
                     region_schema=Schemas.ADMIN_1,
                     region_parent='AU',

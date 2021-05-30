@@ -16,7 +16,8 @@
             ["Active Cases", "status_active"],
             ["New Cases", "new"],
             ["Recovered Cases", "status_recovered"],
-            ["Deaths", "status_deaths"]
+            ["Deaths", "status_deaths"],
+            ["Vaccinated", "status_vaccinated"]
         ]],
         ["Hospitalizations", [
             ["Currently in ICU", "status_icu"],
@@ -104,6 +105,12 @@
             "percapita": true
         },
         "status_discharged_deaths": {
+            "timeperiods": true,
+            "dayssince": true,
+            "roc": true,
+            "percapita": true
+        },
+        "status_vaccinated": {
             "timeperiods": true,
             "dayssince": true,
             "roc": true,

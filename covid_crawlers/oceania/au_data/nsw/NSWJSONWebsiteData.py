@@ -285,6 +285,11 @@ class NSWJSONWebsiteData:
         r = {}
         with open(path_active, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
+                try:
+                    item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
+                except ValueError:
+                    pass
+
                 # {"data":[{
                 #   "Day11":0,"Day12":0,"Day13":0,"POA_NAME16":"2541",
                 #   "Day0":0,"Day1":0,"Day2":0,"Day3":0,"Day10":0,"Day4":0,
@@ -298,6 +303,11 @@ class NSWJSONWebsiteData:
 
         with open(path_active_deaths, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
+                try:
+                    item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
+                except ValueError:
+                    pass
+
                 date = self.__get_partial_date(path_active_deaths, item['Date'])
                 recovered = int(item['Recovered'])
                 deaths = int(item['Deaths'])
@@ -381,6 +391,11 @@ class NSWJSONWebsiteData:
 
         with open(path_tests, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
+                try:
+                    item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
+                except ValueError:
+                    pass
+
                 date = self.__get_partial_date(path_tests, item['Date'])
                 number = int(item['Number'])
                 # recent = item['Recent'] # TODO: ADD ME!!! ========================================================
@@ -406,6 +421,11 @@ class NSWJSONWebsiteData:
 
         with open(path_totals, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
+                try:
+                    item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
+                except ValueError:
+                    pass
+
                 date = self.__get_partial_date(path_totals, item['Date'])
                 number = int(item['Number'])
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'

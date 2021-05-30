@@ -87,6 +87,7 @@ class DataTypes(str, Enum):
     STATUS_ICU_VENTILATORS = 'status_icu_ventilators'
     STATUS_ICU_RUNNINGTOTAL = 'status_icu_runningtotal'
     STATUS_ICU_VENTILATORS_RUNNINGTOTAL = 'status_icu_ventilators_runningtotal'
+    STATUS_VACCINATED = 'status_vaccinated'
     STATUS_RECOVERED = 'status_recovered'
     STATUS_ACTIVE = 'status_active'
     STATUS_UNKNOWN = 'status_unknown'

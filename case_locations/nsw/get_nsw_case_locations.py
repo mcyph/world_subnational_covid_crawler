@@ -60,7 +60,7 @@ class _NSWCaseLocations(CacheBase):
                 try:
                     date = parse_datetime(i['Date'], dayfirst=True)
                 except:
-                    date = parse_datetime(i['Date'].partition(' ')[-1],
+                    date = parse_datetime(i['Date'].partition(' ')[-1].split(' to ')[-1],
                                           dayfirst=True)
 
                 r.append(VenueLocation(

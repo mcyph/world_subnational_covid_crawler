@@ -11,6 +11,21 @@ from covid_db.datatypes.DatapointMerger import DataPointMerger
 from covid_crawlers._base_classes.URLBase import URL, URLBase
 
 
+class ExpiringCounter(Counter):
+    def __init__(self, *args, **kw):
+        Counter.__init__(self, *args, **kw)
+        self.__changed = set()
+
+    def items(self):
+        for k in self.__changed:
+            yield k, self[k]
+        self.__changed = set()
+
+    def __setitem__(self, key, value):
+        Counter.__setitem__(self, key, value)
+        self.__changed.add(key)
+
+
 class VicCSV(URLBase):
     SOURCE_ID = 'au_vic_dhhs_csv'
     SOURCE_URL = 'https://www.dhhs.vic.gov.au/coronavirus'
@@ -77,36 +92,36 @@ class VicCSV(URLBase):
 
                 if current_date != date_updated:
                     if current_date is not None:
-                        for postcode, by_source in by_postcode.items():
-                            for source, value in by_source.items():
-                                r.append(DataPoint(
-                                    region_schema=Schemas.POSTCODE,
-                                    region_parent='AU-VIC',
-                                    region_child=postcode,
-                                    datatype=sources[source],
-                                    value=int(value),
-                                    date_updated=date_updated,
-                                    source_url=self.SOURCE_URL,
-                                    source_id=self.SOURCE_ID
-                                ))
+                        #for postcode, by_source in by_postcode.items():
+                        #    for source, value in by_source.items():
+                        #        r.append(DataPoint(
+                        #            region_schema=Schemas.POSTCODE,
+                        #            region_parent='AU-VIC',
+                        #            region_child=postcode,
+                        #            datatype=sources[source],
+                        #            value=int(value),
+                        #            date_updated=current_date,
+                        #            source_url=self.SOURCE_URL,
+                        #            source_id=self.SOURCE_ID
+                        #        ))
                         for lga, by_source in by_lga.items():
                             for source, value in by_source.items():
                                 r.append(DataPoint(
                                     region_schema=Schemas.LGA,
                                     region_parent='AU-VIC',
-                                    region_child=lga,
+                                    region_child=normalize_locality_name(lga),
                                     datatype=sources[source],
                                     value=int(value),
-                                    date_updated=date_updated,
+                                    date_updated=current_date,
                                     source_url=self.SOURCE_URL,
                                     source_id=self.SOURCE_ID
                                 ))
                     current_date = date_updated
 
                 if row['Localgovernmentarea']:
-                    by_lga.setdefault(row['Localgovernmentarea'].split('(')[0].strip(), Counter())[row['acquired']] += 1
+                    by_lga.setdefault(row['Localgovernmentarea'].split('(')[0].strip(), ExpiringCounter())[row['acquired']] += 1
                 if row['Postcode']:
-                    by_postcode.setdefault(row['Localgovernmentarea'].strip('_'), Counter())[row['acquired']] += 1
+                    by_postcode.setdefault(row['Localgovernmentarea'].strip('_'), ExpiringCounter())[row['acquired']] += 1
 
         return r
 
@@ -138,7 +153,7 @@ class VicCSV(URLBase):
                                 region_child='AU-VIC',
                                 datatype=sources[source],
                                 value=int(value),
-                                date_updated=date_updated,
+                                date_updated=current_date,
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
@@ -152,7 +167,7 @@ class VicCSV(URLBase):
     def _get_all_lga_datapoints(self, date):
         r = []
         current_date = None
-        by_agegroup = Counter()
+        by_agegroup = ExpiringCounter()
 
         with open(get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga.csv', 'r', encoding='utf-8') as f:
             for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
@@ -166,10 +181,10 @@ class VicCSV(URLBase):
                             r.append(DataPoint(
                                 region_schema=Schemas.LGA,
                                 region_parent='AU-VIC',
-                                region_child=lga.split('(')[0].strip(),
+                                region_child=normalize_locality_name(lga.split('(')[0].strip()),
                                 datatype=DataTypes.TOTAL,
                                 value=int(value),
-                                date_updated=date_updated,
+                                date_updated=current_date,
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))
@@ -202,7 +217,7 @@ class VicCSV(URLBase):
                                 datatype=DataTypes.TOTAL,
                                 agerange=agerange,
                                 value=int(value),
-                                date_updated=date_updated,
+                                date_updated=current_date,
                                 source_url=self.SOURCE_URL,
                                 source_id=self.SOURCE_ID
                             ))

@@ -166,6 +166,11 @@ class NSWJSONOpenData:
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
+                try:
+                    row['postcode'] = str(int(float(row['postcode'])))
+                except ValueError:
+                    pass
+
                 if '/' in row['notification_date']:
                     pad = lambda i: '%02d' % int(i)
                     dd, mm, yyyy = row['notification_date'].split('/')
@@ -313,6 +318,11 @@ class NSWJSONOpenData:
         with open(path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
+                try:
+                    row['postcode'] = str(int(float(row['postcode'])))
+                except ValueError:
+                    pass
+
                 if '/' in row['test_date']:
                     pad = lambda i: '%02d' % int(i)
                     dd, mm, yyyy = row['test_date'].split('/')

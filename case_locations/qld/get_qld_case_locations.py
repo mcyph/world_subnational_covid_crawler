@@ -5,11 +5,11 @@ from dateutil.parser import parse as parse_datetime
 from case_locations._base_classes.CacheBase import CacheBase
 from case_locations._base_classes.datatypes import PublicTransportRoutePortion, VenueLocation
 
-CASE_LOCATIONS_ALERTS_URL = 'https://www.dhhs.vic.gov.au/case-locations-and-outbreaks'
+CASE_LOCATIONS_ALERTS_URL = 'https://www.qld.gov.au/health/conditions/health-alerts/coronavirus-covid-19/current-status/contact-tracing'
 
 
-class _VicDHHSCaseLocations(CacheBase):
-    STATE_NAME = 'vic'
+class _QLDCaseLocations(CacheBase):
+    STATE_NAME = 'qld'
 
     def get_datapoints(self):
         revision_dir = self._get_new_dir()
@@ -25,37 +25,31 @@ class _VicDHHSCaseLocations(CacheBase):
     def __get_venue_locations(self, rq):
         out = []
 
-        for table in pq(rq.text)('table:contains("Health advice")'):
-            table_headers = [pq(i).text() for i in pq(table)('th')]
+        for table in pq(rq.text)('table:contains("Suburb")'):
+            table_headers = [pq(i).text().strip() for i in pq(table)('th')]
             data = [
                 dict(zip(table_headers, [pq(j).text() for j in pq(i)('td')]))
                 for i in pq(table)('tr')[1:]
             ]
+            msg = pq(rq.text)('p:contains("Anyone who has been in the below locations")').text()
+            description = msg.replace('\xa0', ' ')
+            description = ' '.join(description.split())
+
+            typ = 'monitor'
 
             for item in data:
-                if item['Site'].replace('\n', '. ').strip() == '-':
-                    # Indicates nothing!!
-                    continue
-
-                date_time = item['Exposure period']
-                date = date_time.split()[0]
-                date = date.replace('0/2/2021', '1/2/2021')
+                date = item['Date']
                 date = parse_datetime(date, dayfirst=True)
-                time = ' '.join(date_time.split()[1:])
-                description = item['Health advice'].partition('-')[-1]
+                time = item['Arrival time']+'-'+item['Departure time'].strip('-')
 
                 out.append(VenueLocation(
                     state=self.STATE_NAME.upper(),
-                    type=item['Health advice'].partition('-')[0],
-                    venue=item['Site'].replace('\n', '. '),
-                    area=item['Location'],
+                    type=typ,
+                    venue=item['Place'].replace('\n', '. '),
+                    area=item['Suburb'],
                     date=date,
                     time=time,
-                    description=(
-                        f'{item["Notes"].rstrip(".")}. {description}'
-                        if item['Notes']
-                        else description
-                    ),
+                    description=description,
                     long=None,
                     lat=None,
                 ))
@@ -63,9 +57,9 @@ class _VicDHHSCaseLocations(CacheBase):
         return out
 
 
-def get_vic_case_locations():
+def get_qld_case_locations():
     out = []
-    datapoints = _VicDHHSCaseLocations().get_datapoints()
+    datapoints = _QLDCaseLocations().get_datapoints()
 
     for datapoint in datapoints:
         out.append(datapoint.to_dict())
@@ -73,4 +67,4 @@ def get_vic_case_locations():
 
 
 if __name__ == '__main__':
-    print(json.dumps(get_vic_case_locations(), indent=2))
+    print(json.dumps(get_qld_case_locations(), indent=2))

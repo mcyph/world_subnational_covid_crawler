@@ -217,22 +217,20 @@ class App(object):
             statistics_datapoints.append((
                 from_date,
                 inst.get_combined_values(
-                    (
-                        (Schemas.ADMIN_1, DataTypes.TOTAL, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.NEW, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS_NEW, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED_NEW, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.TESTS_TOTAL, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_HOSPITALIZED, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.STATUS_ICU, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.TOTAL_FEMALE, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.TOTAL_MALE, 'AU'),
-                    ),
+                    ((Schemas.ADMIN_1, DataTypes.TOTAL, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.NEW, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_DEATHS_NEW, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_RECOVERED_NEW, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.TESTS_TOTAL, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_HOSPITALIZED, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.STATUS_ICU, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.TOTAL_FEMALE, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.TOTAL_MALE, 'AU'),),
                     from_date=from_date
                 )
             ))
@@ -267,13 +265,11 @@ class App(object):
             statistics_datapoints.append((
                 from_date,
                 inst.get_combined_values(
-                    (
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_OVERSEAS, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
-                        (Schemas.ADMIN_1, DataTypes.SOURCE_UNDER_INVESTIGATION, 'AU'),
-                    ),
+                    ((Schemas.ADMIN_1, DataTypes.SOURCE_OVERSEAS, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_CONFIRMED, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_COMMUNITY, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_INTERSTATE, 'AU'),
+                     (Schemas.ADMIN_1, DataTypes.SOURCE_UNDER_INVESTIGATION, 'AU'),),
                     from_date=from_date
                 )
             ))
@@ -296,11 +292,9 @@ class App(object):
         inst = SQLiteDataRevision(rev_date, rev_subid)
         gender_age_datapoints = [i for i in inst.get_combined_values_by_datatype(
             Schemas.ADMIN_1,
-            (
-                DataTypes.TOTAL_FEMALE,
-                DataTypes.TOTAL_MALE,
-                DataTypes.TOTAL,
-            ),
+            (DataTypes.TOTAL_FEMALE,
+             DataTypes.TOTAL_MALE,
+             DataTypes.TOTAL,),
             region_parent='AU'
         ) if i['agerange']]
 

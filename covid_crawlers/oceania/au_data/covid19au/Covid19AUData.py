@@ -84,7 +84,16 @@ class Covid19AUData(CacheBase):
     def _unpack_values(self, values):
         d = {}
 
-        if len(values) == 7:
+        if len(values) == 8:
+            d[DataTypes.TOTAL], \
+            d[DataTypes.STATUS_DEATHS], \
+            d[DataTypes.STATUS_RECOVERED], \
+            d[DataTypes.TESTS_TOTAL], \
+            d[DataTypes.STATUS_ACTIVE], \
+            d[DataTypes.STATUS_HOSPITALIZED], \
+            d[DataTypes.STATUS_ICU], \
+            d[DataTypes.STATUS_VACCINATED], = values
+        elif len(values) == 7:
             d[DataTypes.TOTAL], \
             d[DataTypes.STATUS_DEATHS], \
             d[DataTypes.STATUS_RECOVERED], \

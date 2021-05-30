@@ -146,6 +146,8 @@ class UKGovData(URLBase):
             data = loads(f.read())
 
             for item in data:
+                print(item)
+
                 date = self.convert_date(item['date'])
                 if item['name'] in ni_mappings:
                     area = ni_mappings[item['name']]
@@ -266,5 +268,5 @@ class UKGovData(URLBase):
 if __name__ == "__main__":
     from pprint import pprint
     inst = UKGovData()
-    inst.get_datapoints()
-    pprint(inst.get_datapoints())
+    dp = inst.get_datapoints()
+    #pprint(dp)

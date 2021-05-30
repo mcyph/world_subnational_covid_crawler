@@ -5,15 +5,16 @@ from geopy.geocoders import MapBox
 
 from _utility.get_package_dir import get_package_dir
 from case_locations.nsw.get_nsw_case_locations import get_nsw_case_locations
-#from case_locations.vic.get_vic_case_locations import get_vic_case_locations
-from case_locations.vic.get_vic_case_locations_2 import get_vic_case_locations
+from case_locations.vic.get_vic_case_locations_3 import get_vic_case_locations
+from case_locations.qld.get_qld_case_locations import get_qld_case_locations
 from case_locations._base_classes.datatypes import VenueLocation
 
 
 def crawl_case_locations():
     out = []
-    out.extend(get_nsw_case_locations())
+    #out.extend(get_nsw_case_locations())
     out.extend(get_vic_case_locations())
+    #out.extend(get_qld_case_locations())
     return out
 
 
@@ -46,7 +47,7 @@ def dicts_to_df(geocoords_by_key, dicts):
 
         if not out['long'] and vl.get_geocoord_key() in geocoords_by_key:
             out['long'], out['lat'] = geocoords_by_key[vl.get_geocoord_key()]
-        elif 'trains' in out['venue'].lower() or 'v/line' in out['venue'].lower():
+        elif 'train' in out['venue'].lower() or 'v/line' in out['venue'].lower():
             # Need to add public transport lines separately!
             pass
         elif not out['long']:
@@ -56,7 +57,7 @@ def dicts_to_df(geocoords_by_key, dicts):
                     user_agent="https://covid-19-au.com"
                 )
             try:
-                location = GEOLOCATOR[0].geocode(out['venue']+', '+out['area']+', '+out['state'])
+                location = GEOLOCATOR[0].geocode(out['venue']+', '+out['area']+', '+out['state']+', '+'Australia')
                 print(out, location)
                 if location:
                     out['long'] = location.longitude
@@ -86,6 +87,7 @@ def get_geocoords_by_key(venue_locations):
     """
 
     """
+
     def to_venue_location(i):
         if not isinstance(i, VenueLocation):
             return VenueLocation.from_dict(i)
@@ -130,6 +132,7 @@ def update_spreadsheet(wk1):
     new_df = new_df.sort_values(by=['date', 'state', 'area', 'venue'],
                                 ascending=[False, True, True, True])
 
+    wk1.clear('*')
     wk1.set_dataframe(new_df, (1, 1), nan='')
 
 
@@ -142,9 +145,9 @@ def get_worksheet_data_as_dicts(remove_no_geoloc=True):
     if remove_no_geoloc:
         out = []
         for i in r:
-            if not i['lat']:
+            if not i['lat'] or not i['long']:
                 continue
-            elif i['lat'] == '!error':
+            elif i['lat'] == '!error' or i['long'] == '!error':
                 continue
             out.append(i)
         r = out

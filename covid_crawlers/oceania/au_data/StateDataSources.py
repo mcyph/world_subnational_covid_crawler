@@ -21,6 +21,7 @@ from covid_crawlers.oceania.au_data.qld.QLDNews import QLDNews
 from covid_crawlers.oceania.au_data.sa.SANews import SANews
 from covid_crawlers.oceania.au_data.sa.SARegionsReader import SARegionsReader
 from covid_crawlers.oceania.au_data.sa.SAJSONReader import SAJSONReader
+from covid_crawlers.oceania.au_data.sa.SARegionsTableauReader import SARegionsTableauReader
 
 from covid_crawlers.oceania.au_data.tas.TasNews import TasNews
 from covid_crawlers.oceania.au_data.tas.TasFacebook import TasFacebook
@@ -59,17 +60,19 @@ class StateDataSources:
              NSWJSONOpenData, NSWJSONWebsiteData,),
             (#ACTNews,
              ACTPowerBIReader,),
-            #(QLDNews,),
+            (QLDNews,),
             #(NTNews,),
             (#SANews,
-             SARegionsReader, SAJSONReader,),
+             SARegionsTableauReader, SARegionsReader, SAJSONReader,),
             (#WANews,
              WADashReader,),
             (#TasNews,
              TasFacebook,),
             (#VicNews,
              VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative,),
-            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, GuardianData,),
+            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, 
+             #GuardianData,
+             ),
         ]
 
         for klass_set in news_insts:
