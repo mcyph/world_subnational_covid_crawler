@@ -129,15 +129,15 @@ class WorldCovid19DataHubData(URLBase):
         return r
 
     def _add_datapoints(self, r, region_schema, region_parent, region_child, item):
-
-        if region_schema == Schemas.ADMIN_1 and region_parent.lower() == 'australia':
+        if region_schema in (Schemas.ADMIN_1, Schemas.ADMIN_0) and region_parent.lower() == 'australia':
             return
         elif region_schema == Schemas.ADMIN_1 and region_parent.lower() == 'portugal':
             # TODO!!! =================================================================
             return
-        date = self.convert_date(item['date'])
 
         d = {}
+        date = self.convert_date(item['date'])
+
         if item['tests']:
             d[DataTypes.TESTS_TOTAL] = int(float(item['tests']))
         if item['confirmed']:

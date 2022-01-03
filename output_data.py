@@ -19,7 +19,12 @@ from covid_db.output_compressor.output_revision_datapoints_to_zip import output_
 from data_export.push_to_github import push_to_github
 from data_export.output_geojson import output_geojson
 from data_export.output_source_info import output_source_info
-from data_export.output_tsv_data import output_tsv_data
+from data_export.output_csv_data import output_csv_data
+
+
+# Output stdout/stderr to log files
+stdout_logger = sys.stdout = Logger(sys.stdout, ext='stdout')
+stderr_logger = sys.stderr = Logger(sys.stderr, ext='stderr')
 
 OUTPUT_DIR = get_output_dir() / 'output'
 TIME_FORMAT = datetime.datetime.now().strftime('%Y_%m_%d')
@@ -55,7 +60,7 @@ def _rem_dupes(datapoints):
     return list(add_me)
 
 
-def output_overseas_data(dpdb):
+def output_overseas_data(dpdb: DataPointsDB):
     """
     Output from overseas data
     """
@@ -68,7 +73,7 @@ def output_overseas_data(dpdb):
     return ods.get_status_dict()
 
 
-def output_state_data(dpdb):
+def output_state_data(dpdb: DataPointsDB):
     """
     Output from state data
     """
@@ -81,19 +86,7 @@ def output_state_data(dpdb):
     return sds.get_status_dict()
 
 
-if __name__ == '__main__':
-    status = {}
-
-    # Output stdout/stderr to log files
-    stdout_logger = sys.stdout = Logger(sys.stdout, ext='stdout')
-    stderr_logger = sys.stderr = Logger(sys.stderr, ext='stderr')
-
-    # Open the new output SQLite database
-    sqlite_path = RevisionIDs.get_path_from_id(
-        TIME_FORMAT, LATEST_REVISION_ID, 'sqlite'
-    )
-    dpdb = DataPointsDB(sqlite_path)
-
+def run_crawlers(status: dict, dpdb: DataPointsDB):
     if RUN_INFREQUENT_JOBS:
         # Run infrequent jobs that need Selenium or other
         # high-processing tasks only a few times a day tops
@@ -113,14 +106,15 @@ if __name__ == '__main__':
         _output_overseas_data = lambda: status.update(output_overseas_data(dpdb))
         t1 = threading.Thread(target=_output_state_data, args=())
         t2 = threading.Thread(target=_output_overseas_data, args=())
-        
-        t1.start(); t2.start()
-        t1.join(); t2.join()
+
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
         print("State and overseas data done. Migrating sources with errors...")
 
-    # NOTE ME: There shouldn't be any dupes!!!
-    dpdb.create_indexes()
 
+def copy_failed_from_previous_revision(status: dict, dpdb: DataPointsDB):
     # If any of them failed, copy them across from the previous revision.
     # Note the previous revision might have failed too, but should have
     # copied the values from the previous revision before that, etc
@@ -136,6 +130,19 @@ if __name__ == '__main__':
     prev_revision_path = revisions.get_revision_path(rev_date, rev_subid)
     dpdb.migrate_source_ids(prev_revision_path, migrate_source_ids)
 
+
+def main():
+    status = {}
+
+    # Open the new output SQLite database
+    sqlite_path = RevisionIDs.get_path_from_id(
+        TIME_FORMAT, LATEST_REVISION_ID, 'sqlite'
+    )
+    dpdb = DataPointsDB(sqlite_path)
+    run_crawlers(status, dpdb)
+    dpdb.create_indexes()
+    copy_failed_from_previous_revision(status, dpdb)
+
     # Derive "new cases" from "total cases" when
     # they aren't explicitly specified, etc
     DerivedData(dpdb).add_derived()
@@ -149,9 +156,7 @@ if __name__ == '__main__':
     # This also signifies to the web
     # interface that the import went OK
     print("Writing status JSON file")
-    status_json_path = RevisionIDs.get_path_from_id(
-        TIME_FORMAT, LATEST_REVISION_ID, 'json'
-    )
+    status_json_path = RevisionIDs.get_path_from_id(TIME_FORMAT, LATEST_REVISION_ID, 'json')
     with open(status_json_path, 'w', encoding='utf-8') as f:
         f.write(json.dumps({'status': status}, indent=4))
 
@@ -169,9 +174,9 @@ if __name__ == '__main__':
     delete_old_dbs()
 
     # Update the csv output
-    print("Outputting TSV files:")
-    output_tsv_data(TIME_FORMAT, LATEST_REVISION_ID)
-    print('TSV write done')
+    print("Outputting CSV files:")
+    output_csv_data(TIME_FORMAT, LATEST_REVISION_ID)
+    print('CSV write done')
 
     # Output information about the sources to a markdown table/csv file
     print("Outputting source info...")
@@ -187,3 +192,7 @@ if __name__ == '__main__':
     print("Push to GitHub done!")
 
     print("[end of script]")
+
+
+if __name__ == '__main__':
+    main()

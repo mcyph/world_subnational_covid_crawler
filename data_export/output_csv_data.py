@@ -1,10 +1,11 @@
 import csv
+import codecs
 from io import BytesIO
 from _utility.get_package_dir import get_global_subnational_covid_data_dir
 from covid_db.SQLiteDataRevision import SQLiteDataRevision
 
 
-def output_tsv_data(time_format, latest_revision_id):
+def output_csv_data(time_format, latest_revision_id):
     sqlite_data_revision = SQLiteDataRevision(time_format, latest_revision_id)
 
     for source_id in sqlite_data_revision.get_source_ids():
@@ -27,43 +28,45 @@ def output_tsv_data(time_format, latest_revision_id):
                                      'seek': file_obj.tell()})
 
                 with open(path_parent / f'{country}_{source_name}_{datatype}.csv', 'wb') as f:
-                    f.write(get_tsv_data_for_source_id(sqlite_data_revision, source_id, datatype,
+                    f.write(get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype,
                                                        on_month_change=on_month_change))
 
 
-def get_tsv_data_for_source_id(sqlite_data_revision, source_id, datatype,
+def get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype,
                                on_month_change=None):
-    csvfile = BytesIO()
+    StreamWriter = codecs.getwriter('utf-8')
+    _csvfile = BytesIO()
+    csvfile = StreamWriter(_csvfile)
+
     writer = csv.DictWriter(
         csvfile,
-        fieldnames=['region_schema', 'region_parent', 'region_child', 'agerange', 'date']
+        fieldnames=['date', 'region_schema', 'region_parent', 'region_child', 'agerange', 'value']
     )
     writer.writeheader()
 
     out_dicts = []
     for group_dict, values_by_date in sqlite_data_revision.iter_rows(source_id, datatype):
         for date, value in values_by_date:
-            out_dicts.append({
-                'date': date,
-                'region_schema': group_dict['region_schema'],
-                'region_parent': group_dict['region_parent'],
-                'region_child': group_dict['region_child'],
-                'agerange': group_dict['agerange'],
-                'value': value,
-            })
+            out_dicts.append({'date': date,
+                              'region_schema': group_dict['region_schema'],
+                              'region_parent': group_dict['region_parent'],
+                              'region_child': group_dict['region_child'],
+                              'agerange': group_dict['agerange'],
+                              'value': value})
 
-    prev_date = None
+    prev_month = None
     for out_dict in sorted(out_dicts, key=lambda x: (x['date'],
                                                      x['region_schema'],
                                                      x['region_parent'],
                                                      x['region_child'],
                                                      x['agerange'])):
-        if not prev_date or prev_date.split('-')[1:] != out_dict['date'].split('-')[1:]:
-            month = out_dict['date'].rpartition('-')[0]
-            on_month_change(month, csvfile)
 
+        month = out_dict['date'].rpartition('-')[0]
+        if not prev_month or month != prev_month:
+            if on_month_change:
+                on_month_change(month, _csvfile)
+            prev_month = month
         writer.writerow(out_dict)
-        prev_date = out_dict['date']
 
-    csvfile.seek(0)
-    return csvfile.read()
+    _csvfile.seek(0)
+    return _csvfile.read()
