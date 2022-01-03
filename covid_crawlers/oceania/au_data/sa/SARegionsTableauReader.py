@@ -41,7 +41,7 @@ class SARegionsTableauReader:
                 total_idx = self.get_recursively(data, 'paneColumnsList')[0]['vizPaneColumns'][4]['aliasIndices']
 
                 for _active, lga in zip(active_idx, lga_by_idx[1:]):
-                    if _active == -44:
+                    if _active in (-44, -70):
                         continue
                     elif _active < 0:
                         raise Exception(_active)

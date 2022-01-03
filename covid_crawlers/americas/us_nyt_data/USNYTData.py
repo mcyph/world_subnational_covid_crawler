@@ -94,6 +94,11 @@ class USNYTData(GithubRepo):
                 #print(item)
                 date = self.convert_date(item['date'])
 
+                if item['county'].lower() == 'bristol bay plus lake and peninsula':
+                    item['county'] = 'Bristol Bay Borough'
+                elif item['county'].lower() == 'yakutat plus hoonah-angoon':
+                    continue  # FIXME!
+
                 r.append(
                     region_parent=item['state'],
                     region_schema=Schemas.US_COUNTY,
@@ -128,6 +133,8 @@ class USNYTData(GithubRepo):
                   'r', encoding='utf-8') as f:
             for item in csv.DictReader(f):
                 #print(item)
+                if item['state'] == 'American Samoa':
+                    continue
                 date = self.convert_date(item['date'])
 
                 r.append(

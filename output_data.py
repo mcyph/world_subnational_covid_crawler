@@ -15,8 +15,11 @@ from covid_db.DataPointsDB import DataPointsDB
 from covid_db.delete_old_dbs import delete_old_dbs
 from covid_db.SQLiteDataRevisions import SQLiteDataRevisions
 from covid_db.output_compressor.output_revision_datapoints_to_zip import output_revision_datapoints_to_zip
-from _utility.output_tsv_data import output_tsv_data, output_source_info, output_geojson, push_to_github
 
+from data_export.push_to_github import push_to_github
+from data_export.output_geojson import output_geojson
+from data_export.output_source_info import output_source_info
+from data_export.output_tsv_data import output_tsv_data
 
 OUTPUT_DIR = get_output_dir() / 'output'
 TIME_FORMAT = datetime.datetime.now().strftime('%Y_%m_%d')
@@ -110,6 +113,7 @@ if __name__ == '__main__':
         _output_overseas_data = lambda: status.update(output_overseas_data(dpdb))
         t1 = threading.Thread(target=_output_state_data, args=())
         t2 = threading.Thread(target=_output_overseas_data, args=())
+        
         t1.start(); t2.start()
         t1.join(); t2.join()
         print("State and overseas data done. Migrating sources with errors...")

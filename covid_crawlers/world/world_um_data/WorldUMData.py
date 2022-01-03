@@ -34,6 +34,7 @@ class WorldUMData(URLBase):
     def get_datapoints(self):
         r = []
         for date in listdir(get_overseas_dir() / 'world_um' / 'api_data'):
+            print(date)
             r.extend(self._get_datapoints(date))
         return r
 
@@ -47,25 +48,28 @@ class WorldUMData(URLBase):
 
             for country, country_data_dict in data['covid'].items():
                 for country_dict in country_data_dict['countries']:
-                    #print(country_dict)
+                    key = 'smoothed_cli' if 'smoothed_cli' in country_dict else 'smoothed_covid_se'
+                    print(country_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_parent='',
                         region_child=country,
                         datatype=DataTypes.FACEBOOK_COVID_SYMPTOMS,
-                        value=round(country_dict['smoothed_cli']*100000),
+                        value=round(country_dict[key]*100000),
                         date_updated=self.convert_date(country_dict['survey_date'],
                                                        formats=('%Y%m%d',)),
                         source_url=self.SOURCE_URL
                     )
 
                 for region_dict in country_data_dict['regions']:
+                    key = 'smoothed_cli' if 'smoothed_cli' in country_dict else 'smoothed_covid_se'
+                    print(region_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent=country,
                         region_child=region_dict['region'],
                         datatype=DataTypes.FACEBOOK_COVID_SYMPTOMS,
-                        value=round(region_dict['smoothed_cli']*100000),
+                        value=round(region_dict[key]*100000),
                         date_updated=self.convert_date(region_dict['survey_date'],
                                                        formats=('%Y%m%d',)),
                         source_url=self.SOURCE_URL
@@ -73,24 +77,28 @@ class WorldUMData(URLBase):
 
             for country, country_data_dict in data['flu'].items():
                 for country_dict in country_data_dict['countries']:
+                    key = 'smoothed_ili' if 'smoothed_ili' in country_dict else 'smoothed_flu_se'
+                    print(country_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_0,
                         region_parent='',
                         region_child=country,
                         datatype=DataTypes.FACEBOOK_FLU_SYMPTOMS,
-                        value=round(country_dict['smoothed_ili']*100000),
+                        value=round(country_dict[key]*100000),
                         date_updated=self.convert_date(country_dict['survey_date'],
                                                        formats=('%Y%m%d',)),
                         source_url=self.SOURCE_URL
                     )
 
                 for region_dict in country_data_dict['regions']:
+                    key = 'smoothed_ili' if 'smoothed_ili' in country_dict else 'smoothed_flu_se'
+                    print(region_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_1,
                         region_parent=country,
                         region_child=region_dict['region'],
                         datatype=DataTypes.FACEBOOK_FLU_SYMPTOMS,
-                        value=round(region_dict['smoothed_ili']*100000),
+                        value=round(region_dict[key]*100000),
                         date_updated=self.convert_date(region_dict['survey_date'],
                                                        formats=('%Y%m%d',)),
                         source_url=self.SOURCE_URL

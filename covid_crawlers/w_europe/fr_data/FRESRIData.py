@@ -95,10 +95,11 @@ class FRESRIData(URLBase):
             r = self.sdpf()
             with open(base_path / fnam, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
+                print(base_path, fnam, data)
 
             for property in data['features']:
                 attributes = property['attributes']
-                #print(property)
+                print(property)
 
                 date = self.convert_date(attributes['Jour'])
                 try:

@@ -49,12 +49,15 @@ class HTData(URLBase):
         first_item = True
 
         for item in csv.DictReader(f):
+            #print(item)
             if first_item:
                 first_item = False
                 continue
 
             date = self.convert_date(item['Date'])
             region_child = item['Département']
+            if region_child == 'Quest':
+                region_child = 'Ouest'
 
             if item['Cumulative cases']:
                 r.append(

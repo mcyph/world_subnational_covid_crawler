@@ -327,9 +327,9 @@ class QLDNews(StateNewsBase):
 
             for tr in table[1:]:
                 age_group = pq(tr[0]).text().strip()
-                female = int(pq(tr[1]).text())
-                male = int(pq(tr[2]).text())
-                total = int(pq(tr[3]).text())
+                female = int(pq(tr[1]).text().replace(',', ''))
+                male = int(pq(tr[2]).text().replace(',', ''))
+                total = int(pq(tr[3]).text().replace(',', ''))
 
                 for datatype, value in (
                     (DataTypes.TOTAL_FEMALE, female),

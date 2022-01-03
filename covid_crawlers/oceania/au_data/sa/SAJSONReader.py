@@ -55,7 +55,7 @@ class SAJSONReader:
             region_parent='AU',
             region_child='AU-SA',
             datatype=DataTypes.TOTAL,
-            value=int(data['todaycase_sa']),
+            value=int(data['todaycase_sa']) if 'todaycase_sa' in data else int(data['totalcase_sa']),
             date_updated=base_data_date,
             source_url=self.SOURCE_URL,
             source_id=self.SOURCE_ID

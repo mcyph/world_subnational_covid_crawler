@@ -7,10 +7,11 @@ import cherrypy
 import datetime
 import mimetypes
 from shlex import quote
-from os import listdir, system
-from jinja2 import Environment, FileSystemLoader
 from cherrypy import _json
+from os import listdir, system
 from _thread import start_new_thread
+from jinja2 import Environment, FileSystemLoader
+from data_export.output_tsv_data import get_tsv_data_for_source_id
 
 # MONKEY PATCH: Reduce cherrpy json file output
 _json._encode = json.JSONEncoder(separators=(',', ':')).iterencode
@@ -190,10 +191,10 @@ class App(object):
         return SQLiteDataRevision(rev_date, rev_subid).get_datapoints()
 
     @cherrypy.expose
-    def get_tsv_data(self, rev_date, rev_subid, source_id):
+    def get_tsv_data(self, rev_date, rev_subid, source_id, datatype):
         rev_subid = int(rev_subid)
         inst = SQLiteDataRevision(rev_date, rev_subid)
-        data = inst.get_tsv_data(source_id)
+        data = get_tsv_data_for_source_id(inst, source_id, datatype)
 
         cherrypy.response.headers['Content-Disposition'] = \
             'attachment; filename="covid_%s.tsv"' % source_id

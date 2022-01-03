@@ -18,7 +18,8 @@ class VEData(URLBase):
              output_dir=get_overseas_dir() / 've' / 'data',
              urls_dict={
                  'cases_deaths.csv': URL(
-                     'https://docs.google.com/spreadsheets/d/e/2PACX-1vTT8ef-uVa5q_5kBYbVXeEpRCW8gOJHlWhHGrH8dQ704D64_yNaMMjvkzdgD9YweSBQ-GyqnGLLasvK/pub?gid=608241994&single=true&output=csv',
+                     #'https://docs.google.com/spreadsheets/d/e/2PACX-1vTT8ef-uVa5q_5kBYbVXeEpRCW8gOJHlWhHGrH8dQ704D64_yNaMMjvkzdgD9YweSBQ-GyqnGLLasvK/pub?gid=608241994&single=true&output=csv',
+                     'https://docs.google.com/spreadsheets/d/e/2PACX-1vTT8ef-uVa5q_5kBYbVXeEpRCW8gOJHlWhHGrH8dQ704D64_yNaMMjvkzdgD9YweSBQ-GyqnGLLasvK/pub?gid=754668318&single=true&output=csv',
                      static_file=False
                  ),
                  'cases_by_age_gender.csv': URL(
@@ -53,6 +54,7 @@ class VEData(URLBase):
         first_item = True
 
         for item in csv.DictReader(f):
+            print(item)
             if first_item:
                 first_item = False
                 continue

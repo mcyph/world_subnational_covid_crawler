@@ -242,26 +242,18 @@ class NSWJSONWebsiteData:
         path_active_deaths = dir_ / 'covid_19_cases_by_postcode_active_deaths.json'
         path_tests = dir_ / 'covid_19_tests_by_postcode.json'
         path_active = dir_ / 'covid_19_cases_by_postcode_active.json'
+        path_vaccination_metrics = dir_ / 'vaccination_metrics.json'
+        path_lga_daily_vaccines = dir_ / 'lga_daily_vaccines.json'
 
         if not exists(path_totals) or not exists(path_active_deaths) or not exists(path_active) or not exists(path_tests):
             if download:
                 # Retrieve these, just in cases...
-                urlretrieve(
-                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases2.json',
-                    path_active_deaths
-                )
-                urlretrieve(
-                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases.json',
-                    path_totals
-                )
-                urlretrieve(
-                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_tests.json',
-                    path_tests
-                )
-                urlretrieve(
-                    'https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/active_cases.json',
-                    path_active
-                )
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/data_Cases2.json', path_active_deaths)
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_cases.json', path_totals)
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/postcode_daily_tests.json', path_tests)
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/active_cases.json', path_active)
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/vaccination_metrics-v3.json', path_vaccination_metrics)
+                urlretrieve('https://nswdac-covid-19-postcode-heatmap.azurewebsites.net/datafiles/lga_daily_vaccines.json', path_lga_daily_vaccines)
 
         r = []
         SOURCE_URL = 'https://data.nsw.gov.au/nsw-covid-19-data/tests'
@@ -309,12 +301,12 @@ class NSWJSONWebsiteData:
                     pass
 
                 date = self.__get_partial_date(path_active_deaths, item['Date'])
-                recovered = int(item['Recovered'])
+                print(item)
+                recovered = int(item.get('Recovered', 0))
                 deaths = int(item['Deaths'])
                 cases = int(item['Cases'])
                 censored = int(item.get('censored',
                                         0))  # NOTE ME:  From 12 June, this heatmap reporting of active cases has changed. Cases that are not recorded as recovered or deceased after six weeks are not included.
-                active = cases - recovered - deaths - censored
                 postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
 
                 r.append(DataPoint(
@@ -353,6 +345,8 @@ class NSWJSONWebsiteData:
                         source_id=self.SOURCE_ID
                     ))
                 elif date <= '2020_06_12':
+                    active = cases - recovered - deaths - censored
+
                     r.append(DataPoint(
                         region_schema=Schemas.POSTCODE,
                         region_parent='AU-NSW',
@@ -421,25 +415,58 @@ class NSWJSONWebsiteData:
 
         with open(path_totals, 'r', encoding='utf-8') as f:
             for item in json.loads(f.read())['data']:
-                try:
-                    item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
-                except ValueError:
-                    pass
+                if 'active_cases' in item:
+                    try:
+                        item['postcode'] = str(int(float(item['postcode'])))
+                    except ValueError:
+                        pass
 
-                date = self.__get_partial_date(path_totals, item['Date'])
-                number = int(item['Number'])
-                postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
+                    # New format (2022)
+                    date = item['date'].replace('-', '_')
+                    total = int(item['total_cases'])
+                    active = int(item['active_cases'])
+                    postcode = item['postcode'] if item['postcode'] else 'Unknown'
 
-                r.append(DataPoint(
-                    region_schema=Schemas.POSTCODE,
-                    region_parent='AU-NSW',
-                    region_child=postcode,
-                    datatype=DataTypes.TOTAL,
-                    value=number,
-                    date_updated=date,
-                    source_url=SOURCE_URL,
-                    source_id=self.SOURCE_ID
-                ))
+                    r.append(DataPoint(
+                        region_schema=Schemas.POSTCODE,
+                        region_parent='AU-NSW',
+                        region_child=postcode,
+                        datatype=DataTypes.TOTAL,
+                        value=total,
+                        date_updated=date,
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID
+                    ))
+                    r.append(DataPoint(
+                        region_schema=Schemas.POSTCODE,
+                        region_parent='AU-NSW',
+                        region_child=postcode,
+                        datatype=DataTypes.STATUS_ACTIVE,
+                        value=active,
+                        date_updated=date,
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID
+                    ))
+                else:
+                    try:
+                        item['POA_NAME16'] = str(int(float(item['POA_NAME16'])))
+                    except ValueError:
+                        pass
+
+                    date = self.__get_partial_date(path_totals, item['Date'])
+                    number = int(item['Number'])
+                    postcode = item['POA_NAME16'] if item['POA_NAME16'] else 'Unknown'
+
+                    r.append(DataPoint(
+                        region_schema=Schemas.POSTCODE,
+                        region_parent='AU-NSW',
+                        region_child=postcode,
+                        datatype=DataTypes.TOTAL,
+                        value=number,
+                        date_updated=date,
+                        source_url=SOURCE_URL,
+                        source_id=self.SOURCE_ID
+                    ))
 
         return r
 
@@ -459,6 +486,17 @@ class NSWJSONWebsiteData:
                 return datetime.strptime(date + '-20', '%d-%b-%y').strftime('%Y_%m_%d')
             else:
                 return datetime.strptime(date + '-21', '%d-%b-%y').strftime('%Y_%m_%d')
+        elif '2022_' in dir_:
+            if '2022_12_' in dir_ or '2022_11_' in dir_:
+                raise Exception(path)
+
+            month = date.split('-')[-1].lower()
+            assert len(month) == 3, month
+
+            if month in ('nov', 'dec'):
+                return datetime.strptime(date + '-21', '%d-%b-%y').strftime('%Y_%m_%d')
+            else:
+                return datetime.strptime(date + '-22', '%d-%b-%y').strftime('%Y_%m_%d')
         else:
             raise Exception(path)
 

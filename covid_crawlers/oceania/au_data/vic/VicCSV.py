@@ -204,7 +204,7 @@ class VicCSV(URLBase):
             for row in sorted(csv.DictReader(f), key=lambda x: x['diagnosis_date']) + \
                        [{'diagnosis_date': '1111-01-01', 'agegroup': None}]:
 
-                assert len(row['diagnosis_date']) == 10
+                assert len(row['diagnosis_date']) in (9, 10), row['diagnosis_date']
                 date_updated = self.convert_date(row['diagnosis_date'])
 
                 if current_date != date_updated:

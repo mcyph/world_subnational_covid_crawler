@@ -111,6 +111,8 @@ class COData(URLBase):
             if first_item:
                 first_item = False
                 continue
+            elif '<html>' in item:
+                continue
 
             print(item)
             case_id = item['ID de caso']

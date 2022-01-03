@@ -2,6 +2,7 @@ import json
 import glob
 import datetime
 from os import listdir
+from pathlib import Path
 from os.path import dirname, exists
 
 from _utility.URLArchiver import URLArchiver
@@ -66,6 +67,8 @@ class WADashReader:
                 (self.get_regions_data, 'regions'),
             ):
                 path = f'{dir_}/{subdir}/{fnam_prefix}.json'
+                if not Path(path).exists():
+                    continue
                 with open(path, 'r', encoding='utf-8', errors='ignore') as f:
                     data = json.loads(f.read())
                 r.extend(fn(period, data))
@@ -122,28 +125,29 @@ class WADashReader:
                             traceback.print_exc()
                             continue  # WARNING!!! ============================================================================
 
-            num = DataPoint(
-                region_schema=Schemas.LGA,
-                region_parent='au-wa',
-                region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
-                datatype=DataTypes.TOTAL,
-                value=int(value),
-                date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
-                source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
-            )
-            r.append(num)
-
-            if 'Active_Case' in attributes and attributes['Active_Case'] is not None:
-                r.append(DataPoint(
+            if 'LGA_NAME19' in attributes:
+                num = DataPoint(
                     region_schema=Schemas.LGA,
                     region_parent='au-wa',
                     region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
-                    datatype=DataTypes.STATUS_ACTIVE,
-                    value=int(attributes['Active_Case']),
+                    datatype=DataTypes.TOTAL,
+                    value=int(value),
                     date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
-                    source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768',
-                    source_id=self.SOURCE_ID
-                ))
+                    source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768'
+                )
+                r.append(num)
+
+                if 'Active_Case' in attributes and attributes['Active_Case'] is not None:
+                    r.append(DataPoint(
+                        region_schema=Schemas.LGA,
+                        region_parent='au-wa',
+                        region_child=attributes['LGA_NAME19'].split('(')[0].strip(),
+                        datatype=DataTypes.STATUS_ACTIVE,
+                        value=int(attributes['Active_Case']),
+                        date_updated=period if self.max_date is None else self.max_date,  # TODO: Get from the text shown in the dash!!! =====================================
+                        source_url='https://experience.arcgis.com/experience/359bca83a1264e3fb8d3b6f0a028d768',
+                        source_id=self.SOURCE_ID
+                    ))
         return r
 
     def __get_date(self, ts):

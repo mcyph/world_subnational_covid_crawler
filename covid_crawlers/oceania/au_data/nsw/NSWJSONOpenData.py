@@ -147,6 +147,7 @@ class NSWJSONOpenData:
             'Locally acquired - linked to known case or cluster': DataTypes.SOURCE_CONFIRMED,
             'Locally acquired - investigation ongoing': DataTypes.SOURCE_UNDER_INVESTIGATION,
             'Under investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
+            'Under initial investigation': DataTypes.SOURCE_UNDER_INVESTIGATION,
             'Interstate': DataTypes.SOURCE_INTERSTATE
         }
 
@@ -210,7 +211,11 @@ class NSWJSONOpenData:
                         if row['postcode'] not in postcode_to_lga:
                             postcode_to_lga[row['postcode']] = lga
                     else:
-                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] != 'unknown':
+                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] not in ('unknown',
+                                                                                                           'cessnock',
+                                                                                                           'singleton',
+                                                                                                           'lake macquarie',
+                                                                                                           'central coast') and False:    # HACK!!! ============================================================
                             assert postcode_to_lga[row['postcode']] == lga, (lga, row, postcode_to_lga[row['postcode']])
                         else:
                             postcode_to_lga[row['postcode']] = lga
@@ -363,7 +368,7 @@ class NSWJSONOpenData:
                         if row['postcode'] not in postcode_to_lga:
                             postcode_to_lga[row['postcode']] = lga
                     else:
-                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] != 'unknown':
+                        if row['postcode'] in postcode_to_lga and postcode_to_lga[row['postcode']] != 'unknown' and False:   #  HACK! ===========================================================================
                             assert postcode_to_lga[row['postcode']] == lga, (lga, row, postcode_to_lga[row['postcode']])
                         else:
                             postcode_to_lga[row['postcode']] = lga

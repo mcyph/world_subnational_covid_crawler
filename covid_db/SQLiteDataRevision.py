@@ -164,13 +164,10 @@ class SQLiteDataRevision:
     def get_datatypes_by_source_id(self, source_id):
         return self._datapoints_db.get_datatypes_by_source_id(source_id)
 
-    def get_tsv_data(self, source_id, datatype, thin_out=True):
+    def iter_rows(self, source_id, datatype):
         datapoints = self.get_datapoints_by_source_id(
             source_id, datatype, add_source_urls=False
         )
-        if thin_out:
-            datapoints = datapoints_thinned_out(datapoints)
-
         dates = set()
         [dates.add(i.date_updated.replace('_', '-')) for i in datapoints]
 
@@ -186,14 +183,6 @@ class SQLiteDataRevision:
                 datapoint.date_updated.replace('_', '-')
             ] = datapoint.value
 
-        csvfile = StringIO()
-        writer = csv.DictWriter(
-            csvfile,
-            ['region_schema', 'region_parent', 'region_child', 'agerange'] +
-                [i for i in sorted(dates)]
-        )
-        writer.writeheader()
-
         for (region_schema, region_parent, region_child, agerange), values in sorted(by_unique_key.items()):
             row = {
                 'region_schema': region_schema,
@@ -201,11 +190,7 @@ class SQLiteDataRevision:
                 'region_child': region_child,
                 'agerange': agerange
             }
-            row.update(values)
-            writer.writerow(row)
-
-        csvfile.seek(0)
-        return csvfile.read()
+            yield row, list(sorted(values.items()))
 
     #=============================================================#
     #                       Get DataPoints                        #

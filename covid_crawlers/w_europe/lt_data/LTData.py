@@ -1,6 +1,8 @@
 # http://sam.lrv.lt/lt/naujienos/koronavirusas
 # https://registrucentras.maps.arcgis.com/apps/opsdashboard/index.html#/becd01f2fade4149ba7a9e5baaddcd8d
 
+# TODO: Migrate to https://experience.arcgis.com/experience/cab84dcfe0464c2a8050a78f817924ca
+
 import json
 import datetime
 from os import listdir
@@ -41,7 +43,7 @@ class LTData(URLBase):
             }
         )
         self.sdpf = StrictDataPointsFactory(mode=MODE_STRICT)
-        self.update()
+        #self.update()
 
     def get_datapoints(self):
         r = []
@@ -55,6 +57,7 @@ class LTData(URLBase):
         for date in self.iter_nonempty_dirs(base_dir):
             r = self.sdpf()
             path = f'{base_dir}/{date}/regions_data.json'
+            print(path)
 
             with open(path, 'r', encoding='utf-8') as f:
                 data = f.read()
