@@ -1,3 +1,4 @@
+import csv
 import json
 from datetime import datetime
 
@@ -19,8 +20,10 @@ class WorldGenderDisaggregated(URLBase):
         URLBase.__init__(self,
             output_dir=get_overseas_dir() / 'world_gender_disaggregated' / 'data',
             urls_dict={
-                'world_gender_disaggregated.json': URL(url='https://api.globalhealth5050.org/api/v1/summary?data=historic',
-                                                       static_file=False),
+                #'world_gender_disaggregated.json': URL(url='https://api.globalhealth5050.org/api/v1/summary?data=historic',
+                #                                       static_file=False),
+                'world_gender_disaggregated.csv': URL(url='https://globalhealth5050.org/?_covid-data=datasettable&_extype=csv',
+                                                      static_file=False)
             }
         )
         self.update()
@@ -32,9 +35,57 @@ class WorldGenderDisaggregated(URLBase):
         return r
 
     def _get_datapoints(self):
-        r = self.sdpf()
         date = datetime.today().strftime('%Y_%m_%d')
-        path = get_overseas_dir() / 'world_gender_disaggregated' / 'data' / date / 'world_gender_disaggregated.json'
+        json_path = get_overseas_dir() / 'world_gender_disaggregated' / 'data' / date / 'world_gender_disaggregated.json'
+        csv_path = get_overseas_dir() / 'world_gender_disaggregated' / 'data' / date / 'world_gender_disaggregated.csv'
+
+        if json_path.exists():
+            return self._get_json_datapoints(json_path)
+        elif csv_path.exists():
+            return self._get_csv_datapoints(csv_path)
+        else:
+            raise Exception()
+
+    def _get_csv_datapoints(self, path):
+        r = self.sdpf()
+
+        with open(path, 'r', encoding='utf-8') as f:
+            for item in csv.DictReader(f):
+                if '\ufeff"Country code"' in item:
+                    item['Country code'] = item['\ufeff"Country code"']
+
+                if not item['Country code'] or not item['Cases where sex-disaggregated data is available']:
+                    print("IGNORING:", item)
+                    continue
+                elif item['Country code'] == 'BQ':
+                    continue
+
+                for datatype, date, value in (
+                    # TODO: Support more gendered datatypes!
+                    (DataTypes.TOTAL, item['Cases date'], int(item['Cases where sex-disaggregated data is available'])),
+                    (DataTypes.TOTAL_MALE, item['Cases date'], int(item['Cases (% male)'].replace('%', ''))/100.0*int(item['Cases where sex-disaggregated data is available'])),
+                    (DataTypes.TOTAL_FEMALE, item['Cases date'], int(item['Cases (% female)'].replace('%', ''))/100.0*int(item['Cases where sex-disaggregated data is available'])),
+                ):
+                    if not value:
+                        continue
+                    elif not date:
+                        continue
+
+                    i_date = self.convert_date(date, formats=('%Y/%m/%d',))
+                    r.append(
+                        region_schema=Schemas.ADMIN_0,
+                        region_parent='',
+                        region_child=item['Country code'],
+                        datatype=datatype,
+                        value=int(float(value)),
+                        date_updated=i_date,
+                        source_url=self.SOURCE_URL
+                    )
+
+        return r
+
+    def _get_json_datapoints(self, path):
+        r = self.sdpf()
 
         with open(path, 'r', encoding='utf-8') as f:
             data = json.loads(f.read())

@@ -172,6 +172,17 @@ class WorldJHUData(GithubRepo):
                       'r', encoding='utf-8-sig') as f:
                 #print(fnam)
                 for item in csv.DictReader(f):
+                    if 'Province/State' in item:
+                        item['Province_State'] = item['Province/State']
+                        item['Country_Region'] = item['Country/Region']
+
+                    if 'Province_State' in item:
+                        item['Province_State'] = {
+                            'W.P. Kuala Lumpur': 'Kuala Lumpur',
+                            'W.P. Labuan': 'Labuan',
+                            'W.P. Putrajaya': 'Putrajaya',
+                        }.get(item['Province_State'], item['Province_State'])
+
                     if item.get('Province_State') in (
                         'Diamond Princess',
                         'Grand Princess',
@@ -179,10 +190,17 @@ class WorldJHUData(GithubRepo):
                         'Northern Mariana Islands',
                         'Puerto Rico',
                         'Virgin Islands',
-                        'American Samoa'
+                        'American Samoa',
+                        'Cook Islands',
+                        'Summer Olympics 2020',
+                        'Wallis and Futuna',
                     ):
                         continue  # HACK!
-                    #print(item)
+                    elif item.get('Country_Region') in (
+                        'Summer Olympics 2020',
+                    ):
+                        continue
+                    print(item)
 
                     if 'Last Update' in item:
                         date = item['Last Update'].split('T')[0].split()[0]
@@ -194,12 +212,8 @@ class WorldJHUData(GithubRepo):
                     except:
                         date = self.convert_date(date, formats=('%m/%d/%y', '%m/%d/%Y'))
 
-                    if 'Province/State' in item:
-                        province_state = item['Province/State'].strip('*')
-                        country_region = item['Country/Region'].strip('*')
-                    else:
-                        province_state = item['Province_State'].strip('*')
-                        country_region = item['Country_Region'].strip('*')
+                    province_state = item['Province_State'].strip('*')
+                    country_region = item['Country_Region'].strip('*')
 
                     if country_region.lower() in ('australia', 'new zealand'):
                         # HACK: Disable recovered/active values for AU, as they aren't accurate!

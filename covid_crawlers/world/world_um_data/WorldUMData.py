@@ -41,6 +41,7 @@ class WorldUMData(URLBase):
     def _get_datapoints(self, date):
         r = self.sdpf()
         path = get_overseas_dir() / 'world_um' / 'api_data' / date / 'data.json'
+        print(path)
 
         with open(path, 'r', encoding='utf-8') as f:
             data = loads(f.read())
@@ -49,6 +50,9 @@ class WorldUMData(URLBase):
             for country, country_data_dict in data['covid'].items():
                 for country_dict in country_data_dict['countries']:
                     key = 'smoothed_cli' if 'smoothed_cli' in country_dict else 'smoothed_covid_se'
+                    if country_dict[key] is None:
+                        continue
+
                     print(country_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_0,
@@ -63,6 +67,9 @@ class WorldUMData(URLBase):
 
                 for region_dict in country_data_dict['regions']:
                     key = 'smoothed_cli' if 'smoothed_cli' in country_dict else 'smoothed_covid_se'
+                    if region_dict[key] is None:
+                        continue
+
                     print(region_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_1,
@@ -78,6 +85,9 @@ class WorldUMData(URLBase):
             for country, country_data_dict in data['flu'].items():
                 for country_dict in country_data_dict['countries']:
                     key = 'smoothed_ili' if 'smoothed_ili' in country_dict else 'smoothed_flu_se'
+                    if country_dict[key] is None:
+                        continue
+
                     print(country_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_0,
@@ -92,6 +102,9 @@ class WorldUMData(URLBase):
 
                 for region_dict in country_data_dict['regions']:
                     key = 'smoothed_ili' if 'smoothed_ili' in country_dict else 'smoothed_flu_se'
+                    if region_dict[key] is None:
+                        continue
+
                     print(region_dict)
                     r.append(
                         region_schema=Schemas.ADMIN_1,

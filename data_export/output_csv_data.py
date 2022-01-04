@@ -17,9 +17,10 @@ def output_csv_data(time_format, latest_revision_id):
             country = source_id.split('_')[0]
             source_name = source_id.partition('_')[2]
             path_parent.mkdir(parents=True, exist_ok=True)
+            seek_path = path_parent / 'seek_pos' / f'{country}.{source_name}.{datatype}.seek_pos.csv'
+            seek_path.parent.mkdir(parents=False, exist_ok=True)
 
-            with open(path_parent / f'{country}_{source_name}_{datatype}_seek_pos.csv', 'w',
-                      encoding='utf-8') as seek_f:
+            with open(seek_path, 'w', encoding='utf-8') as seek_f:
                 writer = csv.DictWriter(seek_f, ['month', 'seek'])
                 writer.writeheader()
 
@@ -27,7 +28,7 @@ def output_csv_data(time_format, latest_revision_id):
                     writer.writerow({'month': month,
                                      'seek': file_obj.tell()})
 
-                with open(path_parent / f'{country}_{source_name}_{datatype}.csv', 'wb') as f:
+                with open(path_parent / f'{country}.{source_name}.{datatype}.csv', 'wb') as f:
                     f.write(get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype,
                                                        on_month_change=on_month_change))
 

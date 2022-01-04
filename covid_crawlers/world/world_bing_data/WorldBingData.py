@@ -111,6 +111,14 @@ class WorldBingData(GithubRepo):
                 region_schema = Schemas.CR_CANTON
                 region_parent = item['AdminRegion1']
                 region_child = item['AdminRegion2']
+            elif item['Country_Region'] == 'Germany':
+                region_schema = Schemas.ADMIN_1
+                region_parent = 'de'
+                region_child = item['AdminRegion1']
+            elif item['Country_Region'] == 'Czechia':
+                region_schema = Schemas.ADMIN_1
+                region_parent = 'cz'
+                region_child = item['AdminRegion1']
             else:
                 if (item['Country_Region'], item['AdminRegion1'], item['AdminRegion2']) in warning_printed:
                     return None, None, None
@@ -133,6 +141,9 @@ class WorldBingData(GithubRepo):
             region_schema = Schemas.ADMIN_0
             region_parent = None
             region_child = item['Country_Region']
+
+        if region_child == 'Negri Sembilan':
+            region_child = 'Negeri Sembilan'
 
         return region_schema, region_parent, region_child
 

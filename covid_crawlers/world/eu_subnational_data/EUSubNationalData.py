@@ -152,7 +152,10 @@ class EUSubNationalData(URLBase):
                     'NOT SPECIFIED': 'Unknown',
                 }.get(item['CountryName'], item['CountryName']) \
                     .replace('Russian Fed.', 'Russian Federation') \
-                    .replace('Czech Republic', '')
+                    .replace('Czech Republic', '') \
+                    .replace('Congo, Rep. Of', 'Congo') \
+                    .replace('Myanmar, Union of', 'Myanmar') \
+                    .replace('Guinea Bissau', 'Guinea-Bissau')
 
                 # Ignore certain kinds of data, as it may not match with ISO 3166-2 etc
                 if country in (
@@ -166,6 +169,9 @@ class EUSubNationalData(URLBase):
                     # Might be possible to fix these 2, but for now have specific datasources
                     'Switzerland',
                     'Greece',
+
+                    'Whole Globe',
+                    'Bonaire, Saint Eustatius and Saba',
                 ):
                     continue
 
@@ -205,14 +211,14 @@ class EUSubNationalData(URLBase):
                     # country = 'SI'
                 elif country == 'Portugal':
                     continue
-                elif region_child == country:
-                    region_child = country
+                elif region_child == country or not region_child:
+                    region_child = country or region_child
                     country = None
                     schema = Schemas.ADMIN_0
                 else:
                     schema = Schemas.ADMIN_1
 
-                #print(schema, country, region_child)
+                print(schema, country, region_child)
 
                 for datatype, value in (
                     (DataTypes.TOTAL, item['CumulativePositive']),

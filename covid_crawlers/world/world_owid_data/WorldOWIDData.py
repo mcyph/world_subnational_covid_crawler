@@ -58,6 +58,11 @@ class WorldOWIDData(GithubRepo):
 
                 # Will only use tests+metadata
 
+                if item['location'] in (
+                    'Timor',
+                ):
+                    continue
+
                 if item['total_tests']:
                     r.append(
                         region_schema=Schemas.ADMIN_0,
