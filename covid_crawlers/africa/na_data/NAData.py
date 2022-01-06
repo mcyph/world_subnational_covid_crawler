@@ -63,6 +63,7 @@ class NAData(URLBase):
 
         for date in self.iter_nonempty_dirs(base_dir):
             path = f'{base_dir}/{date}/regions.json'
+            print(path)
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.loads(f.read())
 

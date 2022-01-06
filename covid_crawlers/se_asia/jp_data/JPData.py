@@ -121,7 +121,7 @@ class JPData(GithubRepo):
                         region_parent='Japan',
                         region_child=prefecture,
                         datatype=DataTypes.TESTS_TOTAL,
-                        value=int(item['peopleTested']),
+                        value=int(float(item['peopleTested'])),
                         date_updated=date,
                         source_url=self.github_url
                     )
@@ -142,7 +142,7 @@ class JPData(GithubRepo):
                         region_parent='Japan',
                         region_child=prefecture,
                         datatype=DataTypes.STATUS_RECOVERED,
-                        value=int(item["discharged"]),
+                        value=int(float(item["discharged"])),
                         date_updated=date,
                         source_url=self.github_url
                     )
@@ -153,7 +153,7 @@ class JPData(GithubRepo):
                         region_parent='Japan',
                         region_child=prefecture,
                         datatype=DataTypes.STATUS_DEATHS,
-                        value=int(item["deaths"]),
+                        value=int(float(item["deaths"])),
                         date_updated=date,
                         source_url=self.github_url
                     )
@@ -232,7 +232,7 @@ class JPData(GithubRepo):
         )
 
         with open(self.get_path_in_dir('demography.csv'),
-                  'r', encoding='utf-8') as f:
+                  'r', encoding='shift-jis') as f:
 
             for item in csv.DictReader(f):
                 #print(item)

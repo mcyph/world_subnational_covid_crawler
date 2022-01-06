@@ -114,8 +114,12 @@ class SAJSONReader:
         ):
             datatype = {
                 'male': DataTypes.TOTAL_MALE,
-                'female': DataTypes.TOTAL_FEMALE
+                'female': DataTypes.TOTAL_FEMALE,
+                'not stated': None,  # FIXME!
             }[gender.lower()]
+
+            if not datatype:
+                continue
 
             r.append(DataPoint(
                 region_schema=Schemas.ADMIN_1,

@@ -49,7 +49,7 @@ class BRData(KaggleDataset):
                     region_parent='Brazil',
                     region_child='br-'+item['state'],
                     datatype=DataTypes.TOTAL,
-                    value=int(item['cases']),
+                    value=int(float(item['cases'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -59,7 +59,7 @@ class BRData(KaggleDataset):
                     region_parent='Brazil',
                     region_child='br-'+item['state'],
                     datatype=DataTypes.STATUS_DEATHS,
-                    value=int(item['deaths']),
+                    value=int(int(item['deaths'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )
@@ -85,7 +85,7 @@ class BRData(KaggleDataset):
                     region_parent='BR-'+item['state'].upper(),
                     region_child=item['name'],
                     datatype=DataTypes.TOTAL,
-                    value=int(item['cases']),
+                    value=int(float(item['cases'])),
                     source_url=self.SOURCE_URL,
                     date_updated=date
                 )

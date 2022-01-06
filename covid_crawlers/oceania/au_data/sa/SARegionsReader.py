@@ -14,7 +14,7 @@ SA_MAP_DIR = get_data_dir() / 'sa' / 'custom_map'
 
 
 class SARegionsReader:
-    SOURCE_ID = 'au_sa_dashmap'
+    SOURCE_ID = 'au_sa_old_dashmap'
     SOURCE_URL = 'https://www.covid-19.sa.gov.au/home/dashboard'
     SOURCE_DESCRIPTION = ''
 

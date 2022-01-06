@@ -38,7 +38,7 @@ class ExtractFromTokyoPDF:
             months = [current_month]
         else:
             months = [
-                month for month in range(4, current_month+1)
+                month for month in range(1, 13)
             ]
 
         for month in months:
@@ -49,7 +49,7 @@ class ExtractFromTokyoPDF:
             html = pq(url, parser='html', encoding='utf-8')
 
             for a in html('a'):
-                if not '新型コロナウイルスに関連した患者の発生' in pq(a).html():
+                if not '新型コロナ' in pq(a).html() or not '発生' in pq(a).html():
                     continue
                 print(pq(a).html())
 
@@ -255,6 +255,6 @@ class ExtractFromTokyoPDF:
 
 if __name__ == '__main__':
     from pprint import pprint
-    #ExtractFromTokyoPDF().download_pdfs(only_most_recent=False)
+    ExtractFromTokyoPDF().download_pdfs(only_most_recent=True)
     dp = ExtractFromTokyoPDF().get_from_pdfs()
     pprint(dp)

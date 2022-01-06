@@ -1,6 +1,6 @@
 import csv
 import codecs
-from io import BytesIO
+from io import BytesIO, StringIO
 from _utility.get_package_dir import get_global_subnational_covid_data_dir
 from covid_db.SQLiteDataRevision import SQLiteDataRevision
 
@@ -17,57 +17,78 @@ def output_csv_data(time_format, latest_revision_id):
             country = source_id.split('_')[0]
             source_name = source_id.partition('_')[2]
             path_parent.mkdir(parents=True, exist_ok=True)
-            seek_path = path_parent / 'seek_pos' / f'{country}.{source_name}.{datatype}.seek_pos.csv'
-            seek_path.parent.mkdir(parents=False, exist_ok=True)
 
-            with open(seek_path, 'w', encoding='utf-8') as seek_f:
-                writer = csv.DictWriter(seek_f, ['month', 'seek'])
-                writer.writeheader()
+            seek_data_dict, data_dict = get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype)
 
-                def on_month_change(month, file_obj):
-                    writer.writerow({'month': month,
-                                     'seek': file_obj.tell()})
+            for schema, seek_data in seek_data_dict.items():
+                seek_path = path_parent / 'seek_pos' / f'{country}.{schema}.{source_name}.{datatype}.seek_pos.txt'
+                seek_path.parent.mkdir(parents=False, exist_ok=True)
 
-                with open(path_parent / f'{country}.{source_name}.{datatype}.csv', 'wb') as f:
-                    f.write(get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype,
-                                                       on_month_change=on_month_change))
+                with open(seek_path, 'w', encoding='utf-8') as f:
+                    f.write(seek_data)
+
+            for schema, data in data_dict.items():
+                with open(path_parent / f'{country}.{schema}.{source_name}.{datatype}.txt', 'wb') as f:
+                    f.write(data)
 
 
-def get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype,
-                               on_month_change=None):
-    StreamWriter = codecs.getwriter('utf-8')
-    _csvfile = BytesIO()
-    csvfile = StreamWriter(_csvfile)
+class _CSVWriter:
+    def __init__(self):
+        StreamWriter = codecs.getwriter('utf-8')
+        self._csvfile = BytesIO()
+        self.csvfile = StreamWriter(self._csvfile)
 
-    writer = csv.DictWriter(
-        csvfile,
-        fieldnames=['date', 'region_schema', 'region_parent', 'region_child', 'agerange', 'value']
-    )
-    writer.writeheader()
+        self.writer = csv.DictWriter(
+            self.csvfile,
+            fieldnames=['date', 'region_schema', 'region_parent', 'region_child', 'agerange', 'value']
+        )
+        self.writer.writeheader()
 
-    out_dicts = []
+        self.seek_csvfile = StringIO()
+        self.seek_writer = csv.DictWriter(
+            self.seek_csvfile,
+            fieldnames=['month', 'seek']
+        )
+        self.seek_writer.writeheader()
+
+
+def get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype):
+    out_dicts_by_schema = {}
     for group_dict, values_by_date in sqlite_data_revision.iter_rows(source_id, datatype):
         for date, value in values_by_date:
-            out_dicts.append({'date': date,
-                              'region_schema': group_dict['region_schema'],
-                              'region_parent': group_dict['region_parent'],
-                              'region_child': group_dict['region_child'],
-                              'agerange': group_dict['agerange'],
-                              'value': value})
+            out_dicts_by_schema.setdefault(group_dict['region_schema'], []).append({
+                'date': date,
+                'region_schema': group_dict['region_schema'],
+                'region_parent': group_dict['region_parent'],
+                'region_child': group_dict['region_child'],
+                'agerange': group_dict['agerange'],
+                'value': value
+            })
 
-    prev_month = None
-    for out_dict in sorted(out_dicts, key=lambda x: (x['date'],
-                                                     x['region_schema'],
-                                                     x['region_parent'],
-                                                     x['region_child'],
-                                                     x['agerange'])):
+    csv_writers = {}
+    for region_schema, out_dicts in out_dicts_by_schema.items():
+        writer = csv_writers[region_schema] = _CSVWriter()
 
-        month = out_dict['date'].rpartition('-')[0]
-        if not prev_month or month != prev_month:
-            if on_month_change:
-                on_month_change(month, _csvfile)
-            prev_month = month
-        writer.writerow(out_dict)
+        prev_month = None
+        for out_dict in sorted(out_dicts, key=lambda x: (x['date'],
+                                                         x['region_schema'],
+                                                         x['region_parent'],
+                                                         x['region_child'],
+                                                         x['agerange'])):
 
-    _csvfile.seek(0)
-    return _csvfile.read()
+            month = out_dict['date'].rpartition('-')[0]
+            if not prev_month or month != prev_month:
+                writer.seek_writer.writerow({'month': month,
+                                             'seek': writer._csvfile.tell()})
+                prev_month = month
+            writer.writer.writerow(out_dict)
+
+        writer._csvfile.seek(0)
+        writer.seek_csvfile.seek(0)
+
+    return (
+        {k: writer.seek_csvfile.read()
+         for k, writer in csv_writers.items()},
+        {k: writer._csvfile.read()
+         for k, writer in csv_writers.items()}
+    )

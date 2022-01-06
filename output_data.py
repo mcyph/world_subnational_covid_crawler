@@ -176,22 +176,22 @@ def main():
     delete_old_dbs()
 
     # Update the csv output
-    #print("Outputting CSV files:")
-    #output_csv_data(TIME_FORMAT, LATEST_REVISION_ID)
-    #print('CSV write done')
+    print("Outputting CSV files:")
+    output_csv_data(TIME_FORMAT, LATEST_REVISION_ID)
+    print('CSV write done')
 
     # Output information about the sources to a markdown table/csv file
-    #print("Outputting source info...")
-    #output_source_info(SOURCE_INFO)
+    print("Outputting source info...")
+    output_source_info(SOURCE_INFO)
 
     # Output GeoJSON
-    #print("Outputting geojson...")
-    #output_geojson()
+    print("Outputting geojson...")
+    output_geojson()
 
     # Commit to GitHub
-    #print("Pushing to GitHub...")
-    #push_to_github()
-    #print("Push to GitHub done!")
+    print("Pushing to GitHub...")
+    push_to_github()
+    print("Push to GitHub done!")
 
     print("[end of script]")
 
