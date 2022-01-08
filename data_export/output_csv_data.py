@@ -3,6 +3,7 @@ import codecs
 from io import BytesIO, StringIO
 from _utility.get_package_dir import get_global_subnational_covid_data_dir
 from covid_db.SQLiteDataRevision import SQLiteDataRevision
+from data_export.split_csv_into_chunks import split_csv_into_chunks, TEN_MB
 
 
 def output_csv_data(time_format, latest_revision_id):
@@ -28,8 +29,12 @@ def output_csv_data(time_format, latest_revision_id):
                     f.write(seek_data)
 
             for schema, data in data_dict.items():
-                with open(path_parent / f'{country}.{schema}.{source_name}.{datatype}.txt', 'wb') as f:
+                path = path_parent / f'{country}.{schema}.{source_name}.{datatype}.txt'
+                with open(path, 'wb') as f:
                     f.write(data)
+
+                if len(data) > TEN_MB:
+                    split_csv_into_chunks(path, chunk_size=TEN_MB)
 
 
 class _CSVWriter:
@@ -87,8 +92,6 @@ def get_csv_data_for_source_id(sqlite_data_revision, source_id, datatype):
         writer.seek_csvfile.seek(0)
 
     return (
-        {k: writer.seek_csvfile.read()
-         for k, writer in csv_writers.items()},
-        {k: writer._csvfile.read()
-         for k, writer in csv_writers.items()}
+        {k: writer.seek_csvfile.read() for k, writer in csv_writers.items()},
+        {k: writer._csvfile.read() for k, writer in csv_writers.items()}
     )

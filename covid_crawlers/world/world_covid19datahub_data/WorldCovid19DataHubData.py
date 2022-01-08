@@ -51,6 +51,9 @@ class WorldCovid19DataHubData(URLBase):
 
         with open(path, 'r', encoding='utf-8-sig') as f:
             for item in csv.DictReader(f):
+                if item['administrative_area_level_1'] == 'Australia':
+                    continue
+
                 self._add_datapoints(r,
                                      region_schema=Schemas.ADMIN_0,
                                      region_parent='',
@@ -119,6 +122,11 @@ class WorldCovid19DataHubData(URLBase):
                 elif admin0 == 'Italy': schema = Schemas.IT_PROVINCE
                 elif admin0 == 'Puerto Rico': continue
                 elif admin0 == 'Spain': schema = Schemas.ES_PROVINCE
+                elif admin0 == 'Lithuania': schema = Schemas.LT_MUNICIPALITY
+                elif admin0 == 'Latvia': continue
+                elif admin0 == 'Denmark': continue
+                elif admin0 == 'Argentina': continue
+                elif admin0 == 'Belgium': continue
                 else: raise ValueError(admin0)
 
                 self._add_datapoints(r,

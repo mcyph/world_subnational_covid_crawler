@@ -172,6 +172,8 @@ class EUSubNationalData(URLBase):
 
                     'Whole Globe',
                     'Bonaire, Saint Eustatius and Saba',
+
+                    'Australia',
                 ):
                     continue
 

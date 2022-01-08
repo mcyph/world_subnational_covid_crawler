@@ -86,4 +86,3 @@ class _OutputGeoJSON:
 
         return out_poly_geojson, out_point_geojson
 
-

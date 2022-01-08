@@ -70,7 +70,8 @@ class StateDataSources:
              TasFacebook,),
             (#VicNews,
              VicPowerBIReader, VicGoogleSheets, VicCSV, VicTableauNative,),
-            (Covid19AUData, Covid19DataComAUData, AUCovid19Data, 
+            (#Covid19AUData,
+             Covid19DataComAUData, AUCovid19Data,
              #GuardianData,
              ),
         ]
