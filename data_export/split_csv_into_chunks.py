@@ -2,6 +2,7 @@ from pathlib import Path
 
 
 TEN_MB = 10000000
+FIVE_MB = 5000000
 
 
 def split_csv_into_chunks(path, chunk_size=TEN_MB):

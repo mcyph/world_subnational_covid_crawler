@@ -11,8 +11,7 @@ from covid_db.datatypes.StrictDataPointsFactory import StrictDataPointsFactory, 
 
 
 class WorldEUCDCData(URLBase):
-    SOURCE_URL = 'https://www.ecdc.europa.eu/en/publications-data/' \
-                 'download-todays-data-geographic-distribution-covid-19-cases-worldwide'
+    SOURCE_URL = 'https://www.ecdc.europa.eu/en/publications-data/data-daily-new-cases-covid-19-eueea-country'
     SOURCE_DESCRIPTION = ''
     SOURCE_ID = 'world_eu_cdc'
 
@@ -31,11 +30,10 @@ class WorldEUCDCData(URLBase):
 
     def __get_urls_dict(self):
         r = {}
-        r['world_data.xlsx'] = URL(url='https://opendata.ecdc.europa.eu/covid19/casedistribution/xlsx',
-                                  static_file=False)
         for url, key in (
-            ('https://opendata.ecdc.europa.eu/covid19/hospitalicuadmissionrates/xlsx', 'hosp_icu.xlsx'),
-            ('https://opendata.ecdc.europa.eu/covid19/testing/xlsx', 'tests.xlsx'),
+            ('https://opendata.ecdc.europa.eu/covid19/nationalcasedeath_eueea_daily_ei/xlsx/data.xlsx', 'world_data.xlsx'),
+            ('https://opendata.ecdc.europa.eu/covid19/hospitalicuadmissionrates/xlsx/data.xlsx', 'hosp_icu.xlsx'),
+            ('https://opendata.ecdc.europa.eu/covid19/testing/xlsx/data.xlsx', 'tests.xlsx'),
         ):
             r[key] = URL(url, static_file=False)
         return r
@@ -122,16 +120,24 @@ class WorldEUCDCData(URLBase):
         r = self.sdpf()
 
         date = datetime.today().strftime('%Y_%m_%d')
-        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.xlsx', engine="openpyxl")
-        df = df.sort_values('dateRep', axis=0)
+        df = pd.read_excel(get_overseas_dir() / 'world_eu_cdc' / 'data' / date / 'world_data.xlsx', engine="openpyxl", parse_dates=False)
 
+        date_rep_out = []
+        for idx, item in df.iterrows():
+            if '/' in item['dateRep']:
+                dd, mm, yyyy = item['dateRep'].split('/')
+                date_rep_out.append(f'{yyyy}/{mm}/{dd}')
+            else:
+                date_rep_out.append(item['dateRep'])
+        df['dateRep'] = date_rep_out
+
+        df = df.sort_values('dateRep', axis=0)
         prev_date = None
 
         cases_cumulative = Counter()
         deaths_cumulative = Counter()
 
         for idx, item in df.iterrows():
-            #print(item)
             date = self.convert_date(str(item['dateRep']).split()[0])
 
             if item['geoId'] in ('BQ', 'JPG11668'):

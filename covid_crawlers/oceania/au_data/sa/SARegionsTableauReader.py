@@ -26,9 +26,11 @@ class SARegionsTableauReader:
 
     def _get_datapoints(self, path):
         date = path.name.split('-')[0]
+        print(date)
 
         for path in path.iterdir():
-            with open(path / '', 'r', encoding='utf-8') as f:
+            print(path)
+            with open(path, 'r', encoding='utf-8') as f:
                 r = []
 
                 text = json.loads(f.read())

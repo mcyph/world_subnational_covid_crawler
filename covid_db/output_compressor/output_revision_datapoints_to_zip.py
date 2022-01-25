@@ -133,6 +133,9 @@ class _TimeSeriesDataZipper:
     def _get_revision_datapoints(self, rev_date, rev_subid):
         r = {}
         inst = SQLiteDataRevision(rev_date, rev_subid)
+        from datetime import datetime, timedelta
+        after_date = datetime.now() - timedelta(weeks=26)  # NOTE: only output for the last half year! ==========================================================================================
+        after_date = after_date.strftime('%Y_%m_%d')
 
         for region_schema in inst.get_region_schemas():
             print("Getting revision datapoints for zip:", region_schema.value)
@@ -148,7 +151,7 @@ class _TimeSeriesDataZipper:
 
                     for (region_child, agerange), date_updated_dict in inst.get_time_series(
                             datatypes, region_schema, region_parent,
-                            region_child=None
+                            region_child=None, after_date=after_date
                     ).items():
                         for date_updated, datapoints in date_updated_dict.items():
                             for datapoint in datapoints:
@@ -165,7 +168,7 @@ class _TimeSeriesDataZipper:
                 for region_parent in inst.get_region_parents(region_schema):
                     for (region_child, agerange), date_updated_dict in inst.get_time_series(
                             datatypes, region_schema, region_parent,
-                            region_child=None
+                            region_child=None, after_date=after_date
                     ).items():
                         for date_updated, datapoints in date_updated_dict.items():
                             for datapoint in datapoints:

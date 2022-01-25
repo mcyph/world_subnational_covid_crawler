@@ -68,7 +68,8 @@ class SQLiteDataRevision:
     def get_time_series(self, datatypes,
                         region_schema,
                         region_parent,
-                        region_child):
+                        region_child,
+                        after_date=None):
 
         datatypes = [i.value for i in datatypes]
         datapoints = self._datapoints_db.select_many(
@@ -76,6 +77,7 @@ class SQLiteDataRevision:
             region_parent=['= ?', [region_parent]] if region_parent else None,
             region_child=['= ?', [region_child]] if region_child else None,
             datatype=[f"IN ({','.join('?' for _ in datatypes)})", datatypes],
+            date_updated=[f"> ?", [after_date]] if after_date else None,
         )
 
         r = {}

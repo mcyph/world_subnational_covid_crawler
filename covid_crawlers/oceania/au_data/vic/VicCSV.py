@@ -57,6 +57,8 @@ class VicCSV(URLBase):
             r.extend(self._get_postcode_datapoints(date))
             r.extend(self._get_lga_datapoints(date))
 
+            #print(get_data_dir(), date)
+
             if (get_data_dir() / 'vic' / 'csv_data' / date / 'agegroup.csv').exists():
                 r.extend(self._get_agegroup_datapoints(date))
             if (get_data_dir() / 'vic' / 'csv_data' / date / 'all_lga.csv').exists():

@@ -3,7 +3,7 @@ import codecs
 from io import BytesIO, StringIO
 from _utility.get_package_dir import get_global_subnational_covid_data_dir
 from covid_db.SQLiteDataRevision import SQLiteDataRevision
-from data_export.split_csv_into_chunks import split_csv_into_chunks, TEN_MB
+from data_export.split_csv_into_chunks import split_csv_into_chunks, FIVE_MB
 
 
 def output_csv_data(time_format, latest_revision_id):
@@ -33,8 +33,8 @@ def output_csv_data(time_format, latest_revision_id):
                 with open(path, 'wb') as f:
                     f.write(data)
 
-                if len(data) > TEN_MB:
-                    split_csv_into_chunks(path, chunk_size=TEN_MB)
+                if len(data) > FIVE_MB:
+                    split_csv_into_chunks(path, chunk_size=FIVE_MB)
 
 
 class _CSVWriter:
